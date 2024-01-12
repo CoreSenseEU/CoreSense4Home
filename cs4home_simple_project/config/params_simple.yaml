@@ -1,0 +1,13 @@
+image_filter:
+  ros__parameters:
+    core: image_filter
+    efferent: ['image_input']
+      image_input:
+        topic: /image_raw
+        type: sensor_msgs/msg/Image
+    afferent: ['image_output']
+      image_output:
+        topic: /image_raw_filtered
+        type: sensor_msgs/msg/Image
+    meta: default_meta
+    coupling: default_coupling

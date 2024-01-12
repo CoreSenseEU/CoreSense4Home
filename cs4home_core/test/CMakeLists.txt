@@ -1,0 +1,2 @@
+ament_add_gtest(cognitive_module_test cognitive_module_test.cpp)
+target_link_libraries(cognitive_module_test ${PROJECT_NAME})

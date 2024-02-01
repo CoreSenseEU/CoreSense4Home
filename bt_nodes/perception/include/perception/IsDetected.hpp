@@ -9,11 +9,11 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef GO2OBJECT__ISDETECTED_HPP_
-#define GO2OBJECT__ISDETECTED_HPP_
+#ifndef PERCEPTION__ISDETECTED_HPP_
+#define PERCEPTION__ISDETECTED_HPP_
 
 #include <string>
 #include <algorithm>
@@ -76,4 +76,4 @@ private:
 
 }  // namespace go2object
 
-#endif  // GO2OBJECT__ISDETECTED_HPP_
+#endif  // PERCEPTION__ISDETECTED_HPP_

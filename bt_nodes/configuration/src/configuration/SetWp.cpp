@@ -17,9 +17,6 @@
 namespace configuration
 {
 
-using namespace std::chrono_literals;
-using namespace std::placeholders;
-
 SetWp::SetWp(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)

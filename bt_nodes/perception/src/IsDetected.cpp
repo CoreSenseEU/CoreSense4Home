@@ -1,4 +1,4 @@
-// Copyright 2021 Intelligent Robotics Lab
+// Copyright 2024 Intelligent Robotics Lab - Gentlebots
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
 
-namespace go2object
+namespace perception
 {
 
 using namespace std::chrono_literals;

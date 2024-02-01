@@ -1,4 +1,4 @@
-// Copyright 2021 Intelligent Robotics Lab
+// Copyright 2024 Intelligent Robotics Lab - Gentlebots
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@
 #include "vision_msgs/msg/detection3_d_array.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace go2object
+namespace perception
 {
 
 class IsDetected : public BT::ConditionNode

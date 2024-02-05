@@ -34,7 +34,12 @@ SetWp::tick()
     node_->declare_parameter("waypoints." + wp, std::vector<double>());
     std::vector<double> wp_pos;
     node_->get_parameter("waypoints." + wp, wp_pos);
-    config().blackboard->set(wp, wp_pos);
+    geometry_msgs::msg::PoseStamped wp_pos_msg;
+    wp_pos_msg.header.frame_id = "map";
+    wp_pos_msg.pose.position.x = wp_pos[0];
+    wp_pos_msg.pose.position.y = wp_pos[1];
+    wp_pos_msg.pose.position.z = wp_pos[2];
+    config().blackboard->set(wp, wp_pos_msg);
   }
 
   RCLCPP_INFO(node_->get_logger(), "SetWp ticked");

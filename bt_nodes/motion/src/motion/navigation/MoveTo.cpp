@@ -78,11 +78,6 @@ MoveTo::create_and_send_goal()
       };
 
   // TODO: Stop the robot if the goal is under the distance_tolerance
-  send_goal_options.feedback_callback =
-      [this](rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr,
-      const std::shared_ptr<const nav2_msgs::action::NavigateToPose::Feedback> feedback) {
-        RCLCPP_INFO(node_->get_logger(), "Distance remaining: %f", feedback->distance_remaining);
-      };
 
   auto future_goal_handle = action_client_->async_send_goal(goal_msg, send_goal_options);
 

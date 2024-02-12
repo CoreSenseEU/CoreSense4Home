@@ -23,13 +23,6 @@ MoveTo::MoveTo(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-
-  getInput("distance_tolerance", distance_tolerance_);
-
-  std::string tf_frame;
-  getInput("tf_frame", tf_frame);
-
-  config().blackboard->get("entrance", pose_);
 }
 
 BT::NodeStatus
@@ -37,6 +30,11 @@ MoveTo::tick()
 {
   if (status() == BT::NodeStatus::IDLE)
   {
+    std::string tf_frame;
+    getInput("tf_frame", tf_frame);
+    getInput("distance_tolerance", distance_tolerance_);
+    config().blackboard->get(tf_frame, pose_);
+
     RCLCPP_INFO(node_->get_logger(), "MoveTo ticked");
     if (!create_and_send_goal()) { return BT::NodeStatus::FAILURE;}
   }

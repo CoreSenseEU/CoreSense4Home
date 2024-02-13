@@ -11,6 +11,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(nav2_behavior_tree REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -20,6 +21,7 @@ set(dependencies
   behaviortree_cpp_v3
   geometry_msgs
   nav2_msgs
+  nav2_behavior_tree
 )
 
 include_directories(include)

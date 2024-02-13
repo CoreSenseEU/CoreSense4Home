@@ -30,6 +30,8 @@ MoveTo::MoveTo(
   getInput("tf_frame", tf_frame);
 
   config().blackboard->get("entrance", pose_);
+
+  //setOutput("distance", distance_tolerance_);
 }
 
 BT::NodeStatus

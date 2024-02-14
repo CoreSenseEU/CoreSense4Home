@@ -27,10 +27,6 @@ include_directories(include)
 add_library(move_to_bt_node SHARED src/motion/navigation/MoveTo.cpp)
 list(APPEND plugin_libs move_to_bt_node)
 
-add_executable(move_to_test src/test/move_to_test.cpp)
-ament_target_dependencies(move_to_test ${dependencies})
-target_link_libraries(move_to_test move_to_bt_node)
-
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
@@ -38,8 +34,7 @@ endforeach()
 
 install(TARGETS
   ${plugin_libs}
-  move_to_bt_node
-  move_to_test
+  EXPORT ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -47,10 +42,6 @@ install(TARGETS
 
 install(DIRECTORY include/
   DESTINATION include/
-)
-
-install(DIRECTORY bt_xml
-  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
@@ -61,6 +52,6 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_dependencies(${dependencies})
-ament_export_libraries(${plugin_libs})
+ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 ament_package()

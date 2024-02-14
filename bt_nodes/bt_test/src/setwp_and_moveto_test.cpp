@@ -29,15 +29,16 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("setwp_test");
+  auto node = rclcpp::Node::make_shared("setwp_and_moveto_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
   factory.registerFromPlugin(loader.getOSName("set_wp_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
 
-  std::string pkgpath = ament_index_cpp::get_package_share_directory("configuration");
-  std::string xml_file = pkgpath + "/bt_xml/setwp_test.xml";
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
+  std::string xml_file = pkgpath + "/bt_xml/setwp_moveto_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);

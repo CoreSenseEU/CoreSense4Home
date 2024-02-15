@@ -23,7 +23,7 @@ LookAt::LookAt(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  attention_points_pub_ = node_->create_publisher<gb_attention_msgs::msg::AttentionPoints>(
+  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
     "attention/attention_points", 100);
   config().blackboard->get("tf_frame", tf_frame_);
 }
@@ -33,7 +33,7 @@ LookAt::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "LookAt ticked");
 
-  gb_attention_msgs::msg::AttentionPoints attention_points_msg;
+  attention_system_msgs::msg::AttentionPoints attention_points_msg;
   RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", tf_frame_.c_str());
   int seconds;
   getInput("seconds", seconds);

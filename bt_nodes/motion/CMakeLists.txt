@@ -12,7 +12,7 @@ find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(nav2_behavior_tree REQUIRED)
-find_package(gb_attention REQUIRED)
+find_package(attention_system REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -23,7 +23,7 @@ set(dependencies
   geometry_msgs
   nav2_msgs
   nav2_behavior_tree
-  gb_attention
+  attention_system
 )
 
 include_directories(include)

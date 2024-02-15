@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
   
-  blackboard->set("tf_frame", "base_link");
+  blackboard->set("tf_frame", "base_laser_link");
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 

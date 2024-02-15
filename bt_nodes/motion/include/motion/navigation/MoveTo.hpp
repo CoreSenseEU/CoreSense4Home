@@ -21,6 +21,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "nav2_msgs/action/compute_path_to_pose.hpp"
+#include "nav2_msgs/action/follow_path.hpp"
+#include "nav2_util/geometry_utils.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
 namespace navigation
@@ -46,15 +49,21 @@ public:
   }
 
 private:
-  bool create_and_send_goal();
+  bool compute_path();
+  bool truncate_path();
+  bool follow_path();
 
   rclcpp::Node::SharedPtr node_;
   double distance_tolerance_;
   geometry_msgs::msg::PoseStamped pose_;
-  std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> action_client_;
-  rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult result_;
-  rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr goal_handle_;
-  bool goal_result_available_{false};
+
+  std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
+  std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
+  rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;
+  rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowPath>::WrappedResult follow_result_;
+  rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::SharedPtr path_goal_handle_;
+  rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowPath>::SharedPtr follow_goal_handle_;
+  bool path_result_available_, goal_send_ {false};
 };
 
 }  // namespace navigation

@@ -49,6 +49,7 @@ private:
   rclcpp::Node::SharedPtr node_;
   geometry_msgs::msg::PoseStamped pose_;
   rclcpp::Publisher<gb_attention_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
+  std::string tf_frame_;
 };
 
 }  // namespace navigation

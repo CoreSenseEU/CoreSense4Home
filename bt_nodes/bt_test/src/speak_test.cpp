@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   BT::SharedLibrary loader;
 
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("dialogConfirmation"));
+  factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/_test.xml";
 

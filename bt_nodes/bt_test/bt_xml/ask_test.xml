@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="Listen" listen_text="{text_value}"/>
+            <Action ID="AskForSomething" text="{text_value}" intention="name" intention_value="{name_value}"/>
+            <Action ID="Speak" say_text="are you" param="{name_value}"/>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AskForSomething">
+            <input_port name="text"/>
+            <input_port name="intention"/>
+            <output_port name="intention_value"/>
+        </Action>
+        <Action ID="Listen">
+            <output_port name="listen_text"/>
+        </Action>
+        <Action ID="Speak">
+            <input_port name="say_text"/>
+            <input_port name="param"/>
+        </Action>
+    </TreeNodesModel>
+</root>

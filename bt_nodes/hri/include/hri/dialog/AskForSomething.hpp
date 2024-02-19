@@ -12,42 +12,40 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef DIALOG__SPEAK_HPP_
-#define DIALOG__SPEAK_HPP_
+#ifndef HRI__ASKFORSOMETHING_HPP_
+#define HRI__ASKFORSOMETHING_HPP_
 
 #include <algorithm>
 #include <string>
 
-#include "audio_common_msgs/action/tts.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
+#include "llama_msgs/action/generate_response.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace dialog {
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS> {
+class AskForSomething
+    : public dialog::BtActionNode<llama_msgs::action::GenerateResponse> {
 public:
-  explicit Speak(const std::string &xml_tag_name,
-                 const std::string &action_name,
-                 const BT::NodeConfiguration &conf);
+  explicit AskForSomething(const std::string &xml_tag_name,
+                           const std::string &action_name,
+                           const BT::NodeConfiguration &conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
   static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<std::string>("say_text"),
-                          BT::InputPort<std::string>("param")});
+    return BT::PortsList({BT::InputPort<std::string>("text"),
+                          BT::InputPort<std::string>("intention"),
+                          BT::OutputPort<std::string>("intention_value")});
   }
 
 private:
-  // rclcpp::Node::SharedPtr node_;
-  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
-  //  tts_action_;
-
-  // std::string text_;
+  std::string intention_;
 };
 
 } // namespace dialog
 
-#endif // HRI__SPEAK_HPP_
+#endif // HRI__ASKFORSOMETHING_HPP_

@@ -12,6 +12,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
+find_package(llama_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -23,6 +24,7 @@ set(dependencies
   behaviortree_cpp_v3
   audio_common_msgs
   whisper_msgs
+  llama_msgs
 )
 
 include_directories(include)
@@ -32,6 +34,12 @@ list(APPEND plugin_libs speak_bt_node)
 
 add_library(dialogConfirmation_bt_node SHARED src/hri/dialog/DialogConfirmation.cpp)
 list(APPEND plugin_libs dialogConfirmation_bt_node)
+
+add_library(askForSomething_bt_node SHARED src/hri/dialog/AskForSomething.cpp)
+list(APPEND plugin_libs askForSomething_bt_node)
+
+add_library(listen_bt_node SHARED src/hri/dialog/Listen.cpp)
+list(APPEND plugin_libs listen_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

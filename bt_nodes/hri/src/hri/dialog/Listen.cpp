@@ -15,8 +15,8 @@
 #include <string>
 #include <utility>
 
-#include "audio_common_msgs/action/tts.hpp"
-#include "hri/dialog/Speak.hpp"
+#include "hri/dialog/Listen.hpp"
+#include "whisper_msgs/action/stt.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
@@ -25,35 +25,36 @@ namespace dialog {
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-Speak::Speak(const std::string &xml_tag_name, const std::string &action_name,
-             const BT::NodeConfiguration &conf)
-    : dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
-                                                           action_name, conf) {}
+Listen::Listen(const std::string &xml_tag_name, const std::string &action_name,
+               const BT::NodeConfiguration &conf)
+    : dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
+                                                      conf) {}
 
-void Speak::on_tick() {
+void Listen::on_tick() {
 
-  RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "Listen ticked");
   std::string text_;
-  getInput("say_text", text_);
-  std::string param_;
-  getInput("param", param_);
-
-  if (param_.length() > 0) {
-    goal_.text = text_ + " " + param_ + "?";
-  } else {
-    goal_.text = text_;
-  }
+  goal_ = whisper_msgs::action::STT::Goal();
 }
 
-BT::NodeStatus Speak::on_success() { return BT::NodeStatus::SUCCESS; }
+BT::NodeStatus Listen::on_success() {
+  fprintf(stderr, "%s\n", result_.result->text.c_str());
+
+  if (result_.result->text.size() == 0) {
+    return BT::NodeStatus::FAILURE;
+  }
+
+  setOutput("listen_text", result_.result->text);
+  return BT::NodeStatus::SUCCESS;
+}
 
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
   BT::NodeBuilder builder = [](const std::string &name,
                                const BT::NodeConfiguration &config) {
-    return std::make_unique<dialog::Speak>(name, "/say", config);
+    return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
   };
 
-  factory.registerBuilder<dialog::Speak>("Speak", builder);
+  factory.registerBuilder<dialog::Listen>("Listen", builder);
 }

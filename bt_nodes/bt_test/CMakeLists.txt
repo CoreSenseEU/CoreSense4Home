@@ -12,6 +12,7 @@ find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
+find_package(llama_msgs REQUIRED)
 find_package(configuration REQUIRED)
 find_package(motion REQUIRED)
 find_package(hri REQUIRED)
@@ -24,6 +25,7 @@ set(dependencies
   behaviortree_cpp_v3
   audio_common_msgs
   whisper_msgs
+  llama_msgs
   configuration
   motion
   hri
@@ -49,11 +51,17 @@ add_executable(speak_test src/speak_test.cpp)
 ament_target_dependencies(speak_test ${dependencies})
 target_link_libraries(speak_test hri::speak_bt_node hri::dialogConfirmation_bt_node)
 
+# Ask test
+add_executable(ask_test src/ask_test.cpp)
+ament_target_dependencies(ask_test ${dependencies})
+target_link_libraries(ask_test hri::askForSomething_bt_node hri::speak_bt_node hri::listen_bt_node)
+
 install(TARGETS
   set_wp_test
   move_to_test
   setwp_and_moveto_test
   speak_test
+  ask_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

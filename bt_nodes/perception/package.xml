@@ -4,10 +4,18 @@
   <name>perception</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="rodrigo.perez@urjc.es">rod</maintainer>
+  <maintainer email="samuele.sandrini@polito.it">Samuele</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>behaviortree_cpp_v3</depend>
+  <depend>yolov8_msgs</depend>
+  <depend>moveit_msgs</depend>
+  <depend>shape_msgs</depend>
+  <depend>rclpy</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

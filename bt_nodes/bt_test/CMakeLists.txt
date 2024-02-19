@@ -10,10 +10,13 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(audio_common_msgs REQUIRED)
+find_package(whisper_msgs REQUIRED)
 find_package(configuration REQUIRED)
 find_package(motion REQUIRED)
 find_package(perception REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(hri REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -21,10 +24,13 @@ set(dependencies
   rclcpp
   rclcpp_action
   behaviortree_cpp_v3
+  audio_common_msgs
+  whisper_msgs
   configuration
   motion
   perception
   tf2_ros
+  hri
 )
 
 # Set WP test
@@ -57,6 +63,11 @@ add_executable(isdetected_moveto_test src/isdetected_moveto_test.cpp)
 ament_target_dependencies(isdetected_moveto_test ${dependencies})
 target_link_libraries(isdetected_moveto_test perception::is_detected_bt_node motion::move_to_bt_node)
 
+# Speak test
+add_executable(speak_test src/speak_test.cpp)
+ament_target_dependencies(speak_test ${dependencies})
+target_link_libraries(speak_test hri::speak_bt_node hri::dialogConfirmation_bt_node)
+
 install(TARGETS
   set_wp_test
   move_to_test
@@ -64,6 +75,7 @@ install(TARGETS
   is_detected_test
   is_detected_real_test
   isdetected_moveto_test
+  speak_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

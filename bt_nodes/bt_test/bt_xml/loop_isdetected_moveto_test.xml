@@ -2,10 +2,12 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Sequence>
-            <Condition ID="IsDetected" confidence="0.6" entity="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
-            <Action ID="MoveTo" distance_tolerance="0" tf_frame="person"/>
-        </Sequence>
+        <Repeat num_cycles="20">
+            <Sequence>
+                <Condition ID="IsDetected" confidence="0.6" entity="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                <Action ID="MoveTo" distance_tolerance="0" tf_frame="person"/>
+            </Sequence>
+        </Repeat>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>

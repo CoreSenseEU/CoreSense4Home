@@ -63,6 +63,11 @@ add_executable(isdetected_moveto_test src/isdetected_moveto_test.cpp)
 ament_target_dependencies(isdetected_moveto_test ${dependencies})
 target_link_libraries(isdetected_moveto_test perception::is_detected_bt_node motion::move_to_bt_node)
 
+# Is Detected Move To Loop test
+add_executable(is_detected_moveto_loop_test src/is_detected_moveto_loop_test.cpp)
+ament_target_dependencies(is_detected_moveto_loop_test ${dependencies})
+target_link_libraries(is_detected_moveto_loop_test perception::is_detected_bt_node motion::move_to_bt_node)
+
 # Speak test
 add_executable(speak_test src/speak_test.cpp)
 ament_target_dependencies(speak_test ${dependencies})
@@ -75,6 +80,7 @@ install(TARGETS
   is_detected_test
   is_detected_real_test
   isdetected_moveto_test
+  is_detected_moveto_loop_test
   speak_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

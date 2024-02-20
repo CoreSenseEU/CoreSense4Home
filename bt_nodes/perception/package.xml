@@ -5,6 +5,8 @@
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="rodrigo.perez@urjc.es">rod</maintainer>
+  <maintainer email="juancarlos.serrano@urjc.es">Juanca</maintainer>
+  <maintainer email="alberto.gomezjacinto@urjc.es">Alberto</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

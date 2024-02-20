@@ -9,7 +9,7 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions andGO2OBJECT
+// See the License for the specific language governing permissions and
 // limitations under the License.
 
 #ifndef PERCEPTION__ISDETECTED_HPP_
@@ -31,7 +31,6 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 
-#include "vision_msgs/msg/detection3_d_array.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace perception
@@ -58,13 +57,8 @@ public:
     });
   }
 
-  void detection_callback_(vision_msgs::msg::Detection3DArray::UniquePtr msg);
-
 private:
   rclcpp::Node::SharedPtr node_;
-  rclcpp::Time last_time_;
-  rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr detection3D_sub_;
-  vision_msgs::msg::Detection3DArray::UniquePtr last_detection3D_;
 
   std::string entity_, order_;
   double threshold_, max_depth_;
@@ -74,6 +68,6 @@ private:
   tf2_ros::TransformListener tf_listener_;  
 };
 
-}  // namespace go2object
+}  // namespace perception
 
 #endif  // PERCEPTION__ISDETECTED_HPP_

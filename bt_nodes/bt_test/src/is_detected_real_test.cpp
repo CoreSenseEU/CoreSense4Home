@@ -21,6 +21,9 @@
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_ros/static_transform_broadcaster.h"
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -29,18 +32,19 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("setwp_test");
+  auto node = rclcpp::Node::make_shared("isdetected_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("set_wp_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
 
-  std::string pkgpath = ament_index_cpp::get_package_share_directory("configuration");
-  std::string xml_file = pkgpath + "/bt_xml/setwp_test.xml";
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
+  std::string xml_file = pkgpath + "/bt_xml/isdetected_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
+
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);

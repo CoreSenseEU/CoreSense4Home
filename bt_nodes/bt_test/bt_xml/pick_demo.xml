@@ -2,7 +2,19 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Action ID="LookAt" tf_frame=""/>
+        <Sequence>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" objects_map="{map_output}"/>
+            </RetryUntilSuccessful>
+            <RetryUntilSuccessful num_attempts="2">
+                <Sequence>
+                    <Action ID="GenerateTextFromObjects" name="counter in the constructor." objects_map="{map_output}" output_text="{out_msg}" selected_object="{selected_object}"/>
+                    <Action ID="Speak" say_text="{out_msg}"/>
+                    <Action ID="DialogConfirmation"/>
+                </Sequence>
+            </RetryUntilSuccessful>
+            <Action ID="PickObject" object="{selected_object}"/>
+        </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
@@ -31,14 +43,15 @@
         <SubTree ID="Dialog">
             <input_port default="false" name="__shared_blackboard">If false (default), the Subtree has an isolated blackboard and needs port remapping</input_port>
         </SubTree>
-        <Action ID="DialogConfirmation">
-            <input_port name="prompt"/>
-        </Action>
+        <Action ID="DialogConfirmation"/>
         <Action ID="Dialogue">
             <input_port default="Hi welcome to the party" name="say_text"/>
         </Action>
         <Action ID="ExtractBagPosition">
             <output_port name="position"/>
+        </Action>
+        <Action ID="ExtractObjectsFromScene">
+            <output_port name="objects_map">a std::map with name and  a touple with 3d pose and mesh</output_port>
         </Action>
         <Action ID="FindEmptyPlace">
             <output_port default="position" name="position"/>
@@ -46,6 +59,11 @@
         </Action>
         <Action ID="FollowEntity">
             <input_port default="person" name="entity_frame"/>
+        </Action>
+        <Action ID="GenerateTextFromObjects">
+            <input_port name="objects_map"/>
+            <output_port name="output_text"/>
+            <output_port name="selected_object"/>
         </Action>
         <Action ID="GoBack">
             <input_port default="0.2" name="velocity"/>
@@ -112,7 +130,7 @@
             <input_port default="0.3" name="velocity"/>
         </Action>
         <Action ID="PickObject">
-            <input_port default="Bowl" name="tf_frame"/>
+            <input_port default="{selected_object}" name="object"/>
         </Action>
         <Action ID="PlaceObject">
             <output_port default="tf" name="left_position"/>
@@ -125,7 +143,6 @@
             <inout_port name="target"/>
         </Action>
         <Action ID="SetWaypoints"/>
-        <Action ID="SetWp"/>
         <Action ID="Speak">
             <input_port name="say_text"/>
         </Action>

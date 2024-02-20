@@ -31,10 +31,7 @@ MoveTo::MoveTo(
 : navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
-  // config().blackboard->get("distance_tolerance", distance_tolerance_);
-  // config().blackboard->get("tf_frame", tf_frame_);
   getInput("tf_frame", tf_frame_);
-  // config().blackboard->get("entrance", pose_);
 }
 
 void

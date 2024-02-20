@@ -50,9 +50,9 @@ IsDetected::tick()
   geometry_msgs::msg::TransformStamped transform;
 
   try {
-    transform = tf_buffer_.lookupTransform("head_front_camera_link", "person", tf2::TimePointZero);
+    transform = tf_buffer_.lookupTransform("map", entity_, tf2::TimePointZero);
   } catch (tf2::TransformException & ex) {
-    RCLCPP_ERROR(node_->get_logger(), "Could not transform entity to head_front_camera_link: %s", ex.what());
+    RCLCPP_ERROR(node_->get_logger(), "Could not transform entity to map: %s", ex.what());
     return BT::NodeStatus::RUNNING;
   }
 
@@ -60,7 +60,6 @@ IsDetected::tick()
   pose.pose.position.x = transform.transform.translation.x;
   pose.pose.position.y = transform.transform.translation.y;
   pose.pose.position.z = transform.transform.translation.z;
-  RCLCPP_INFO(node_->get_logger(), "Person detected at (%f, %f, %f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
 
   config().blackboard->set("person", pose);
 

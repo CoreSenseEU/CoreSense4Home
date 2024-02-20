@@ -19,6 +19,8 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
+#include "ament_index_cpp/get_package_share_directory.hpp"
+
 namespace navigation
 {
 
@@ -29,7 +31,7 @@ MoveTo::MoveTo(
 : navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
-  config().blackboard->get("distance_tolerance", distance_tolerance_);
+  // config().blackboard->get("distance_tolerance", distance_tolerance_);
   // config().blackboard->get("tf_frame", tf_frame_);
   getInput("tf_frame", tf_frame_);
   // config().blackboard->get("entrance", pose_);
@@ -41,9 +43,14 @@ MoveTo::on_tick()
   geometry_msgs::msg::PoseStamped goal;
   config().blackboard->get(tf_frame_, goal);
   RCLCPP_INFO(node_->get_logger(), "Sending goal: x: %f, y: %f, z: %f , in frame: %s",
-    goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
+  goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
       goal.header.frame_id.c_str());
   goal_.pose = goal;
+
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("motion");
+  std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
+  goal_.behavior_tree = xml_file;
+
 }
 
 BT::NodeStatus

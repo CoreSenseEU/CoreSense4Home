@@ -44,7 +44,7 @@ MoveTo::on_tick()
       goal.header.frame_id.c_str());
   goal_.pose = goal;
 
-  std::string pkgpath = ament_index_cpp::get_package_share_directory("motion");
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
   goal_.behavior_tree = xml_file;
 

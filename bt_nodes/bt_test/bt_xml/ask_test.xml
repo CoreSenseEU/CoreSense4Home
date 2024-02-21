@@ -3,9 +3,11 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
+            <Action ID="Speak" say_text="What's your name?"/>
             <Action ID="Listen" listen_text="{text_value}"/>
             <Action ID="AskForSomething" text="{text_value}" intention="name" intention_value="{name_value}"/>
             <Action ID="Speak" say_text="are you" param="{name_value}"/>
+            <Action ID="DialogConfirmation" />
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->

@@ -54,7 +54,7 @@ target_link_libraries(speak_test hri::speak_bt_node hri::dialogConfirmation_bt_n
 # Ask test
 add_executable(ask_test src/ask_test.cpp)
 ament_target_dependencies(ask_test ${dependencies})
-target_link_libraries(ask_test hri::askForSomething_bt_node hri::speak_bt_node hri::listen_bt_node)
+target_link_libraries(ask_test hri::askForSomething_bt_node hri::speak_bt_node hri::listen_bt_node hri::dialogConfirmation_bt_node)
 
 install(TARGETS
   set_wp_test

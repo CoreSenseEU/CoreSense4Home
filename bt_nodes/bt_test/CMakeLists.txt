@@ -20,7 +20,6 @@ find_package(perception REQUIRED)
 find_package(arm REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(hri REQUIRED)
-find_package(backward_ros REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -106,7 +105,7 @@ install(TARGETS
   speak_test
   extract_object_from_scene_test
   generate_text_from_objects_test
-  pick_demo_no_speech_test
+  pick_demo_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

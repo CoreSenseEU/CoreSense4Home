@@ -1,0 +1,17 @@
+repositories:
+  ThirdParty/pointcloud_to_laserscan:
+    type: git
+    url: https://github.com/Juancams/pointcloud_to_laserscan.git
+    version: humble
+  ThirdParty/small_objects_detector:
+    type: git
+    url: https://github.com/gentlebots/small_objects_detector.git
+    version: robocup
+  ThirdParty/audio_common:
+    type: git
+    url: https://github.com/mgonzs13/audio_common.git
+    version: main
+  ThirdParty/whisper_ros:
+    type: git
+    url: https://github.com/mgonzs13/whisper_ros.git
+    version: main

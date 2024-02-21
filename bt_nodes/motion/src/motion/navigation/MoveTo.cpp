@@ -33,9 +33,9 @@ MoveTo::tick()
     getInput("tf_frame", tf_frame);
     getInput("distance_tolerance", distance_tolerance_);
     config().blackboard->get(tf_frame, pose_);
-
     RCLCPP_INFO(node_->get_logger(), "MoveTo ticked");
-    if (!create_and_send_goal()) {return BT::NodeStatus::FAILURE;}
+
+    if (!create_and_send_goal()) { return BT::NodeStatus::FAILURE;}
   }
 
   if (!goal_result_available_) {
@@ -56,6 +56,7 @@ MoveTo::create_and_send_goal()
 {
   auto goal_msg = nav2_msgs::action::NavigateToPose::Goal();
   goal_msg.pose = pose_;
+  goal_msg.pose.header.frame_id = "map";
 
   action_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
     node_,

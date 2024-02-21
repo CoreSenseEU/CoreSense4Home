@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Condition ID="IsDetected" confidence="0.6" entity="person_1" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Condition ID="IsDetected">
+            <input_port default="0.6" name="confidence"/>
+            <input_port default="person" name="entity"/>
+            <output_port name="frames">array of frames</output_port>
+            <input_port default="2" name="max_depth">value in meters</input_port>
+            <input_port default="1" name="max_entities"/>
+            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]^</input_port>
+        </Condition>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

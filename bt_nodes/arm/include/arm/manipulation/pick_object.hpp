@@ -25,19 +25,25 @@
 #include "arm/manipulation/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace manipulation {
+namespace manipulation
+{
 
-class PickObject : public manipulation::BtActionNode<manipulation_interfaces::action::Pick> {
+class PickObject : public manipulation::BtActionNode<manipulation_interfaces::action::Pick>
+{
 public:
-  explicit PickObject(const std::string &xml_tag_name,
-                 const std::string &action_name,
-                 const BT::NodeConfiguration &conf);
+  explicit PickObject(
+    const std::string & xml_tag_name,
+    const std::string & action_name,
+    const BT::NodeConfiguration & conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("object_to_pick")});
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>(
+          "object_to_pick")});
   }
 
 private:

@@ -20,17 +20,20 @@
 #include "manipulation_interfaces/action/pick.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace manipulation {
+namespace manipulation
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-PickObject::PickObject(const std::string &xml_tag_name, const std::string &action_name,
-             const BT::NodeConfiguration &conf)
-    : manipulation::BtActionNode<manipulation_interfaces::action::Pick>(xml_tag_name,
-                                                           action_name, conf) {}
+PickObject::PickObject(
+  const std::string & xml_tag_name, const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: manipulation::BtActionNode<manipulation_interfaces::action::Pick>(xml_tag_name,
+    action_name, conf) {}
 
-void PickObject::on_tick() {
+void PickObject::on_tick()
+{
 
   RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
   moveit_msgs::msg::CollisionObject::SharedPtr object_;
@@ -38,15 +41,15 @@ void PickObject::on_tick() {
   goal_.object_goal = *object_;
 }
 
-BT::NodeStatus PickObject::on_success() { return BT::NodeStatus::SUCCESS; }
+BT::NodeStatus PickObject::on_success() {return BT::NodeStatus::SUCCESS;}
 
 } // namespace manipulation
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string &name,
-                               const BT::NodeConfiguration &config) {
-    return std::make_unique<manipulation::PickObject>(name, "/pick", config);
-  };
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<manipulation::PickObject>(name, "/pick", config);
+    };
 
   factory.registerBuilder<manipulation::PickObject>("PickObject", builder);
 }

@@ -24,9 +24,9 @@ namespace cs4home_core
 
 class Core
 {
-public:    
+public:
   RCLCPP_SMART_PTR_DEFINITIONS(Core)
-  
+
   Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
   bool configure();

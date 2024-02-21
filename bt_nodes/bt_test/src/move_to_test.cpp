@@ -45,7 +45,7 @@ int main(int argc, char * argv[])
 
   geometry_msgs::msg::PoseStamped pose;
   pose.header.frame_id = "map";
-  
+
   pose.pose.position.x = 1.0;
   pose.pose.position.y = 1.0;
   pose.pose.position.z = 0.0;

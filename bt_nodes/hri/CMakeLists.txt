@@ -40,9 +40,6 @@ list(APPEND plugin_libs dialogConfirmation_bt_node)
 add_library(generate_text_from_objects_bt_node SHARED src/hri/GenerateTextFromObjects.cpp)
 list(APPEND plugin_libs generate_text_from_objects_bt_node)
 
-add_library(generate_text_no_speech_bt_node SHARED src/hri/GenerateTextNoSpeech.cpp)
-list(APPEND plugin_libs generate_text_no_speech_bt_node)
-
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

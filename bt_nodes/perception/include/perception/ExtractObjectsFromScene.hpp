@@ -37,16 +37,18 @@ public:
   explicit ExtractObjectsFromScene(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
-    
+
   void halt();
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>("detected_objects"),
-      BT::OutputPort<size_t>("objects_count")    
-    });
+    return BT::PortsList(
+      {
+        BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
+          "detected_objects"),
+        BT::OutputPort<size_t>("objects_count")
+      });
   }
 
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
@@ -58,7 +60,7 @@ private:
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  
+
 };
 
 }  // namespace perception

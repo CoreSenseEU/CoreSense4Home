@@ -30,19 +30,19 @@ IsDetected::IsDetected(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf),
-tf_buffer_(),
-tf_listener_(tf_buffer_),
-entity_("ND"),
-threshold_(0.5),
-max_entities_(1),
-order_("nearest_first"),
-max_depth_(3.0)
+  tf_buffer_(),
+  tf_listener_(tf_buffer_),
+  entity_("ND"),
+  threshold_(0.5),
+  max_entities_(1),
+  order_("nearest_first"),
+  max_depth_(3.0)
 {
   config().blackboard->get("node", node_);
 
   getInput("entity", entity_);
   getInput("confidence", threshold_);
-  getInput("max_entities", max_entities_); 
+  getInput("max_entities", max_entities_);
   getInput("order", order_);
   getInput("max_depth", max_depth_);
 
@@ -78,37 +78,39 @@ IsDetected::tick()
     return BT::NodeStatus::FAILURE;
   }
 
-  
+
   if (order_ == "nearest_first") { // otherwise from left to right
-    std::sort(last_detection3D_->detections.begin(), last_detection3D_->detections.end(),
-      [](const vision_msgs::msg::Detection3D& a, const vision_msgs::msg::Detection3D& b) {
+    std::sort(
+      last_detection3D_->detections.begin(), last_detection3D_->detections.end(),
+      [](const vision_msgs::msg::Detection3D & a, const vision_msgs::msg::Detection3D & b) {
         return a.bbox.center.position.z < b.bbox.center.position.z;
       });
-  } 
+  }
 
   std::string source_frame = last_detection3D_->header.frame_id;
-  for (const auto& detection : last_detection3D_->detections) {
+  for (const auto & detection : last_detection3D_->detections) {
     std::string class_id = detection.results[0].hypothesis.class_id;
     double score = detection.results[0].hypothesis.score;
-    
+
     RCLCPP_DEBUG(node_->get_logger(), "Detected object (%s). Score: %.2f", class_id.c_str(), score);
-    
+
     in_range = is_there = detection.bbox.center.position.z <= max_depth_;
 
     if (!in_range) {
-      RCLCPP_DEBUG(node_->get_logger(), "Object out of range (%.2f)", detection.bbox.center.position.z);
+      RCLCPP_DEBUG(
+        node_->get_logger(), "Object out of range (%.2f)", detection.bbox.center.position.z);
       continue;
     }
     if (entity_ != "ND") {
-      is_there = (detection.results[0].hypothesis.class_id == entity_)
-              && (detection.results[0].hypothesis.score >= threshold_);
+      is_there = (detection.results[0].hypothesis.class_id == entity_) &&
+        (detection.results[0].hypothesis.score >= threshold_);
     }
 
 
     if (is_there && (entities_detected < max_entities_)) { // TF entity-map to be published
       entities_detected++;
       RCLCPP_INFO(node_->get_logger(), "I see the %s (%d)!", entity_.c_str(), entities_detected);
-      try{;
+      try {
         tf2_ros::StaticTransformBroadcaster tf_broadcaster(node_);
         geometry_msgs::msg::TransformStamped detection_tf;
         geometry_msgs::msg::PoseStamped map_pose, camera_pose;
@@ -119,8 +121,9 @@ IsDetected::tick()
         camera_pose.pose.position.y = detection.bbox.center.position.y;
         camera_pose.pose.position.z = detection.bbox.center.position.z;
 
-        tf2::doTransform(camera_pose, map_pose,
-                tf_buffer_.lookupTransform("map", source_frame, tf2::TimePointZero));
+        tf2::doTransform(
+          camera_pose, map_pose,
+          tf_buffer_.lookupTransform("map", source_frame, tf2::TimePointZero));
 
         detection_tf.header = map_pose.header;
         // detection_tf.child_frame_id = entity_ + "_" + std::to_string(entities_detected);
@@ -131,8 +134,8 @@ IsDetected::tick()
 
         tf_broadcaster.sendTransform(detection_tf);
         detected_frames.push_back(detection_tf.child_frame_id);
-      
-      } catch (tf2::TransformException &ex) {
+
+      } catch (tf2::TransformException & ex) {
         RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
         return BT::NodeStatus::FAILURE;
       }
@@ -141,7 +144,7 @@ IsDetected::tick()
         RCLCPP_DEBUG(node_->get_logger(), "All %ss detected!", entity_.c_str());
         break;
       }
-      
+
     }
 
   }

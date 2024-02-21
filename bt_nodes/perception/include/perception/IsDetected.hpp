@@ -48,14 +48,15 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<geometry_msgs::msg::PoseStamped>("max_entities"),
-      BT::InputPort<geometry_msgs::msg::PoseStamped>("entity"),
-      BT::InputPort<geometry_msgs::msg::PoseStamped>("confidence"),
-      BT::InputPort<std::string>("order"),
-      BT::InputPort<double>("max_depth"),
-      BT::OutputPort<std::vector<std::string>>("frames")
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<geometry_msgs::msg::PoseStamped>("max_entities"),
+        BT::InputPort<geometry_msgs::msg::PoseStamped>("entity"),
+        BT::InputPort<geometry_msgs::msg::PoseStamped>("confidence"),
+        BT::InputPort<std::string>("order"),
+        BT::InputPort<double>("max_depth"),
+        BT::OutputPort<std::vector<std::string>>("frames")
+      });
   }
 
   void detection_callback_(vision_msgs::msg::Detection3DArray::UniquePtr msg);
@@ -71,7 +72,7 @@ private:
   int max_entities_;
 
   tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;  
+  tf2_ros::TransformListener tf_listener_;
 };
 
 }  // namespace go2object

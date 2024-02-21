@@ -20,17 +20,20 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace dialog {
+namespace dialog
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-Speak::Speak(const std::string &xml_tag_name, const std::string &action_name,
-             const BT::NodeConfiguration &conf)
-    : dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
-                                                           action_name, conf) {}
+Speak::Speak(
+  const std::string & xml_tag_name, const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
+    action_name, conf) {}
 
-void Speak::on_tick() {
+void Speak::on_tick()
+{
 
   RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
   std::string text_;
@@ -38,15 +41,15 @@ void Speak::on_tick() {
   goal_.text = text_;
 }
 
-BT::NodeStatus Speak::on_success() { return BT::NodeStatus::SUCCESS; }
+BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}
 
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string &name,
-                               const BT::NodeConfiguration &config) {
-    return std::make_unique<dialog::Speak>(name, "/say", config);
-  };
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Speak>(name, "/say", config);
+    };
 
   factory.registerBuilder<dialog::Speak>("Speak", builder);
 }

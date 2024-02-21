@@ -34,18 +34,21 @@ public:
   explicit GenerateTextFromObjects(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
-    
+
   void halt();
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>("detected_objects"),
-      BT::OutputPort<std::string>("output_text"),
-      BT::OutputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object"),
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
+          "detected_objects"),
+        BT::OutputPort<std::string>("output_text"),
+        BT::OutputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object"),
+      });
   }
+
 private:
   rclcpp::Node::SharedPtr node_;
   unsigned int selected_object_ = 0;

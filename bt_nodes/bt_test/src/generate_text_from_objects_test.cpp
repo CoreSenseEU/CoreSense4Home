@@ -27,16 +27,15 @@
 class SayMessage : public BT::SyncActionNode
 {
 public:
-  SayMessage(const std::string& name, const BT::NodeConfiguration& config) :
-    BT::SyncActionNode(name, config)
+  SayMessage(const std::string & name, const BT::NodeConfiguration & config)
+  : BT::SyncActionNode(name, config)
   {}
 
   // You must override the virtual function tick()
   BT::NodeStatus tick() override
   {
     auto msg = getInput<std::string>("message");
-    if (!msg)
-    {
+    if (!msg) {
       throw BT::RuntimeError("missing required input [message]: ", msg.error());
     }
     std::cout << msg.value() << std::endl;

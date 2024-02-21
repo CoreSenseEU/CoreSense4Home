@@ -15,16 +15,17 @@
 #include "hri/GenerateTextFromObjects.hpp"
 
 using std::placeholders::_1;
-using namespace std::chrono_literals; 
+using namespace std::chrono_literals;
 
 namespace hri
 {
 
-GenerateTextFromObjects::GenerateTextFromObjects(const std::string & xml_tag_name,
-                                                 const BT::NodeConfiguration & conf)
+GenerateTextFromObjects::GenerateTextFromObjects(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
-  config().blackboard->get("node", node_);  
+  config().blackboard->get("node", node_);
 }
 
 void
@@ -40,14 +41,13 @@ GenerateTextFromObjects::tick()
   RCLCPP_DEBUG(node_->get_logger(), "GenerateTextFromObjects ticked");
   rclcpp::spin_some(node_);
   std::vector<moveit_msgs::msg::CollisionObject::SharedPtr> detected_objects = {};
-  getInput("detected_objects",detected_objects);
+  getInput("detected_objects", detected_objects);
 
   if (detected_objects.empty()) {
     RCLCPP_INFO(node_->get_logger(), "No objects detected");
     return BT::NodeStatus::FAILURE;
   }
-  if(selected_object_ >= detected_objects.size())
-  {
+  if (selected_object_ >= detected_objects.size()) {
     selected_object_ = 0;
     return BT::NodeStatus::FAILURE;
   }
@@ -57,7 +57,8 @@ GenerateTextFromObjects::tick()
   question += "?";
   setOutput("output_text", question);
 
-  RCLCPP_INFO(node_->get_logger(), "Selected object: %s", detected_objects[selected_object_]->id.c_str());
+  RCLCPP_INFO(
+    node_->get_logger(), "Selected object: %s", detected_objects[selected_object_]->id.c_str());
   setOutput("selected_object", detected_objects[selected_object_]);
 
   selected_object_++;

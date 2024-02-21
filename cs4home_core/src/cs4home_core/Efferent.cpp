@@ -32,4 +32,3 @@ Efferent::configure()
 
 
 }  // namespace cs4home_core
-

@@ -6,7 +6,7 @@ repositories:
   ThirdParty/small_objects_detector:
     type: git
     url: https://github.com/gentlebots/small_objects_detector.git
-    version: humble
+    version: robocup
   ThirdParty/audio_common:
     type: git
     url: https://github.com/mgonzs13/audio_common.git

@@ -30,20 +30,26 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("lookat_test");
+  auto node = rclcpp::Node::make_shared("moveto_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/lookat_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/moveto_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
+
+  geometry_msgs::msg::PoseStamped pose;
+  pose.header.frame_id = "map";
   
-  blackboard->set("tf_frame", "person");
+  pose.pose.position.x = 3.2237;
+  pose.pose.position.y = -3.26184;
+  pose.pose.position.z = 0.002985;
+  blackboard->set("entrance", pose);
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 

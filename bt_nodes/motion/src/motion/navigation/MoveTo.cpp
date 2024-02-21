@@ -38,9 +38,11 @@ void
 MoveTo::on_tick()
 {
   geometry_msgs::msg::PoseStamped goal;
-  config().blackboard->get(tf_frame_, goal);
-  RCLCPP_INFO(node_->get_logger(), "Sending goal: x: %f, y: %f, z: %f , in frame: %s",
-  goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
+  config().blackboard->get("person", goal);
+  getInput("tf_frame", tf_frame_);
+
+  RCLCPP_INFO(node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
+  goal.pose.position.x, goal.pose.position.y,
       goal.header.frame_id.c_str());
   goal_.pose = goal;
 

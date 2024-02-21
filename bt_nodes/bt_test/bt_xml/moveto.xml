@@ -1,10 +1,10 @@
 <root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <PipelineSequence name="MoveTo">
-      <RateController hz="1.0">
+      <RateController hz="10.0">
         <Sequence>
           <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
-          <TruncatePath distance="0.45" input_path="{path}" output_path="{truncated_path}"/>
+          <TruncatePath distance="1.45" input_path="{path}" output_path="{truncated_path}"/>
         </Sequence>
       </RateController>
       <FollowPath path="{truncated_path}" controller_id="FollowPath"/>

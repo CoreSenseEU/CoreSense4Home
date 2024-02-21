@@ -15,3 +15,29 @@ repositories:
     type: git
     url: https://github.com/mgonzs13/whisper_ros.git
     version: main
+  ThirdParty/whisper_ros:
+    type: git
+    url: https://github.com/mgonzs13/whisper_ros.git
+    version: main
+  ThirdParty/moveit_task_constructor:
+    type: git
+    url: https://github.com/ros-planning/moveit_task_constructor.git
+    version: humble
+  ThirdParty/robocup_at_home_gazebo:
+    type: git
+    url: https://github.com/juandpenan/robocup_at_home_gazebo
+    version: ros2
+  ThirdParty/gazebo-pkgs:
+    type: git
+    url: https://github.com/zitongbai/gazebo-pkgs
+    version: humble
+  ThirdParty/tiago_mtc_examples:
+    type: git
+    url: https://github.com/juandpenan/tiago_mtc_examples.git
+    version: main
+  ThirdParty/manipulation_server:
+    type: git
+    url: https://github.com/rodperex/manipulation_server.git
+    version: main
+
+    

@@ -17,6 +17,7 @@ find_package(whisper_msgs REQUIRED)
 find_package(configuration REQUIRED)
 find_package(motion REQUIRED)
 find_package(perception REQUIRED)
+find_package(arm REQUIRED)
 find_package(hri REQUIRED)
 find_package(backward_ros REQUIRED)
 
@@ -33,6 +34,8 @@ set(dependencies
   perception
   hri
   backward_ros
+  arm
+  geometry_msgs
 )
 
 # Set WP test
@@ -64,6 +67,15 @@ add_executable(generate_text_from_objects_test src/generate_text_from_objects_te
 ament_target_dependencies(generate_text_from_objects_test ${dependencies})
 target_link_libraries(generate_text_from_objects_test hri::generate_text_from_objects_bt_node)
 
+# pick_demo test
+add_executable(pick_demo_test src/pick_demo_test.cpp)
+ament_target_dependencies(pick_demo_test ${dependencies})
+target_link_libraries(pick_demo_test arm::pick_bt_node hri::generate_text_from_objects_bt_node perception::extract_object_from_scene_bt_node hri::speak_bt_node hri::dialogConfirmation_bt_node) 
+
+add_executable(pick_demo_no_speech_test src/pick_demo_test_no_speech.cpp)
+ament_target_dependencies(pick_demo_no_speech_test ${dependencies})
+target_link_libraries(pick_demo_test arm::pick_bt_node hri::generate_text_no_speech_bt_node perception::extract_object_from_scene_bt_node hri::speak_bt_node hri::generate_text_from_objects_bt_node) 
+
 install(TARGETS
   set_wp_test
   move_to_test
@@ -71,6 +83,7 @@ install(TARGETS
   speak_test
   extract_object_from_scene_test
   generate_text_from_objects_test
+  pick_demo_no_speech_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

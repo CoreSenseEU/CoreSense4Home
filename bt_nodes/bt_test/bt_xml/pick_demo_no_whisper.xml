@@ -4,13 +4,19 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
+                 <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
             </RetryUntilSuccessful>
             <RetryUntilSuccessful num_attempts="2">
                 <Sequence>
-                    <Action ID="GenerateTextFromObjects" name="counter in the constructor." detected_objects="{detected_objects}" output_text="{out_msg}" selected_object="{selected_object}" />
+                    <Action ID="GenerateTextNoSpeech" name="counter in the constructor." detected_objects="{detected_objects}" output_text="{out_msg}" selected_object="{selected_object}" />
                     <Action ID="Speak" say_text="{out_msg}"/>
-                    <Action ID="DialogConfirmation"/>
+                    <Delay delay_msec="600">
+                        <RetryUntilSuccessful num_attempts="-1">
+                            <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
+                        </RetryUntilSuccessful>
+                    </Delay>
+                    <Action ID="GenerateTextFromObjects" name="counter in the constructor." detected_objects="{detected_objects}" output_text="{out_msg}" selected_object="{selected_object}"/>
+                    <Action ID="Speak" say_text="{out_msg}"/>
                 </Sequence>
             </RetryUntilSuccessful>
             <Action ID="PickObject" object_to_pick="{selected_object}"/>
@@ -65,6 +71,11 @@
             <input_port name="detected_objects"/>
             <output_port name="output_text"/>
             <output_port name="selected_object"/>
+        </Action>
+        <Action ID="GenerateTextNoSpeech">
+            <inout_port name="detected_objects"/>
+            <inout_port name="output_text"/>
+            <inout_port name="selected_object"/>
         </Action>
         <Action ID="GoBack">
             <input_port default="0.2" name="velocity"/>

@@ -14,6 +14,12 @@
 
 #include "perception/ExtractObjectsFromScene.hpp"
 
+#include <tf2/transform_datatypes.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include "geometry_msgs/msg/transform_stamped.hpp"
+
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+
 using std::placeholders::_1;
 using namespace std::chrono_literals; 
 
@@ -27,7 +33,11 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(const std::string & xml_tag_nam
   config().blackboard->get("node", node_);
 
   detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
-    "/perception_system/objects_detection", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
+    "/test/detections_3d", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
+  tf_buffer_ =
+      std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ =
+      std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   
 }
 
@@ -73,20 +83,52 @@ ExtractObjectsFromScene::tick()
   auto header = last_detected_objs_->header;
   for (auto const &detected_object : last_detected_objs_->detections) {
 
+    if ( detected_object.bbox3d.size.x >= 0.07 && detected_object.bbox3d.size.y >= 0.07 && detected_object.bbox3d.size.z >= 0.07)
+    {
+      RCLCPP_INFO(node_->get_logger(), "Ignoring too large object");
+      continue;
+    } 
+    
     shape_msgs::msg::SolidPrimitive obj_solid_primitive;
-    obj_solid_primitive.type = shape_msgs::msg::SolidPrimitive::BOX;
-    obj_solid_primitive.dimensions = {detected_object.bbox3d.size.x, 
-                                      detected_object.bbox3d.size.y, 
-                                      detected_object.bbox3d.size.z};
+    obj_solid_primitive.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
+    obj_solid_primitive.dimensions = {0.14, 0.035};
 
     auto obj_ptr = std::make_shared<moveit_msgs::msg::CollisionObject>();
 
     obj_ptr->header = header;
+    obj_ptr->header.frame_id = "base_link";
 
     obj_ptr->id = detected_object.class_name +"_" + detected_object.id;
     obj_ptr->primitives = {obj_solid_primitive};
-    obj_ptr->primitive_poses = {detected_object.bbox3d.center};
-    obj_ptr->operation = moveit_msgs::msg::CollisionObject::ADD;
+
+    tf2::Transform camera_2_object;
+    tf2::Transform base_2_camera;
+
+    camera_2_object.setOrigin(tf2::Vector3(detected_object.bbox3d.center.position.x,
+                                           detected_object.bbox3d.center.position.y,
+                                           detected_object.bbox3d.center.position.z));
+    camera_2_object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
+
+    geometry_msgs::msg::TransformStamped base_link_2_camera_msg;
+    try {
+          base_link_2_camera_msg = tf_buffer_->lookupTransform(
+            "base_link", "head_front_camera_link",
+            tf2::TimePointZero);
+        } catch (const tf2::TransformException & ex) {
+          RCLCPP_INFO(
+            node_->get_logger(), "Could not transform %s to %s: %s",
+            "base_link", "head_front_camera_link", ex.what());
+          return BT::NodeStatus::FAILURE;
+        }
+    tf2::fromMsg(base_link_2_camera_msg.transform, base_2_camera);
+
+    tf2::Transform base2object =  base_2_camera * camera_2_object;
+
+    obj_ptr->pose.position.x = base2object.getOrigin().x();
+    obj_ptr->pose.position.y = base2object.getOrigin().y();
+    obj_ptr->pose.position.z = base2object.getOrigin().z();
+
+    // obj_ptr->operation = moveit_msgs::msg::CollisionObject::ADD;
     detected_objects.push_back(obj_ptr); 
 
     RCLCPP_INFO(node_->get_logger(), "Object Found Id: %s",(obj_ptr->id).c_str());

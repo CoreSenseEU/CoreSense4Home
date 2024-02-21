@@ -12,6 +12,10 @@ find_package(yolov8_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
 find_package(rclpy REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 
 # # Python Stuff
 # find_package(ament_cmake_python REQUIRED)
@@ -25,12 +29,16 @@ find_package(rclpy REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
-rclcpp
-rclpy
-behaviortree_cpp_v3
-yolov8_msgs
-moveit_msgs
-shape_msgs
+  rclcpp
+  rclpy
+  behaviortree_cpp_v3
+  yolov8_msgs
+  moveit_msgs
+  shape_msgs
+  tf2_ros
+  geometry_msgs
+  tf2_geometry_msgs
+  tf2
 )
 
 include_directories(include)

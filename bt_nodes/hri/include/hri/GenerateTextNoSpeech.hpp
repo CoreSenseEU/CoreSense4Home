@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
-#define PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
+#ifndef HRI__GENERATE_TEXT_NO_SPEECH_HPP_
+#define HRI__GENERATE_TEXT_NO_SPEECH_HPP_
 
 #include <functional>
 #include <chrono>
@@ -21,20 +21,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
 
-#include "yolov8_msgs/msg/detection_array.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 
-namespace perception
+namespace hri
 {
 
-class ExtractObjectsFromScene : public BT::ActionNodeBase
+class GenerateTextNoSpeech : public BT::ActionNodeBase
 {
 public:
-  explicit ExtractObjectsFromScene(
+  explicit GenerateTextNoSpeech(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
     
@@ -44,23 +41,16 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList({
-      BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>("detected_objects"),
-      BT::OutputPort<size_t>("objects_count")    
+      BT::InputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>("detected_objects"),
+      BT::OutputPort<std::string>("output_text"),
+      BT::OutputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object"),
     });
   }
-
-  void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
-
 private:
   rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<yolov8_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
-  yolov8_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
-
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  
+  unsigned int selected_object_ = 0;
 };
 
-}  // namespace perception
+}  // namespace hri
 
-#endif  // PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
+#endif  // HRI__GENERATE_TEXT_FROM_OBJECTS_HPP_

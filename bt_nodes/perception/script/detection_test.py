@@ -4,14 +4,14 @@ import sys
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Header
-from yolov8_msgs.msg import DetectionArray, Detection, BoundingBox2D
+from yolov8_msgs.msg import DetectionArray, Detection, BoundingBox2D, BoundingBox3D
 
 DEFAULT_NUM_OBJECTS = 5
 
 class DetectionPublisherNode(Node):
     def __init__(self):
         super().__init__('detection_publisher_node')
-        self.publisher_ = self.create_publisher(DetectionArray, '/perception_system/objects_detection', 10)
+        self.publisher_ = self.create_publisher(DetectionArray, '/test/detections_3d', 10)
         self.timer = self.create_timer(1, self.publish_detection)
         
         self.num_objects = self.get_parameter_or('num_objects', DEFAULT_NUM_OBJECTS)
@@ -20,7 +20,7 @@ class DetectionPublisherNode(Node):
     def publish_detection(self):
         detection_msg = DetectionArray()
         detection_msg.header = Header()
-        detection_msg.header.frame_id = "test"
+        detection_msg.header.frame_id = "head_front_camera_link"
         detection_msg.header.stamp = self.get_clock().now().to_msg()
 
         # Create a sample detection
@@ -31,6 +31,12 @@ class DetectionPublisherNode(Node):
             detection.score = 0.85
             detection.id = "example_id"
             detection.bbox = BoundingBox2D()
+            detection.bbox3d.center.position.x = 0.3
+            detection.bbox3d.center.position.y = 0.1
+            detection.bbox3d.center.position.z = -0.3
+            detection.bbox3d.size.x = 0.1
+            detection.bbox3d.size.y = 0.05
+            detection.bbox3d.size.z = 0.1
             # Populate the bounding box as needed
 
             # Append the detection to the list of detections

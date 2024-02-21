@@ -35,9 +35,15 @@ repositories:
     type: git
     url: https://github.com/juandpenan/tiago_mtc_examples.git
     version: main
-  ThirdParty/manipulation_server:
+  systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git
     version: main
+  systems/perception_system:
+    type: git
+    url: https://github.com/jmguerreroh/perception_system
+    version: main
+
+    
 
     

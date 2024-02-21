@@ -34,7 +34,7 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(
   config().blackboard->get("node", node_);
 
   detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
-    "/test/detections_3d", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
+    "/perception_system/detections_3d", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
   tf_buffer_ =
     std::make_unique<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ =

@@ -11,7 +11,7 @@ DEFAULT_NUM_OBJECTS = 5
 class DetectionPublisherNode(Node):
     def __init__(self):
         super().__init__('detection_publisher_node')
-        self.publisher_ = self.create_publisher(DetectionArray, '/test/detections_3d', 10)
+        self.publisher_ = self.create_publisher(DetectionArray, '/perception_system/detections_3d', 10)
         self.timer = self.create_timer(1, self.publish_detection)
         
         self.num_objects = self.get_parameter_or('num_objects', DEFAULT_NUM_OBJECTS)

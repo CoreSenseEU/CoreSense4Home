@@ -18,8 +18,9 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.conditions import IfCondition
+
 
 def generate_launch_description():
     package_dir = get_package_share_directory('robocup_bringup')
@@ -61,7 +62,19 @@ def generate_launch_description():
             'slam': slam,
             'map': map_file,
             'params_file': params_file
-        }.items()
+        }.items(),
+        condition=IfCondition(PythonExpression(['not ', slam]))
+    )
+
+    slam_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(nav2_dir, 'launch', 'slam_launch.py')
+        ),
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'params_file': params_file
+        }.items(),
+        condition=IfCondition(slam)
     )
 
     navigation_cmd = IncludeLaunchDescription(
@@ -92,6 +105,7 @@ def generate_launch_description():
     ld.add_action(declare_use_rviz_cmd)
     ld.add_action(declare_map_cmd)
     ld.add_action(localization_cmd)
+    ld.add_action(slam_cmd)
     ld.add_action(navigation_cmd)
     ld.add_action(rviz_cmd)
 

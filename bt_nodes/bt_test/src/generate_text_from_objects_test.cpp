@@ -21,35 +21,49 @@
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
-#include "geometry_msgs/msg/pose_stamped.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
+class SayMessage : public BT::SyncActionNode
+{
+public:
+  SayMessage(const std::string & name, const BT::NodeConfiguration & config)
+  : BT::SyncActionNode(name, config)
+  {}
+
+  // You must override the virtual function tick()
+  BT::NodeStatus tick() override
+  {
+    auto msg = getInput<std::string>("message");
+    if (!msg) {
+      throw BT::RuntimeError("missing required input [message]: ", msg.error());
+    }
+    std::cout << msg.value() << std::endl;
+    return BT::NodeStatus::SUCCESS;
+  }
+};
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("moveto_test");
+  auto node = rclcpp::Node::make_shared("generate_text_from_objects_test_node");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("extract_object_from_scene_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("generate_text_from_objects_bt_node"));
+
+  BT::PortsList say_ports = {BT::InputPort<std::string>("message")};
+  factory.registerNodeType<SayMessage>("SayMessage", say_ports);
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/moveto_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/generate_text_from_objects_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
 
-  geometry_msgs::msg::PoseStamped pose;
-  pose.header.frame_id = "map";
-
-  pose.pose.position.x = 1.0;
-  pose.pose.position.y = 1.0;
-  pose.pose.position.z = 0.0;
-  blackboard->set("entrance", pose);
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 

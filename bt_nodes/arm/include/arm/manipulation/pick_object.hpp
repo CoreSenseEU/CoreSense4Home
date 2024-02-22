@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef DIALOG__SPEAK_HPP_
-#define DIALOG__SPEAK_HPP_
+#ifndef ARM_MANIPULATION__PICK_OBJECT_HPP_
+#define ARM_MANIPULATION__PICK_OBJECT_HPP_
 
 #include <algorithm>
 #include <string>
 
-#include "audio_common_msgs/action/tts.hpp"
+#include "manipulation_interfaces/action/pick.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "hri/dialog/BTActionNode.hpp"
+#include "arm/manipulation/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace dialog
+namespace manipulation
 {
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS>
+class PickObject : public manipulation::BtActionNode<manipulation_interfaces::action::Pick>
 {
 public:
-  explicit Speak(
+  explicit PickObject(
     const std::string & xml_tag_name,
     const std::string & action_name,
     const BT::NodeConfiguration & conf);
@@ -40,7 +41,9 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({BT::InputPort<std::string>("say_text")});
+    return BT::PortsList(
+      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>(
+          "object_to_pick")});
   }
 
 private:
@@ -51,6 +54,6 @@ private:
   // std::string text_;
 };
 
-} // namespace dialog
+} // namespace manipulation
 
-#endif // HRI__SPEAK_HPP_
+#endif // arm_MANIPULATION__PICK_OBJECT_HPP_

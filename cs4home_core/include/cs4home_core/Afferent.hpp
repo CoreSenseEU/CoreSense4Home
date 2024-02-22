@@ -25,9 +25,9 @@ namespace cs4home_core
 
 class Afferent
 {
-public:    
+public:
   RCLCPP_SMART_PTR_DEFINITIONS(Afferent)
-  
+
   Afferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
   bool configure();

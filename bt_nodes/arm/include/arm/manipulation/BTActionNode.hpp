@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BR2_BT_PATROLLING__CTRL_SUPPORT__BTACTIONNODE_HPP_
-#define BR2_BT_PATROLLING__CTRL_SUPPORT__BTACTIONNODE_HPP_
+#ifndef ARM__MANIPULATION__BTACTIONNODE_HPP_
+#define ARM__MANIPULATION__BTACTIONNODE_HPP_
 
 #include <memory>
 #include <string>
@@ -22,7 +22,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
-namespace dialog
+namespace manipulation
 {
 
 using namespace std::chrono_literals; // NOLINT
@@ -267,6 +267,6 @@ protected:
   std::chrono::milliseconds server_timeout_;
 };
 
-} // namespace dialog
+} // namespace manipulation
 
-#endif // BR2_BT_PATROLLING__CTRL_SUPPORT__BTACTIONNODE_HPP_
+#endif // ARM__MANIPULATION__BTACTIONNODE_HPP_

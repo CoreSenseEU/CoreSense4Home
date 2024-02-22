@@ -31,4 +31,3 @@ Coupling::configure()
 }
 
 }  // namespace cs4home_core
-

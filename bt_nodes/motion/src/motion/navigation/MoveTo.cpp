@@ -28,8 +28,7 @@ MoveTo::MoveTo(
 BT::NodeStatus
 MoveTo::tick()
 {
-  if (status() == BT::NodeStatus::IDLE)
-  {
+  if (status() == BT::NodeStatus::IDLE) {
     std::string tf_frame;
     getInput("tf_frame", tf_frame);
     getInput("distance_tolerance", distance_tolerance_);
@@ -59,7 +58,9 @@ MoveTo::create_and_send_goal()
   goal_msg.pose = pose_;
   goal_msg.pose.header.frame_id = "map";
 
-  action_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(node_, "navigate_to_pose");
+  action_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
+    node_,
+    "navigate_to_pose");
 
   if (!action_client_->wait_for_action_server(std::chrono::seconds(10))) {
     RCLCPP_ERROR(node_->get_logger(), "Action server not available after waiting");
@@ -67,16 +68,18 @@ MoveTo::create_and_send_goal()
   }
 
   goal_result_available_ = false;
-  auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
+  auto send_goal_options =
+    rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
 
   send_goal_options.result_callback =
-      [this](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult & result) {
-        if (this->goal_handle_->get_goal_id() == result.goal_id) {
-          goal_result_available_ = true;
-          result_ = result;
-          RCLCPP_INFO(node_->get_logger(), "Goal result received");
-        }
-      };
+    [this](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult &
+      result) {
+      if (this->goal_handle_->get_goal_id() == result.goal_id) {
+        goal_result_available_ = true;
+        result_ = result;
+        RCLCPP_INFO(node_->get_logger(), "Goal result received");
+      }
+    };
 
   // TODO: Stop the robot if the goal is under the distance_tolerance
 

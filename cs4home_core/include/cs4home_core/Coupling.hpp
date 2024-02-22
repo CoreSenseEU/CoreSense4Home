@@ -24,9 +24,9 @@ namespace cs4home_core
 
 class Coupling
 {
-public:    
+public:
   RCLCPP_SMART_PTR_DEFINITIONS(Coupling)
-  
+
   Coupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
   bool configure();

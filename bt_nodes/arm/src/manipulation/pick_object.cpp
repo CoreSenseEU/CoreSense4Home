@@ -15,41 +15,41 @@
 #include <string>
 #include <utility>
 
-#include "audio_common_msgs/action/tts.hpp"
-#include "hri/dialog/Speak.hpp"
-
+#include "arm/manipulation/pick_object.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
+#include "manipulation_interfaces/action/pick.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace dialog
+namespace manipulation
 {
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-Speak::Speak(
+PickObject::PickObject(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
+: manipulation::BtActionNode<manipulation_interfaces::action::Pick>(xml_tag_name,
     action_name, conf) {}
 
-void Speak::on_tick()
+void PickObject::on_tick()
 {
 
   RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
-  std::string text_;
-  getInput("say_text", text_);
-  goal_.text = text_;
+  moveit_msgs::msg::CollisionObject::SharedPtr object_;
+  getInput("object_to_pick", object_);
+  goal_.object_goal = *object_;
 }
 
-BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}
+BT::NodeStatus PickObject::on_success() {return BT::NodeStatus::SUCCESS;}
 
-} // namespace dialog
+} // namespace manipulation
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
   BT::NodeBuilder builder = [](const std::string & name,
       const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::Speak>(name, "/say", config);
+      return std::make_unique<manipulation::PickObject>(name, "/pick", config);
     };
 
-  factory.registerBuilder<dialog::Speak>("Speak", builder);
+  factory.registerBuilder<manipulation::PickObject>("PickObject", builder);
 }

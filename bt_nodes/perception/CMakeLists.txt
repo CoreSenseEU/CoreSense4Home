@@ -7,41 +7,62 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
+find_package(yolov8_msgs REQUIRED)
+find_package(moveit_msgs REQUIRED)
+find_package(shape_msgs REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
   rclcpp
-  rclcpp_action
+  rclpy
   behaviortree_cpp_v3
+  yolov8_msgs
+  moveit_msgs
+  shape_msgs
+  tf2_ros
   geometry_msgs
   tf2_geometry_msgs
+  tf2
+  rclcpp_action
+  behaviortree_cpp_v3
 )
 
 include_directories(include)
+
+add_library(extract_object_from_scene_bt_node SHARED src/perception/ExtractObjectsFromScene.cpp)
+list(APPEND plugin_libs extract_object_from_scene_bt_node)
 
 add_library(is_detected_bt_node SHARED src/perception/IsDetected.cpp)
 list(APPEND plugin_libs is_detected_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
-  ament_target_dependencies(${bt_plugin} ${dependencies})
-  target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
+ament_target_dependencies(${bt_plugin} ${dependencies})
+target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 
 install(TARGETS
-  ${plugin_libs}
-  EXPORT ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
+${plugin_libs}
+EXPORT ${PROJECT_NAME}
+ARCHIVE DESTINATION lib
+LIBRARY DESTINATION lib
+RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 install(DIRECTORY include/
-  DESTINATION include/
+DESTINATION include/
+)
+
+install(PROGRAMS
+  script/detection_test.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

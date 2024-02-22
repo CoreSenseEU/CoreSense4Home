@@ -24,9 +24,9 @@ namespace cs4home_core
 
 class Meta
 {
-public:    
+public:
   RCLCPP_SMART_PTR_DEFINITIONS(Meta)
-  
+
   Meta(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
   bool configure();

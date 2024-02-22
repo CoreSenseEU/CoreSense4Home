@@ -36,7 +36,7 @@ public:
   RCLCPP_SMART_PTR_DEFINITIONS(CognitiveModule)
   using CallbackReturnT =
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
-    
+
   CognitiveModule(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   CallbackReturnT on_configure(const rclcpp_lifecycle::State & state);
@@ -59,7 +59,7 @@ protected:
 #endif  // CS4HOME__COGNITIVEMODULE_HPP_
 
 // #include "rclcpp_components/register_node_macro.hpp"
-// 
+//
 // // Register the component with class_loader.
 // // This acts as a sort of entry point, allowing the component to be discoverable when its library
 // // is being loaded into a running process.

@@ -12,45 +12,48 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef DIALOG__SPEAK_HPP_
-#define DIALOG__SPEAK_HPP_
+#ifndef HRI__GENERATE_TEXT_FROM_OBJECTS_HPP_
+#define HRI__GENERATE_TEXT_FROM_OBJECTS_HPP_
 
-#include <algorithm>
-#include <string>
+#include <functional>
+#include <chrono>
 
-#include "audio_common_msgs/action/tts.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "hri/dialog/BTActionNode.hpp"
-#include "rclcpp/rclcpp.hpp"
 
-namespace dialog
+#include "moveit_msgs/msg/collision_object.hpp"
+#include "shape_msgs/msg/solid_primitive.hpp"
+
+namespace hri
 {
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS>
+class GenerateTextFromObjects : public BT::ActionNodeBase
 {
 public:
-  explicit Speak(
+  explicit GenerateTextFromObjects(
     const std::string & xml_tag_name,
-    const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
+  void halt();
+  BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({BT::InputPort<std::string>("say_text")});
+    return BT::PortsList(
+      {
+        BT::InputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
+          "detected_objects"),
+        BT::OutputPort<std::string>("output_text"),
+        BT::OutputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object"),
+      });
   }
 
 private:
-  // rclcpp::Node::SharedPtr node_;
-  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
-  //  tts_action_;
-
-  // std::string text_;
+  rclcpp::Node::SharedPtr node_;
+  unsigned int selected_object_ = 0;
 };
 
-} // namespace dialog
+}  // namespace hri
 
-#endif // HRI__SPEAK_HPP_
+#endif  // HRI__GENERATE_TEXT_FROM_OBJECTS_HPP_

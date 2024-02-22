@@ -7,7 +7,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
   auto node = rclcpp::Node::make_shared("speak_test_node");
   BT::BehaviorTreeFactory factory;
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
   while (!finish && rclcpp::ok()) {
     status = tree.rootNode()->executeTick();
     finish = (status == BT::NodeStatus::SUCCESS) ||
-             (status == BT::NodeStatus::FAILURE);
+      (status == BT::NodeStatus::FAILURE);
 
     rclcpp::spin_some(node);
     rate.sleep();

@@ -4,16 +4,18 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
+                <Action ID="ExtractObjectsFromScene" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
             </RetryUntilSuccessful>
-            <RetryUntilSuccessful num_attempts="2">
-                <Sequence>
-                    <Action ID="GenerateTextFromObjects" name="counter in the constructor." detected_objects="{detected_objects}" output_text="{out_msg}" selected_object="{selected_object}" />
-                    <Action ID="Speak" say_text="{out_msg}"/>
-                    <Action ID="DialogConfirmation"/>
-                </Sequence>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Fallback>
+                    <Inverter>
+                        <Action ID="GenerateTextFromObjects" detected_objects="{detected_objects}" output_text="{output_text}" selected_object="{selected_object}"/>
+                    </Inverter>
+                    <ForceFailure>
+                        <Action ID="SayMessage" message="{output_text}"/>
+                    </ForceFailure>
+                </Fallback>
             </RetryUntilSuccessful>
-            <Action ID="PickObject" object_to_pick="{selected_object}"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -51,8 +53,7 @@
             <output_port name="position"/>
         </Action>
         <Action ID="ExtractObjectsFromScene">
-            <output_port name="detected_objects">CollisionObjects</output_port>
-            <output_port name="objects_count">Number of Objects</output_port>
+            <output_port name="objects_map">a std::map with name and  a touple with 3d pose and mesh</output_port>
         </Action>
         <Action ID="FindEmptyPlace">
             <output_port default="position" name="position"/>
@@ -62,7 +63,7 @@
             <input_port default="person" name="entity_frame"/>
         </Action>
         <Action ID="GenerateTextFromObjects">
-            <input_port name="detected_objects"/>
+            <input_port name="objects_map"/>
             <output_port name="output_text"/>
             <output_port name="selected_object"/>
         </Action>
@@ -125,13 +126,13 @@
         </Action>
         <Action ID="MoveTo">
             <input_port default="0" name="distance_tolerance"/>
-            <input_port default="object1" name="tf_frame"/>
+            <input_port default="tf1" name="tf_frame"/>
         </Action>
         <Action ID="Patrol">
             <input_port default="0.3" name="velocity"/>
         </Action>
         <Action ID="PickObject">
-            <input_port default="{selected_object}" name="object_to_pick"/>
+            <input_port default="{selected_object}" name="object"/>
         </Action>
         <Action ID="PlaceObject">
             <output_port default="tf" name="left_position"/>
@@ -142,6 +143,9 @@
         </Action>
         <Action ID="PrintTarget">
             <inout_port name="target"/>
+        </Action>
+        <Action ID="SayMessage">
+            <input_port name="message"/>
         </Action>
         <Action ID="SetWaypoints"/>
         <Action ID="Speak">

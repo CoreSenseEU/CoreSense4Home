@@ -4,16 +4,16 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" objects_map="{map_output}"/>
+                <Action ID="ExtractObjectsFromScene" name="ExtractObjectsFromScene,  return failure if empty or something like that" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
             </RetryUntilSuccessful>
             <RetryUntilSuccessful num_attempts="2">
                 <Sequence>
-                    <Action ID="GenerateTextFromObjects" name="counter in the constructor." objects_map="{map_output}" output_text="{out_msg}" selected_object="{selected_object}"/>
+                    <Action ID="GenerateTextFromObjects" name="counter in the constructor." detected_objects="{detected_objects}" output_text="{out_msg}" selected_object="{selected_object}" />
                     <Action ID="Speak" say_text="{out_msg}"/>
                     <Action ID="DialogConfirmation"/>
                 </Sequence>
             </RetryUntilSuccessful>
-            <Action ID="PickObject" object="{selected_object}"/>
+            <Action ID="PickObject" object_to_pick="{selected_object}"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -51,7 +51,8 @@
             <output_port name="position"/>
         </Action>
         <Action ID="ExtractObjectsFromScene">
-            <output_port name="objects_map">a std::map with name and  a touple with 3d pose and mesh</output_port>
+            <output_port name="detected_objects">CollisionObjects</output_port>
+            <output_port name="objects_count">Number of Objects</output_port>
         </Action>
         <Action ID="FindEmptyPlace">
             <output_port default="position" name="position"/>
@@ -61,7 +62,7 @@
             <input_port default="person" name="entity_frame"/>
         </Action>
         <Action ID="GenerateTextFromObjects">
-            <input_port name="objects_map"/>
+            <input_port name="detected_objects"/>
             <output_port name="output_text"/>
             <output_port name="selected_object"/>
         </Action>
@@ -130,7 +131,7 @@
             <input_port default="0.3" name="velocity"/>
         </Action>
         <Action ID="PickObject">
-            <input_port default="{selected_object}" name="object"/>
+            <input_port default="{selected_object}" name="object_to_pick"/>
         </Action>
         <Action ID="PlaceObject">
             <output_port default="tf" name="left_position"/>

@@ -33,8 +33,6 @@ set(dependencies
   tf2
   rclcpp_action
   behaviortree_cpp_v3
-  geometry_msgs
-  tf2_geometry_msgs
 )
 
 include_directories(include)
@@ -65,14 +63,6 @@ DESTINATION include/
 install(PROGRAMS
   script/detection_test.py
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(TARGETS
-  ${plugin_libs}
-  EXPORT ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

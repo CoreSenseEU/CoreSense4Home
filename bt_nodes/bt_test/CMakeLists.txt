@@ -34,7 +34,6 @@ set(dependencies
   perception
   tf2_ros
   hri
-  backward_ros
   arm
   geometry_msgs
 )

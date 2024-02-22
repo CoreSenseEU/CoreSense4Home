@@ -28,18 +28,19 @@ MoveTo::MoveTo(
   const std::string & xml_tag_name,
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name, action_name, conf)
-{
+: navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name,
+ action_name, conf)
+ {
   config().blackboard->get("node", node_);
-  getInput("tf_frame", tf_frame_);
-}
+ }
 
 void
 MoveTo::on_tick()
 {
+  RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
   geometry_msgs::msg::PoseStamped goal;
-  config().blackboard->get("person", goal);
-  // getInput("tf_frame", tf_frame_);
+  getInput("tf_frame",tf_frame_);
+  config().blackboard->get(tf_frame_, goal);
 
   RCLCPP_INFO(node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
   goal.pose.position.x, goal.pose.position.y,

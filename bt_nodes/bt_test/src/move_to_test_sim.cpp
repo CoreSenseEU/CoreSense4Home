@@ -51,6 +51,8 @@ int main(int argc, char * argv[])
   pose.pose.position.z = 0.002985;
   blackboard->set("entrance", pose);
 
+  RCLCPP_INFO(node->get_logger(), "Blakcboard setted up! and entrance");
+
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);

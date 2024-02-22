@@ -8,7 +8,7 @@
     <TreeNodesModel>
         <Action ID="MoveTo">
             <!-- <input_port default="0" name="distance_tolerance"/> -->
-            <input_port default="tf1" name="tf_frame"/>
+            <input_port default="entrance" name="tf_frame"/>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->

@@ -17,7 +17,7 @@
 #include <string>
 #include <utility>
 
-#include "hri/dialog/AskForSomething.hpp"
+#include "hri/dialog/Query.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -28,15 +28,14 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 using json = nlohmann::json;
 
-AskForSomething::AskForSomething(const std::string &xml_tag_name,
-                                 const std::string &action_name,
-                                 const BT::NodeConfiguration &conf)
+Query::Query(const std::string &xml_tag_name, const std::string &action_name,
+             const BT::NodeConfiguration &conf)
     : dialog::BtActionNode<llama_msgs::action::GenerateResponse>(
           xml_tag_name, action_name, conf) {}
 
-void AskForSomething::on_tick() {
+void Query::on_tick() {
 
-  RCLCPP_DEBUG(node_->get_logger(), "AskForSomething ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "Query ticked");
   std::string text_;
   getInput("text", text_);
   getInput("intention", intention_);
@@ -74,7 +73,7 @@ number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
 ws ::= ([ \t\n] ws)?)";
 }
 
-BT::NodeStatus AskForSomething::on_success() {
+BT::NodeStatus Query::on_success() {
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
 
   if (result_.result->response.text.size() == 0) {
@@ -95,9 +94,9 @@ BT::NodeStatus AskForSomething::on_success() {
 BT_REGISTER_NODES(factory) {
   BT::NodeBuilder builder = [](const std::string &name,
                                const BT::NodeConfiguration &config) {
-    return std::make_unique<dialog::AskForSomething>(
-        name, "/llama/generate_response", config);
+    return std::make_unique<dialog::Query>(name, "/llama/generate_response",
+                                           config);
   };
 
-  factory.registerBuilder<dialog::AskForSomething>("AskForSomething", builder);
+  factory.registerBuilder<dialog::Query>("Query", builder);
 }

@@ -35,8 +35,8 @@ list(APPEND plugin_libs speak_bt_node)
 add_library(dialogConfirmation_bt_node SHARED src/hri/dialog/DialogConfirmation.cpp)
 list(APPEND plugin_libs dialogConfirmation_bt_node)
 
-add_library(askForSomething_bt_node SHARED src/hri/dialog/AskForSomething.cpp)
-list(APPEND plugin_libs askForSomething_bt_node)
+add_library(query_bt_node SHARED src/hri/dialog/Query.cpp)
+list(APPEND plugin_libs query_bt_node)
 
 add_library(listen_bt_node SHARED src/hri/dialog/Listen.cpp)
 list(APPEND plugin_libs listen_bt_node)

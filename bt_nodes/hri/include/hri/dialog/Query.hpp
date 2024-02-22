@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef HRI__ASKFORSOMETHING_HPP_
-#define HRI__ASKFORSOMETHING_HPP_
+#ifndef HRI__QUERY_HPP_
+#define HRI__QUERY_HPP_
 
 #include <algorithm>
 #include <string>
@@ -26,12 +26,12 @@
 
 namespace dialog {
 
-class AskForSomething
+class Query
     : public dialog::BtActionNode<llama_msgs::action::GenerateResponse> {
 public:
-  explicit AskForSomething(const std::string &xml_tag_name,
-                           const std::string &action_name,
-                           const BT::NodeConfiguration &conf);
+  explicit Query(const std::string &xml_tag_name,
+                 const std::string &action_name,
+                 const BT::NodeConfiguration &conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
@@ -48,4 +48,4 @@ private:
 
 } // namespace dialog
 
-#endif // HRI__ASKFORSOMETHING_HPP_
+#endif // HRI__QUERY_HPP_

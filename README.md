@@ -1,17 +1,8 @@
 # CoreSense4Home
 
 ## Installation
-```bash
-cd <ros2-workspace>/src
-vcs import --recursive < CoreSense4Home/robocup_bringup/thirdparty.repos
-sudo apt install portaudio19-dev
-pip3 install -r ThirdParty/audio_common/requirements.txt
-pip3 install -r ThirdParty/whisper_ros/requirements.txt
 
-cd <ros2-workspace>
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install
-```
+See [Software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/Software-Setup)
 
 ## Usage
 ### Navigation

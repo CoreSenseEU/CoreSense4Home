@@ -24,6 +24,8 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "attention_system_msgs/msg/attention_points.hpp"
 
+#include "std_msgs/msg/string.hpp"
+
 namespace navigation
 {
 
@@ -49,6 +51,7 @@ private:
   rclcpp::Node::SharedPtr node_;
   geometry_msgs::msg::PoseStamped pose_;
   rclcpp::Publisher<attention_system_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
   std::string tf_frame_;
 };
 

@@ -24,8 +24,9 @@ LookAt::LookAt(
 {
   config().blackboard->get("node", node_);
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "attention/attention_points", 100);
-  config().blackboard->get("tf_frame", tf_frame_);
+    "/attention/attention_points", 100);
+  getInput("tf_frame", tf_frame_);
+  test_pub_ = node_->create_publisher<std_msgs::msg::String>("/test_publisher", 100);
 }
 
 BT::NodeStatus
@@ -35,11 +36,10 @@ LookAt::tick()
 
   attention_system_msgs::msg::AttentionPoints attention_points_msg;
   RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", tf_frame_.c_str());
-  int seconds;
-  getInput("seconds", seconds);
+
   attention_points_msg.instance_id = "look_at";
   attention_points_msg.lifeness = rclcpp::Duration(5, 0);
-  attention_points_msg.time_in_point = rclcpp::Duration(seconds, 0);
+  attention_points_msg.time_in_point = rclcpp::Duration(0, 10);
 
   
 
@@ -51,8 +51,14 @@ LookAt::tick()
 
   attention_points_msg.attention_points.push_back(point);
   attention_points_pub_->publish(attention_points_msg);
+  
+  std_msgs::msg::String msg;
+  msg.data = "Publishing test message";
+  test_pub_->publish(msg);
 
-  rclcpp::spin_some(node_); 
+  for(int i = 0; i < 30; i++)
+    rclcpp::spin_some(node_);
+  RCLCPP_INFO(node_->get_logger(), "LookAt published attention points");
   return BT::NodeStatus::SUCCESS;
 }
 

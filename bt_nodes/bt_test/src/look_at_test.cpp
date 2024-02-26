@@ -42,18 +42,16 @@ int main(int argc, char * argv[])
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-  
-  blackboard->set("tf_frame", "person");
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(30);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {
-    finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
+    finish = tree.rootNode()->executeTick() != BT::NodeStatus::SUCCESS;
 
     rclcpp::spin_some(node);
     rate.sleep();

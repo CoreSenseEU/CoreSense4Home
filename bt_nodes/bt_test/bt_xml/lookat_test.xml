@@ -2,6 +2,6 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Action ID="LookAt" tf_frame=""/>
+        <Action ID="LookAt" tf_frame="person"/>
     </BehaviorTree>
 </root>

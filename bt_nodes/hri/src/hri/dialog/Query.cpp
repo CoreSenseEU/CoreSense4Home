@@ -76,13 +76,19 @@ ws ::= ([ \t\n] ws)?)";
 BT::NodeStatus Query::on_success() {
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
 
-  if (result_.result->response.text.size() == 0) {
+  if (result_.result->response.text.empty() ||
+      result_.result->response.text == "{}") {
     return BT::NodeStatus::FAILURE;
   }
 
   json response = json::parse(result_.result->response.text);
   std::string value_ = response[intention_];
   fprintf(stderr, "%s\n", value_.c_str());
+
+  if (value_.empty()) {
+
+    return BT::NodeStatus::SUCCESS;
+  }
 
   setOutput("intention_value", value_);
 

@@ -26,5 +26,7 @@
             <input_port name="say_text"/>
             <input_port name="param"/>
         </Action>
+        <Action ID="DialogConfirmation">
+        </Action>
     </TreeNodesModel>
 </root>

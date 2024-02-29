@@ -8,7 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
-find_package(action_server REQUIRED)
+find_package(manipulation_action_server REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
   behaviortree_cpp_v3
-  action_server
+  manipulation_action_server
 )
 
 include_directories(include)

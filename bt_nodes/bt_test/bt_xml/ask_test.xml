@@ -3,13 +3,22 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <RetryUntilSuccessful num_attempts="-1">
-            <Sequence>
-                <Action ID="Speak" say_text="What's your name?"/>
-                <Action ID="Listen" listen_text="{text_value}"/>
-                <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
-                <Action ID="Speak" say_text="are you" param="{name_value}"/>
-                <Action ID="DialogConfirmation" />
-            </Sequence>
+            <SequenceStar>
+                <Sequence>
+                    <Action ID="Speak" say_text="What's your name?"/>
+                    <Action ID="Listen" listen_text="{text_value}"/>
+                    <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
+                    <Action ID="Speak" say_text="are you" param="{name_value}"/>
+                    <Action ID="DialogConfirmation" />
+                </Sequence>
+                <Sequence>
+                    <Action ID="Speak" say_text="What's your favorite drink?"/>
+                    <Action ID="Listen" listen_text="{text_value2}"/>
+                    <Action ID="Query" text="{text_value2}" intention="drink" intention_value="{drink_value}"/>
+                    <Action ID="Speak" say_text="do you like " param="{drink_value}"/>
+                    <Action ID="DialogConfirmation" />
+                </Sequence>
+            </SequenceStar>
         </RetryUntilSuccessful>
     </BehaviorTree>
     <!-- ////////// -->

@@ -41,8 +41,9 @@ void Query::on_tick() {
   getInput("intention", intention_);
   std::string prompt_ =
       "Given the sentence \"" + text_ + "\", extract the " + intention_ +
-      " from the sentence and return it with the following JSON format:\n" +
-      "{\n\t\"name\": \"the name of the person\"\n}";
+      " from the sentence and return "
+      "it with the following JSON format:\n" +
+      "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
   goal_.prompt = prompt_;
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;
@@ -82,12 +83,12 @@ BT::NodeStatus Query::on_success() {
   }
 
   json response = json::parse(result_.result->response.text);
-  std::string value_ = response[intention_];
+  std::string value_ = response["intention"];
   fprintf(stderr, "%s\n", value_.c_str());
 
   if (value_.empty()) {
 
-    return BT::NodeStatus::SUCCESS;
+    return BT::NodeStatus::FAILURE;
   }
 
   setOutput("intention_value", value_);

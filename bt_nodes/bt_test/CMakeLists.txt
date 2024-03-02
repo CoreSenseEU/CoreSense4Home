@@ -14,6 +14,7 @@ find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
+find_package(llama_msgs REQUIRED)
 find_package(configuration REQUIRED)
 find_package(motion REQUIRED)
 find_package(perception REQUIRED)
@@ -29,6 +30,7 @@ set(dependencies
   behaviortree_cpp_v3
   audio_common_msgs
   whisper_msgs
+  llama_msgs
   configuration
   motion
   perception
@@ -93,6 +95,11 @@ ament_target_dependencies(pick_demo_test ${dependencies})
 target_link_libraries(pick_demo_test arm::pick_bt_node hri::generate_text_from_objects_bt_node perception::extract_object_from_scene_bt_node hri::speak_bt_node hri::dialogConfirmation_bt_node) 
 
 
+# Ask test
+add_executable(ask_test src/ask_test.cpp)
+ament_target_dependencies(ask_test ${dependencies})
+target_link_libraries(ask_test hri::query_bt_node hri::speak_bt_node hri::listen_bt_node hri::dialogConfirmation_bt_node)
+
 install(TARGETS
   set_wp_test
   move_to_test
@@ -102,6 +109,7 @@ install(TARGETS
   isdetected_moveto_test
   is_detected_moveto_loop_test
   speak_test
+  ask_test
   extract_object_from_scene_test
   generate_text_from_objects_test
   pick_demo_test

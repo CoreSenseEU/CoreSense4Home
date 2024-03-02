@@ -40,3 +40,13 @@ execute the test:
 ros2 run bt_test pick_demo_test
 ```
 
+### Demo Dialog
+```bash
+ros2 launch robocup_bringup dialog.launch.py
+```
+
+Execute the test:
+
+```bash
+ros2 run bt_test ask_test
+```

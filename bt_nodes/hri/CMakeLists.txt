@@ -12,9 +12,9 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
+find_package(llama_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
-
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
@@ -23,6 +23,7 @@ set(dependencies
   behaviortree_cpp_v3
   audio_common_msgs
   whisper_msgs
+  llama_msgs
   moveit_msgs
   shape_msgs
 )
@@ -34,6 +35,12 @@ list(APPEND plugin_libs speak_bt_node)
 
 add_library(dialogConfirmation_bt_node SHARED src/hri/dialog/DialogConfirmation.cpp)
 list(APPEND plugin_libs dialogConfirmation_bt_node)
+
+add_library(query_bt_node SHARED src/hri/dialog/Query.cpp)
+list(APPEND plugin_libs query_bt_node)
+
+add_library(listen_bt_node SHARED src/hri/dialog/Listen.cpp)
+list(APPEND plugin_libs listen_bt_node)
 
 add_library(generate_text_from_objects_bt_node SHARED src/hri/GenerateTextFromObjects.cpp)
 list(APPEND plugin_libs generate_text_from_objects_bt_node)

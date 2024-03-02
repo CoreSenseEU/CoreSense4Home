@@ -15,9 +15,9 @@ repositories:
     type: git
     url: https://github.com/mgonzs13/whisper_ros.git
     version: main
-  ThirdParty/whisper_ros:
+  ThirdParty/llama_ros:
     type: git
-    url: https://github.com/mgonzs13/whisper_ros.git
+    url: https://github.com/mgonzs13/llama_ros.git
     version: main
   ThirdParty/moveit_task_constructor:
     type: git

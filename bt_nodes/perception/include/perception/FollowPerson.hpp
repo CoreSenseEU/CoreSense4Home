@@ -58,7 +58,7 @@ public:
   }
 
 private:
-  int publicTF_map2obj(const perception_system_interfaces::msg::Detection & detected_object);
+  int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object);
 
   rclcpp::Node::SharedPtr node_;
 
@@ -68,9 +68,6 @@ private:
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_broadcaster_;
-
-  std::shared_ptr<perception_system::PerceptionListener> perception_listener_ =
-    perception_system::PerceptionListener::getInstance();
 };
 
 }  // namespace perception

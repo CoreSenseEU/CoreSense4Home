@@ -27,6 +27,8 @@ namespace perception
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
+using pl = perception_system::PerceptionListener;
+
 FollowPerson::FollowPerson(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
@@ -42,13 +44,11 @@ FollowPerson::FollowPerson(
 
   tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
-  perception_listener_->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  perception_listener_->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   getInput("person_id", person_id_);
   getInput("camera_link", camera_link_);
-  // person_id_ = 103020103212;
-  // camera_link_ = "head_front_camera_link";
 }
 
 void
@@ -57,80 +57,64 @@ FollowPerson::halt()
   RCLCPP_INFO(node_->get_logger(), "FollowPerson halted");
 }
 
-int 
-FollowPerson::publicTF_map2obj(const perception_system_interfaces::msg::Detection & detected_object)
+int
+FollowPerson::publicTF_map2object(
+  const perception_system_interfaces::msg::Detection & detected_object)
 {
   geometry_msgs::msg::TransformStamped map2camera_msg;
-    try {
-      map2camera_msg = tf_buffer_->lookupTransform(
-        "map", camera_link_,
-        tf2::TimePointZero);
-    } catch (const tf2::TransformException & ex) {
-      RCLCPP_INFO(
-        node_->get_logger(), "Could not transform %s to %s: %s",
-        "map", camera_link_.c_str(), ex.what());
-        try {
-          map2camera_msg = tf_buffer_->lookupTransform(
-            "odom", camera_link_,
-            tf2::TimePointZero);
-        } catch (const tf2::TransformException & ex) {
-          RCLCPP_INFO(
-            node_->get_logger(), "Could not transform %s to %s: %s",
-            "odom", camera_link_.c_str(), ex.what());
-          return -1;
-        }
-      return -1;
-    }
+  try {
+    map2camera_msg = tf_buffer_->lookupTransform(
+      "map", camera_link_,
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & ex) {
+    RCLCPP_INFO(
+      node_->get_logger(), "Could not transform %s to %s: %s",
+      "map", camera_link_.c_str(), ex.what());
+    return -1;
+  }
 
-    tf2::Transform camera2obstacle;
-    camera2obstacle.setOrigin(
-      tf2::Vector3(
-        detected_object.center3d.position.x,
-        detected_object.center3d.position.y,
-        detected_object.center3d.position.z));
-    camera2obstacle.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
+  tf2::Transform camera2object;
+  camera2object.setOrigin(
+    tf2::Vector3(
+      detected_object.center3d.position.x,
+      detected_object.center3d.position.y,
+      detected_object.center3d.position.z));
+  camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
-    tf2::Transform map2camera;
-    tf2::fromMsg(map2camera_msg.transform, map2camera);
- 
-    tf2::Transform map2obstacle = map2camera * camera2obstacle;
-    // create a transform message from tf2::Transform
-    geometry_msgs::msg::TransformStamped map2obstacle_msg;
-    map2obstacle_msg.header.stamp = detected_object.header.stamp;
-    map2obstacle_msg.header.frame_id = "map";
-    map2obstacle_msg.child_frame_id = "person";
-    map2obstacle_msg.transform = tf2::toMsg(map2obstacle);
+  tf2::Transform map2camera;
+  tf2::fromMsg(map2camera_msg.transform, map2camera);
 
-    tf_broadcaster_->sendTransform(map2obstacle_msg);
-    return 0;
+  tf2::Transform map2object = map2camera * camera2object;
+  // create a transform message from tf2::Transform
+  geometry_msgs::msg::TransformStamped map2object_msg;
+  map2object_msg.header.stamp = detected_object.header.stamp;
+  map2object_msg.header.frame_id = "map";
+  map2object_msg.child_frame_id = "person";
+  map2object_msg.transform = tf2::toMsg(map2object);
+
+  tf_broadcaster_->sendTransform(map2object_msg);
+  return 0;
 }
 
 BT::NodeStatus
 FollowPerson::tick()
 {
-  perception_listener_->set_interest("person", true);
-  rclcpp::spin_some(perception_listener_->get_node_base_interface());
-  
-  // RCLCPP_INFO(node_->get_logger(), "FollowPerson ticked");
-  // // std::cout << "perception_listener_: " << perception_listener_ << std::endl;
+  pl::getInstance()->set_interest("person", true);
+  pl::getInstance()->update(true);
+  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   std::vector<perception_system_interfaces::msg::Detection> detections;
-  detections = perception_listener_->get_by_type("person");
-  if (!perception_listener_) {
-    RCLCPP_ERROR(node_->get_logger(), "PerceptionListener not found");
-  }
+  detections = pl::getInstance()->get_by_type("person");
 
   if (detections.empty()) {
-    RCLCPP_INFO(node_->get_logger(), "No detections");
+    // RCLCPP_INFO(node_->get_logger(), "No detections");
     return BT::NodeStatus::FAILURE;
   }
 
   perception_system_interfaces::msg::Detection best_detection;
-  // std::cout << "detections type person: " << detections.size() << std::endl;
+
   best_detection = detections[0];
   // TO-DO: Implement the best detection
-
-  
   float best_detection_diff = perception_system::diffIDs(person_id_, best_detection.color_person);
 
   for (auto & detected_object : detections) {
@@ -144,8 +128,11 @@ FollowPerson::tick()
     }
   }
 
+  std::cout << "Best detection: " << best_detection.unique_id << " color: " <<
+    best_detection.color_person << " pointing: " << (int)best_detection.pointing_direction <<
+    std::endl;
 
-  int dev = publicTF_map2obj(best_detection);
+  int dev = publicTF_map2object(best_detection);
   if (dev != 0) {
     return BT::NodeStatus::FAILURE;
   }

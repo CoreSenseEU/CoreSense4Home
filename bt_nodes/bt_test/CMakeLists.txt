@@ -21,6 +21,7 @@ find_package(perception REQUIRED)
 find_package(arm REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(hri REQUIRED)
+find_package(perception_system_interfaces REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -38,6 +39,7 @@ set(dependencies
   hri
   arm
   geometry_msgs
+  perception_system_interfaces
 )
 
 # Set WP test
@@ -92,8 +94,14 @@ target_link_libraries(generate_text_from_objects_test hri::generate_text_from_ob
 # pick_demo test
 add_executable(pick_demo_test src/pick_demo_test.cpp)
 ament_target_dependencies(pick_demo_test ${dependencies})
-target_link_libraries(pick_demo_test arm::pick_bt_node hri::generate_text_from_objects_bt_node perception::extract_object_from_scene_bt_node hri::speak_bt_node hri::dialogConfirmation_bt_node) 
-
+target_link_libraries(pick_demo_test
+    arm::pick_bt_node
+    hri::generate_text_from_objects_bt_node
+    perception::extract_object_from_scene_bt_node
+    perception::extract_collision_scene_bt_node
+    hri::speak_bt_node
+    hri::dialogConfirmation_bt_node    
+)
 
 # Ask test
 add_executable(ask_test src/ask_test.cpp)

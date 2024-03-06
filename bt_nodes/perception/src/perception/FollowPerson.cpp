@@ -18,6 +18,7 @@
 #include "perception/FollowPerson.hpp"
 #include "perception_system/PerceptionUtils.hpp"
 
+
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
 
@@ -57,6 +58,33 @@ FollowPerson::halt()
   RCLCPP_INFO(node_->get_logger(), "FollowPerson halted");
 }
 
+// Distance between two transformations
+double tfs_distance(
+  const geometry_msgs::msg::TransformStamped & tf1,
+  const geometry_msgs::msg::TransformStamped & tf2)
+{
+  double dist = sqrt(
+    pow(tf1.transform.translation.x - tf2.transform.translation.x, 2) +
+    pow(tf1.transform.translation.y - tf2.transform.translation.y, 2) +
+    pow(tf1.transform.translation.z - tf2.transform.translation.z, 2));
+
+  return dist;
+}
+
+// Mean of two transformations
+geometry_msgs::msg::TransformStamped tfs_mean(
+  const geometry_msgs::msg::TransformStamped & tf1,
+  const geometry_msgs::msg::TransformStamped & tf2)
+{
+  geometry_msgs::msg::TransformStamped mean = tf1;
+
+  mean.transform.translation.x = (tf1.transform.translation.x + tf2.transform.translation.x) / 2;
+  mean.transform.translation.y = (tf1.transform.translation.y + tf2.transform.translation.y) / 2;
+  mean.transform.translation.z = (tf1.transform.translation.z + tf2.transform.translation.z) / 2;
+
+  return mean;
+}
+
 int
 FollowPerson::publicTF_map2object(
   const perception_system_interfaces::msg::Detection & detected_object)
@@ -92,7 +120,29 @@ FollowPerson::publicTF_map2object(
   map2object_msg.child_frame_id = "person";
   map2object_msg.transform = tf2::toMsg(map2object);
 
-  tf_broadcaster_->sendTransform(map2object_msg);
+  // if person_pose_ is not initialized, initialize it
+  if (person_pose_.header.frame_id.empty()) {
+    person_pose_ = map2object_msg;
+    last_pose_ = rclcpp::Clock(RCL_STEADY_TIME).now();
+  } else {
+    auto now = rclcpp::Clock(RCL_STEADY_TIME).now();
+    auto diff = now - last_pose_;
+    if (diff.seconds() > 0.5) {
+      person_pose_ = map2object_msg;
+      last_pose_ = rclcpp::Clock(RCL_STEADY_TIME).now();
+    } else {
+      // calculate the distance between the current position and the new position
+      double distance = tfs_distance(person_pose_, map2object_msg);
+      // if the distance is greater than a threshold, update the position
+      if (distance < 0.5) {
+        geometry_msgs::msg::TransformStamped mean = tfs_mean(person_pose_, map2object_msg);
+        person_pose_ = mean;
+        last_pose_ = rclcpp::Clock(RCL_STEADY_TIME).now();
+      }
+    }
+  }
+
+  tf_broadcaster_->sendTransform(person_pose_);
   return 0;
 }
 
@@ -128,9 +178,10 @@ FollowPerson::tick()
     }
   }
 
-  std::cout << "Best detection: " << best_detection.unique_id << " color: " <<
-    best_detection.color_person << " pointing: " << (int)best_detection.pointing_direction <<
-    std::endl;
+  RCLCPP_INFO(
+    node_->get_logger(), "Best detection: %s, color_person: %ld, pointing: %d",
+    best_detection.unique_id.c_str(), best_detection.color_person,
+    best_detection.pointing_direction);
 
   int dev = publicTF_map2object(best_detection);
   if (dev != 0) {

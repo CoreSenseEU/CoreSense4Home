@@ -64,6 +64,8 @@ private:
 
   std::string camera_link_;
   int64_t person_id_;
+  geometry_msgs::msg::TransformStamped person_pose_;
+  rclcpp::Time last_pose_;
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

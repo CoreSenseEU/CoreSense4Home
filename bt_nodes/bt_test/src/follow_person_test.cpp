@@ -31,8 +31,6 @@ int main(int argc, char * argv[])
 
   auto node = rclcpp::Node::make_shared("follow_person_test_node");
 
-  // auto perception_listener = perception_system::PerceptionListener::getInstance();
-
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
@@ -42,7 +40,6 @@ int main(int argc, char * argv[])
   std::string xml_file = pkgpath + "/bt_xml/follow_person_test.xml";
 
   auto blackboard = BT::Blackboard::create();
-  // blackboard->set("perception_listener", perception_listener);
   blackboard->set("node", node);
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);

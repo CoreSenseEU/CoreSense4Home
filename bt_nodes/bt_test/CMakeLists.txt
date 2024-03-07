@@ -45,10 +45,20 @@ add_executable(set_wp_test src/set_wp_test.cpp)
 ament_target_dependencies(set_wp_test ${dependencies})
 target_link_libraries(set_wp_test configuration::set_wp_bt_node)
 
-# Move To test
+# Look At test
+add_executable(look_at_test src/look_at_test.cpp)
+ament_target_dependencies(look_at_test ${dependencies})
+target_link_libraries(look_at_test motion::look_at_bt_node)
+
+# Move To test Real
 add_executable(move_to_test src/move_to_test.cpp)
 ament_target_dependencies(move_to_test ${dependencies})
 target_link_libraries(move_to_test motion::move_to_bt_node)
+
+# Move To test Simulated
+add_executable(move_to_test_sim src/move_to_test_sim.cpp)
+ament_target_dependencies(move_to_test_sim ${dependencies})
+target_link_libraries(move_to_test_sim motion::move_to_bt_node)
 
 # Set WP and MoveTo test
 add_executable(setwp_and_moveto_test src/setwp_and_moveto_test.cpp)
@@ -74,6 +84,11 @@ target_link_libraries(isdetected_moveto_test perception::is_detected_bt_node mot
 add_executable(is_detected_moveto_loop_test src/is_detected_moveto_loop_test.cpp)
 ament_target_dependencies(is_detected_moveto_loop_test ${dependencies})
 target_link_libraries(is_detected_moveto_loop_test perception::is_detected_bt_node motion::move_to_bt_node)
+
+#Is Detected Move To and Attention - Follow test
+add_executable(follow_test src/follow_test.cpp)
+ament_target_dependencies(follow_test ${dependencies})
+target_link_libraries(follow_test perception::is_detected_bt_node motion::move_to_bt_node motion::look_at_bt_node)
 
 # Speak test
 add_executable(speak_test src/speak_test.cpp)
@@ -106,12 +121,15 @@ target_link_libraries(ask_test hri::query_bt_node hri::speak_bt_node hri::listen
 
 install(TARGETS
   set_wp_test
+  look_at_test
   move_to_test
+  move_to_test_sim
   setwp_and_moveto_test
   is_detected_test
   is_detected_real_test
   isdetected_moveto_test
   is_detected_moveto_loop_test
+  follow_test
   speak_test
   ask_test
   extract_object_from_scene_test

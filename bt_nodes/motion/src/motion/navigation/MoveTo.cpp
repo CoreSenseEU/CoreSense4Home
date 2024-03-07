@@ -14,97 +14,64 @@
 
 #include "motion/navigation/MoveTo.hpp"
 
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
+
+#include "behaviortree_cpp_v3/behavior_tree.h"
+
+#include "ament_index_cpp/get_package_share_directory.hpp"
+
 namespace navigation
 {
 
 MoveTo::MoveTo(
   const std::string & xml_tag_name,
+  const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(xml_tag_name, conf)
-{
+: navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name,
+ action_name, conf)
+ {
   config().blackboard->get("node", node_);
-}
+ }
 
-BT::NodeStatus
-MoveTo::tick()
+void
+MoveTo::on_tick()
 {
-  if (status() == BT::NodeStatus::IDLE) {
-    std::string tf_frame;
-    getInput("tf_frame", tf_frame);
-    getInput("distance_tolerance", distance_tolerance_);
-    config().blackboard->get(tf_frame, pose_);
-    RCLCPP_INFO(node_->get_logger(), "MoveTo ticked");
+  RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
+  geometry_msgs::msg::PoseStamped goal;
+  getInput("tf_frame",tf_frame_);
+  config().blackboard->get(tf_frame_, goal);
 
   RCLCPP_INFO(node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
   goal.pose.position.x, goal.pose.position.y,
       goal.header.frame_id.c_str());
   goal_.pose = goal;
-  goal_updated_ = true;
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
   goal_.behavior_tree = xml_file;
+
 }
 
-void
-MoveTo::halt()
+BT::NodeStatus
+MoveTo::on_success()
 {
-  RCLCPP_INFO(node_->get_logger(), "MoveTo halted");
+  RCLCPP_INFO(node_->get_logger(), "Navigation succeeded");
+
+  return BT::NodeStatus::SUCCESS;
 }
 
-bool
-MoveTo::create_and_send_goal()
-{
-  auto goal_msg = nav2_msgs::action::NavigateToPose::Goal();
-  goal_msg.pose = pose_;
-  goal_msg.pose.header.frame_id = "map";
-
-  action_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
-    node_,
-    "navigate_to_pose");
-
-  if (!action_client_->wait_for_action_server(std::chrono::seconds(10))) {
-    RCLCPP_ERROR(node_->get_logger(), "Action server not available after waiting");
-    return false;
-  }
-
-  goal_result_available_ = false;
-  auto send_goal_options =
-    rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
-
-  send_goal_options.result_callback =
-    [this](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult &
-      result) {
-      if (this->goal_handle_->get_goal_id() == result.goal_id) {
-        goal_result_available_ = true;
-        result_ = result;
-        RCLCPP_INFO(node_->get_logger(), "Goal result received");
-      }
-    };
-
-  // TODO: Stop the robot if the goal is under the distance_tolerance
-
-  auto future_goal_handle = action_client_->async_send_goal(goal_msg, send_goal_options);
-
-  if (rclcpp::spin_until_future_complete(node_, future_goal_handle) !=
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
-    RCLCPP_ERROR(node_->get_logger(), "send goal call failed :(");
-    return false;
-  }
-
-  goal_handle_ = future_goal_handle.get();
-  if (!goal_handle_) {
-    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected by server");
-    return false;
-  }
-
-  return true;
-}
 
 }  // namespace navigation
 
+#include "behaviortree_cpp_v3/bt_factory.h"
+
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<navigation::MoveTo>("MoveTo");
+BT::NodeBuilder builder = [](const std::string &name,
+                               const BT::NodeConfiguration & config) {
+    return std::make_unique<navigation::MoveTo>(name, "navigate_to_pose", config);
+  };
+
+  factory.registerBuilder<navigation::MoveTo>("MoveTo",builder);
 }

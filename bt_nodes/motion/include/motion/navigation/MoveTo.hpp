@@ -16,25 +16,34 @@
 #define NAVIGATION__MOVE_TO_HPP_
 
 #include <string>
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-#include "rclcpp/rclcpp.hpp"
+
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
+
+#include "motion/navigation/ctrl_support/BTActionNode.hpp"
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+
+// #include "rclcpp/rclcpp.hpp"
+// #include "nav2_msgs/action/compute_path_to_pose.hpp"
+// #include "nav2_msgs/action/follow_path.hpp"
+// #include "nav2_util/geometry_utils.hpp"
+// #include "rclcpp_action/rclcpp_action.hpp"
 
 namespace navigation
 {
 
-class MoveTo : public BT::ActionNodeBase
+class MoveTo 
+  : public navigation::BtActionNode<nav2_msgs::action::NavigateToPose>
 {
 public:
   explicit MoveTo(
     const std::string & xml_tag_name,
+    const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
-  void halt();
-  BT::NodeStatus tick();
+  void on_tick() override;
+  BT::NodeStatus on_success() override;
 
   static BT::PortsList providedPorts()
   {
@@ -46,15 +55,17 @@ public:
   }
 
 private:
-  bool create_and_send_goal();
-
   rclcpp::Node::SharedPtr node_;
   double distance_tolerance_;
+  std::string tf_frame_;
   geometry_msgs::msg::PoseStamped pose_;
-  std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> action_client_;
-  rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult result_;
-  rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr goal_handle_;
-  bool goal_result_available_{false};
+  // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
+  // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
+  // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;
+  // rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowPath>::WrappedResult follow_result_;
+  // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::SharedPtr path_goal_handle_;
+  // rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowPath>::SharedPtr follow_goal_handle_;
+  // bool path_result_available_, goal_send_ {false};
 };
 
 }  // namespace navigation

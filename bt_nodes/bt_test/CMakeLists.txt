@@ -119,6 +119,11 @@ add_executable(ask_test src/ask_test.cpp)
 ament_target_dependencies(ask_test ${dependencies})
 target_link_libraries(ask_test hri::query_bt_node hri::speak_bt_node hri::listen_bt_node hri::dialogConfirmation_bt_node)
 
+# init_carry test
+add_executable(init_carry src/init_carry_test.cpp)
+ament_target_dependencies(init_carry ${dependencies})
+target_link_libraries(configuration::init_carry_bt_node)
+
 install(TARGETS
   set_wp_test
   look_at_test
@@ -136,6 +141,7 @@ install(TARGETS
   generate_text_from_objects_test
   pick_demo_test
   follow_person_test
+  init_carry
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

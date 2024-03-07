@@ -38,7 +38,14 @@ void Speak::on_tick()
   RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
   std::string text_;
   getInput("say_text", text_);
-  goal_.text = text_;
+  std::string param_;
+  getInput("param", param_);
+
+  if (param_.length() > 0) {
+    goal_.text = text_ + " " + param_ + "?";
+  } else {
+    goal_.text = text_;
+  }
 }
 
 BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}

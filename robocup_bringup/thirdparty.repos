@@ -15,9 +15,9 @@ repositories:
     type: git
     url: https://github.com/mgonzs13/whisper_ros.git
     version: main
-  ThirdParty/whisper_ros:
+  ThirdParty/llama_ros:
     type: git
-    url: https://github.com/mgonzs13/whisper_ros.git
+    url: https://github.com/mgonzs13/llama_ros.git
     version: main
   ThirdParty/moveit_task_constructor:
     type: git
@@ -27,13 +27,21 @@ repositories:
     type: git
     url: https://github.com/juandpenan/tiago_mtc_examples.git
     version: main
+  ThirdParty/yolov8_ros:
+    type: git
+    url: https://github.com/jmguerreroh/yolov8_ros.git
+    version: main
+  ThirdParty/rclcpp_cascade_lifecycle:
+    type: git
+    url: https://github.com/Juancams/cascade_lifecycle.git
+    version: rolling
   systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git
     version: main
   systems/perception_system:
     type: git
-    url: https://github.com/jmguerreroh/perception_system
+    url: https://github.com/jmguerreroh/perception_system.git
     version: main
 
     

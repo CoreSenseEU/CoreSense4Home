@@ -50,7 +50,7 @@ MoveTo::on_tick()
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
   goal_.behavior_tree = xml_file;
-
+  on_new_goal_received();
 }
 
 BT::NodeStatus

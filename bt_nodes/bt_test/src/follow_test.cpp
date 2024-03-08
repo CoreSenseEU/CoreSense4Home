@@ -42,7 +42,7 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/isdetected_moveto_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/follow_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);

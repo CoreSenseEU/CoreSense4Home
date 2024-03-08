@@ -2,13 +2,13 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Repeat num_cycles="20">
+        <RetryUntilSuccessful num_attempts="-1">
             <ReactiveSequence>
                 <Condition ID="IsDetected" confidence="0.6" entity="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
-                <Action ID ="LookAt" tf_frame="person"/>
+                <!-- <Action ID ="LookAt" tf_frame="person"/> -->
                 <Action ID="MoveTo" tf_frame="person"/>
             </ReactiveSequence>
-        </Repeat>
+        </RetryUntilSuccessful>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
@@ -22,6 +22,7 @@
         </Condition>
         <Action ID="LookAt">
             <input_port default="person" name="tf_frame"/>
+        </Action>
         <Action ID="MoveTo">
             <input_port default="person" name="tf_frame"/>
         </Action>

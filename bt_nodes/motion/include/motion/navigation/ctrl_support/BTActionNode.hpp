@@ -172,6 +172,7 @@ public:
 
     switch (result_.code) {
       case rclcpp_action::ResultCode::SUCCEEDED:
+        goal_result_available_ = false;
         return on_success();
 
       case rclcpp_action::ResultCode::ABORTED:

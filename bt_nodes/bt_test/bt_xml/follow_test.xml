@@ -5,7 +5,7 @@
         <RetryUntilSuccessful num_attempts="-1">
             <ReactiveSequence>
                 <Condition ID="IsDetected" confidence="0.6" entity="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
-                <!-- <Action ID ="LookAt" tf_frame="person"/> -->
+                <Action ID ="LookAt" tf_frame="person"/>
                 <Action ID="MoveTo" tf_frame="person"/>
             </ReactiveSequence>
         </RetryUntilSuccessful>

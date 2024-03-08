@@ -143,8 +143,8 @@ local_costmap:
       robot_base_frame: base_link
       use_sim_time: False
       rolling_window: true
-      width: 3
-      height: 3
+      width: 2
+      height: 2
       resolution: 0.05
       robot_radius: 0.275
       plugins: ["voxel_layer", "inflation_layer"]
@@ -162,7 +162,7 @@ local_costmap:
         z_voxels: 16
         max_obstacle_height: 2.0
         mark_threshold: 0
-        observation_sources: scan pointcloud_scan
+        observation_sources: scan
         scan:
           topic: /scan
           max_obstacle_height: 2.0
@@ -173,16 +173,16 @@ local_costmap:
           raytrace_min_range: 0.0
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
-        pointcloud_scan:
-          topic: /scanner/point_cloud_scan
-          max_obstacle_height: 2.0
-          clearing: True
-          marking: True
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
+        # pointcloud_scan:
+        #   topic: /scanner/point_cloud_scan
+        #   max_obstacle_height: 2.0
+        #   clearing: True
+        #   marking: True
+        #   data_type: "LaserScan"
+        #   raytrace_max_range: 3.0
+        #   raytrace_min_range: 0.0
+        #   obstacle_max_range: 2.5
+        #   obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -203,7 +203,7 @@ global_costmap:
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scan pointcloud_scan
+        observation_sources: scan
         scan:
           topic: /scan
           max_obstacle_height: 2.0
@@ -214,16 +214,16 @@ global_costmap:
           raytrace_min_range: 0.0
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
-        pointcloud_scan:
-          topic: /scanner/point_cloud_scan
-          max_obstacle_height: 2.0
-          clearing: True
-          marking: True
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
+        # pointcloud_scan:
+        #   topic: /scanner/point_cloud_scan
+        #   max_obstacle_height: 2.0
+        #   clearing: True
+        #   marking: True
+        #   data_type: "LaserScan"
+        #   raytrace_max_range: 3.0
+        #   raytrace_min_range: 0.0
+        #   obstacle_max_range: 2.5
+        #   obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -311,7 +311,7 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.46, 0.0, 1.0]
+    max_velocity: [0.36, 0.0, 1.0]
     min_velocity: [-0.26, 0.0, -1.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
@@ -349,20 +349,20 @@ slam_toolbox:
     loop_search_space_dimension: 8.0
     loop_search_space_resolution: 0.05
     loop_search_space_smear_deviation: 0.03
-    map_file_name: /home/juanca/ros/coresense_ws/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
-    map_frame: map
-    map_start_pose:
-    - -0.9
-    - 3.6
-    - 1.56
+    # map_file_name: /home/juanca/ros/coresense_ws/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
+    # map_frame: map
+    # map_start_pose:
+    # - -0.9
+    # - 3.6
+    # - 1.56
     map_update_interval: 0.1
     max_laser_range: 20.0
     minimum_angle_penalty: 0.9
     minimum_distance_penalty: 0.5
     minimum_time_interval: 0.1
-    minimum_travel_distance: 0.5
-    minimum_travel_heading: 0.5
-    mode: mapping
+    minimum_travel_distance: 0.01
+    minimum_travel_heading: 0.01
+    mode: localization
     odom_frame: odom
     resolution: 0.05
     scan_buffer_maximum_scan_distance: 10.0

@@ -61,7 +61,6 @@ LookAt::halt()
 }
 
 
-
 }  // namespace navigation
 
 BT_REGISTER_NODES(factory)

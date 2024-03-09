@@ -58,15 +58,16 @@ public:
         BT::InputPort<int>("person_id"),
         BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
-        BT::InputPort<std::string>("order"), // todo: enum map or string? 
+        BT::InputPort<std::string>("order"), // todo: enum map or string?
         BT::InputPort<double>("max_depth"),
         BT::OutputPort<std::vector<std::string>>("frames")
       });
   }
 
 private:
-  int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object,
-                          const std::string & frame_name);
+  int publicTF_map2object(
+    const perception_system_interfaces::msg::Detection & detected_object,
+    const std::string & frame_name);
 
   rclcpp::Node::SharedPtr node_;
 

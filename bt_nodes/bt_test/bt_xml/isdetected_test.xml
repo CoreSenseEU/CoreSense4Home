@@ -3,7 +3,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <RetryUntilSuccessful num_attempts="-1">
-            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="color"/>
         </RetryUntilSuccessful>
     </BehaviorTree>
     <!-- ////////// -->
@@ -15,7 +15,7 @@
             <output_port name="frames">array of frames</output_port>
             <input_port default="2" name="max_depth">value in meters</input_port>
             <input_port default="1" name="max_entities"/>
-            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]</input_port>
+            <input_port default="depth_nearest" name="order">[depth, color]</input_port>
         </Condition>
     </TreeNodesModel>
     <!-- ////////// -->

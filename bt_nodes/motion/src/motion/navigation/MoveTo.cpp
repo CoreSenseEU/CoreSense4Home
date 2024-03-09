@@ -29,22 +29,23 @@ MoveTo::MoveTo(
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name,
- action_name, conf)
- {
+    action_name, conf)
+{
   config().blackboard->get("node", node_);
- }
+}
 
 void
 MoveTo::on_tick()
 {
   RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
   geometry_msgs::msg::PoseStamped goal;
-  getInput("tf_frame",tf_frame_);
+  getInput("tf_frame", tf_frame_);
   config().blackboard->get(tf_frame_, goal);
 
-  RCLCPP_INFO(node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
-  goal.pose.position.x, goal.pose.position.y,
-      goal.header.frame_id.c_str());
+  RCLCPP_INFO(
+    node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
+    goal.pose.position.x, goal.pose.position.y,
+    goal.header.frame_id.c_str());
   goal_.pose = goal;
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
@@ -68,10 +69,10 @@ MoveTo::on_success()
 
 BT_REGISTER_NODES(factory)
 {
-BT::NodeBuilder builder = [](const std::string &name,
-                               const BT::NodeConfiguration & config) {
-    return std::make_unique<navigation::MoveTo>(name, "navigate_to_pose", config);
-  };
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<navigation::MoveTo>(name, "navigate_to_pose", config);
+    };
 
-  factory.registerBuilder<navigation::MoveTo>("MoveTo",builder);
+  factory.registerBuilder<navigation::MoveTo>("MoveTo", builder);
 }

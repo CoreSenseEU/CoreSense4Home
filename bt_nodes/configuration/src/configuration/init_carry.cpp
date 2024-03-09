@@ -31,14 +31,13 @@ InitCarry::tick()
   auto list = node_->list_parameters({}, 1);
 
   std::vector<double> pose_;
-  if (node_->has_parameter("cam_frame")
-     && node_->has_parameter("home_position")
-     && node_->has_parameter("home_pose")
-     && node_->has_parameter("offer_pose")
-     && node_->has_parameter("person_id")) 
+  if (node_->has_parameter("cam_frame") &&
+    node_->has_parameter("home_position") &&
+    node_->has_parameter("home_pose") &&
+    node_->has_parameter("offer_pose") &&
+    node_->has_parameter("person_id"))
   {
-    try 
-    {
+    try {
       node_->get_parameter("cam_frame", cam_frame_);
       node_->get_parameter("home_position", pose_);
       node_->get_parameter("home_pose", home_pose_);
@@ -60,17 +59,13 @@ InitCarry::tick()
       config().blackboard->set("person_id", person_id);
       config().blackboard->set("home_position", home_position_);
 
-      RCLCPP_INFO(node_->get_logger(), "InitCarry ticked and parameters set");      
+      RCLCPP_INFO(node_->get_logger(), "InitCarry ticked and parameters set");
       return BT::NodeStatus::SUCCESS;
-    } 
-    catch (std::exception & e) 
-    {
+    } catch (std::exception & e) {
       RCLCPP_ERROR(node_->get_logger(), "InitCarry: some parameters are missing");
       return BT::NodeStatus::FAILURE;
     }
-  } 
-  else 
-  {
+  } else {
     RCLCPP_ERROR(node_->get_logger(), "InitCarry: some parameters are missing");
     return BT::NodeStatus::FAILURE;
   }

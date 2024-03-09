@@ -32,10 +32,10 @@ IsDetected::IsDetected(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf),
-tf_buffer_(),
-tf_listener_(tf_buffer_),
-max_depth_(std::numeric_limits<double>::max()),
-max_entities_(1)
+  tf_buffer_(),
+  tf_listener_(tf_buffer_),
+  max_depth_(std::numeric_limits<double>::max()),
+  max_entities_(1)
 {
   config().blackboard->get("node", node_);
   config().blackboard->get("cam_frame", cam_frame_);
@@ -48,7 +48,7 @@ max_entities_(1)
 
   getInput("interest", interest_);
   getInput("confidence", threshold_);
-  getInput("max_entities", max_entities_); 
+  getInput("max_entities", max_entities_);
   getInput("order", order_);
   getInput("max_depth", max_depth_);
   getInput("person_id", person_id_);
@@ -63,44 +63,64 @@ IsDetected::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "IsDetected ticked");
   pl::getInstance()->set_interest(interest_, true);
-  pl::getInstance()->update(35);  
+  pl::getInstance()->update(35);
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   auto detections = pl::getInstance()->get_by_type(interest_);
 
-  if (detections.empty())
-  {
+  if (detections.empty()) {
     return BT::NodeStatus::FAILURE;
   }
-  
-  // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
-  std::sort(detections.begin(), detections.end(),
-      [this](const auto& a, const auto& b) {
-          return perception_system::diffIDs(this->person_id_, a.color_person) < perception_system::diffIDs(this->person_id_, b.color_person);
+
+  if (order_ == "color") {
+    // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
+    std::sort(
+      detections.begin(), detections.end(),
+      [this](const auto & a, const auto & b) {
+        return perception_system::diffIDs(
+          this->person_id_,
+          a.color_person) <
+        perception_system::diffIDs(this->person_id_, b.color_person);
       }
-  );
+    );
+  } else if (order_ == "depth") {
+    std::sort(
+      detections.begin(), detections.end(),
+      [this](const auto & a, const auto & b) {
+        return a.center3d.position.z < b.center3d.position.z;
+      }
+    );
+
+  }
+  // implement more sorting methods
 
   auto entity_counter = 0;
-  for (auto it = detections.begin(); it != detections.end() && entity_counter < max_entities_;) {
-      auto const& detection = *it;
+  for (auto it = detections.begin(); it != detections.end() && entity_counter < max_entities_; ) {
+    auto const & detection = *it;
 
-      if (detection.score <= threshold_ || detection.center3d.position.z > max_depth_) {
-          it = detections.erase(it);
-      } else {
-          frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
-          publicTF_map2object(detection, detection.class_name + "_" +std::to_string(entity_counter));
-          ++it;
-          ++entity_counter;
-      }
+    if (detection.score <= threshold_ || detection.center3d.position.z > max_depth_) {
+      it = detections.erase(it);
+    } else {
+      frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
+      publicTF_map2object(detection, detection.class_name + "_" + std::to_string(entity_counter));
+      ++it;
+      ++entity_counter;
+    }
   }
+
+  if (frames_.empty()) {
+    return BT::NodeStatus::FAILURE;
+  }
+
   setOutput("frames", frames_);
   frames_.clear();
-  return BT::NodeStatus::FAILURE; //test, change to SUCCESS
+  return BT::NodeStatus::SUCCESS; //test, change to SUCCESS
 }
 
 int
 IsDetected::publicTF_map2object(
-  const perception_system_interfaces::msg::Detection & detected_object, const std::string & frame_name)
+  const perception_system_interfaces::msg::Detection & detected_object,
+  const std::string & frame_name)
 {
   geometry_msgs::msg::TransformStamped map2camera_msg;
   try {
@@ -135,7 +155,7 @@ IsDetected::publicTF_map2object(
   map2object_msg.transform = tf2::toMsg(map2object);
 
   // TODO: just  put the output unique_id
-  
+
   tf_broadcaster_->sendTransform(map2object_msg);
   return 0;
 }

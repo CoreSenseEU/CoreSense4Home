@@ -142,7 +142,7 @@ public:
     }
 
     on_tick();
-    
+
     if (status() == BT::NodeStatus::IDLE) {
       on_new_goal_received();
       setStatus(BT::NodeStatus::RUNNING);

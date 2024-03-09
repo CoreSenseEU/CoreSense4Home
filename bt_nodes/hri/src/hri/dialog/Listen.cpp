@@ -20,24 +20,28 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace dialog {
+namespace dialog
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-Listen::Listen(const std::string &xml_tag_name, const std::string &action_name,
-               const BT::NodeConfiguration &conf)
-    : dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
-                                                      conf) {}
+Listen::Listen(
+  const std::string & xml_tag_name, const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
+    conf) {}
 
-void Listen::on_tick() {
+void Listen::on_tick()
+{
 
   RCLCPP_DEBUG(node_->get_logger(), "Listen ticked");
   std::string text_;
   goal_ = whisper_msgs::action::STT::Goal();
 }
 
-BT::NodeStatus Listen::on_success() {
+BT::NodeStatus Listen::on_success()
+{
   fprintf(stderr, "%s\n", result_.result->text.c_str());
 
   if (result_.result->text.size() == 0) {
@@ -51,10 +55,10 @@ BT::NodeStatus Listen::on_success() {
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string &name,
-                               const BT::NodeConfiguration &config) {
-    return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
-  };
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
+    };
 
   factory.registerBuilder<dialog::Listen>("Listen", builder);
 }

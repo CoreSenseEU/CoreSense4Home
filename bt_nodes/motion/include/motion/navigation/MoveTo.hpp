@@ -33,7 +33,7 @@
 namespace navigation
 {
 
-class MoveTo 
+class MoveTo
   : public navigation::BtActionNode<nav2_msgs::action::NavigateToPose>
 {
 public:

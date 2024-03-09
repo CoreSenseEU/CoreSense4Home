@@ -43,6 +43,10 @@ repositories:
     type: git
     url: https://github.com/jmguerreroh/perception_system.git
     version: main
+  systems/attention_system:
+    type: git
+    url: hhttps://github.com/aaggj/attention_system
+    version: humble
 
     
 

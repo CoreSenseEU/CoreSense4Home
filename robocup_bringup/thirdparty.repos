@@ -45,7 +45,7 @@ repositories:
     version: main
   systems/attention_system:
     type: git
-    url: hhttps://github.com/aaggj/attention_system
+    url: https://github.com/aaggj/attention_system
     version: humble
 
     

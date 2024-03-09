@@ -30,11 +30,16 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/static_transform_broadcaster.h>
+#include "tf2_ros/transform_broadcaster.h"
+
+#include "perception_system/PerceptionListener.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
 namespace perception
 {
+
+using pl = perception_system::PerceptionListener;
 
 class IsDetected : public BT::ConditionNode
 {
@@ -49,24 +54,30 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<geometry_msgs::msg::PoseStamped>("max_entities"),
-        BT::InputPort<geometry_msgs::msg::PoseStamped>("entity"),
-        BT::InputPort<geometry_msgs::msg::PoseStamped>("confidence"),
-        BT::InputPort<std::string>("order"),
+        BT::InputPort<int>("max_entities"),
+        BT::InputPort<int>("person_id"),
+        BT::InputPort<std::string>("interest"),
+        BT::InputPort<float>("confidence"),
+        BT::InputPort<std::string>("order"), // todo: enum map or string? 
         BT::InputPort<double>("max_depth"),
         BT::OutputPort<std::vector<std::string>>("frames")
       });
   }
 
 private:
+  int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object,
+                          const std::string & frame_name);
+
   rclcpp::Node::SharedPtr node_;
 
-  std::string entity_, order_;
+  std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;
-  int max_entities_;
+  int max_entities_, person_id_;
+  std::vector<std::string> frames_;
 
   tf2::BufferCore tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
 
 }  // namespace perception

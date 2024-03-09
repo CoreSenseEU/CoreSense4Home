@@ -30,36 +30,28 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("moveto_test");
+  auto node = rclcpp::Node::make_shared("lookat_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/moveto_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/lookat_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-
-  geometry_msgs::msg::PoseStamped pose;
-  pose.header.frame_id = "map";
-
-  pose.pose.position.x = 5.875;
-  pose.pose.position.y = 3.9719;
-  pose.pose.position.z = 0.0064;
-  blackboard->set("entrance", pose);
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(30);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {
-    finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
+    finish = tree.rootNode()->executeTick() != BT::NodeStatus::SUCCESS;
 
     rclcpp::spin_some(node);
     rate.sleep();

@@ -11,6 +11,8 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(nav2_behavior_tree REQUIRED)
+find_package(attention_system REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -20,12 +22,17 @@ set(dependencies
   behaviortree_cpp_v3
   geometry_msgs
   nav2_msgs
+  nav2_behavior_tree
+  attention_system
 )
 
 include_directories(include)
 
 add_library(move_to_bt_node SHARED src/motion/navigation/MoveTo.cpp)
 list(APPEND plugin_libs move_to_bt_node)
+
+add_library(look_at_bt_node SHARED src/motion/head/LookAt.cpp)
+list(APPEND plugin_libs look_at_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

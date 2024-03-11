@@ -21,35 +21,26 @@
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
-#include "geometry_msgs/msg/pose_stamped.hpp"
 
 #include "rclcpp/rclcpp.hpp"
-
+#include "perception_system/PerceptionListener.hpp"
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("moveto_test");
+  auto node = rclcpp::Node::make_shared("follow_person_test_node");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("follow_person_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/moveto_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/follow_person_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-
-  geometry_msgs::msg::PoseStamped pose;
-  pose.header.frame_id = "map";
-  
-  pose.pose.position.x = 5.875;
-  pose.pose.position.y = 3.9719;
-  pose.pose.position.z = 0.0064;
-  blackboard->set("entrance", pose);
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
@@ -60,7 +51,6 @@ int main(int argc, char * argv[])
   bool finish = false;
   while (!finish && rclcpp::ok()) {
     finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
-
     rclcpp::spin_some(node);
     rate.sleep();
   }

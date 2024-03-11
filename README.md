@@ -4,7 +4,7 @@
 
 See [Software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/Software-Setup)
 
-## Usage
+## Usage 
 ### Navigation
 ```bash
 ros2 launch robocup_bringup navigation.launch.py

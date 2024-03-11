@@ -19,6 +19,7 @@
   <depend>moveit_msgs</depend>
   <depend>shape_msgs</depend>
   <depend>rclpy</depend>
+  <depend>perception_system</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

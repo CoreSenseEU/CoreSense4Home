@@ -17,6 +17,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
+find_package(perception_system REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -33,6 +34,7 @@ set(dependencies
   tf2
   rclcpp_action
   behaviortree_cpp_v3
+  perception_system
 )
 
 include_directories(include)
@@ -42,6 +44,9 @@ list(APPEND plugin_libs extract_object_from_scene_bt_node)
 
 add_library(is_detected_bt_node SHARED src/perception/IsDetected.cpp)
 list(APPEND plugin_libs is_detected_bt_node)
+
+add_library(follow_person_bt_node SHARED src/perception/FollowPerson.cpp)
+list(APPEND plugin_libs follow_person_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

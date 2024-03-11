@@ -46,10 +46,12 @@ int main(int argc, char * argv[])
   geometry_msgs::msg::PoseStamped pose;
   pose.header.frame_id = "map";
   
-  pose.pose.position.x = 5.875;
-  pose.pose.position.y = 3.9719;
-  pose.pose.position.z = 0.0064;
+  pose.pose.position.x = 3.2237;
+  pose.pose.position.y = -3.26184;
+  pose.pose.position.z = 0.002985;
   blackboard->set("entrance", pose);
+
+  RCLCPP_INFO(node->get_logger(), "Blakcboard setted up! and entrance");
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 

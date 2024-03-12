@@ -33,9 +33,12 @@ MoveTo::MoveTo(
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name,
-    action_name, conf)
+    action_name, conf),
+  tf_buffer_(),
+  tf_listener_(tf_buffer_)
 {
   config().blackboard->get("node", node_);
+  
 }
 
 void
@@ -43,9 +46,26 @@ MoveTo::on_tick()
 {
   RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
   geometry_msgs::msg::PoseStamped goal;
+   geometry_msgs::msg::TransformStamped map_to_goal;
+
   getInput("tf_frame", tf_frame_);
   getInput("distance_tolerance", distance_tolerance_);
-  config().blackboard->get(tf_frame_, goal);
+  getInput("will_finish", will_finish_);
+ 
+  try {
+    map_to_goal = tf_buffer_.lookupTransform(
+      "map", tf_frame_,
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & ex) {
+    RCLCPP_INFO(
+      node_->get_logger(), "Could not transform %s to %s: %s",
+      "map", tf_frame_.c_str(), ex.what());
+    throw BT::RuntimeError("Could not transform");
+  }
+
+  goal.header.frame_id = "map";
+  goal.pose.position.x = map_to_goal.transform.translation.x;
+  goal.pose.position.y = map_to_goal.transform.translation.y;
 
   RCLCPP_INFO(
     node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
@@ -60,7 +80,7 @@ MoveTo::on_tick()
 
   if (!input_file.is_open()) {
       std::cerr << "Error opening XML file." << std::endl;
-      setStatus(BT::NodeStatus::FAILURE);
+      // setStatus(BT::NodeStatus::FAILURE);
       return;
   }
   std::string xml_content((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
@@ -77,14 +97,14 @@ MoveTo::on_tick()
       }
   } else {
       std::cerr << "Element not found in XML." << std::endl;
-      setStatus(BT::NodeStatus::FAILURE);
+      // setStatus(BT::NodeStatus::FAILURE);
       return;
   }
   // Save the updated XML back to the same file
   std::ofstream output_file(xml_file);
   if (!output_file.is_open()) {
       std::cerr << "Error opening output file." << std::endl;
-      setStatus(BT::NodeStatus::FAILURE);
+      // setStatus(BT::NodeStatus::FAILURE);
       return;
   }
 
@@ -93,15 +113,28 @@ MoveTo::on_tick()
   
   goal_.behavior_tree = xml_file;
   goal_.pose = goal;
-  on_new_goal_received();
 }
 
 BT::NodeStatus
 MoveTo::on_success()
 {
   RCLCPP_INFO(node_->get_logger(), "Navigation succeeded");
+  if (will_finish_) {
+    return BT::NodeStatus::SUCCESS;
+  }
+  return BT::NodeStatus::RUNNING;
+}
 
-  return BT::NodeStatus::SUCCESS;
+BT::NodeStatus
+MoveTo::on_wait_for_result()
+{
+  // if (feedback_.distance_remaining <= distance_tolerance_) {    
+  //   if (will_finish_) {
+  //     RCLCPP_INFO(node_->get_logger(), "Navigation succeeded");
+  //     return BT::NodeStatus::SUCCESS;
+  //   }    
+  // }
+  return BT::NodeStatus::RUNNING;
 }
 
 

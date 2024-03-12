@@ -79,7 +79,7 @@ private:
 
   tf2::BufferCore tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_broadcaster_;
 };
 
 }  // namespace perception

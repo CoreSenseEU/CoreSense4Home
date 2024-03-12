@@ -41,7 +41,7 @@ IsDetected::IsDetected(
   config().blackboard->get("cam_frame", cam_frame_);
   config().blackboard->get("person_id", person_id_);
 
-  tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+  tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
   getInput("interest", interest_);
   getInput("cam_frame", cam_frame_);

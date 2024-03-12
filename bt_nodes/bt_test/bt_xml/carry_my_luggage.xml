@@ -10,17 +10,26 @@
                     <Condition ID="IsPointing" bag_frame="{bag_tf}" cam_frame="head_front_camera_link_color_optical_frame"/>
                 </Sequence>
             </RetryUntilSuccessful>
-            <!-- <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="entrance"/> -->
-            <!-- <Action ID="MoveToPredefined" pose="open"/> -->
-            <Action ID="LookAt" tf_frames="{frames}"/>
-            <!-- <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
-            <Action ID="LookAt" tf_frames="gripper"/>
-            <Delay delay_msec="3000">
+            <RetryUntilSuccessful num_attempts="-1">
+                <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="{bag_tf}" will_finish="true"/>
+            </RetryUntilSuccessful>
+            <Action ID="MoveToPredefined" pose="offer"/>
+            <ReactiveSequence>
+                <Action ID="LookAt" tf_frame="person_0"/>
+                <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
+            </ReactiveSequence>
+            <Repeat num_cycles="5">
+                <Action ID="LookAt" tf_frame="gripper_link"/>
+             </Repeat num_cycles="5">
+            <Delay delay_msec="9000">
                 <Action ID="MoveToPredefined" pose="home"/>
             </Delay>
-            <Action ID="Speak" param="" say_text="Perfect, now i will follow you, when we arrive to the correct location please stop "/> -->
-            <!-- <RetryUntilSuccessful num_attempts="-1">
-                <Sequence>
+            <ReactiveSequence>
+                <Action ID="LookAt" tf_frame="person_0"/>
+                <Action ID="Speak" param="" say_text="Perfect, now i will follow you, when we arrive to the correct location please stop "/>
+            </ReactiveSequence>            
+            <RetryUntilSuccessful num_attempts="-1">
+                <Fallback>
                     <ReactiveSequence>
                         <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
                         <Action ID="LookAt" tf_frames="person_0"/>
@@ -29,12 +38,14 @@
                     </ReactiveSequence>
                     <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
                     <Action ID="DialogConfirmation"/>
-                </Sequence>
-            </RetryUntilSuccessful> -->
+                </Fallback>
+            </RetryUntilSuccessful>
             <!-- <Action ID="MoveToPredefined" pose="offer"/>
-            <Action ID="LookAt" tf_frames="person_0"/>
-            <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
-            <Action ID="LookAt" tf_frames="gripper"/>
+            <ReactiveSequence>
+                <Action ID="LookAt" tf_frame="person_0"/>
+                <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
+            </ReactiveSequence>
+            <Action ID="LookAt" tf_frames="gripper_link"/>
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back to the hotel, have a nice day"/>
             </Delay> -->
@@ -68,6 +79,7 @@
         </Action>
         <Action ID="LookAt">
             <input_port name="tf_frames"/>
+            <input_port name="tf_frame"/>
         </Action>
         <Action ID="MoveTo">
             <input_port default="1.0" name="distance_tolerance"/>

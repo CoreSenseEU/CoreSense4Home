@@ -46,6 +46,7 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<std::vector<std::string>>("tf_frames"),
+        BT::InputPort<std::string>("tf_frame")
       });
   }
 
@@ -55,6 +56,7 @@ private:
   rclcpp::Publisher<attention_system_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
   std::vector<std::string> tf_frames_;
+  std::string tf_frame_;
 };
 
 }  // namespace navigation

@@ -195,7 +195,7 @@ IsPointing::tick()
   if (dev != 0) {
     return BT::NodeStatus::FAILURE;
   }
-  setOutput("bag_frame", "bag_frame");
+  setOutput("bag_frame", bag_frame_);
   bag_frame_.clear();
   return BT::NodeStatus::SUCCESS;
 }

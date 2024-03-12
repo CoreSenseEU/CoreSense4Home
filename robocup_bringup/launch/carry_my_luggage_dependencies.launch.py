@@ -157,17 +157,17 @@ def generate_launch_description():
     #    )
 
     ld = LaunchDescription()
-    # ld.add_action(perception)
-    # ld.add_action(attention) # afuera
+    ld.add_action(perception)
+    # ld.add_action(attention) # afuera 
     # ld.add_action(navigation) 
-    # ld.add_action(manipulation_server)
-    # ld.add_action(move_group)
-    ld.add_action(carry_my_luggage)
-    # ld.add_action(declare_model_repo_cmd)
-    # ld.add_action(declare_model_filename_cmd)
-    # ld.add_action(whisper_cmd)
-    # ld.add_action(audio_common_tts_node)
-    # ld.add_action(audio_common_player_node)
-    # ld.add_action(declare_log_level)
+    ld.add_action(manipulation_server)
+    ld.add_action(move_group)
+    # # ld.add_action(carry_my_luggage)
+    ld.add_action(declare_model_repo_cmd)
+    ld.add_action(declare_model_filename_cmd)
+    ld.add_action(whisper_cmd)
+    ld.add_action(audio_common_tts_node)
+    ld.add_action(audio_common_player_node)
+    ld.add_action(declare_log_level)
 
     return ld

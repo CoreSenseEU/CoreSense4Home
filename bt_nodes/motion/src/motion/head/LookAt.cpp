@@ -23,8 +23,10 @@ LookAt::LookAt(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
+  rclcpp::QoS qos(rclcpp::KeepLast(10));
+  qos.transient_local().reliable();
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "/attention/attention_points", 100);  
+    "/attention/attention_points", qos);  
 }
 
 BT::NodeStatus
@@ -32,16 +34,30 @@ LookAt::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "LookAt ticked");
   getInput("tf_frames", tf_frames_);
+  getInput("tf_frame", tf_frame_);
+
+  std::string goal_frame;
+
+  if (tf_frames_.size() == 0 && !tf_frame_.empty()) {
+    goal_frame = tf_frame_;
+  }
+  else if (tf_frames_.size() > 0) {
+    goal_frame = tf_frames_[0];
+  }
+  else {
+    RCLCPP_ERROR(node_->get_logger(), "No goal frame provided");
+    return BT::NodeStatus::FAILURE;
+  }
 
   attention_system_msgs::msg::AttentionPoints attention_points_msg;
-  RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", tf_frames_[0].c_str());
+  RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", goal_frame.c_str());
 
   attention_points_msg.instance_id = "look_at";
   attention_points_msg.lifeness = rclcpp::Duration(5, 0);
   attention_points_msg.time_in_point = rclcpp::Duration(0, 0);
 
   geometry_msgs::msg::PointStamped point;
-  point.header.frame_id = tf_frames_[0]; // for now
+  point.header.frame_id = goal_frame;
   point.point.x = 0.0;
   point.point.y = 0.0;
   point.point.z = 0.0;

@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #include "motion/navigation/MoveTo.hpp"
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -40,17 +44,55 @@ MoveTo::on_tick()
   RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
   geometry_msgs::msg::PoseStamped goal;
   getInput("tf_frame", tf_frame_);
+  getInput("distance_tolerance", distance_tolerance_);
   config().blackboard->get(tf_frame_, goal);
 
   RCLCPP_INFO(
     node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
     goal.pose.position.x, goal.pose.position.y,
     goal.header.frame_id.c_str());
-  goal_.pose = goal;
+  
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
+
+  std::ifstream input_file(xml_file);
+
+  if (!input_file.is_open()) {
+      std::cerr << "Error opening XML file." << std::endl;
+      setStatus(BT::NodeStatus::FAILURE);
+      return;
+  }
+  std::string xml_content((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+  input_file.close();
+
+ size_t truncate_pos = xml_content.find("<TruncatePath");
+  if (truncate_pos != std::string::npos) {
+      size_t distance_pos = xml_content.find("distance=\"", truncate_pos);
+      if (distance_pos != std::string::npos) {
+          size_t end_qote_pos = xml_content.find("\"", distance_pos + 10);
+          if (end_qote_pos != std::string::npos) {
+              xml_content.replace(distance_pos + 10, end_qote_pos - distance_pos - 10, std::to_string(distance_tolerance_));
+          }
+      }
+  } else {
+      std::cerr << "Element not found in XML." << std::endl;
+      setStatus(BT::NodeStatus::FAILURE);
+      return;
+  }
+  // Save the updated XML back to the same file
+  std::ofstream output_file(xml_file);
+  if (!output_file.is_open()) {
+      std::cerr << "Error opening output file." << std::endl;
+      setStatus(BT::NodeStatus::FAILURE);
+      return;
+  }
+
+  output_file << xml_content;
+  output_file.close();
+  
   goal_.behavior_tree = xml_file;
+  goal_.pose = goal;
   on_new_goal_received();
 }
 
@@ -71,7 +113,7 @@ BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name,
       const BT::NodeConfiguration & config) {
-      return std::make_unique<navigation::MoveTo>(name, "navigate_to_pose", config);
+      return std::make_unique<navigation::MoveTo>(name, "/navigate_to_pose", config);
     };
 
   factory.registerBuilder<navigation::MoveTo>("MoveTo", builder);

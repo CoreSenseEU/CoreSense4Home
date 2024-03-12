@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="InitCarry"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Sequence>
+                    <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="3" max_entities="1" order="color"/>
+                    <Condition ID="IsPointing" bag_frame="{bag_tf}" cam_frame="head_front_camera_link_color_optical_frame"/>
+                </Sequence>
+            </RetryUntilSuccessful>
+            <!-- <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="entrance"/> -->
+            <!-- <Action ID="MoveToPredefined" pose="open"/> -->
+            <Action ID="LookAt" tf_frames="{frames}"/>
+            <!-- <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
+            <Action ID="LookAt" tf_frames="gripper"/>
+            <Delay delay_msec="3000">
+                <Action ID="MoveToPredefined" pose="home"/>
+            </Delay>
+            <Action ID="Speak" param="" say_text="Perfect, now i will follow you, when we arrive to the correct location please stop "/> -->
+            <!-- <RetryUntilSuccessful num_attempts="-1">
+                <Sequence>
+                    <ReactiveSequence>
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
+                        <Action ID="LookAt" tf_frames="person_0"/>
+                        <Condition ID="IsEntityMoving" check_time="2.0" distance_tolerance="0.5" frame="person_0"/>
+                        <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="person_0"/>
+                    </ReactiveSequence>
+                    <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
+                    <Action ID="DialogConfirmation"/>
+                </Sequence>
+            </RetryUntilSuccessful> -->
+            <!-- <Action ID="MoveToPredefined" pose="offer"/>
+            <Action ID="LookAt" tf_frames="person_0"/>
+            <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
+            <Action ID="LookAt" tf_frames="gripper"/>
+            <Delay delay_msec="3000">
+                <Action ID="Speak" param="" say_text="I am going back to the hotel, have a nice day"/>
+            </Delay> -->
+            <!-- <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/> -->
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="DialogConfirmation"/>
+        <Action ID="InitCarry"/>
+        <Condition ID="IsDetected">
+            <input_port default="head_front_camera_link_color_optical_frame" name="cam_frame"/>
+            <input_port default="0.6" name="confidence"/>
+            <output_port name="frames">array of frames</output_port>
+            <input_port default="person" name="interest"/>
+            <input_port default="2" name="max_depth">value in meters</input_port>
+            <input_port default="1" name="max_entities"/>
+            <input_port default="depth_nearest" name="order">[depth, color]</input_port>
+        </Condition>
+        <Condition ID="IsEntityMoving">
+            <input_port name="check_time"/>
+            <input_port name="distance_tolerance"/>
+            <input_port name="frame"/>
+        </Condition>
+        <Condition ID="IsPointing">
+            <output_port name="bag_frame"/>
+            <input_port name="cam_frame"/>
+        </Condition>
+        <Action ID="Listen">
+            <output_port name="listen_text"/>
+        </Action>
+        <Action ID="LookAt">
+            <input_port name="tf_frames"/>
+        </Action>
+        <Action ID="MoveTo">
+            <input_port default="1.0" name="distance_tolerance"/>
+            <input_port name="tf_frame"/>
+        </Action>
+        <Action ID="MoveToPredefined">
+            <input_port default="offer" name="pose"/>
+        </Action>
+        <Action ID="Query">
+            <input_port name="intention"/>
+            <output_port name="intention_value"/>
+            <input_port name="text"/>
+        </Action>
+        <Action ID="Speak">
+            <input_port name="param"/>
+            <input_port name="say_text"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

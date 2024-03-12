@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PERCEPTION__ISDETECTED_HPP_
-#define PERCEPTION__ISDETECTED_HPP_
+#ifndef PERCEPTION__IS_POINTING_HPP_
+#define PERCEPTION__IS_POINTING_HPP_
 
 #include <string>
 #include <algorithm>
@@ -30,21 +30,18 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
-#include "perception_system/PerceptionListener.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+
+#include "perception_system/PerceptionListener.hpp"
 
 namespace perception
 {
 
-using pl = perception_system::PerceptionListener;
-
-class IsDetected : public BT::ConditionNode
+class IsPointing : public BT::ConditionNode
 {
 public:
-  explicit IsDetected(
+  explicit IsPointing(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -54,34 +51,27 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<int>("max_entities"),
-        BT::InputPort<int>("person_id"),
+        // BT::InputPort<std::int64_t>("person_id"),
         BT::InputPort<std::string>("cam_frame"),
-        BT::InputPort<std::string>("interest"),
-        BT::InputPort<float>("confidence"),
-        BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"),
-        BT::OutputPort<std::vector<std::string>>("frames")
+        BT::OutputPort<std::string>("bag_frame")
       });
   }
 
 private:
-  int publicTF_map2object(
-    const perception_system_interfaces::msg::Detection & detected_object,
-    const std::string & frame_name);
+  int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object);
 
   rclcpp::Node::SharedPtr node_;
 
-  std::string interest_, order_, cam_frame_;
-  double threshold_, max_depth_;
-  int max_entities_, person_id_;
-  std::vector<std::string> frames_;
+  std::string camera_frame_, bag_frame_;
+  int64_t person_id_;
+  geometry_msgs::msg::TransformStamped person_pose_;
+  rclcpp::Time last_pose_;
 
-  tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_broadcaster_;
 };
 
 }  // namespace perception
 
-#endif  // PERCEPTION__ISDETECTED_HPP_
+#endif  // PERCEPTION__IS_POINTING_HPP_

@@ -23,14 +23,20 @@ InitCarry::InitCarry(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
+  node_->declare_parameter("cam_frame", "head_front_camera_link_color_optical_frame");
+  node_->declare_parameter("home_position", std::vector<double>{0.0, 0.0, 0.0});
+  node_->declare_parameter("home_pose", "home");
+  node_->declare_parameter("offer_pose", "offer");
+  node_->declare_parameter("person_id", 001122334455);
+
 }
 
 BT::NodeStatus
 InitCarry::tick()
 {
-  auto list = node_->list_parameters({}, 1);
-
+  RCLCPP_INFO(node_->get_logger(), "InitCarry ticked");
   std::vector<double> pose_;
+
   if (node_->has_parameter("cam_frame") &&
     node_->has_parameter("home_position") &&
     node_->has_parameter("home_pose") &&
@@ -60,6 +66,7 @@ InitCarry::tick()
       config().blackboard->set("home_position", home_position_);
 
       RCLCPP_INFO(node_->get_logger(), "InitCarry ticked and parameters set");
+      RCLCPP_INFO(node_->get_logger(), "cam_frame: %s", cam_frame_.c_str());
       return BT::NodeStatus::SUCCESS;
     } catch (std::exception & e) {
       RCLCPP_ERROR(node_->get_logger(), "InitCarry: some parameters are missing");

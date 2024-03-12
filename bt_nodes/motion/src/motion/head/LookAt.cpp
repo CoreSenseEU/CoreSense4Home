@@ -24,24 +24,24 @@ LookAt::LookAt(
 {
   config().blackboard->get("node", node_);
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "/attention/attention_points", 100);
-  getInput("tf_frame", tf_frame_);
+    "/attention/attention_points", 100);  
 }
 
 BT::NodeStatus
 LookAt::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "LookAt ticked");
+  getInput("tf_frames", tf_frames_);
 
   attention_system_msgs::msg::AttentionPoints attention_points_msg;
-  RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", tf_frame_.c_str());
+  RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", tf_frames_[0].c_str());
 
   attention_points_msg.instance_id = "look_at";
   attention_points_msg.lifeness = rclcpp::Duration(5, 0);
   attention_points_msg.time_in_point = rclcpp::Duration(0, 0);
 
   geometry_msgs::msg::PointStamped point;
-  point.header.frame_id = tf_frame_;
+  point.header.frame_id = tf_frames_[0]; // for now
   point.point.x = 0.0;
   point.point.y = 0.0;
   point.point.z = 0.0;

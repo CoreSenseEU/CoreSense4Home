@@ -110,12 +110,12 @@ target_link_libraries(generate_text_from_objects_test hri::generate_text_from_ob
 add_executable(pick_demo_test src/pick_demo_test.cpp)
 ament_target_dependencies(pick_demo_test ${dependencies})
 target_link_libraries(pick_demo_test
-    arm::pick_bt_node
-    hri::generate_text_from_objects_bt_node
-    perception::extract_object_from_scene_bt_node
-    perception::extract_collision_scene_bt_node
-    hri::speak_bt_node
-    hri::dialogConfirmation_bt_node    
+  arm::pick_bt_node
+  hri::generate_text_from_objects_bt_node
+  perception::extract_object_from_scene_bt_node
+  perception::extract_collision_scene_bt_node
+  hri::speak_bt_node
+  hri::dialogConfirmation_bt_node    
 )
 
 # Ask test
@@ -132,6 +132,21 @@ target_link_libraries(configuration::init_carry_bt_node)
 add_executable(follow_person_test src/follow_person_test.cpp)
 ament_target_dependencies(follow_person_test ${dependencies})
 target_link_libraries(follow_person_test perception::follow_person_bt_node) 
+
+# carry my luggage test
+add_executable(carry_my_luggage_test src/carry_my_luggage_test.cpp)
+ament_target_dependencies(carry_my_luggage_test ${dependencies})
+target_link_libraries(carry_my_luggage_test
+  configuration::init_carry_bt_node
+  perception::is_detected_bt_node
+  perception::is_pointing_bt_node
+  perception::is_entity_moving_bt_node
+  arm::move_to_predefined_bt_node
+  motion::move_to_bt_node
+  motion::look_at_bt_node
+  hri::speak_bt_node
+  hri::dialogConfirmation_bt_node
+)
 
 install(TARGETS
   set_wp_test
@@ -151,6 +166,7 @@ install(TARGETS
   pick_demo_test
   follow_person_test
   init_carry
+  carry_my_luggage_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

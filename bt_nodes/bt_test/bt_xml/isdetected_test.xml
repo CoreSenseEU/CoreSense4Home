@@ -10,8 +10,8 @@
     <TreeNodesModel>
         <Condition ID="IsDetected">
             <input_port default="0.6" name="confidence"/>
+            <input_port default="head_front_camera_link" name="cam_frame"/>
             <input_port default="person" name="interest"/>
-            <input_port default="head_front_camera_link_color_optical_frame" name="cam_frame"/>
             <output_port name="frames">array of frames</output_port>
             <input_port default="2" name="max_depth">value in meters</input_port>
             <input_port default="1" name="max_entities"/>

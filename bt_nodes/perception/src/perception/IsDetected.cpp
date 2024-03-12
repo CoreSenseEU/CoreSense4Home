@@ -41,12 +41,10 @@ IsDetected::IsDetected(
   config().blackboard->get("cam_frame", cam_frame_);
   config().blackboard->get("person_id", person_id_);
 
-  //delte this :
-  cam_frame_ = "head_front_camera_link_color_optical_frame";
-
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
 
   getInput("interest", interest_);
+  getInput("cam_frame", cam_frame_);
   getInput("confidence", threshold_);
   getInput("max_entities", max_entities_);
   getInput("order", order_);
@@ -61,7 +59,7 @@ IsDetected::IsDetected(
 BT::NodeStatus
 IsDetected::tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "IsDetected ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(35);
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
@@ -69,6 +67,7 @@ IsDetected::tick()
   auto detections = pl::getInstance()->get_by_type(interest_);
 
   if (detections.empty()) {
+    RCLCPP_INFO(node_->get_logger(), "No detections");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -109,11 +108,13 @@ IsDetected::tick()
   }
 
   if (frames_.empty()) {
+    RCLCPP_INFO(node_->get_logger(), "No detections after filter");
     return BT::NodeStatus::FAILURE;
   }
 
   setOutput("frames", frames_);
   frames_.clear();
+  RCLCPP_INFO(node_->get_logger(), "Detected!");
   return BT::NodeStatus::SUCCESS; //test, change to SUCCESS
 }
 

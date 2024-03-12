@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PERCEPTION__ISDETECTED_HPP_
-#define PERCEPTION__ISDETECTED_HPP_
+#ifndef PERCEPTION__IS_ENTITY_MOVING_HPP_
+#define PERCEPTION__IS_ENTITY_MOVING_HPP_
 
 #include <string>
 #include <algorithm>
@@ -39,12 +39,12 @@
 namespace perception
 {
 
-using pl = perception_system::PerceptionListener;
+using namespace std::chrono_literals;
 
-class IsDetected : public BT::ConditionNode
+class IsEntityMoving : public BT::ConditionNode
 {
 public:
-  explicit IsDetected(
+  explicit IsEntityMoving(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -54,34 +54,23 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<int>("max_entities"),
-        BT::InputPort<int>("person_id"),
-        BT::InputPort<std::string>("cam_frame"),
-        BT::InputPort<std::string>("interest"),
-        BT::InputPort<float>("confidence"),
-        BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"),
-        BT::OutputPort<std::vector<std::string>>("frames")
+        BT::InputPort<std::string>("frame"),
+        BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
+        BT::InputPort<float>("distance_tolerance", "distance tolerance to consider the entity is moving")
       });
   }
 
 private:
-  int publicTF_map2object(
-    const perception_system_interfaces::msg::Detection & detected_object,
-    const std::string & frame_name);
-
+ 
   rclcpp::Node::SharedPtr node_;
 
-  std::string interest_, order_, cam_frame_;
-  double threshold_, max_depth_;
-  int max_entities_, person_id_;
-  std::vector<std::string> frames_;
+  std::string frame_, cam_frame_;
+  float check_time_, distance_tolerance_;
 
-  tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
 
 }  // namespace perception
 
-#endif  // PERCEPTION__ISDETECTED_HPP_
+#endif  // PERCEPTION__IS_ENTITY_MOVING_HPP_

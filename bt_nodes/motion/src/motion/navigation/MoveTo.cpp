@@ -123,6 +123,31 @@ MoveTo::on_success()
     return BT::NodeStatus::SUCCESS;
   }
   goal_updated_ = true;
+  on_tick();
+  on_new_goal_received();
+  return BT::NodeStatus::RUNNING;
+}
+
+BT::NodeStatus
+MoveTo::on_aborted()
+{
+  if (will_finish_) {
+    return BT::NodeStatus::FAILURE;
+  }
+  on_tick();
+  on_new_goal_received();
+  return BT::NodeStatus::RUNNING;
+}
+
+BT::NodeStatus
+MoveTo::on_cancelled()
+{
+  if (will_finish_) {
+    return BT::NodeStatus::SUCCESS;
+  }
+  on_tick();
+  on_new_goal_received();
+  RCLCPP_INFO(node_->get_logger(), "Navigation cancelled");
   return BT::NodeStatus::RUNNING;
 }
 

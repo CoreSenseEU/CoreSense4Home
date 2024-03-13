@@ -17,6 +17,7 @@
 
 #include <string>
 #include <algorithm>
+#include <memory>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -55,8 +56,8 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<std::string>("frame"),
-        BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
-        BT::InputPort<float>("distance_tolerance", "distance tolerance to consider the entity is moving")
+        BT::InputPort<int>("max_iterations"),
+        BT::InputPort<float>("velocity_tolerance", "velocity tolerance to consider the entity is moving")
       });
   }
 
@@ -65,8 +66,11 @@ private:
   rclcpp::Node::SharedPtr node_;
 
   std::string frame_, cam_frame_;
-  float check_time_, distance_tolerance_;
+  float velocity_tolerance_;
 
+  std::vector<geometry_msgs::msg::TransformStamped> entity_transforms_;
+  std::vector<float> velocities_;
+  int max_iterations_;
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };

@@ -3,7 +3,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <!-- <Action ID="InitCarry"/>
+            <Action ID="InitCarry"/>
             <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>
                     <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="3" max_entities="1" order="color"/>
@@ -14,44 +14,47 @@
                 <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="{bag_tf}" will_finish="true"/>
             </RetryUntilSuccessful>
             <Action ID="MoveToPredefined" pose="offer"/>
-            <ReactiveSequence>
+            <ReactiveSequence>  
                 <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
                 <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
             </ReactiveSequence>
             <Repeat num_cycles="5">
                 <Action ID="LookAt" tf_frame="gripper_link" tf_frames=""/>
             </Repeat>
-            <Delay delay_msec="9000">
+            <Delay delay_msec="5000">
                 <Action ID="MoveToPredefined" pose="home"/>
             </Delay>
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
-                <Action ID="Speak" param="" say_text="Perfect, now i will follow you, when we arrive to the correct location please stop "/>
-            </ReactiveSequence> -->
+                <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
+            </ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
                 <Fallback>
                     <ReactiveSequence>
-                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="" interest="person" max_depth="4" max_entities="1" order="depth_nearest"/>
+                        <RetryUntilSuccessful num_attempts="-1">
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" frames="" interest="person" max_depth="6" max_entities="1" order="color"/>
+                        </RetryUntilSuccessful>
                         <Action ID="LookAt" tf_frame="person_0"/>
-                        <!-- <Condition ID="IsEntityMoving" check_time="4.0" distance_tolerance="0.5" frame="person_0"/> -->
-                        <Action ID="MoveTo" distance_tolerance="0.5" tf_frame="person_0" will_finish="true"/>
+                        <Condition ID="IsEntityMoving" velocity_tolerance="0.12" frame="person_0" max_iterations="100"/>
+                        <Action ID="MoveTo" distance_tolerance="0.2" tf_frame="person_0" will_finish="false"/>
                     </ReactiveSequence>
-                    <!-- <ForceFailure>
+                    <ForceFailure>
                         <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
                     </ForceFailure>
-                    <Action ID="DialogConfirmation"/> -->
+                    <Action ID="DialogConfirmation"/>
                 </Fallback>
             </RetryUntilSuccessful>
-            <!-- <Action ID="MoveToPredefined" pose="offer"/>
+            <Action ID="MoveToPredefined" pose="offer"/>
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
                 <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
             </ReactiveSequence>
-            <Action ID="LookAt" tf_frame="" tf_frames="gripper_link"/>
+            <Action ID="LookAt"  tf_frame="gripper_link"/>
+            <Action ID="MoveToPredefined" pose="home"/>
             <Delay delay_msec="3000">
-                <Action ID="Speak" param="" say_text="I am going back to the hotel, have a nice day"/>
+                <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>
             </Delay>
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/> -->
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->

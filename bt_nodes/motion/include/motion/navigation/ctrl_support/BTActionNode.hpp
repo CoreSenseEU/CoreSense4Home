@@ -156,8 +156,7 @@ public:
 
       auto goal_status = goal_handle_->get_status();
       if (goal_updated_ && (goal_status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
-        goal_status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED ||
-        goal_status == action_msgs::msg::GoalStatus::STATUS_SUCCEEDED))
+        goal_status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED))
       {
         goal_updated_ = false;
         on_new_goal_received();

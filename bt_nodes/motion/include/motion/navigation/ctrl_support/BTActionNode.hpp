@@ -100,9 +100,8 @@ public:
 
   // There can be many loop iterations per tick. Any opportunity to do something after
   // a timeout waiting for a result that hasn't been received yet
-  virtual BT::NodeStatus on_wait_for_result()
+  virtual void on_wait_for_result()
   {
-    return BT::NodeStatus::RUNNING;
   }
 
   // Called upon successful completion of the action. A derived class can override this
@@ -153,13 +152,12 @@ public:
     // The following code corresponds to the "RUNNING" loop
     if (rclcpp::ok() && !goal_result_available_) {
       // user defined callback. May modify the value of "goal_updated_"
-      if (on_wait_for_result() != BT::NodeStatus::RUNNING) {
-        return on_wait_for_result();
-      }
+      on_wait_for_result();
 
       auto goal_status = goal_handle_->get_status();
       if (goal_updated_ && (goal_status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
-        goal_status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED))
+        goal_status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED ||
+        goal_status == action_msgs::msg::GoalStatus::STATUS_SUCCEEDED))
       {
         goal_updated_ = false;
         on_new_goal_received();
@@ -239,11 +237,6 @@ protected:
           result_ = result;
         }
       };
-    send_goal_options.feedback_callback =
-      [this](typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr,
-        const typename std::shared_ptr<const typename ActionT::Feedback> feedback) {
-        feedback_ = *feedback;
-      };
 
     auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
 
@@ -277,7 +270,6 @@ protected:
   bool goal_result_available_{false};
   typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr goal_handle_;
   typename rclcpp_action::ClientGoalHandle<ActionT>::WrappedResult result_;
-  typename rclcpp_action::ClientGoalHandle<ActionT>::Feedback feedback_;
   // The node that will be used for any ROS operations
   typename NodeT::SharedPtr node_;
 

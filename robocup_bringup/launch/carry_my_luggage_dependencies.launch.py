@@ -165,7 +165,7 @@ def generate_launch_description():
     # # ld.add_action(carry_my_luggage)
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
-    ld.add_action(whisper_cmd)
+    # ld.add_action(whisper_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
     ld.add_action(declare_log_level)

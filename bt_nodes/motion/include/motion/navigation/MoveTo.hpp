@@ -47,7 +47,6 @@ public:
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
-  BT::NodeStatus on_wait_for_result() override;
 
   static BT::PortsList providedPorts()
   {

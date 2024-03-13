@@ -38,7 +38,7 @@ MoveTo::MoveTo(
   tf_listener_(tf_buffer_)
 {
   config().blackboard->get("node", node_);
-  
+
 }
 
 void
@@ -122,18 +122,7 @@ MoveTo::on_success()
   if (will_finish_) {
     return BT::NodeStatus::SUCCESS;
   }
-  return BT::NodeStatus::RUNNING;
-}
-
-BT::NodeStatus
-MoveTo::on_wait_for_result()
-{
-  // if (feedback_.distance_remaining <= distance_tolerance_) {    
-  //   if (will_finish_) {
-  //     RCLCPP_INFO(node_->get_logger(), "Navigation succeeded");
-  //     return BT::NodeStatus::SUCCESS;
-  //   }    
-  // }
+  goal_updated_ = true;
   return BT::NodeStatus::RUNNING;
 }
 

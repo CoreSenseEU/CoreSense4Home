@@ -57,6 +57,7 @@ IsDetected::tick()
   }
 
   geometry_msgs::msg::PoseStamped pose;
+  pose.header.frame_id = "map";
   pose.pose.position.x = transform.transform.translation.x;
   pose.pose.position.y = transform.transform.translation.y;
   pose.pose.position.z = transform.transform.translation.z;

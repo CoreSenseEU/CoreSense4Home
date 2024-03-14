@@ -133,12 +133,19 @@ public:
       createActionClient(action_name_);
 
       // setting the status to RUNNING to notify the BT Loggers (if any)
-      setStatus(BT::NodeStatus::RUNNING);
+      // setStatus(BT::NodeStatus::RUNNING);
 
       // user defined callback
-      on_tick();
+      // on_tick();
 
+      // on_new_goal_received();
+    }
+
+    on_tick();
+    
+    if (status() == BT::NodeStatus::IDLE) {
       on_new_goal_received();
+      setStatus(BT::NodeStatus::RUNNING);
     }
 
     // The following code corresponds to the "RUNNING" loop
@@ -165,6 +172,7 @@ public:
 
     switch (result_.code) {
       case rclcpp_action::ResultCode::SUCCEEDED:
+        goal_result_available_ = false;
         return on_success();
 
       case rclcpp_action::ResultCode::ABORTED:

@@ -39,13 +39,13 @@ def generate_launch_description():
         'use_sim_time', default_value='false')
 
     declare_slam_cmd = DeclareLaunchArgument(
-        'slam', default_value='False')
+        'slam', default_value='True')
 
     declare_use_rviz_cmd = DeclareLaunchArgument(
         'rviz', default_value='False')
 
     declare_map_cmd = DeclareLaunchArgument(
-        'map', default_value=os.path.join(package_dir, "maps", "lab_robocup.yaml"))
+        'map', default_value="")
 
     declare_nav_params_cmd = DeclareLaunchArgument(
         'params_file', default_value=os.path.join(

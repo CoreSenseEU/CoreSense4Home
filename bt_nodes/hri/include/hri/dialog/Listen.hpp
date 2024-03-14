@@ -24,18 +24,22 @@
 #include "rclcpp/rclcpp.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
-namespace dialog {
+namespace dialog
+{
 
-class Listen : public dialog::BtActionNode<whisper_msgs::action::STT> {
+class Listen : public dialog::BtActionNode<whisper_msgs::action::STT>
+{
 public:
-  explicit Listen(const std::string &xml_tag_name,
-                  const std::string &action_name,
-                  const BT::NodeConfiguration &conf);
+  explicit Listen(
+    const std::string & xml_tag_name,
+    const std::string & action_name,
+    const BT::NodeConfiguration & conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
-  static BT::PortsList providedPorts() {
+  static BT::PortsList providedPorts()
+  {
     return BT::PortsList({BT::OutputPort<std::string>("listen_text")});
   }
 

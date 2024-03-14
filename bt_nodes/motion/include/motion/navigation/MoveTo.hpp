@@ -24,6 +24,9 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"
@@ -33,7 +36,7 @@
 namespace navigation
 {
 
-class MoveTo 
+class MoveTo
   : public navigation::BtActionNode<nav2_msgs::action::NavigateToPose>
 {
 public:
@@ -44,6 +47,8 @@ public:
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
+  BT::NodeStatus on_aborted() override;
+  BT::NodeStatus on_cancelled() override;
 
   static BT::PortsList providedPorts()
   {
@@ -51,6 +56,7 @@ public:
       {
         BT::InputPort<double>("distance_tolerance"),
         BT::InputPort<std::string>("tf_frame"),
+        BT::InputPort<bool>("will_finish")
       });
   }
 
@@ -59,6 +65,9 @@ private:
   double distance_tolerance_;
   std::string tf_frame_;
   geometry_msgs::msg::PoseStamped pose_;
+  tf2::BufferCore tf_buffer_;
+  tf2_ros::TransformListener tf_listener_;
+  bool will_finish_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

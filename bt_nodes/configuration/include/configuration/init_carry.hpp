@@ -12,29 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef NAVIGATION__LOOK_AT_HPP_
-#define NAVIGATION__LOOK_AT_HPP_
+#ifndef CONFIGURATION__INIT_CARRY_HPP_
+#define CONFIGURATION__INIT_CARRY_HPP_
 
 #include <string>
-#include <memory>
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
-#include "nav2_msgs/action/navigate_to_pose.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "attention_system_msgs/msg/attention_points.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-#include "std_msgs/msg/string.hpp"
-
-namespace navigation
+namespace configuration
 {
 
-class LookAt : public BT::ActionNodeBase
+class InitCarry : public BT::ActionNodeBase
 {
 public:
-  explicit LookAt(
+  explicit InitCarry(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -43,22 +37,17 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList(
-      {
-        BT::InputPort<std::vector<std::string>>("tf_frames"),
-        BT::InputPort<std::string>("tf_frame")
-      });
+    return BT::PortsList({});
   }
 
 private:
   rclcpp::Node::SharedPtr node_;
-  geometry_msgs::msg::PoseStamped pose_;
-  rclcpp::Publisher<attention_system_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
-  std::vector<std::string> tf_frames_;
-  std::string tf_frame_;
+  std::string cam_frame_, home_pose_, offer_pose_;
+  int person_id;
+  geometry_msgs::msg::PoseStamped home_position_;
+
 };
 
-}  // namespace navigation
+}  // namespace configuration
 
-#endif  // NAVIGATION__LOOK_AT_HPP_
+#endif  // CONFIGURATION__INIT_CARRY_HPP_

@@ -133,19 +133,20 @@ public:
       createActionClient(action_name_);
 
       // setting the status to RUNNING to notify the BT Loggers (if any)
-      // setStatus(BT::NodeStatus::RUNNING);
+      setStatus(BT::NodeStatus::RUNNING);
 
       // user defined callback
-      // on_tick();
+      try
+      {
+       on_tick();
+      }
+      catch(const std::exception& e)
+      {
+        std::cerr << e.what() << '\n';
+        return BT::NodeStatus::FAILURE;
+      }
 
-      // on_new_goal_received();
-    }
-
-    on_tick();
-    
-    if (status() == BT::NodeStatus::IDLE) {
       on_new_goal_received();
-      setStatus(BT::NodeStatus::RUNNING);
     }
 
     // The following code corresponds to the "RUNNING" loop
@@ -172,7 +173,6 @@ public:
 
     switch (result_.code) {
       case rclcpp_action::ResultCode::SUCCEEDED:
-        goal_result_available_ = false;
         return on_success();
 
       case rclcpp_action::ResultCode::ABORTED:
@@ -269,7 +269,6 @@ protected:
   bool goal_result_available_{false};
   typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr goal_handle_;
   typename rclcpp_action::ClientGoalHandle<ActionT>::WrappedResult result_;
-
   // The node that will be used for any ROS operations
   typename NodeT::SharedPtr node_;
 
@@ -277,6 +276,7 @@ protected:
   // new action goal is sent or canceled
   std::chrono::milliseconds server_timeout_;
 };
+
 
 
 }  // namespace navigation

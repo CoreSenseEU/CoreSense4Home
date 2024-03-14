@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef DIALOG__SPEAK_HPP_
-#define DIALOG__SPEAK_HPP_
+#ifndef ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_
+#define ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_
 
 #include <algorithm>
 #include <string>
 
-#include "audio_common_msgs/action/tts.hpp"
+#include "manipulation_interfaces/action/move_to_predefined.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "hri/dialog/BTActionNode.hpp"
+#include "arm/manipulation/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace dialog
+namespace manipulation
 {
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS>
+class MoveToPredefined : public manipulation::BtActionNode<manipulation_interfaces::action::MoveToPredefined>
 {
 public:
-  explicit Speak(
+  explicit MoveToPredefined(
     const std::string & xml_tag_name,
     const std::string & action_name,
     const BT::NodeConfiguration & conf);
@@ -41,8 +42,8 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("say_text"),
-        BT::InputPort<std::string>("param")});
+      {BT::InputPort<std::string>(
+          "pose")});
   }
 
 private:
@@ -50,9 +51,9 @@ private:
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;
 
-  // std::string text_;
+  std::string pose_;
 };
 
-} // namespace dialog
+} // namespace manipulation
 
-#endif // HRI__SPEAK_HPP_
+#endif // ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_

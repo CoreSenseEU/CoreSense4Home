@@ -48,6 +48,15 @@ list(APPEND plugin_libs is_detected_bt_node)
 add_library(follow_person_bt_node SHARED src/perception/FollowPerson.cpp)
 list(APPEND plugin_libs follow_person_bt_node)
 
+add_library(extract_collision_scene_bt_node SHARED src/perception/extract_collision_scene.cpp)
+list(APPEND plugin_libs extract_collision_scene_bt_node)
+
+add_library(is_entity_moving_bt_node SHARED src/perception/is_entity_moving.cpp)
+list(APPEND plugin_libs is_entity_moving_bt_node)
+
+add_library(is_pointing_bt_node SHARED src/perception/is_pointing.cpp)
+list(APPEND plugin_libs is_pointing_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

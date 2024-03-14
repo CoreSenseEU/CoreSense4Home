@@ -34,7 +34,8 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(
   config().blackboard->get("node", node_);
 
   detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
-    "/perception_system/detections_3d", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
+    "/perception_system/detections_3d", 100,
+    std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
   tf_buffer_ =
     std::make_unique<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ =
@@ -86,8 +87,7 @@ ExtractObjectsFromScene::tick()
   auto header = last_detected_objs_->header;
   for (auto const & detected_object : last_detected_objs_->detections) {
 
-    if (detected_object.bbox3d.size.x >= 0.07 && detected_object.bbox3d.size.y >= 0.07 &&
-      detected_object.bbox3d.size.z >= 0.07)
+    if (detected_object.bbox3d.size.x >= 0.12 && detected_object.bbox3d.size.y >= 0.12)
     {
       RCLCPP_INFO(node_->get_logger(), "Ignoring too large object");
       continue;
@@ -95,8 +95,8 @@ ExtractObjectsFromScene::tick()
 
     shape_msgs::msg::SolidPrimitive obj_solid_primitive;
     obj_solid_primitive.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
-    obj_solid_primitive.dimensions = {0.14, 0.035};
-
+    obj_solid_primitive.dimensions = {0.09, 0.035};
+    // obj_solid_primitive.dimensions = {detected_object.bbox3d.size.y, detected_object.bbox3d.size.x/2};
     auto obj_ptr = std::make_shared<moveit_msgs::msg::CollisionObject>();
 
     obj_ptr->header = header;
@@ -118,12 +118,12 @@ ExtractObjectsFromScene::tick()
     geometry_msgs::msg::TransformStamped base_link_2_camera_msg;
     try {
       base_link_2_camera_msg = tf_buffer_->lookupTransform(
-        "base_link", "head_front_camera_link",
+        "base_link", "head_front_camera_link_color_optical_frame",
         tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
         node_->get_logger(), "Could not transform %s to %s: %s",
-        "base_link", "head_front_camera_link", ex.what());
+        "base_link", "head_front_camera_link_color_optical_frame", ex.what());
       return BT::NodeStatus::FAILURE;
     }
     tf2::fromMsg(base_link_2_camera_msg.transform, base_2_camera);

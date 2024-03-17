@@ -54,6 +54,9 @@ list(APPEND plugin_libs extract_collision_scene_bt_node)
 add_library(is_entity_moving_bt_node SHARED src/perception/is_entity_moving.cpp)
 list(APPEND plugin_libs is_entity_moving_bt_node)
 
+add_library(is_moving_bt_node SHARED src/perception/is_moving.cpp)
+list(APPEND plugin_libs is_moving_bt_node)
+
 add_library(is_pointing_bt_node SHARED src/perception/is_pointing.cpp)
 list(APPEND plugin_libs is_pointing_bt_node)
 

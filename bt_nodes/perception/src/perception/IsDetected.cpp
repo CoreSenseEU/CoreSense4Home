@@ -32,16 +32,12 @@ IsDetected::IsDetected(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf),
-  tf_buffer_(),
-  tf_listener_(tf_buffer_),
   max_depth_(std::numeric_limits<double>::max()),
   max_entities_(1)
 {
   config().blackboard->get("node", node_);
   config().blackboard->get("cam_frame", cam_frame_);
   config().blackboard->get("person_id", person_id_);
-
-  tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
   getInput("interest", interest_);
   getInput("cam_frame", cam_frame_);
@@ -59,6 +55,13 @@ IsDetected::IsDetected(
 BT::NodeStatus
 IsDetected::tick()
 {
+
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
+    config().blackboard->get("tf_buffer", tf_buffer_);
+    config().blackboard->get("tf_broadcaster", tf_broadcaster_);
+  }
+
   RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(35);
@@ -125,7 +128,7 @@ IsDetected::publicTF_map2object(
 {
   geometry_msgs::msg::TransformStamped map2camera_msg;
   try {
-    map2camera_msg = tf_buffer_.lookupTransform(
+    map2camera_msg = tf_buffer_->lookupTransform(
       "map", cam_frame_,
       tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
@@ -134,7 +137,6 @@ IsDetected::publicTF_map2object(
       "map", cam_frame_.c_str(), ex.what());
     return -1;
   }
-
   tf2::Transform camera2object;
   camera2object.setOrigin(
     tf2::Vector3(
@@ -154,8 +156,6 @@ IsDetected::publicTF_map2object(
   map2object_msg.header.frame_id = "map";
   map2object_msg.child_frame_id = frame_name;
   map2object_msg.transform = tf2::toMsg(map2object);
-
-  // TODO: just  put the output unique_id
 
   tf_broadcaster_->sendTransform(map2object_msg);
   return 0;

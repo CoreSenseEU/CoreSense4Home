@@ -11,8 +11,11 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
-find_package(nav2_behavior_tree REQUIRED)
+# find_package(nav2_behavior_tree REQUIRED)
 find_package(attention_system REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -22,7 +25,10 @@ set(dependencies
   behaviortree_cpp_v3
   geometry_msgs
   nav2_msgs
-  nav2_behavior_tree
+  # nav2_behavior_tree
+  tf2_ros
+  tf2_geometry_msgs
+  tf2
   attention_system
 )
 
@@ -33,6 +39,9 @@ list(APPEND plugin_libs move_to_bt_node)
 
 add_library(look_at_bt_node SHARED src/motion/head/LookAt.cpp)
 list(APPEND plugin_libs look_at_bt_node)
+
+add_library(follow_entity_bt_node SHARED src/motion/navigation/follow_entity.cpp)
+list(APPEND plugin_libs follow_entity_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

@@ -29,6 +29,12 @@ InitCarry::InitCarry(
   node_->declare_parameter("offer_pose", "offer");
   node_->declare_parameter("person_id", 001122334455);
 
+  tf_buffer_ =
+    std::make_shared<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ =
+    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+  tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 }
 
 BT::NodeStatus
@@ -59,14 +65,19 @@ InitCarry::tick()
 
       home_position_.pose.orientation = tf2::toMsg(q);
 
-      config().blackboard->set("cam_frame", cam_frame_);
-      config().blackboard->set("home_pose", home_pose_);
-      config().blackboard->set("offer_pose", offer_pose_);
-      config().blackboard->set("person_id", person_id);
-      config().blackboard->set("home_position", home_position_);
+      setOutput("cam_frame", cam_frame_);
+      setOutput("home_pose", home_pose_);
+      setOutput("offer_pose", offer_pose_);
+      setOutput("person_id", person_id);
+      setOutput("home_position", home_position_);
+
+      config().blackboard->set("tf_buffer", tf_buffer_);
+      config().blackboard->set("tf_listener", tf_listener_);
+      config().blackboard->set("tf_broadcaster", tf_broadcaster_);
+      config().blackboard->set("tf_static_broadcaster", tf_static_broadcaster_);
 
       RCLCPP_INFO(node_->get_logger(), "InitCarry ticked and parameters set");
-      RCLCPP_INFO(node_->get_logger(), "cam_frame: %s", cam_frame_.c_str());
+
       return BT::NodeStatus::SUCCESS;
     } catch (std::exception & e) {
       RCLCPP_ERROR(node_->get_logger(), "InitCarry: some parameters are missing");

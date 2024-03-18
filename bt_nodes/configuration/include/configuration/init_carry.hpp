@@ -21,6 +21,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/buffer.h"
 
 namespace configuration
 {
@@ -37,7 +41,15 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({});
+    return BT::PortsList({
+      BT::OutputPort<std::string>("cam_frame",
+                                  "frame to transform to all detections"),
+      BT::OutputPort<geometry_msgs::msg::PoseStamped>("home_position", "position to  return"),
+      BT::OutputPort<std::string>("home_pose", "arm default pose"),
+      BT::OutputPort<std::string>("offer_pose", "arm offering pose"),
+      BT::OutputPort<int>("person_id", "person id by color detection in HSV"),
+    });
+
   }
 
 private:
@@ -45,6 +57,13 @@ private:
   std::string cam_frame_, home_pose_, offer_pose_;
   int person_id;
   geometry_msgs::msg::PoseStamped home_position_;
+
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster>
+    tf_static_broadcaster_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster>
+    tf_broadcaster_;
 
 };
 

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PERCEPTION__ISDETECTED_HPP_
-#define PERCEPTION__ISDETECTED_HPP_
+#ifndef NAVIGATION__FOLLOW_ENTITY_HPP_
+#define NAVIGATION__FOLLOW_ENTITY_HPP_
 
 #include <string>
 #include <algorithm>
@@ -23,65 +23,63 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
+
+#include "nav2_msgs/action/navigate_to_pose.hpp"
 
 #include <tf2/transform_datatypes.h>
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/utils.h"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
-#include "perception_system/PerceptionListener.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 
-namespace perception
+
+namespace navigation
 {
 
-using pl = perception_system::PerceptionListener;
-
-class IsDetected : public BT::ConditionNode
+class FollowEntity : public BT::ActionNodeBase
 {
 public:
-  explicit IsDetected(
+  explicit FollowEntity(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
+  void halt();
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
       {
-        BT::InputPort<int>("max_entities"),
-        BT::InputPort<int>("person_id"),
-        BT::InputPort<std::string>("cam_frame"),
-        BT::InputPort<std::string>("interest"),
-        BT::InputPort<float>("confidence"),
-        BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"),
-        BT::OutputPort<std::vector<std::string>>("frames")
+        BT::InputPort<std::string>("camera_frame"),
+        BT::InputPort<std::string>("frame_to_follow"),
+        BT::InputPort<double>("distance_tolerance"),
       });
   }
 
 private:
-  int publicTF_map2object(
-    const perception_system_interfaces::msg::Detection & detected_object,
-    const std::string & frame_name);
+
 
   rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr entity_pose_pub_;
 
-  std::string interest_, order_, cam_frame_;
-  double threshold_, max_depth_;
-  int max_entities_, person_id_;
-  std::vector<std::string> frames_;
+  std::string camera_frame_, frame_to_follow_, xml_path_;
+  double distance_tolerance_;
+  geometry_msgs::msg::TransformStamped entity_transform_;
+  geometry_msgs::msg::TransformStamped robot_direction_;
+  geometry_msgs::msg::PoseStamped goal_pose_;
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
 
-}  // namespace perception
+}  // namespace navigation
 
-#endif  // PERCEPTION__ISDETECTED_HPP_
+#endif  // NAVIGATION__FOLLOW_ENTITY_HPP_

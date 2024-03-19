@@ -3,12 +3,13 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Header
-from yolov8_msgs.msg import BoundingBox2D, Detection, DetectionArray
+from yolov8_msgs.msg import BoundingBox2D, Detection, DetectionArray, , 
 
 DEFAULT_NUM_OBJECTS = 5
 
 
 class DetectionPublisherNode(Node):
+
     def __init__(self):
         super().__init__('detection_publisher_node')
         self.publisher_ = self.create_publisher(

@@ -148,6 +148,11 @@ target_link_libraries(carry_my_luggage_test
   hri::dialogConfirmation_bt_node
 )
 
+# FilterEntity test
+add_executable(filter_entity_test src/filter_entity_test.cpp)
+ament_target_dependencies(filter_entity_test ${dependencies})
+target_link_libraries(filter_entity_test perception::filter_entity_bt_node)
+
 install(TARGETS
   set_wp_test
   look_at_test
@@ -167,6 +172,7 @@ install(TARGETS
   follow_person_test
   init_carry
   carry_my_luggage_test
+  filter_entity_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

@@ -16,10 +16,9 @@
 #include <utility>
 #include <limits>
 
-#include "perception/is_moving.hpp"
+#include "perception/filter_entity.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
-#include "perception_system/PerceptionUtils.hpp"
 
 
 namespace perception
@@ -31,7 +30,7 @@ using namespace std::placeholders;
 FilterEntity::FilterEntity(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
-: BT::ConditionNode(xml_tag_name, conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 
@@ -47,18 +46,25 @@ FilterEntity::FilterEntity(
   
 }
 
+void
+FilterEntity::halt()
+{
+  RCLCPP_INFO(node_->get_logger(), "FilterEntity halted");
+}
 
-geometry_msgs::msg::TransformStamped FilterEntity::update_state_observer(const geometry_msgs::msg::TransformStamped & entity)
+geometry_msgs::msg::TransformStamped FilterEntity::update_state_observer(const geometry_msgs::msg::TransformStamped& entity)
 {
   filtered_entity_.transform.translation.x = filtered_entity_.transform.translation.x + lambda_ * (entity.transform.translation.x - filtered_entity_.transform.translation.x);
   filtered_entity_.transform.translation.y = filtered_entity_.transform.translation.y + lambda_ * (entity.transform.translation.y - filtered_entity_.transform.translation.y);
   filtered_entity_.transform.translation.z = filtered_entity_.transform.translation.z + lambda_ * (entity.transform.translation.z - filtered_entity_.transform.translation.z);
+  filtered_entity_.header.stamp = entity.header.stamp;
 
   return filtered_entity_;
 }
-geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(const geometry_msgs::msg::TransformStamped & entity)
+geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(const geometry_msgs::msg::TransformStamped& entity)
 {
   filtered_entity_ = entity;
+  filtered_entity_.child_frame_id = entity.child_frame_id + "_filtered";
   return filtered_entity_;
 }
 
@@ -68,19 +74,15 @@ BT::NodeStatus
 FilterEntity::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "IsMoving ticked");
-
+  
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
   rclcpp::Time when = node_->get_clock()->now();
 
   try {
     entity_transform_now_msg = tf_buffer_->lookupTransform(
-      frame_,
       "map",
+      frame_,
       tf2::TimePointZero);
-
-    double x = entity_transform_now_msg.transform.translation.x;
-    double y = entity_transform_now_msg.transform.translation.y;
-    double z = entity_transform_now_msg.transform.translation.z;
 
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
@@ -97,6 +99,7 @@ FilterEntity::tick()
   else
   {
     filtered_entity = initialize_state_observer(entity_transform_now_msg);
+    state_obs_initialized_ = true;
   }
   tf_broadcaster_->sendTransform(filtered_entity);
   return BT::NodeStatus::SUCCESS;

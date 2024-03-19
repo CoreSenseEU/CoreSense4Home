@@ -50,21 +50,21 @@ def generate_launch_description():
     # rviz = LaunchConfiguration('rviz')
     # map_file = LaunchConfiguration('map')
     # params_file = LaunchConfiguration('params_file')
-    # # log_level = LaunchConfiguration("log_level")
+    # # log_level = LaunchConfiguration('log_level')
 
     # declare_model_repo_cmd = DeclareLaunchArgument(
-    #     'model_repo', default_value="ggerganov/whisper.cpp",
-    #     description="Hugging Face model repo")
+    #     'model_repo', default_value='ggerganov/whisper.cpp',
+    #     description='Hugging Face model repo')
 
     # declare_model_filename_cmd = DeclareLaunchArgument(
-    #     'model_filename', default_value="ggml-large-v3-q5_0.bin",
-    #     description="Hugging Face model filename")
+    #     'model_filename', default_value='ggml-large-v3-q5_0.bin',
+    #     description='Hugging Face model filename')
 
     # declare_log_level = DeclareLaunchArgument(
-    #         "log_level",
-    #         default_value="error",
-    #         description="The level of logging that is applied to all ROS 2\
-    #         nodes launched by this script.",
+    #         'log_level',
+    #         default_value='error',
+    #         description='The level of logging that is applied to all ROS 2\
+    #         nodes launched by this script.',
     #     )
 
     # audio related launchers:
@@ -80,22 +80,22 @@ def generate_launch_description():
     # )
 
     # audio_common_tts_node = Node(
-    #     package="audio_common",
-    #     executable="tts_node",
+    #     package='audio_common',
+    #     executable='tts_node',
     #     parameters=[
-    #         {"chunk": 4096},
-    #         {"frame_id": ""},
-    #         {"model": "tts_models/en/ljspeech/vits"},
-    #         {"speaker_wav": ""},
-    #         {"device": "cuda"}]
+    #         {'chunk': 4096},
+    #         {'frame_id': ''},
+    #         {'model': 'tts_models/en/ljspeech/vits'},
+    #         {'speaker_wav': ''},
+    #         {'device': 'cuda'}]
     # )
 
     # audio_common_player_node = Node(
-    #     package="audio_common",
-    #     executable="audio_player_node",
+    #     package='audio_common',
+    #     executable='audio_player_node',
     #     parameters=[
-    #         {"channels": 2},
-    #         {"device": -1}]
+    #         {'channels': 2},
+    #         {'device': -1}]
     # )
 
     # manipulation launchers
@@ -152,7 +152,7 @@ def generate_launch_description():
     # wait_for_navigation = RegisterEventHandler(
     #          OnExecutionComplete(
     #                  target_action=,
-    #                  on_start=[LogInfo(msg="Started the carry_ luggage. "),
+    #                  on_start=[LogInfo(msg='Started the carry_ luggage. '),
     #                                  another_node]
     #          )
     #    )

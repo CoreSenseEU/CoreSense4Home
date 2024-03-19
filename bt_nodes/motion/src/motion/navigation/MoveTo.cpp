@@ -46,12 +46,12 @@ MoveTo::on_tick()
 {
   RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
   geometry_msgs::msg::PoseStamped goal;
-   geometry_msgs::msg::TransformStamped map_to_goal;
+  geometry_msgs::msg::TransformStamped map_to_goal;
 
   getInput("tf_frame", tf_frame_);
   getInput("distance_tolerance", distance_tolerance_);
   getInput("will_finish", will_finish_);
- 
+
   try {
     map_to_goal = tf_buffer_.lookupTransform(
       "map", tf_frame_,
@@ -71,7 +71,7 @@ MoveTo::on_tick()
     node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
     goal.pose.position.x, goal.pose.position.y,
     goal.header.frame_id.c_str());
-  
+
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
@@ -79,38 +79,41 @@ MoveTo::on_tick()
   std::ifstream input_file(xml_file);
 
   if (!input_file.is_open()) {
-      std::cerr << "Error opening XML file." << std::endl;
-      // setStatus(BT::NodeStatus::FAILURE);
-      return;
+    std::cerr << "Error opening XML file." << std::endl;
+    // setStatus(BT::NodeStatus::FAILURE);
+    return;
   }
-  std::string xml_content((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+  std::string xml_content((std::istreambuf_iterator<char>(input_file)),
+    std::istreambuf_iterator<char>());
   input_file.close();
 
- size_t truncate_pos = xml_content.find("<TruncatePath");
+  size_t truncate_pos = xml_content.find("<TruncatePath");
   if (truncate_pos != std::string::npos) {
-      size_t distance_pos = xml_content.find("distance=\"", truncate_pos);
-      if (distance_pos != std::string::npos) {
-          size_t end_qote_pos = xml_content.find("\"", distance_pos + 10);
-          if (end_qote_pos != std::string::npos) {
-              xml_content.replace(distance_pos + 10, end_qote_pos - distance_pos - 10, std::to_string(distance_tolerance_));
-          }
+    size_t distance_pos = xml_content.find("distance=\"", truncate_pos);
+    if (distance_pos != std::string::npos) {
+      size_t end_qote_pos = xml_content.find("\"", distance_pos + 10);
+      if (end_qote_pos != std::string::npos) {
+        xml_content.replace(
+          distance_pos + 10, end_qote_pos - distance_pos - 10,
+          std::to_string(distance_tolerance_));
       }
+    }
   } else {
-      std::cerr << "Element not found in XML." << std::endl;
-      // setStatus(BT::NodeStatus::FAILURE);
-      return;
+    std::cerr << "Element not found in XML." << std::endl;
+    // setStatus(BT::NodeStatus::FAILURE);
+    return;
   }
   // Save the updated XML back to the same file
   std::ofstream output_file(xml_file);
   if (!output_file.is_open()) {
-      std::cerr << "Error opening output file." << std::endl;
-      // setStatus(BT::NodeStatus::FAILURE);
-      return;
+    std::cerr << "Error opening output file." << std::endl;
+    // setStatus(BT::NodeStatus::FAILURE);
+    return;
   }
 
   output_file << xml_content;
   output_file.close();
-  
+
   goal_.behavior_tree = xml_file;
   goal_.pose = goal;
 }

@@ -70,30 +70,31 @@ IsEntityMoving::tick()
   if (entity_transforms_.size() < max_iterations_) {
     entity_transforms_.push_back(entity_transform_now_msg);
     return BT::NodeStatus::SUCCESS;
-  } else if(entity_transforms_.size()  == max_iterations_)
-     {
-       for (auto it = entity_transforms_.begin(); it != entity_transforms_.end(); ++it) {
-        auto velocity_x = ((std::next(it))->transform.translation.x - it->transform.translation.x) /
-             (((std::next(it))->header.stamp.sec + (std::next(it))->header.stamp.nanosec*1.0e-9 )  - (it->header.stamp.sec + it->header.stamp.nanosec*1.0e-9));
-        auto velocity_y = ((std::next(it))->transform.translation.y - it->transform.translation.y) /
-             (((std::next(it))->header.stamp.sec + (std::next(it))->header.stamp.nanosec*1.0e-9 )  - (it->header.stamp.sec + it->header.stamp.nanosec*1.0e-9));
+  } else if (entity_transforms_.size() == max_iterations_) {
+    for (auto it = entity_transforms_.begin(); it != entity_transforms_.end(); ++it) {
+      auto velocity_x = ((std::next(it))->transform.translation.x - it->transform.translation.x) /
+        (((std::next(it))->header.stamp.sec + (std::next(it))->header.stamp.nanosec * 1.0e-9 ) -
+        (it->header.stamp.sec + it->header.stamp.nanosec * 1.0e-9));
+      auto velocity_y = ((std::next(it))->transform.translation.y - it->transform.translation.y) /
+        (((std::next(it))->header.stamp.sec + (std::next(it))->header.stamp.nanosec * 1.0e-9 ) -
+        (it->header.stamp.sec + it->header.stamp.nanosec * 1.0e-9));
 
-        velocities_.push_back(std::hypot(velocity_x, velocity_y));
-      }
-      auto vel = std::accumulate(velocities_.begin(), velocities_.end(), 0.0) / velocities_.size();
-      RCLCPP_INFO(node_->get_logger(), "Velocity: %f", vel);
+      velocities_.push_back(std::hypot(velocity_x, velocity_y));
+    }
+    auto vel = std::accumulate(velocities_.begin(), velocities_.end(), 0.0) / velocities_.size();
+    RCLCPP_INFO(node_->get_logger(), "Velocity: %f", vel);
 
-      if (vel > velocity_tolerance_) {
-        RCLCPP_INFO(node_->get_logger(), "Entity is moving");
-        return BT::NodeStatus::SUCCESS;
-      } 
-      RCLCPP_INFO(node_->get_logger(), "Entity is not moving");
-      velocities_.clear();
-      entity_transforms_.clear();
-      return BT::NodeStatus::FAILURE;      
+    if (vel > velocity_tolerance_) {
+      RCLCPP_INFO(node_->get_logger(), "Entity is moving");
+      return BT::NodeStatus::SUCCESS;
+    }
+    RCLCPP_INFO(node_->get_logger(), "Entity is not moving");
+    velocities_.clear();
+    entity_transforms_.clear();
+    return BT::NodeStatus::FAILURE;
   }
   return BT::NodeStatus::SUCCESS;
-  
+
 
 }
 

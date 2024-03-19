@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/CognitiveModule.hpp"
 #include "gtest/gtest.h"
 
@@ -25,5 +24,4 @@ TEST(cognitive_module_test, startup_simple)
 
   auto cm1 = cs4home_core::CognitiveModule::make_shared(options);
   ASSERT_EQ(std::string(cm1->get_name()), "cognitive_module_1");
-
 }

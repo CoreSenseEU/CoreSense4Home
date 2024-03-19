@@ -30,7 +30,7 @@ def generate_launch_description():
 
     package_dir = get_package_share_directory('robocup_bringup')
     whisper_dir = get_package_share_directory('whisper_bringup')
-    audio_common_dir = get_package_share_directory('audio_common')
+    # audio_common_dir = get_package_share_directory('audio_common')
     move_group_dir = get_package_share_directory('tiago_mtc_examples')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     attention_dir = get_package_share_directory('attention_system')
@@ -46,21 +46,19 @@ def generate_launch_description():
     model_repo = LaunchConfiguration('model_repo')
     model_filename = LaunchConfiguration('model_filename')
 
-    rviz = LaunchConfiguration('rviz')
-    map_file = LaunchConfiguration('map')
-    params_file = LaunchConfiguration('params_file')
-    # log_level = LaunchConfiguration("log_level")
-
     declare_model_repo_cmd = DeclareLaunchArgument(
-        'model_repo', default_value="ggerganov/whisper.cpp", description="Hugging Face model repo")
+        'model_repo', default_value="ggerganov/whisper.cpp",
+        description="Hugging Face model repo")
 
     declare_model_filename_cmd = DeclareLaunchArgument(
-        'model_filename', default_value="ggml-large-v3-q5_0.bin", description="Hugging Face model filename")
-    
+        'model_filename', default_value="ggml-large-v3-q5_0.bin",
+        description="Hugging Face model filename")
+
     declare_log_level = DeclareLaunchArgument(
             "log_level",
             default_value="error",
-            description="The level of logging that is applied to all ROS 2 nodes launched by this script.",
+            description="The level of logging that is applied to all ROS 2\
+            nodes launched by this script.",
         )
 
     # audio related launchers:
@@ -139,7 +137,6 @@ def generate_launch_description():
 
     )
 
-
     carry_my_luggage = Node(
         package='bt_test',
         executable='carry_my_luggage_test',
@@ -151,21 +148,21 @@ def generate_launch_description():
     # wait_for_navigation = RegisterEventHandler(
     #          OnExecutionComplete(
     #                  target_action=,
-    #                  on_start=[LogInfo(msg="Started the carry_ luggage. "), 
+    #                  on_start=[LogInfo(msg="Started the carry_ luggage. "),
     #                                  another_node]
     #          )
     #    )
 
     ld = LaunchDescription()
     ld.add_action(perception)
-    # ld.add_action(attention) # afuera 
-    # ld.add_action(navigation) 
+    ld.add_action(attention)
+    ld.add_action(navigation)
     ld.add_action(manipulation_server)
     ld.add_action(move_group)
-    # # ld.add_action(carry_my_luggage)
+    ld.add_action(carry_my_luggage)
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
-    # ld.add_action(whisper_cmd)
+    ld.add_action(whisper_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
     ld.add_action(declare_log_level)

@@ -57,12 +57,13 @@ public:
       {
         BT::InputPort<std::string>("frame"),
         BT::InputPort<int>("max_iterations"),
-        BT::InputPort<float>("velocity_tolerance", "velocity tolerance to consider the entity is moving")
+        BT::InputPort<float>(
+          "velocity_tolerance",
+          "velocity tolerance to consider the entity is moving")
       });
   }
 
 private:
- 
   rclcpp::Node::SharedPtr node_;
 
   std::string frame_, cam_frame_;

@@ -136,12 +136,9 @@ public:
       setStatus(BT::NodeStatus::RUNNING);
 
       // user defined callback
-      try
-      {
-       on_tick();
-      }
-      catch(const std::exception& e)
-      {
+      try {
+        on_tick();
+      } catch (const std::exception & e) {
         std::cerr << e.what() << '\n';
         return BT::NodeStatus::FAILURE;
       }
@@ -276,7 +273,6 @@ protected:
   // new action goal is sent or canceled
   std::chrono::milliseconds server_timeout_;
 };
-
 
 
 }  // namespace navigation

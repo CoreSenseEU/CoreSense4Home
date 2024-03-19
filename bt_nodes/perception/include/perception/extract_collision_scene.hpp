@@ -25,21 +25,26 @@
 #include "perception_system_interfaces/srv/isolate_pc_background.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
 
-namespace perception {
+namespace perception
+{
 
-class ExtractCollisionScene : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground> {
+class ExtractCollisionScene : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>
+{
 public:
-  explicit ExtractCollisionScene(const std::string &xml_tag_name,
-                  const std::string &action_name,
-                  const BT::NodeConfiguration &conf);
+  explicit ExtractCollisionScene(
+    const std::string & xml_tag_name,
+    const std::string & action_name,
+    const BT::NodeConfiguration & conf);
 
   void on_tick() override;
   void on_result() override;
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({
-      BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object")
-    });
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {
+        BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object")
+      });
   }
 
 

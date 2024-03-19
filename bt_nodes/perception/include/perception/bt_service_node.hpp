@@ -69,7 +69,10 @@ public:
     callback_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     callback_group_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
     // Now that we have the ROS node to use, create the action client for this BT action
-    service_client_ = node_->template create_client<ServiceT>(service_name, rmw_qos_profile_services_default, callback_group_);
+    service_client_ = node_->template create_client<ServiceT>(
+      service_name,
+      rmw_qos_profile_services_default,
+      callback_group_);
 
     // Make sure the server is actually there before continuing
     RCLCPP_INFO(node_->get_logger(), "Waiting for \"%s\" service server", service_name.c_str());
@@ -108,12 +111,12 @@ public:
   virtual void on_result()
   {
   }
-  
+
   // The main override required by a BT action
   BT::NodeStatus tick() override
   {
     // first step to be done only at the beginning of the Action
-    if (status() == BT::NodeStatus::IDLE  || !service_client_) {
+    if (status() == BT::NodeStatus::IDLE || !service_client_) {
       createServiceClient(service_name_);
 
       // setting the status to RUNNING to notify the BT Loggers (if any)
@@ -130,8 +133,7 @@ public:
     if (rclcpp::ok() && !request_result_available_) {
       // user defined callback. May modify the value of "goal_updated_"
 
-      if (request_updated_)
-      {
+      if (request_updated_) {
         request_updated_ = false;
         on_new_request_received();
       }
@@ -146,23 +148,22 @@ public:
     }
 
     on_result();
-    
+
     return status();
   }
 
   // The other (optional) override required by a BT action. In this case, we
   // make sure to cancel the ROS2 action if it is still running.
-void halt() override
-{
-  setStatus(BT::NodeStatus::IDLE);
-}
+  void halt() override
+  {
+    setStatus(BT::NodeStatus::IDLE);
+  }
 
 protected:
-
   void on_new_request_received()
   {
     request_result_available_ = false;
-    
+
     // auto result_callback =
     //     [&,this](typename rclcpp::Client<ServiceT>::SharedFuture future_result) {
     //         request_result_available_ = true;
@@ -170,15 +171,14 @@ protected:
     // };
 
     auto future_request = service_client_->async_send_request(request_).share();
-    
-    auto ret = callback_group_executor_.spin_until_future_complete(future_request, std::chrono::milliseconds(5000));
 
-    if (ret != rclcpp::FutureReturnCode::SUCCESS)
-    {
+    auto ret = callback_group_executor_.spin_until_future_complete(
+      future_request, std::chrono::milliseconds(
+        5000));
+
+    if (ret != rclcpp::FutureReturnCode::SUCCESS) {
       throw std::runtime_error("send_request failed");
-    }
-    else
-    {
+    } else {
       request_result_available_ = true;
       result_ = *future_request.get();
       future_request = {};

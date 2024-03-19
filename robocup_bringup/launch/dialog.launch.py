@@ -22,24 +22,24 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from llama_bringup.utils import create_llama_launch
 
+
 def generate_launch_description():
-    package_dir = get_package_share_directory('robocup_bringup')
-    llama_dir = get_package_share_directory('llama_bringup')
+    # package_dir = get_package_share_directory('robocup_bringup')
+    # llama_dir = get_package_share_directory('llama_bringup')
     whisper_dir = get_package_share_directory('whisper_bringup')
-    audio_common_dir = get_package_share_directory('audio_common')
+    # audio_common_dir = get_package_share_directory('audio_common')
 
     # Configuration Variables
     model_repo = LaunchConfiguration('model_repo')
     model_filename = LaunchConfiguration('model_filename')
-    rviz = LaunchConfiguration('rviz')
-    map_file = LaunchConfiguration('map')
-    params_file = LaunchConfiguration('params_file')
 
     declare_model_repo_cmd = DeclareLaunchArgument(
-        'model_repo', default_value="ggerganov/whisper.cpp", description="Hugging Face model repo")
+        'model_repo', default_value='ggerganov/whisper.cpp',
+        description='Hugging Face model repo')
 
     declare_model_filename_cmd = DeclareLaunchArgument(
-        'model_filename', default_value="ggml-large-v3-q5_0.bin", description="Hugging Face model filename")
+        'model_filename', default_value='ggml-large-v3-q5_0.bin',
+        description='Hugging Face model filename')
 
     # Actions
     llama_cmd = create_llama_launch(
@@ -49,12 +49,12 @@ def generate_launch_description():
             n_threads=4,
             n_predict=-1,
 
-            model_repo="TheBloke/Marcoroni-7B-v3-GGUF",
-            model_filename="marcoroni-7b-v3.Q4_K_M.gguf",
+            model_repo='TheBloke/Marcoroni-7B-v3-GGUF',
+            model_filename='marcoroni-7b-v3.Q4_K_M.gguf',
 
-            prefix="\n\n### Instruction:\n",
-            suffix="\n\n### Response:\n",
-            stop="\n\n\n\n",
+            prefix='\n\n### Instruction:\n',
+            suffix='\n\n### Response:\n',
+            stop='\n\n\n\n',
     )
 
     whisper_cmd = IncludeLaunchDescription(
@@ -68,22 +68,22 @@ def generate_launch_description():
     )
 
     audio_common_tts_node = Node(
-        package="audio_common",
-        executable="tts_node",
+        package='audio_common',
+        executable='tts_node',
         parameters=[
-            {"chunk": 4096},
-            {"frame_id": ""},
-            {"model": "tts_models/en/ljspeech/vits"},
-            {"speaker_wav": ""},
-            {"device": "cuda"}]
+            {'chunk': 4096},
+            {'frame_id': ''},
+            {'model': 'tts_models/en/ljspeech/vits'},
+            {'speaker_wav': ''},
+            {'device': 'cuda'}]
     )
 
     audio_common_player_node = Node(
-        package="audio_common",
-        executable="audio_player_node",
+        package='audio_common',
+        executable='audio_player_node',
         parameters=[
-            {"channels": 2},
-            {"device": -1}]
+            {'channels': 2},
+            {'device': -1}]
     )
 
     ld = LaunchDescription()

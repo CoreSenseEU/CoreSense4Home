@@ -87,8 +87,7 @@ ExtractObjectsFromScene::tick()
   auto header = last_detected_objs_->header;
   for (auto const & detected_object : last_detected_objs_->detections) {
 
-    if (detected_object.bbox3d.size.x >= 0.12 && detected_object.bbox3d.size.y >= 0.12)
-    {
+    if (detected_object.bbox3d.size.x >= 0.12 && detected_object.bbox3d.size.y >= 0.12) {
       RCLCPP_INFO(node_->get_logger(), "Ignoring too large object");
       continue;
     }

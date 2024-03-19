@@ -12,20 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-#ifndef CS4HOME__COGNITIVEMODULE_HPP_
-#define CS4HOME__COGNITIVEMODULE_HPP_
-
+#ifndef CS4HOME_CORE__COGNITIVEMODULE_HPP_
+#define CS4HOME_CORE__COGNITIVEMODULE_HPP_
 
 #include "cs4home_core/Afferent.hpp"
-#include "cs4home_core/Efferent.hpp"
 #include "cs4home_core/Core.hpp"
-#include "cs4home_core/Meta.hpp"
 #include "cs4home_core/Coupling.hpp"
-
-#include "rclcpp_lifecycle/lifecycle_node.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "cs4home_core/Efferent.hpp"
+#include "cs4home_core/Meta.hpp"
 #include "rclcpp/macros.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 namespace cs4home_core
 {
@@ -34,10 +31,9 @@ class CognitiveModule : public rclcpp_lifecycle::LifecycleNode
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(CognitiveModule)
-  using CallbackReturnT =
-    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+  using CallbackReturnT = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-  CognitiveModule(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit CognitiveModule(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   CallbackReturnT on_configure(const rclcpp_lifecycle::State & state);
   CallbackReturnT on_activate(const rclcpp_lifecycle::State & state);
@@ -56,7 +52,7 @@ protected:
 
 }  // namespace cs4home_core
 
-#endif  // CS4HOME__COGNITIVEMODULE_HPP_
+#endif  // CS4HOME_CORE__COGNITIVEMODULE_HPP_
 
 // #include "rclcpp_components/register_node_macro.hpp"
 //

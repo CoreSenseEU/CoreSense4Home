@@ -54,7 +54,6 @@ public:
   }
 
 private:
- 
   rclcpp::Node::SharedPtr node_;
 
   std::string frame_;
@@ -67,8 +66,10 @@ private:
 
   geometry_msgs::msg::TransformStamped filtered_entity_;
 
-  geometry_msgs::msg::TransformStamped initialize_state_observer(const geometry_msgs::msg::TransformStamped& entity);
-  geometry_msgs::msg::TransformStamped update_state_observer(const geometry_msgs::msg::TransformStamped& entity);
+  geometry_msgs::msg::TransformStamped initialize_state_observer(
+    const geometry_msgs::msg::TransformStamped & entity);
+  geometry_msgs::msg::TransformStamped update_state_observer(
+    const geometry_msgs::msg::TransformStamped & entity);
 };
 
 }  // namespace perception

@@ -43,7 +43,7 @@ FilterEntity::FilterEntity(
   getInput("lambda", lambda_);
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
 
-  
+
 }
 
 void
@@ -52,16 +52,21 @@ FilterEntity::halt()
   RCLCPP_INFO(node_->get_logger(), "FilterEntity halted");
 }
 
-geometry_msgs::msg::TransformStamped FilterEntity::update_state_observer(const geometry_msgs::msg::TransformStamped& entity)
+geometry_msgs::msg::TransformStamped FilterEntity::update_state_observer(
+  const geometry_msgs::msg::TransformStamped & entity)
 {
-  filtered_entity_.transform.translation.x = filtered_entity_.transform.translation.x + lambda_ * (entity.transform.translation.x - filtered_entity_.transform.translation.x);
-  filtered_entity_.transform.translation.y = filtered_entity_.transform.translation.y + lambda_ * (entity.transform.translation.y - filtered_entity_.transform.translation.y);
-  filtered_entity_.transform.translation.z = filtered_entity_.transform.translation.z + lambda_ * (entity.transform.translation.z - filtered_entity_.transform.translation.z);
+  filtered_entity_.transform.translation.x = filtered_entity_.transform.translation.x + lambda_ *
+    (entity.transform.translation.x - filtered_entity_.transform.translation.x);
+  filtered_entity_.transform.translation.y = filtered_entity_.transform.translation.y + lambda_ *
+    (entity.transform.translation.y - filtered_entity_.transform.translation.y);
+  filtered_entity_.transform.translation.z = filtered_entity_.transform.translation.z + lambda_ *
+    (entity.transform.translation.z - filtered_entity_.transform.translation.z);
   filtered_entity_.header.stamp = entity.header.stamp;
 
   return filtered_entity_;
 }
-geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(const geometry_msgs::msg::TransformStamped& entity)
+geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(
+  const geometry_msgs::msg::TransformStamped & entity)
 {
   filtered_entity_ = entity;
   filtered_entity_.child_frame_id = entity.child_frame_id + "_filtered";
@@ -69,12 +74,11 @@ geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(con
 }
 
 
-
 BT::NodeStatus
 FilterEntity::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "IsMoving ticked");
-  
+
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
   rclcpp::Time when = node_->get_clock()->now();
 
@@ -88,16 +92,14 @@ FilterEntity::tick()
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform %s to %s: %s",
       frame_.c_str(), "map", ex.what());
-      RCLCPP_INFO(node_->get_logger(), "Cannot transform");
+    RCLCPP_INFO(node_->get_logger(), "Cannot transform");
 
-      return BT::NodeStatus::SUCCESS;
+    return BT::NodeStatus::SUCCESS;
   }
   geometry_msgs::msg::TransformStamped filtered_entity;
-  if(state_obs_initialized_){
+  if (state_obs_initialized_) {
     filtered_entity = update_state_observer(entity_transform_now_msg);
-  }
-  else
-  {
+  } else {
     filtered_entity = initialize_state_observer(entity_transform_now_msg);
     state_obs_initialized_ = true;
   }

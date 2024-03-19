@@ -35,7 +35,7 @@
 #include "perception_system/PerceptionListener.hpp"
 
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/float64.hpp" 
+#include "std_msgs/msg/float64.hpp"
 
 namespace perception
 {
@@ -56,14 +56,15 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<std::string>("frame"),
-        BT::InputPort<float>("velocity_tolerance", "Tolerance in velocity to consider the human stopped"),
+        BT::InputPort<float>(
+          "velocity_tolerance",
+          "Tolerance in velocity to consider the human stopped"),
         BT::InputPort<float>("threshold_time", "Lag time to consider the human stopped"),
         BT::InputPort<float>("position_buffer_dimension", "Human position buffer dimension")
       });
   }
 
 private:
- 
   rclcpp::Node::SharedPtr node_;
 
   std::string frame_, cam_frame_;

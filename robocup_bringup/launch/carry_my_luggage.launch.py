@@ -160,7 +160,7 @@ def generate_launch_description():
     ld = LaunchDescription()
     # ld.add_action(perception)
     # ld.add_action(attention) # afuera
-    # ld.add_action(navigation) 
+    # ld.add_action(navigation)
     # ld.add_action(manipulation_server)
     # ld.add_action(move_group)
     ld.add_action(carry_my_luggage)

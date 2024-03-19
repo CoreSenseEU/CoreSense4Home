@@ -3,7 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Header
-from yolov8_msgs.msg import DetectionArray, Detection, BoundingBox2D
+from yolov8_msgs.msg import BoundingBox2D, Detection, DetectionArray
 
 DEFAULT_NUM_OBJECTS = 5
 
@@ -14,7 +14,7 @@ class DetectionPublisherNode(Node):
         self.publisher_ = self.create_publisher(
             DetectionArray, '/perception_system/detections_3d', 10)
         self.timer = self.create_timer(1, self.publish_detection)
- 
+
         self.num_objects = self.get_parameter_or('num_objects',
                                                  DEFAULT_NUM_OBJECTS)
         self.get_logger().info(f'Number of found objects: {self.num_objects}')
@@ -61,4 +61,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    main() 
+    main()

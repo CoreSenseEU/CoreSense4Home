@@ -50,6 +50,7 @@ public:
       {
         BT::InputPort<std::string>("frame"),
         BT::InputPort<float>("lambda", "filtering parameter"),
+        BT::OutputPort<std::string>("filtered_frame"),
       });
   }
 

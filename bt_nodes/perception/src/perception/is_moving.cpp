@@ -54,7 +54,7 @@ IsMoving::IsMoving(
 void IsMoving::add_position(
   const geometry_msgs::msg::TransformStamped & new_position)
 {
-  RCLCPP_INFO(node_->get_logger(), "Adding position to buffer dim: %d", position_buffer_.size());
+  // RCLCPP_INFO(node_->get_logger(), "Adding position to buffer dim: %d", position_buffer_.size());
   if (position_buffer_.size() == position_buffer_dimension_) {
     buffer_dim_riched_ = true;
   }
@@ -82,29 +82,29 @@ double IsMoving::compute_velocity()
     double time_1 = position_buffer_[i - 1].header.stamp.sec +
       position_buffer_[i - 1].header.stamp.nanosec * 1e-9;
 
-    RCLCPP_INFO(node_->get_logger(), "Time 1: %.10f s", time_1);
-    RCLCPP_INFO(
-      node_->get_logger(), "Delta time sec: %d s", position_buffer_[i - 1].header.stamp.sec);
-    RCLCPP_INFO(
-      node_->get_logger(), "Delta time nanosec: %d s",
-      position_buffer_[i - 1].header.stamp.nanosec);
-    RCLCPP_INFO(node_->get_logger(), "Time 2: %.10f s", time_2);
-    RCLCPP_INFO(
-      node_->get_logger(), "Delta time sec 2 : %d s",
-      position_buffer_[i].header.stamp.sec);
-    RCLCPP_INFO(
-      node_->get_logger(), "Delta time nanosec 2: %d s",
-      position_buffer_[i].header.stamp.nanosec);
+    // RCLCPP_INFO(node_->get_logger(), "Time 1: %.10f s", time_1);
+    // RCLCPP_INFO(
+    //   node_->get_logger(), "Delta time sec: %d s", position_buffer_[i - 1].header.stamp.sec);
+    // RCLCPP_INFO(
+    //   node_->get_logger(), "Delta time nanosec: %d s",
+    //   position_buffer_[i - 1].header.stamp.nanosec);
+    // RCLCPP_INFO(node_->get_logger(), "Time 2: %.10f s", time_2);
+    // RCLCPP_INFO(
+    //   node_->get_logger(), "Delta time sec 2 : %d s",
+    //   position_buffer_[i].header.stamp.sec);
+    // RCLCPP_INFO(
+    //   node_->get_logger(), "Delta time nanosec 2: %d s",
+    //   position_buffer_[i].header.stamp.nanosec);
 
     double delta_time = time_2 - time_1;
     if (delta_time <= 1e-10) {
       continue;
     }
     at_least_one_couple = true;
-    RCLCPP_INFO(node_->get_logger(), "Delta time: %.10f s", delta_time);
+    // RCLCPP_INFO(node_->get_logger(), "Delta time: %.10f s", delta_time);
     double velocity = std::sqrt(delta_x * delta_x + delta_y * delta_y) / delta_time;
-    RCLCPP_INFO(node_->get_logger(), "velocity: %f s", velocity);
-    RCLCPP_INFO(node_->get_logger(), "Delta pos: %f m", delta_x);
+    RCLCPP_INFO(node_->get_logger(), "Velocity: %f s", velocity);
+    // RCLCPP_INFO(node_->get_logger(), "Delta pos: %f m", delta_x);
 
     total_velocity += velocity;
   }
@@ -125,8 +125,8 @@ IsMoving::tick()
 
   try {
     entity_transform_now_msg = tf_buffer_->lookupTransform(
-      frame_,
       "map",
+      frame_,
       tf2::TimePointZero);
     // Ottenere la posizione x, y, z dalla trasformazione
     double x = entity_transform_now_msg.transform.translation.x;
@@ -189,7 +189,6 @@ IsMoving::tick()
     RCLCPP_INFO(node_->get_logger(), "First time stopped %f", velocity);
 
   }
-  RCLCPP_INFO(node_->get_logger(), "Here");
 
   if ((when.seconds() - first_time_stopped_.seconds()) > threshold_time_) {
 

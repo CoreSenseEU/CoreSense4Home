@@ -46,7 +46,9 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_entity_moving_bt_node"));
   factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
-
+  factory.registerFromPlugin(loader.getOSName("filter_entity_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("is_moving_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("follow_entity_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/carry_my_luggage.xml";
@@ -57,7 +59,7 @@ int main(int argc, char * argv[])
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(30);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {

@@ -52,7 +52,7 @@ IsEntityMoving::tick()
   getInput("frame", frame_);
   getInput("velocity_tolerance", velocity_tolerance_);
   getInput("max_iterations", max_iterations_);
-  RCLCPP_INFO(node_->get_logger(), "IsEntityMoving ticked");
+  // RCLCPP_INFO(node_->get_logger(), "IsEntityMoving ticked");
 
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
 
@@ -86,6 +86,8 @@ IsEntityMoving::tick()
 
     if (vel > velocity_tolerance_) {
       RCLCPP_INFO(node_->get_logger(), "Entity is moving");
+      velocities_.clear();
+      entity_transforms_.clear();
       return BT::NodeStatus::SUCCESS;
     }
     RCLCPP_INFO(node_->get_logger(), "Entity is not moving");

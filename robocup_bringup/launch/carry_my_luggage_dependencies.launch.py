@@ -126,7 +126,7 @@ def generate_launch_description():
             os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
         ),
         launch_arguments={
-            'model': 'yolov8x-pose.pt',
+            'model': 'yolov8n-pose.pt',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',
@@ -155,14 +155,14 @@ def generate_launch_description():
 
     ld = LaunchDescription()
     ld.add_action(perception)
-    ld.add_action(attention)
-    ld.add_action(navigation)
+    # ld.add_action(attention)
+    # ld.add_action(navigation)
     ld.add_action(manipulation_server)
     ld.add_action(move_group)
-    ld.add_action(carry_my_luggage)
+    # ld.add_action(carry_my_luggage)
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
-    ld.add_action(whisper_cmd)
+    # ld.add_action(whisper_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
     ld.add_action(declare_log_level)

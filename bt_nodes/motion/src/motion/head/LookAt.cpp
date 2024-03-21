@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "motion/navigation/LookAt.hpp"
+#include <math.h>
 
 namespace navigation
 {
@@ -23,48 +24,72 @@ LookAt::LookAt(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  rclcpp::QoS qos(rclcpp::KeepLast(10));
-  qos.transient_local().reliable();
-  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "/attention/attention_points", 1);  
+
+  action_client_ = rclcpp_action::create_client<TrajectoryAction>(
+    node_, "head_controller/follow_joint_trajectory");
+
+  if (!action_client_->wait_for_action_server()) {
+    RCLCPP_ERROR(node_->get_logger(), "Action server not available after waiting");
+  }
 }
 
 BT::NodeStatus
 LookAt::tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "LookAt ticked");
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_INFO(node_->get_logger(), "LookAt idle");
+    config().blackboard->get("tf_buffer", tf_buffer_);
+    return BT::NodeStatus::RUNNING;
+  }
+
   getInput("tf_frames", tf_frames_);
   getInput("tf_frame", tf_frame_);
 
-  std::string goal_frame;
-
-  if (tf_frames_.size() == 0 && !tf_frame_.empty()) {
-    goal_frame = tf_frame_;
-  } else if (tf_frames_.size() > 0) {
-    goal_frame = tf_frames_[0];
-  } else {
+  if (tf_frames_.size() == 0 && tf_frame_.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "No goal frame provided");
     return BT::NodeStatus::FAILURE;
   }
 
-  attention_system_msgs::msg::AttentionPoints attention_points_msg;
-  RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", goal_frame.c_str());
+  while(!tf_buffer_->canTransform("head_1_link", tf_frame_, tf2::TimePointZero) &&
+          rclcpp::ok() &&
+          !tf_buffer_->canTransform("head_2_link", tf_frame_, tf2::TimePointZero))
+  {
+    RCLCPP_INFO(
+      node_->get_logger(), "Waiting for transform from head to %s",
+      tf_frame_.c_str());
+    rclcpp::spin_some(node_->get_node_base_interface());
+    return BT::NodeStatus::RUNNING;
+  }
 
-  attention_points_msg.instance_id = "look_at";
-  attention_points_msg.lifeness = rclcpp::Duration(5, 0);
-  attention_points_msg.time_in_point = rclcpp::Duration(0, 0);
+  try {
+    head_1_transform = tf_buffer_->lookupTransform(
+      "head_1_link", tf_frame_,
+      tf2::TimePointZero);
+    head_2_transform = tf_buffer_->lookupTransform(
+      "head_2_link", tf_frame_,
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & ex) {
+    RCLCPP_INFO(
+      node_->get_logger(), "Could not transform head to %s: %s",
+        tf_frame_.c_str(), ex.what());
+    return BT::NodeStatus::FAILURE;
+  }
 
-  geometry_msgs::msg::PointStamped point;
-  point.header.frame_id = goal_frame;
-  point.point.x = 0.0;
-  point.point.y = 0.0;
-  point.point.z = 0.0;
+  yaw_ = atan2(head_1_transform.transform.translation.y, head_1_transform.transform.translation.x);
+  pitch_ = atan2(head_2_transform.transform.translation.y, head_2_transform.transform.translation.x);
+  
+  RCLCPP_INFO(node_->get_logger(), "LookAt yaw: %f, pitch: %f", yaw_, pitch_);
 
-  attention_points_msg.attention_points.push_back(point);
-  attention_points_pub_->publish(attention_points_msg);
+  goal_msg.trajectory.joint_names = std::vector<std::string>{"head_1_joint", "head_2_joint"};
+  point.positions = std::vector<double>{yaw_, pitch_};
+  point.time_from_start = rclcpp::Duration::from_seconds(0.5);
+  goal_msg.trajectory.points.push_back(point);
+
+  action_client_->async_send_goal(goal_msg);
+
+  RCLCPP_INFO(node_->get_logger(), "Sending goal to head controller");
 
   rclcpp::spin_some(node_);
-  RCLCPP_INFO(node_->get_logger(), "LookAt published attention points");
   return BT::NodeStatus::SUCCESS;
 }
 

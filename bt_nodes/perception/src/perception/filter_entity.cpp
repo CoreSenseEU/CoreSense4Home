@@ -42,6 +42,7 @@ FilterEntity::FilterEntity(
   getInput("frame", frame_);
   getInput("lambda", lambda_);
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
+  setOutput("filtered_frame", frame_  + "_filtered");
 
 
 }
@@ -104,6 +105,7 @@ FilterEntity::tick()
     state_obs_initialized_ = true;
   }
   tf_broadcaster_->sendTransform(filtered_entity);
+  setOutput("filtered_frame", filtered_entity.child_frame_id);
   return BT::NodeStatus::SUCCESS;
 }
 

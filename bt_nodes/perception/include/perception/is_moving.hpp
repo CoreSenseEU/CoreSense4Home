@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PERCEPTION__ISDETECTED_HPP_
-#define PERCEPTION__ISDETECTED_HPP_
+#ifndef PERCEPTION__IS_MOVING_HPP_
+#define PERCEPTION__IS_MOVING_HPP_
 
 #include <string>
 #include <algorithm>
@@ -33,19 +33,19 @@
 #include "tf2_ros/transform_broadcaster.h"
 
 #include "perception_system/PerceptionListener.hpp"
-#include "perception_system_interfaces/msg/detection_array.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/float64.hpp"
 
 namespace perception
 {
 
-using pl = perception_system::PerceptionListener;
+using namespace std::chrono_literals;
 
-class IsDetected : public BT::ConditionNode
+class IsMoving : public BT::ConditionNode
 {
 public:
-  explicit IsDetected(
+  explicit IsMoving(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -55,38 +55,35 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<int>("max_entities"),
-        BT::InputPort<int>("person_id"),
-        BT::InputPort<std::string>("cam_frame"),
-        BT::InputPort<std::string>("interest"),
-        BT::InputPort<float>("confidence"),
-        BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"),
-        BT::OutputPort<std::vector<std::string>>("frames")
+        BT::InputPort<std::string>("frame"),
+        BT::InputPort<float>(
+          "velocity_tolerance",
+          "Tolerance in velocity to consider the human stopped"),
+        BT::InputPort<float>("threshold_time", "Lag time to consider the human stopped"),
+        BT::InputPort<float>("position_buffer_dimension", "Human position buffer dimension")
       });
   }
 
 private:
-  int publicTF_map2object(
-    const perception_system_interfaces::msg::Detection & detected_object,
-    const std::string & frame_name);
-
-  void detection_callback(perception_system_interfaces::msg::DetectionArray::SharedPtr msg);
-
   rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr detected_objs_sub_;
-  perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};
 
-  std::string interest_, order_, cam_frame_;
-  double threshold_, max_depth_;
-  int max_entities_, person_id_;
-  std::vector<std::string> frames_;
+  std::string frame_, cam_frame_;
+  float velocity_tolerance_, threshold_time_, position_buffer_dimension_;
+  bool buffer_dim_riched_ = false;
+  bool entity_stopped_ = false;
+  rclcpp::Time first_time_stopped_;
 
-  tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+
+  std::vector<geometry_msgs::msg::TransformStamped> position_buffer_;
+
+  void add_position(const geometry_msgs::msg::TransformStamped & new_position);
+  double compute_velocity();
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr publisher_;
+
 };
 
 }  // namespace perception
 
-#endif  // PERCEPTION__ISDETECTED_HPP_
+#endif  // PERCEPTION__IS_MOVING_HPP_

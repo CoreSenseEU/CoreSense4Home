@@ -49,7 +49,7 @@ IsPointing::IsPointing(
   pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
-  
+
   getInput("cam_frame", camera_frame_);
 }
 
@@ -113,17 +113,21 @@ IsPointing::publicTF_map2object(
   geometry_msgs::msg::TransformStamped map2object_msg;
   map2object_msg.header.stamp = detected_object.header.stamp;
   map2object_msg.header.frame_id = "map";
-  
+
   map2object_msg.transform = tf2::toMsg(map2object);
-  
+
 
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
-  if (detected_object.pointing_direction == 0 || detected_object.pointing_direction == 1 || detected_object.pointing_direction == 7) {
+  if (detected_object.pointing_direction == 0 || detected_object.pointing_direction == 1 ||
+    detected_object.pointing_direction == 7)
+  {
     map2object_msg.child_frame_id = "right_bag";
     bag_frame_ = "right_bag";
-    map2object_msg.transform.translation.y += 0.4; // + or - ? 
-  } else if (detected_object.pointing_direction == 3 || detected_object.pointing_direction == 4 || detected_object.pointing_direction == 5) {
-    map2object_msg.transform.translation.y -= 0.4; // + or - ? 
+    map2object_msg.transform.translation.y += 0.4; // + or - ?
+  } else if (detected_object.pointing_direction == 3 || detected_object.pointing_direction == 4 ||
+    detected_object.pointing_direction == 5)
+  {
+    map2object_msg.transform.translation.y -= 0.4; // + or - ?
     bag_frame_ = "left_bag";
     map2object_msg.child_frame_id = "left_bag";
   }

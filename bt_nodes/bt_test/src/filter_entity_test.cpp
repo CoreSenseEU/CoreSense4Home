@@ -21,6 +21,11 @@
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/transform_listener.h"
+#include <tf2_ros/buffer.h>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -29,28 +34,29 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("pick_demo_test_node");
+  auto node = rclcpp::Node::make_shared("filter_entity_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("extract_object_from_scene_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("generate_text_from_objects_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("pick_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("extract_collision_scene_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("filter_entity_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/pick_demo.xml";
+  std::string xml_file = pkgpath + "/bt_xml/filter_entity_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
 
+  // auto tf_buffer = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+  // auto tf_broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(node);
+  // auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
+
+  // blackboard->set("tf_buffer", tf_buffer);
+  // blackboard->set("tf_broadcaster", tf_broadcaster);
 
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
-  auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
+  // auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
 
   rclcpp::Rate rate(10);
 

@@ -26,7 +26,11 @@ LookAt::LookAt(
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   qos.transient_local().reliable();
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
+<<<<<<< HEAD
     "/attention/attention_points", 1);  
+=======
+    "/attention/attention_points", qos);
+>>>>>>> 2aa9304bbf8e1eee08feb06c9d2a72ce4de019cf
 }
 
 BT::NodeStatus
@@ -40,11 +44,9 @@ LookAt::tick()
 
   if (tf_frames_.size() == 0 && !tf_frame_.empty()) {
     goal_frame = tf_frame_;
-  }
-  else if (tf_frames_.size() > 0) {
+  } else if (tf_frames_.size() > 0) {
     goal_frame = tf_frames_[0];
-  }
-  else {
+  } else {
     RCLCPP_ERROR(node_->get_logger(), "No goal frame provided");
     return BT::NodeStatus::FAILURE;
   }

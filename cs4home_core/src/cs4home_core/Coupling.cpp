@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/Coupling.hpp"
 
 namespace cs4home_core
 {
 
 Coupling::Coupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
+: parent_(parent) {}
 
-}
-
-bool
-Coupling::configure()
-{
-  return true;
-}
+bool Coupling::configure() {return true;}
 
 }  // namespace cs4home_core

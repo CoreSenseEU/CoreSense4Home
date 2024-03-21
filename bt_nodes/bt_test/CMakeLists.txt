@@ -117,7 +117,7 @@ target_link_libraries(pick_demo_test
   perception::extract_object_from_scene_bt_node
   perception::extract_collision_scene_bt_node
   hri::speak_bt_node
-  hri::dialogConfirmation_bt_node    
+  hri::dialogConfirmation_bt_node
 )
 
 # Ask test
@@ -133,7 +133,7 @@ target_link_libraries(configuration::init_carry_bt_node)
 # follow_person test
 add_executable(follow_person_test src/follow_person_test.cpp)
 ament_target_dependencies(follow_person_test ${dependencies})
-target_link_libraries(follow_person_test perception::follow_person_bt_node) 
+target_link_libraries(follow_person_test perception::follow_person_bt_node)
 
 # carry my luggage test
 add_executable(carry_my_luggage_test src/carry_my_luggage_test.cpp)
@@ -164,6 +164,10 @@ target_link_libraries(follow_entity_test
   # hri::speak_bt_node
   # hri::dialogConfirmation_bt_node
 )
+# FilterEntity test
+add_executable(filter_entity_test src/filter_entity_test.cpp)
+ament_target_dependencies(filter_entity_test ${dependencies})
+target_link_libraries(filter_entity_test perception::filter_entity_bt_node)
 
 install(TARGETS
   set_wp_test
@@ -185,6 +189,7 @@ install(TARGETS
   init_carry
   carry_my_luggage_test
   follow_entity_test
+  filter_entity_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

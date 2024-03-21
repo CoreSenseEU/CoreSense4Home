@@ -18,7 +18,7 @@
 
 #include "motion/navigation/utils.hpp"
 #include "motion/navigation/follow_entity.hpp"
-
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
@@ -102,21 +102,19 @@ FollowEntity::tick()
     goal_pose_.pose.position.y = entity_transform_.transform.translation.y;
     
 
-    // tf2::Quaternion current_orientation;
-    // tf2::Quaternion goal_orientation;
-    // // geometry_msgs::msg::Quaternion goal_orientation_msg;
+    tf2::Quaternion current_orientation;
+    tf2::Quaternion goal_orientation;
 
-    // tf2::fromMsg(goal_orientation, entity_transform_.transform.rotation);
-    // tf2::fromMsg(current_orientation, robot_direction_.transform.rotation);
-    // // tf2::toMsg(goal_orientation_msg, goal_orientation - current_orientation);
+    tf2::fromMsg(entity_transform_.transform.rotation, goal_orientation);
+    tf2::fromMsg(robot_direction_.transform.rotation, current_orientation);
 
-    // goal_pose_.pose.orientation = tf2::toMsg(goal_orientation - current_orientation);
+    goal_pose_.pose.orientation = tf2::toMsg(goal_orientation - current_orientation);
 
     auto goal = nav2_msgs::action::NavigateToPose::Goal();
     xml_path_ = generate_xml_file(dynamic_following_xml,distance_tolerance_);
 
     goal.pose = goal_pose_;
-    // goal.behavior_tree = xml_path_;
+    goal.behavior_tree = xml_path_;
 
     auto future_goal_handle = client_->async_send_goal(goal);
     if (rclcpp::spin_until_future_complete(
@@ -160,18 +158,18 @@ FollowEntity::tick()
 
     goal_pose_.header.frame_id = "map";
     goal_pose_.header.stamp = node_->now();
-    
+
     goal_pose_.pose.position.x = entity_transform_.transform.translation.x;
     goal_pose_.pose.position.y = entity_transform_.transform.translation.y;
     
 
-    // tf2::Quaternion current_orientation;
-    // tf2::Quaternion goal_orientation;
+    tf2::Quaternion current_orientation;
+    tf2::Quaternion goal_orientation;
 
-    // tf2::fromMsg(goal_orientation, entity_transform_.transform.rotation);
-    // tf2::fromMsg(current_orientation, robot_direction_.transform.rotation);
+    tf2::fromMsg(entity_transform_.transform.rotation, goal_orientation);
+    tf2::fromMsg(robot_direction_.transform.rotation, current_orientation);
 
-    // goal_pose_.pose.orientation = tf2::toMsg(goal_orientation - current_orientation);
+    goal_pose_.pose.orientation = tf2::toMsg(goal_orientation - current_orientation);
     entity_pose_pub_->publish(goal_pose_);
 
     rclcpp::spin_some(node_->get_node_base_interface());

@@ -33,6 +33,7 @@
 #include "tf2_ros/transform_broadcaster.h"
 
 #include "perception_system/PerceptionListener.hpp"
+#include "perception_system_interfaces/msg/detection_array.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -70,7 +71,11 @@ private:
     const perception_system_interfaces::msg::Detection & detected_object,
     const std::string & frame_name);
 
+  void detection_callback(perception_system_interfaces::msg::DetectionArray::SharedPtr msg);
+
   rclcpp::Node::SharedPtr node_;
+  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr detected_objs_sub_;
+  perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};
 
   std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;

@@ -76,6 +76,7 @@ DESTINATION include/
 
 install(PROGRAMS
   script/detection_test.py
+  script/attention_test.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

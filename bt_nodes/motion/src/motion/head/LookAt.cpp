@@ -26,7 +26,7 @@ LookAt::LookAt(
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   qos.transient_local().reliable();
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "/attention/attention_points", qos);  
+    "/attention/attention_points", 1);  
 }
 
 BT::NodeStatus

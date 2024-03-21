@@ -6,15 +6,15 @@
             <Action ID="InitCarry"/>
             <RetryUntilSuccessful num_attempts="-1">
                 <ReactiveSequence>
-                    <Condition ID="IsDetected" confidence="0.6"
+                    <Condition ID="IsDetected" confidence="0.4"
                                                interest="person"
-                                               max_depth="4"
+                                               max_depth="6"
                                                max_entities="1"
                                                order="depth"
                                                cam_frame="head_front_camera_link_color_optical_frame"/>
                     <Action ID ="LookAt" tf_frame="person_0"/>
                     <Action ID="FollowEntity" frame_to_follow="person_0"
-                                              distance_tolerance="2.0"
+                                              distance_tolerance="1.5"
                                               camera_frame="head_front_camera_link_color_optical_frame"/>
                 </ReactiveSequence>
             </RetryUntilSuccessful>

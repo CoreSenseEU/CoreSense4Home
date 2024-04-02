@@ -28,6 +28,8 @@
 #include <tf2_ros/transform_listener.h>
 
 #include "nav2_costmap_2d/costmap_2d_ros.hpp"
+#include "nav2_costmap_2d/clear_costmap_service.hpp"
+#include "nav2_costmap_2d/costmap_layer.hpp"
 
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
@@ -38,18 +40,12 @@
 namespace navigation
 {
 
-class ClearMapAtGoal
-  : public BT::SyncActionNode 
+class ClearMapAtGoal : public BT::SyncActionNode 
 {
 public:
-  explicit MoveTo(
+  explicit ClearMapAtGoal(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
-
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
-  BT::NodeStatus on_aborted() override;
-  BT::NodeStatus on_cancelled() override;
 
   static BT::PortsList providedPorts()
   {
@@ -60,14 +56,21 @@ public:
       });
   }
 
+  BT::NodeStatus tick();
+
 private:
   rclcpp::Node::SharedPtr node_;
-  double distance_tolerance_;
-  std::string tf_frame_;
-  geometry_msgs::msg::PoseStamped pose_;
-  tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
-  bool will_finish_;
+  double radius_;
+  // std::string tf_frame_;
+  // geometry_msgs::msg::PoseStamped pose_;
+  // tf2::BufferCore tf_buffer_;
+  // tf2_ros::TransformListener tf_listener_;
+  // bool will_finish_;
+  void clearLayerRegion(
+  std::shared_ptr<nav2_costmap_2d::CostmapLayer> & costmap, double pose_x, double pose_y, double reset_distance,
+  bool invert);
+
+  std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

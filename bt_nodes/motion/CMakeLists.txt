@@ -15,6 +15,7 @@ find_package(attention_system REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(nav2_costmap_2d REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -28,6 +29,7 @@ set(dependencies
   tf2_geometry_msgs
   tf2
   attention_system
+  nav2_costmap_2d
 )
 
 include_directories(include)
@@ -40,6 +42,9 @@ list(APPEND plugin_libs look_at_bt_node)
 
 add_library(follow_entity_bt_node SHARED src/motion/navigation/follow_entity.cpp)
 list(APPEND plugin_libs follow_entity_bt_node)
+
+add_library(clear_map_at_goal_bt_node SHARED src/motion/navigation/clear_map_at_goal.cpp)
+list(APPEND plugin_libs clear_map_at_goal_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

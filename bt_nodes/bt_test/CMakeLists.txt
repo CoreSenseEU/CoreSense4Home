@@ -143,6 +143,7 @@ target_link_libraries(carry_my_luggage_test
   perception::is_detected_bt_node
   perception::is_pointing_bt_node
   perception::is_entity_moving_bt_node
+  perception::extract_entity_color_bt_node
   arm::move_to_predefined_bt_node
   motion::move_to_bt_node
   motion::look_at_bt_node

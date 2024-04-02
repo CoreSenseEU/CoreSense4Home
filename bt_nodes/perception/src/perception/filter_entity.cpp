@@ -39,7 +39,7 @@ FilterEntity::FilterEntity(
   tf_listener_ =
     std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  getInput("frame", frame_);
+  
   getInput("lambda", lambda_);
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
   setOutput("filtered_frame", frame_  + "_filtered");
@@ -78,10 +78,10 @@ geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(
 BT::NodeStatus
 FilterEntity::tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "IsMoving ticked");
+  getInput("frame", frame_);
+  RCLCPP_INFO(node_->get_logger(), "IsMoving filtering frame %s", frame_.c_str());
 
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
-  rclcpp::Time when = node_->get_clock()->now();
 
   try {
     entity_transform_now_msg = tf_buffer_->lookupTransform(

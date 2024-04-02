@@ -36,18 +36,6 @@ IsDetected::IsDetected(
   max_entities_(1)
 {
   config().blackboard->get("node", node_);
-  config().blackboard->get("cam_frame", cam_frame_);
-  config().blackboard->get("person_id", person_id_);
-
-  // tf_buffer_ =
-  //   std::make_shared<tf2_ros::Buffer>(node_->get_clock());
-  // tf_listener_ =
-  //   std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-  // tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
-
-  detected_objs_sub_ = node_->create_subscription<perception_system_interfaces::msg::DetectionArray>(
-    "perception_system/all_perceptions", 1,
-    std::bind(&IsDetected::detection_callback, this, _1));
 
   getInput("interest", interest_);
   getInput("cam_frame", cam_frame_);
@@ -57,33 +45,28 @@ IsDetected::IsDetected(
   getInput("max_depth", max_depth_);
   getInput("person_id", person_id_);
 
+  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+
 }
 
-void
-IsDetected::detection_callback(perception_system_interfaces::msg::DetectionArray::SharedPtr msg)
-{
-  last_detected_objs_ = msg;
-}
 BT::NodeStatus
 IsDetected::tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "IsDetected ticked");
-  rclcpp::spin_some(node_);
-  RCLCPP_INFO(node_->get_logger(), "IsDetected ticked after spin_some");
+  pl::getInstance()->set_interest(interest_, true);
+  pl::getInstance()->update(30);
+
+  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   if (status() == BT::NodeStatus::IDLE) {
-    RCLCPP_INFO(node_->get_logger(), "IsDetected ticked");
+    RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
     config().blackboard->get("tf_buffer", tf_buffer_);
     config().blackboard->get("tf_broadcaster", tf_broadcaster_);
   }
 
-  if (last_detected_objs_ == nullptr)
-  {
-    RCLCPP_INFO(node_->get_logger(), "No detections");
-    return BT::NodeStatus::FAILURE;
-  }  
+  auto detections = pl::getInstance()->get_by_type(interest_);
 
-  if (last_detected_objs_->detections.empty() ) {
+  if (detections.empty() ) {
     RCLCPP_INFO(node_->get_logger(), "No detections");
     return BT::NodeStatus::FAILURE;
   }
@@ -93,7 +76,7 @@ IsDetected::tick()
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
     std::sort(
-      last_detected_objs_->detections.begin(), last_detected_objs_->detections.end(),
+      detections.begin(), detections.end(),
       [this](const auto & a, const auto & b) {
         return perception_system::diffIDs(
           this->person_id_,
@@ -103,7 +86,7 @@ IsDetected::tick()
     );
   } else if (order_ == "depth") {
     std::sort(
-      last_detected_objs_->detections.begin(), last_detected_objs_->detections.end(),
+      detections.begin(), detections.end(),
       [this](const auto & a, const auto & b) {
         return a.center3d.position.z < b.center3d.position.z;
       }
@@ -114,14 +97,16 @@ IsDetected::tick()
   // implement more sorting methods
 
   auto entity_counter = 0;
-  for (auto it = last_detected_objs_->detections.begin(); it != last_detected_objs_->detections.end() && entity_counter < max_entities_; ) {
+  for (auto it = detections.begin(); it != detections.end() && entity_counter < max_entities_; ) {
     auto const & detection = *it;
 
     if (detection.score <= threshold_ || detection.center3d.position.z > max_depth_) {
-      it = last_detected_objs_->detections.erase(it);
+      it = detections.erase(it);
     } else {
       frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
-      publicTF_map2object(detection, detection.class_name + "_" + std::to_string(entity_counter));
+      if(publicTF_map2object(detection, detection.class_name + "_" + std::to_string(entity_counter)) == -1){
+        return BT::NodeStatus::FAILURE;
+      }
       ++it;
       ++entity_counter;
     }

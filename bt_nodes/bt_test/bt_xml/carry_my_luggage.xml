@@ -4,9 +4,10 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action ID="InitCarry"/>
-            <!-- <RetryUntilSuccessful num_attempts="-1">
+            <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>
                     <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="3" max_entities="1" order="color"/>
+                    <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{person_id}"/>
                     <Condition ID="IsPointing" bag_frame="{bag_tf}" cam_frame="head_front_camera_link_color_optical_frame"/>
                 </Sequence>
             </RetryUntilSuccessful>
@@ -27,22 +28,22 @@
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
                 <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
-            </ReactiveSequence> -->
+            </ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
                 <Fallback>
                     <ReactiveSequence>
                         <RetryUntilSuccessful num_attempts="-1">
-                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" frames="" interest="person" max_depth="6" max_entities="1" order="depth"/>
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="6" max_entities="1" order="color"/>
                         </RetryUntilSuccessful>
-                        <!-- <Action ID="FilterEntity" filtered_frame="{filtered}" frame="person_0" lambda="0.25"/> -->
+                        <!-- <Action ID="FilterEntity" frame="person_0" lambda="0.25"/> -->
                         <Action ID="LookAt" tf_frame="person_0"/>
-                        <!-- <Condition ID="IsEntityMoving" velocity_tolerance="0.2" frame="person_0" max_iterations="50"/> -->
+                        <Condition ID="IsEntityMoving" distance_tolerance="1.2" frame="person_0" check_time="9"/>
                         <!-- <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/> -->
                         <Action ID="FollowEntity" camera_frame="head_front_camera_link_color_optical_frame" distance_tolerance="2.0" frame_to_follow="person_0"/>
                     </ReactiveSequence>
-                    <ForceFailure>
+                    <!-- <ForceFailure>
                         <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
-                    </ForceFailure>
+                    </ForceFailure> -->
                     <!-- <Action ID="DialogConfirmation"/> -->
                 </Fallback>
             </RetryUntilSuccessful>

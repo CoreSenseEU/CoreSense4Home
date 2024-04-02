@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PERCEPTION__IS_ENTITY_MOVING_HPP_
-#define PERCEPTION__IS_ENTITY_MOVING_HPP_
+#ifndef PERCEPTION__EXTRACT_COLOR_HPP_
+#define PERCEPTION__EXTRACT_COLOR_HPP_
 
 #include <string>
 #include <algorithm>
-#include <memory>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -34,48 +33,46 @@
 #include "tf2_ros/transform_broadcaster.h"
 
 #include "perception_system/PerceptionListener.hpp"
+#include "perception_system_interfaces/msg/detection_array.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
 namespace perception
 {
 
-using namespace std::chrono_literals;
+using pl = perception_system::PerceptionListener;
 
-class IsEntityMoving : public BT::ConditionNode
+class ExtractEntityColor : public BT::ActionNodeBase
 {
 public:
-  explicit IsEntityMoving(
+  explicit ExtractEntityColor(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
+  void halt();
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::string>("frame"),
-        BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
-        BT::InputPort<float>("distance_tolerance", "distance tolerance to consider the entity is moving")
+        BT::InputPort<std::string>("interest"),
+        BT::InputPort<float>("confidence"),
+        BT::OutputPort<int>("person_id")
       });
   }
 
 private:
+
   rclcpp::Node::SharedPtr node_;
+  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr detected_objs_sub_;
+  perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};
 
-  std::string frame_, cam_frame_;
-  float distance_tolerance_, check_time_;
-
-  std::vector<geometry_msgs::msg::TransformStamped> entity_transforms_;
-  std::vector<float> velocities_;
-  int max_iterations_;
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
-  rclcpp::Time time_since_last_stop_;
-  rclcpp::Time first_time_;
-  bool has_stoped_{false};
+  std::string interest_;
+  float threshold_;
+  int person_id_;
 };
 
 }  // namespace perception
 
-#endif  // PERCEPTION__IS_ENTITY_MOVING_HPP_
+#endif  // PERCEPTION__EXTRACT_COLOR_HPP_

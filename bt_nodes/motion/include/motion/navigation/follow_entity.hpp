@@ -64,7 +64,7 @@ public:
 
 private:
 
-
+  BT::NodeStatus on_idle();
   rclcpp::Node::SharedPtr node_;
   std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr entity_pose_pub_;

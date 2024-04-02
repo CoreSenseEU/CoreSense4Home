@@ -118,18 +118,24 @@ IsPointing::publicTF_map2object(
 
 
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
-  if (detected_object.pointing_direction == 0 || detected_object.pointing_direction == 1 ||
-    detected_object.pointing_direction == 7)
+  if (detected_object.pointing_direction == 2 )
   {
     map2object_msg.child_frame_id = "right_bag";
     bag_frame_ = "right_bag";
     map2object_msg.transform.translation.y += 0.4; // + or - ?
-  } else if (detected_object.pointing_direction == 3 || detected_object.pointing_direction == 4 ||
-    detected_object.pointing_direction == 5)
+  } else if (detected_object.pointing_direction == 4)
   {
     map2object_msg.transform.translation.y -= 0.4; // + or - ?
     bag_frame_ = "left_bag";
     map2object_msg.child_frame_id = "left_bag";
+  } else if (detected_object.pointing_direction == 3)
+  {
+    bag_frame_ = "center_bag";
+    map2object_msg.child_frame_id = "center_bag";
+  }
+  else
+  {
+    return -1;
   }
 
   // if person_pose_ is not initialized, initialize it
@@ -162,7 +168,7 @@ BT::NodeStatus
 IsPointing::tick()
 {
   pl::getInstance()->set_interest("person", true);
-  pl::getInstance()->update(true);
+  pl::getInstance()->update(30);
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   std::vector<perception_system_interfaces::msg::Detection> detections;

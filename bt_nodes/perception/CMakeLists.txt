@@ -64,6 +64,9 @@ list(APPEND plugin_libs filter_entity_bt_node)
 add_library(is_pointing_bt_node SHARED src/perception/is_pointing.cpp)
 list(APPEND plugin_libs is_pointing_bt_node)
 
+add_library(extract_entity_color_bt_node SHARED src/perception/extract_entity_color.cpp)
+list(APPEND plugin_libs extract_entity_color_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

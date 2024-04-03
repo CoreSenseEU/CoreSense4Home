@@ -117,7 +117,7 @@ FollowPerson::publicTF_map2object(
   geometry_msgs::msg::TransformStamped map2object_msg;
   map2object_msg.header.stamp = detected_object.header.stamp;
   map2object_msg.header.frame_id = "map";
-  map2object_msg.child_frame_id = "person";
+  map2object_msg.child_frame_id = "follow_person";
   map2object_msg.transform = tf2::toMsg(map2object);
 
   // if person_pose_ is not initialized, initialize it
@@ -150,7 +150,9 @@ BT::NodeStatus
 FollowPerson::tick()
 {
   pl::getInstance()->set_interest("person", true);
-  pl::getInstance()->update(true);
+  // pl::getInstance()->set_interest("chair", true);
+  pl::getInstance()->update(30);
+  pl::getInstance()->publicTFinterest();
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   std::vector<perception_system_interfaces::msg::Detection> detections;

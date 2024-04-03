@@ -18,7 +18,6 @@
             <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]^</input_port>
         </Condition>
         <Action ID="MoveTo">
-            <input_port default="0" name="distance_tolerance"/>
             <input_port default="person" name="tf_frame"/>
         </Action>
     </TreeNodesModel>

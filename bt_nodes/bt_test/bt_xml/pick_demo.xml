@@ -13,7 +13,10 @@
                     <Action ID="DialogConfirmation"/>
                 </Sequence>
             </RetryUntilSuccessful>
-            <Action ID="PickObject" object_to_pick="{selected_object}"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Action ID="ExtractCollisionScene" selected_object="{selected_object}"/>
+            </RetryUntilSuccessful>            
+            <Action ID="PickObject" object_to_pick="{selected_object}"/>            
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -21,6 +24,9 @@
         <Action ID="AskForSomething">
             <input_port default="name" name="Intention"/>
             <output_port name="intention_value"/>
+        </Action>
+        <Action ID="ExtractCollisionScene">
+            <input_port default="{selected_object}"  name="selected_object"/>
         </Action>
         <Action ID="CalculateGoal">
             <inout_port name="goal"/>

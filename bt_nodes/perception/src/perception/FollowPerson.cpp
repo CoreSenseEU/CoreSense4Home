@@ -153,6 +153,7 @@ FollowPerson::tick()
   // pl::getInstance()->set_interest("chair", true);
   pl::getInstance()->update(30);
   pl::getInstance()->publicTFinterest();
+
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   std::vector<perception_system_interfaces::msg::Detection> detections;

@@ -6,15 +6,19 @@
   <description>TODO: Package description</description>
   <maintainer email="rodrigo.perez@urjc.es">rod</maintainer>
   <maintainer email="juancarlos.serrano@urjc.es">Juanca</maintainer>
-  <maintainer email="alberto.gomezjacinto@urjc.es">Alberto</maintainer>
+  <maintainer email="albertogarciagomezjacinto@gmail.com">Alberto</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>behaviortree_cpp_v3</depend>
+  <depend>action_msgs</depend>
+  <depend>attention_system</depend>
+  <depend>nav2_behavior_tree</depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
-  <export>
-    <build_type>ament_cmake</build_type>
-  </export>
+  
 </package>

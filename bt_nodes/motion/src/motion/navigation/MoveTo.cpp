@@ -12,98 +12,159 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #include "motion/navigation/MoveTo.hpp"
+
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
+
+#include "behaviortree_cpp_v3/behavior_tree.h"
+
+#include "ament_index_cpp/get_package_share_directory.hpp"
 
 namespace navigation
 {
 
 MoveTo::MoveTo(
   const std::string & xml_tag_name,
+  const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(xml_tag_name, conf)
+: navigation::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name,
+    action_name, conf),
+  tf_buffer_(),
+  tf_listener_(tf_buffer_)
 {
   config().blackboard->get("node", node_);
-}
 
-BT::NodeStatus
-MoveTo::tick()
-{
-  if (status() == BT::NodeStatus::IDLE) {
-    std::string tf_frame;
-    getInput("tf_frame", tf_frame);
-    getInput("distance_tolerance", distance_tolerance_);
-    config().blackboard->get(tf_frame, pose_);
-    RCLCPP_INFO(node_->get_logger(), "MoveTo ticked");
-
-    if (!create_and_send_goal()) { return BT::NodeStatus::FAILURE;}
-  }
-
-  if (!goal_result_available_) {
-    return BT::NodeStatus::RUNNING;
-  }
-
-  return BT::NodeStatus::SUCCESS;
 }
 
 void
-MoveTo::halt()
+MoveTo::on_tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "MoveTo halted");
-}
+  RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
+  geometry_msgs::msg::PoseStamped goal;
+  geometry_msgs::msg::TransformStamped map_to_goal;
 
-bool
-MoveTo::create_and_send_goal()
-{
-  auto goal_msg = nav2_msgs::action::NavigateToPose::Goal();
-  goal_msg.pose = pose_;
-  goal_msg.pose.header.frame_id = "map";
+  getInput("tf_frame", tf_frame_);
+  getInput("distance_tolerance", distance_tolerance_);
+  getInput("will_finish", will_finish_);
 
-  action_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
-    node_,
-    "navigate_to_pose");
-
-  if (!action_client_->wait_for_action_server(std::chrono::seconds(10))) {
-    RCLCPP_ERROR(node_->get_logger(), "Action server not available after waiting");
-    return false;
+  try {
+    map_to_goal = tf_buffer_.lookupTransform(
+      "map", tf_frame_,
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & ex) {
+    RCLCPP_INFO(
+      node_->get_logger(), "Could not transform %s to %s: %s",
+      "map", tf_frame_.c_str(), ex.what());
+    throw BT::RuntimeError("Could not transform");
   }
 
-  goal_result_available_ = false;
-  auto send_goal_options =
-    rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
+  goal.header.frame_id = "map";
+  goal.pose.position.x = map_to_goal.transform.translation.x;
+  goal.pose.position.y = map_to_goal.transform.translation.y;
 
-  send_goal_options.result_callback =
-    [this](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult &
-      result) {
-      if (this->goal_handle_->get_goal_id() == result.goal_id) {
-        goal_result_available_ = true;
-        result_ = result;
-        RCLCPP_INFO(node_->get_logger(), "Goal result received");
+  RCLCPP_INFO(
+    node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s",
+    goal.pose.position.x, goal.pose.position.y,
+    goal.header.frame_id.c_str());
+
+
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
+  std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
+
+  std::ifstream input_file(xml_file);
+
+  if (!input_file.is_open()) {
+    std::cerr << "Error opening XML file." << std::endl;
+    // setStatus(BT::NodeStatus::FAILURE);
+    return;
+  }
+  std::string xml_content((std::istreambuf_iterator<char>(input_file)),
+    std::istreambuf_iterator<char>());
+  input_file.close();
+
+  size_t truncate_pos = xml_content.find("<TruncatePath");
+  if (truncate_pos != std::string::npos) {
+    size_t distance_pos = xml_content.find("distance=\"", truncate_pos);
+    if (distance_pos != std::string::npos) {
+      size_t end_qote_pos = xml_content.find("\"", distance_pos + 10);
+      if (end_qote_pos != std::string::npos) {
+        xml_content.replace(
+          distance_pos + 10, end_qote_pos - distance_pos - 10,
+          std::to_string(distance_tolerance_));
       }
-    };
-
-  // TODO: Stop the robot if the goal is under the distance_tolerance
-
-  auto future_goal_handle = action_client_->async_send_goal(goal_msg, send_goal_options);
-
-  if (rclcpp::spin_until_future_complete(node_, future_goal_handle) !=
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
-    RCLCPP_ERROR(node_->get_logger(), "send goal call failed :(");
-    return false;
+    }
+  } else {
+    std::cerr << "Element not found in XML." << std::endl;
+    // setStatus(BT::NodeStatus::FAILURE);
+    return;
+  }
+  // Save the updated XML back to the same file
+  std::ofstream output_file(xml_file);
+  if (!output_file.is_open()) {
+    std::cerr << "Error opening output file." << std::endl;
+    // setStatus(BT::NodeStatus::FAILURE);
+    return;
   }
 
-  goal_handle_ = future_goal_handle.get();
-  if (!goal_handle_) {
-    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected by server");
-    return false;
-  }
+  output_file << xml_content;
+  output_file.close();
 
-  return true;
+  goal_.behavior_tree = xml_file;
+  goal_.pose = goal;
 }
+
+BT::NodeStatus
+MoveTo::on_success()
+{
+  RCLCPP_INFO(node_->get_logger(), "Navigation succeeded");
+  if (will_finish_) {
+    return BT::NodeStatus::SUCCESS;
+  }
+  goal_updated_ = true;
+  on_tick();
+  on_new_goal_received();
+  return BT::NodeStatus::RUNNING;
+}
+
+BT::NodeStatus
+MoveTo::on_aborted()
+{
+  if (will_finish_) {
+    return BT::NodeStatus::FAILURE;
+  }
+  on_tick();
+  on_new_goal_received();
+  return BT::NodeStatus::RUNNING;
+}
+
+BT::NodeStatus
+MoveTo::on_cancelled()
+{
+  if (will_finish_) {
+    return BT::NodeStatus::SUCCESS;
+  }
+  on_tick();
+  on_new_goal_received();
+  RCLCPP_INFO(node_->get_logger(), "Navigation cancelled");
+  return BT::NodeStatus::RUNNING;
+}
+
 
 }  // namespace navigation
 
+#include "behaviortree_cpp_v3/bt_factory.h"
+
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<navigation::MoveTo>("MoveTo");
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<navigation::MoveTo>(name, "/navigate_to_pose", config);
+    };
+
+  factory.registerBuilder<navigation::MoveTo>("MoveTo", builder);
 }

@@ -24,20 +24,25 @@
 #include "hri/dialog/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace dialog {
+namespace dialog
+{
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS> {
+class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS>
+{
 public:
-  explicit Speak(const std::string &xml_tag_name,
-                 const std::string &action_name,
-                 const BT::NodeConfiguration &conf);
+  explicit Speak(
+    const std::string & xml_tag_name,
+    const std::string & action_name,
+    const BT::NodeConfiguration & conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<std::string>("say_text"),
-                          BT::InputPort<std::string>("param")});
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {BT::InputPort<std::string>("say_text"),
+        BT::InputPort<std::string>("param")});
   }
 
 private:

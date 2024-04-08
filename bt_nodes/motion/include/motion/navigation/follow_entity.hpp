@@ -24,6 +24,10 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
+#include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
+
+#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "nav2_costmap_2d/costmap_2d.hpp"
 
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 
@@ -64,6 +68,9 @@ public:
 
 private:
 
+  void map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg);
+  void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
+  void check_robot_inside_map();
   BT::NodeStatus on_idle();
   rclcpp::Node::SharedPtr node_;
   std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
@@ -77,6 +84,11 @@ private:
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::shared_ptr<nav2_costmap_2d::Costmap2D> costmap_;
+  geometry_msgs::msg::PoseWithCovarianceStamped current_pos_;
+
+  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr sub_map_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr sub_pose_;
 };
 
 }  // namespace navigation

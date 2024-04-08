@@ -36,11 +36,33 @@ FollowEntity::FollowEntity(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
 
   entity_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
     "goal_update", 10);
   client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
-    node_, "navigate_to_pose");    
+    node_, "navigate_to_pose");
+  sub_map_ = node_->create_subscription<nav_msgs::msg::OccupancyGrid>(
+    "map", qos,
+    std::bind(&FollowEntity::map_callback, this, _1));
+  sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+    "amcl_pose", qos,
+    std::bind(&FollowEntity::pose_callback, this, _1));
+}
+
+void
+FollowEntity::pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg)
+{
+  current_pos_ = *msg;
+  // std::cout << "got pose callback" << std::endl;
+}
+
+void
+FollowEntity::map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg)
+{
+  costmap_ = std::make_shared<nav2_costmap_2d::Costmap2D>(*msg);
+  // std::cout << "got map callback" << std::endl;
+  sub_map_ = nullptr;
 }
 
 void
@@ -49,17 +71,37 @@ FollowEntity::halt()
   RCLCPP_INFO(node_->get_logger(), "FollowEntity halted");
 }
 
+void
+FollowEntity::check_robot_inside_map()
+{
+  int max_x, max_y, current_mx, current_my;
+  max_x = costmap_->getSizeInCellsX();
+  max_y = costmap_->getSizeInCellsY();
+  costmap_->worldToMapNoBounds(
+    current_pos_.pose.pose.position.x, current_pos_.pose.pose.position.y,
+    current_mx, current_my);
+
+  if (current_mx <= max_x && current_my <= max_y) {
+    std::cout << "ROBOT  IS INSIDE" << std::endl;
+  } else {
+    std::cout << "ROBOT  IS OUTSIDE" << std::endl;
+  }
+}
+
 BT::NodeStatus
 FollowEntity::tick()
 {
-  if (status() == BT::NodeStatus::IDLE) 
-  {
+  if (status() == BT::NodeStatus::IDLE) {
     return on_idle();
-  } 
+  }
 
-  while(!tf_buffer_->canTransform("map", frame_to_follow_, tf2::TimePointZero) &&
-        rclcpp::ok() &&
-        !tf_buffer_->canTransform("map", "base_footprint", tf2::TimePointZero))
+  if (costmap_ != nullptr && current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
+    check_robot_inside_map();
+  }
+
+  while (!tf_buffer_->canTransform("map", frame_to_follow_, tf2::TimePointZero) &&
+    rclcpp::ok() &&
+    !tf_buffer_->canTransform("map", "base_footprint", tf2::TimePointZero))
   {
     RCLCPP_INFO(
       node_->get_logger(), "Waiting for transform from map to %s",

@@ -67,7 +67,10 @@ std::string dynamic_following_xml = R"(<root main_tree_to_execute="MainTree">
           <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
           <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
           <GoalUpdater input_goal="{goal}" output_goal="{updated_goal}">
-            <ComputePathToPose goal="{updated_goal}" path="{path}" planner_id="GridBased"/>            
+              <Sequence>
+                <ClearMapAtGoal input_goal="{updated_goal}" radius="1.5"/>
+                <ComputePathToPose goal="{updated_goal}" path="{path}" planner_id="GridBased"/>
+              </Sequence>    
           </GoalUpdater>
          <TruncatePath distance="1.0" input_path="{path}" output_path="{truncated_path}"/>
         </Sequence>

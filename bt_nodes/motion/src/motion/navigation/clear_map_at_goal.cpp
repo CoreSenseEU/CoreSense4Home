@@ -18,6 +18,7 @@
 
 #include "motion/navigation/clear_map_at_goal.hpp"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
@@ -33,33 +34,49 @@ ClearMapAtGoal::ClearMapAtGoal(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
 : BT::SyncActionNode(xml_tag_name, conf),
-costmap_ros_(std::make_shared<nav2_costmap_2d::Costmap2DROS>("costmap_bt")),
+costmap_ros_(std::make_shared<nav2_costmap_2d::Costmap2DROS>("costmap")),
 radius_(0.0)
 {
-  // config().blackboard->get("node", node_);
+  node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
+  costmap_ros_->on_configure(rclcpp_lifecycle::State());
 }
 
 BT::NodeStatus
 ClearMapAtGoal::tick()
 {
-
+  setStatus(BT::NodeStatus::RUNNING);
+  
   geometry_msgs::msg::PoseStamped goal;
   getInput("input_goal", goal);
   getInput("radius", radius_);
 
+  RCLCPP_INFO(node_->get_logger(), "Clearing costmap around goal");
+  RCLCPP_INFO(node_->get_logger(), "Goal: %f, %f", goal.pose.position.x, goal.pose.position.y);
+  RCLCPP_INFO(node_->get_logger(), "Radius: %f", radius_);
+
   auto layers = costmap_ros_->getLayeredCostmap()->getPlugins();
 
+  RCLCPP_INFO(node_->get_logger(), "Layers retreived");
+
+  RCLCPP_INFO(node_->get_logger(), "before foor loop");
   for (auto & layer : *layers) {
+    RCLCPP_INFO(node_->get_logger(), "Trying to clear layer %s", layer->getName().c_str());
     if (layer->isClearable()) {
+      RCLCPP_INFO(node_->get_logger(), "Creating layer using static pointer cast");
       auto costmap_layer = std::static_pointer_cast<nav2_costmap_2d::CostmapLayer>(layer);
-      clearLayerRegion(costmap_layer, goal.pose.position.x, goal.pose.position.y, radius_, false);
+      RCLCPP_INFO(node_->get_logger(), "Clearing layer");
+      try {
+        clearLayerRegion(costmap_layer, goal.pose.position.x, goal.pose.position.y, radius_, false);
+      } catch (const std::exception & e) {
+        RCLCPP_ERROR(node_->get_logger(), "Error clearing costmap: %s", e.what());
+      }
     }
   }
-
+   RCLCPP_INFO(node_->get_logger(), "Cleared succeeded");
   return BT::NodeStatus::SUCCESS;
 }
 
-void clearLayerRegion(
+void ClearMapAtGoal::clearLayerRegion(
   std::shared_ptr<nav2_costmap_2d::CostmapLayer> & costmap, double pose_x, double pose_y, double reset_distance,
   bool invert)
 {
@@ -87,5 +104,12 @@ void clearLayerRegion(
 
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<navigation::ClearMapAtGoal>("ClearMapAtGoal");
+  BT::NodeBuilder builder =
+    [](const std::string & name, const BT::NodeConfiguration & config)
+    {
+      return std::make_unique<navigation::ClearMapAtGoal>(name, config);
+    };
+
+  factory.registerBuilder<navigation::ClearMapAtGoal>("ClearMapAtGoal", builder);
+  // factory.registerNodeType<navigation::ClearMapAtGoal>("ClearMapAtGoal");
 }

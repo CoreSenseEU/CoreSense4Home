@@ -4,7 +4,7 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action ID="InitCarry"/>
-            <RetryUntilSuccessful num_attempts="-1">
+            <!-- <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>
                     <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="3" max_entities="1" order="color"/>
                     <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{person_id}"/>
@@ -28,12 +28,12 @@
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
                 <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
-            </ReactiveSequence>
+            </ReactiveSequence> -->
             <RetryUntilSuccessful num_attempts="-1">
                 <Fallback>
                     <ReactiveSequence>
                         <RetryUntilSuccessful num_attempts="-1">
-                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="6" max_entities="1" order="color"/>
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="6" max_entities="1" order="depth"/>
                         </RetryUntilSuccessful>
                         <!-- <Action ID="FilterEntity" frame="person_0" lambda="0.25"/> -->
                         <Action ID="LookAt" tf_frame="person_0"/>

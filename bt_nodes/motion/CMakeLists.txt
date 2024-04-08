@@ -16,6 +16,7 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
+find_package(pluginlib REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -30,9 +31,14 @@ set(dependencies
   tf2
   attention_system
   nav2_costmap_2d
+  pluginlib
 )
 
 include_directories(include)
+
+add_library(people_layer SHARED
+            src/motion/navigation/nav2_plugins/clear_people_layer.cpp)
+ament_target_dependencies(people_layer ${dependencies})
 
 add_library(move_to_bt_node SHARED src/motion/navigation/MoveTo.cpp)
 list(APPEND plugin_libs move_to_bt_node)
@@ -53,11 +59,14 @@ endforeach()
 
 install(TARGETS
   ${plugin_libs}
+  people_layer
   EXPORT ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
+pluginlib_export_plugin_description_file(nav2_costmap_2d clear_people_layer.xml)
 
 install(DIRECTORY include/
   DESTINATION include/

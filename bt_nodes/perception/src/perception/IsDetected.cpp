@@ -55,6 +55,7 @@ IsDetected::tick()
 {
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(30);
+  // pl::getInstance()->publicTFinterest();
 
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 

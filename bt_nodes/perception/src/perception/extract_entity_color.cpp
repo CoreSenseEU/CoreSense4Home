@@ -46,20 +46,19 @@ ExtractEntityColor::ExtractEntityColor(
 BT::NodeStatus
 ExtractEntityColor::tick()
 {
-  
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(30);
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
-
+  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Interest %s", interest_.c_str());
   auto detections = pl::getInstance()->get_by_type(interest_);
 
   if (detections.empty() ) {
-    RCLCPP_INFO(node_->get_logger(), "No detections");
+    RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
-  RCLCPP_INFO(node_->get_logger(), "Processing detections...");
+  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Processing detections...");
 
   std::sort(
     detections.begin(), detections.end(),
@@ -69,16 +68,17 @@ ExtractEntityColor::tick()
   );
 
   if(detections[0].score < threshold_){
-    RCLCPP_ERROR(node_->get_logger(), "Detection confidence is below threshold");
+    RCLCPP_ERROR(node_->get_logger(), "[ExtractEntityColor] Detection confidence is below threshold");
     return BT::NodeStatus::FAILURE;
   }
   setOutput("person_id", detections[0].color_person);
+  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Person color: %ld", detections[0].color_person);
   return BT::NodeStatus::SUCCESS;
 }
 void
 ExtractEntityColor::halt()
 {
-  RCLCPP_INFO(node_->get_logger(), "ExtractEntityColor halted");
+  RCLCPP_DEBUG(node_->get_logger(), "ExtractEntityColor halted");
 }
 
 }  // namespace perception

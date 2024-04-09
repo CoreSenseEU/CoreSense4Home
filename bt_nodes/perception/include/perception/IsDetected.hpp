@@ -56,7 +56,7 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<int>("max_entities"),
-        BT::InputPort<int>("person_id"),
+        BT::InputPort<std::int64_t>("person_id"),
         BT::InputPort<std::string>("cam_frame"),
         BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
@@ -79,7 +79,8 @@ private:
 
   std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;
-  int max_entities_, person_id_;
+  int max_entities_;
+  std::int64_t person_id_;
   std::vector<std::string> frames_;
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;

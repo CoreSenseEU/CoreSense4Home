@@ -30,6 +30,8 @@
 #include "nav2_costmap_2d/costmap_2d.hpp"
 
 #include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "navigation_system_interfaces/srv/set_mode.hpp"
+#include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 
 #include <tf2/transform_datatypes.h>
 #include "tf2/LinearMath/Quaternion.h"
@@ -75,6 +77,8 @@ private:
   rclcpp::Node::SharedPtr node_;
   std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr entity_pose_pub_;
+  rclcpp::Client<navigation_system_interfaces::srv::SetMode>::SharedPtr set_mode_client_;
+  rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr set_truncate_distance_client_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_;

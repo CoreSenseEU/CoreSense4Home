@@ -48,6 +48,10 @@ FollowEntity::FollowEntity(
   sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "amcl_pose", qos,
     std::bind(&FollowEntity::pose_callback, this, _1));
+
+  set_mode_client_ = node_->create_client<navigation_system_interfaces::srv::SetMode>("navigation_system_node/set_mode");
+  set_truncate_distance_client_ = node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>("navigation_system_node/set_truncate_distance");
+
 }
 
 void
@@ -82,15 +86,33 @@ FollowEntity::check_robot_inside_map()
     current_mx, current_my);
 
   if (current_mx <= max_x && current_my <= max_y) {
-    std::cout << "ROBOT  IS INSIDE" << std::endl;
   } else {
-    std::cout << "ROBOT  IS OUTSIDE" << std::endl;
+    RCLCPP_INFO(node_->get_logger(), "Robot outside map, stopping");
+    auto request = std::make_shared<navigation_system_interfaces::srv::SetMode::Request>();
+    request->mode.id = 2;
+    auto result = set_mode_client_->async_send_request(request);
+    if (rclcpp::spin_until_future_complete(node_, result) ==
+    rclcpp::FutureReturnCode::SUCCESS)
+    {
+      if (!result.get()->success) {
+      setStatus(BT::NodeStatus::FAILURE);
+      }
+    } else {
+      setStatus(BT::NodeStatus::FAILURE);
+    }   
   }
 }
 
 BT::NodeStatus
 FollowEntity::tick()
 {
+  while (!set_mode_client_->wait_for_service(std::chrono::seconds(1)) ||
+         !set_truncate_distance_client_->wait_for_service(std::chrono::seconds(1))) {
+    RCLCPP_INFO(node_->get_logger(), "Waiting for action server to be up...");
+    return BT::NodeStatus::RUNNING;
+
+  }
+
   if (status() == BT::NodeStatus::IDLE) {
     return on_idle();
   }
@@ -205,7 +227,22 @@ FollowEntity::on_idle()
   goal_pose_.pose.orientation = tf2::toMsg(goal_orientation - current_orientation);
 
   auto goal = nav2_msgs::action::NavigateToPose::Goal();
-  xml_path_ = generate_xml_file(dynamic_following_xml,distance_tolerance_);
+  // xml_path_ = generate_xml_file(dynamic_following_xml,distance_tolerance_);
+  auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
+    request->distance = distance_tolerance_;
+    auto result = set_truncate_distance_client_->async_send_request(request);
+    if (rclcpp::spin_until_future_complete(node_, result) ==
+    rclcpp::FutureReturnCode::SUCCESS)
+    {
+      if (result.get()->success) {
+      xml_path_ = result.get()->xml_path;
+      return BT::NodeStatus::SUCCESS;
+      }
+      return BT::NodeStatus::FAILURE;
+    } else {
+      return BT::NodeStatus::FAILURE;
+    }   
+
 
   goal.pose = goal_pose_;
   goal.behavior_tree = xml_path_;

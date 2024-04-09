@@ -58,7 +58,7 @@ public:
       {
         BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
-        BT::OutputPort<int>("person_id")
+        BT::OutputPort<std::int64_t>("person_id")
       });
   }
 

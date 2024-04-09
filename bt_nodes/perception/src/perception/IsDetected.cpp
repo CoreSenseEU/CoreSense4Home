@@ -43,7 +43,7 @@ IsDetected::IsDetected(
   getInput("max_entities", max_entities_);
   getInput("order", order_);
   getInput("max_depth", max_depth_);
-  getInput("person_id", person_id_);
+  
 
   pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
@@ -53,6 +53,8 @@ IsDetected::IsDetected(
 BT::NodeStatus
 IsDetected::tick()
 {
+  getInput("person_id", person_id_);
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Person color: %ld", person_id_);
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(30);
   // pl::getInstance()->publicTFinterest();
@@ -68,11 +70,11 @@ IsDetected::tick()
   auto detections = pl::getInstance()->get_by_type(interest_);
 
   if (detections.empty() ) {
-    RCLCPP_INFO(node_->get_logger(), "No detections");
+    RCLCPP_INFO(node_->get_logger(), "[IsDetected] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
-  RCLCPP_INFO(node_->get_logger(), "Processing detections...");
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Processing detections...");
 
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
@@ -94,7 +96,7 @@ IsDetected::tick()
     );
 
   }
-  RCLCPP_INFO(node_->get_logger(), "Detections sorted");
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 
   auto entity_counter = 0;
@@ -112,16 +114,16 @@ IsDetected::tick()
       ++entity_counter;
     }
   }
-  RCLCPP_INFO(node_->get_logger(), "Detections sorted and filtered");
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted and filtered");
   if (frames_.empty()) {
-    RCLCPP_INFO(node_->get_logger(), "No detections after filter");
+    RCLCPP_INFO(node_->get_logger(), "[IsDetected] No detections after filter");
     return BT::NodeStatus::FAILURE;
   }
 
   setOutput("frames", frames_);
   frames_.clear();
-  RCLCPP_INFO(node_->get_logger(), "Detections published");
-  return BT::NodeStatus::SUCCESS; //test, change to SUCCESS
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections published");
+  return BT::NodeStatus::SUCCESS; 
 }
 
 int

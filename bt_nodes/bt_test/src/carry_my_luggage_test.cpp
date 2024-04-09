@@ -40,6 +40,7 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("init_carry_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_pointing_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("extract_entity_color_bt_node"));  
   factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_predefined_bt_node"));
   factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));

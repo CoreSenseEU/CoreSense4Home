@@ -17,6 +17,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(navigation_system_interfaces REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -32,6 +33,7 @@ set(dependencies
   attention_system
   nav2_costmap_2d
   pluginlib
+  navigation_system_interfaces
 )
 
 include_directories(include)

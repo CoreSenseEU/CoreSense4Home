@@ -67,7 +67,7 @@ private:
   geometry_msgs::msg::PoseStamped pose_;
   tf2::BufferCore tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
-  bool will_finish_;
+  bool will_finish_ = true;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

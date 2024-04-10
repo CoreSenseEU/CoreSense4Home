@@ -36,18 +36,17 @@ IsPointing::IsPointing(
 : BT::ConditionNode(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  config().blackboard->get("person_id", person_id_);
   // config().blackboard->get("perception_listener", perception_listener_);
 
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  // tf_buffer_ =
+  //   std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+  // tf_listener_ =
+  //   std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
+  // tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
 
   getInput("cam_frame", camera_frame_);
@@ -111,7 +110,6 @@ IsPointing::publicTF_map2object(
   tf2::Transform map2object = map2camera * camera2object;
   // create a transform message from tf2::Transform
   geometry_msgs::msg::TransformStamped map2object_msg;
-  map2object_msg.header.stamp = detected_object.header.stamp;
   map2object_msg.header.frame_id = "map";
 
   map2object_msg.transform = tf2::toMsg(map2object);
@@ -160,7 +158,7 @@ IsPointing::publicTF_map2object(
     }
   }
 
-  tf_broadcaster_->sendTransform(person_pose_);
+  tf_static_broadcaster_->sendTransform(person_pose_);
   return 0;
 }
 
@@ -171,8 +169,15 @@ IsPointing::tick()
   pl::getInstance()->update(30);
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
-  std::vector<perception_system_interfaces::msg::Detection> detections;
-  detections = pl::getInstance()->get_by_type("person");
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
+    config().blackboard->get("tf_buffer", tf_buffer_);
+    config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
+  }
+
+  getInput("person_id", person_id_);
+
+  auto detections = pl::getInstance()->get_by_type("person");
 
   if (detections.empty()) {
     // RCLCPP_INFO(node_->get_logger(), "No detections");
@@ -181,20 +186,17 @@ IsPointing::tick()
 
   perception_system_interfaces::msg::Detection best_detection;
 
+  std::sort(
+      detections.begin(), detections.end(),
+      [this](const auto & a, const auto & b) {
+        return perception_system::diffIDs(
+          this->person_id_,
+          a.color_person) <
+        perception_system::diffIDs(this->person_id_, b.color_person);
+      }
+  );
+
   best_detection = detections[0];
-  // TO-DO: Implement the best detection
-  float best_detection_diff = perception_system::diffIDs(person_id_, best_detection.color_person);
-
-  for (auto & detected_object : detections) {
-    // Get the bounding box
-    float min_diff = perception_system::diffIDs(person_id_, detected_object.color_person);
-
-    if (min_diff < best_detection_diff) {
-      // Display the results
-      best_detection = detected_object;
-      best_detection_diff = min_diff;
-    }
-  }
 
   RCLCPP_INFO(
     node_->get_logger(), "Best detection: %s, color_person: %ld, pointing: %d",

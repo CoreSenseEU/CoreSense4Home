@@ -20,6 +20,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -81,7 +82,7 @@ def generate_launch_description():
 
     slam_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(nav2_dir, 'launch', 'slam_launch.py')
+            os.path.join(package_dir, 'launch', 'slam_launch.py')
         ),
         launch_arguments={
             'use_sim_time': use_sim_time,
@@ -97,6 +98,15 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'params_file': params_file
         }.items()
+    )
+
+    navigation_system_node = Node(
+        package='navigation_system',
+        executable='navigation_system_node',
+        name='navigation_system_node',
+        output='screen',
+        parameters=[{'nodes': [],
+                     'mode': 'amcl'}]
     )
 
     rviz_cmd = IncludeLaunchDescription(
@@ -118,9 +128,10 @@ def generate_launch_description():
     ld.add_action(declare_map_cmd)
     ld.add_action(small_objects_cmd)
     ld.add_action(pcl_to_laser_cmd)
-    ld.add_action(localization_cmd)
+    # ld.add_action(localization_cmd) Not needed for slam =P
     ld.add_action(slam_cmd)
     ld.add_action(navigation_cmd)
     ld.add_action(rviz_cmd)
+    # ld.add_action(navigation_system_node)
 
     return ld

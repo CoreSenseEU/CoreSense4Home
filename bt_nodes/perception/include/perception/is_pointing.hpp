@@ -51,7 +51,7 @@ public:
   {
     return BT::PortsList(
       {
-        // BT::InputPort<std::int64_t>("person_id"),
+        BT::InputPort<std::int64_t>("person_id"),
         BT::InputPort<std::string>("cam_frame"),
         BT::OutputPort<std::string>("bag_frame")
       });
@@ -63,13 +63,12 @@ private:
   rclcpp::Node::SharedPtr node_;
 
   std::string camera_frame_, bag_frame_;
-  int64_t person_id_;
+  std::int64_t person_id_;
   geometry_msgs::msg::TransformStamped person_pose_;
   rclcpp::Time last_pose_;
 
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_broadcaster_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
 };
 
 }  // namespace perception

@@ -106,20 +106,20 @@ FollowEntity::check_robot_inside_map()
 BT::NodeStatus
 FollowEntity::tick()
 {
-  while (!set_mode_client_->wait_for_service(std::chrono::seconds(1)) ||
-         !set_truncate_distance_client_->wait_for_service(std::chrono::seconds(1))) {
-    RCLCPP_INFO(node_->get_logger(), "Waiting for action server to be up...");
-    return BT::NodeStatus::RUNNING;
+  // while (!set_mode_client_->wait_for_service(std::chrono::seconds(1)) ||
+  //        !set_truncate_distance_client_->wait_for_service(std::chrono::seconds(1))) {
+  //   RCLCPP_INFO(node_->get_logger(), "Waiting for action server to be up...");
+  //   return BT::NodeStatus::RUNNING;
 
-  }
+  // }
 
   if (status() == BT::NodeStatus::IDLE) {
     return on_idle();
   }
 
-  if (costmap_ != nullptr && current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
-    check_robot_inside_map();
-  }
+  // if (costmap_ != nullptr && current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
+  //   check_robot_inside_map();
+  // }
 
   while (!tf_buffer_->canTransform("map", frame_to_follow_, tf2::TimePointZero) &&
     rclcpp::ok() &&
@@ -227,22 +227,28 @@ FollowEntity::on_idle()
   goal_pose_.pose.orientation = tf2::toMsg(goal_orientation - current_orientation);
 
   auto goal = nav2_msgs::action::NavigateToPose::Goal();
-  // xml_path_ = generate_xml_file(dynamic_following_xml,distance_tolerance_);
-  auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
-    request->distance = distance_tolerance_;
-    auto result = set_truncate_distance_client_->async_send_request(request);
-    if (rclcpp::spin_until_future_complete(node_, result) ==
-    rclcpp::FutureReturnCode::SUCCESS)
-    {
-      if (result.get()->success) {
-      xml_path_ = result.get()->xml_path;
-      return BT::NodeStatus::SUCCESS;
-      }
-      return BT::NodeStatus::FAILURE;
-    } else {
-      return BT::NodeStatus::FAILURE;
-    }   
+  xml_path_ = generate_xml_file(dynamic_following_xml,distance_tolerance_);
+  // auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
+  // RCLCPP_INFO(node_->get_logger(), "Setting truncate distance to %f", distance_tolerance_);
+  // request->distance = distance_tolerance_;
+  
+  // auto future_request = set_truncate_distance_client_->async_send_request(request).share();
+  // if (rclcpp::spin_until_future_complete(node_, future_request) ==
+  // rclcpp::FutureReturnCode::SUCCESS)
+  // {
+  //   RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
+  //   auto result = *future_request.get();
+  //   if (!result.success) {
+  //     RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED calling service");
+  //     return BT::NodeStatus::FAILURE;    
+  //   }
+  //   xml_path_ = result.xml_path;    
+  // } else {
+  //   RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED");
+  //   return BT::NodeStatus::FAILURE;
+  // }   
 
+  RCLCPP_INFO(node_->get_logger(), "Sending goal");
 
   goal.pose = goal_pose_;
   goal.behavior_tree = xml_path_;

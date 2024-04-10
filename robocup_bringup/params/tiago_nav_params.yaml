@@ -40,10 +40,10 @@ amcl:
     scan_topic: /scan
     set_initial_pose: true
     initial_pose:
-      x: 0.0
-      y: 0.0
+      x: 0.5156184016639794
+      y: 1.2985416281620732
       z: 0.0
-      yaw: 0.0
+      yaw: 1.6028087
 
 bt_navigator:
   ros__parameters:
@@ -101,6 +101,7 @@ bt_navigator:
     - nav2_spin_cancel_bt_node
     - nav2_back_up_cancel_bt_node
     - nav2_drive_on_heading_cancel_bt_node
+    - clear_map_at_goal_bt_node
 
 bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:

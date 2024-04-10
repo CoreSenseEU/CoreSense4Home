@@ -91,7 +91,7 @@ IsPointing::publicTF_map2object(
       tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "Could not transform %s to %s: %s",
+      node_->get_logger(), "[IsPointing] Could not transform %s to %s: %s",
       "map", camera_frame_.c_str(), ex.what());
     return -1;
   }
@@ -120,15 +120,16 @@ IsPointing::publicTF_map2object(
   {
     map2object_msg.child_frame_id = "right_bag";
     bag_frame_ = "right_bag";
-    map2object_msg.transform.translation.y += 0.4; // + or - ?
+    map2object_msg.transform.translation.x -= 0.4; // + or - ?
   } else if (detected_object.pointing_direction == 4)
   {
-    map2object_msg.transform.translation.y -= 0.4; // + or - ?
+    map2object_msg.transform.translation.x += 0.4; // + or - ?
     bag_frame_ = "left_bag";
     map2object_msg.child_frame_id = "left_bag";
   } else if (detected_object.pointing_direction == 3)
   {
     bag_frame_ = "center_bag";
+    map2object_msg.transform.translation.y -= 0.4; // + or - ?
     map2object_msg.child_frame_id = "center_bag";
   }
   else
@@ -157,6 +158,9 @@ IsPointing::publicTF_map2object(
       }
     }
   }
+  RCLCPP_INFO(
+    node_->get_logger(), "[IsPointing] Bag direction %s",
+    bag_frame_.c_str());
 
   tf_static_broadcaster_->sendTransform(person_pose_);
   return 0;
@@ -170,7 +174,7 @@ IsPointing::tick()
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   if (status() == BT::NodeStatus::IDLE) {
-    RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
+    RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");
     config().blackboard->get("tf_buffer", tf_buffer_);
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
   }
@@ -199,7 +203,7 @@ IsPointing::tick()
   best_detection = detections[0];
 
   RCLCPP_INFO(
-    node_->get_logger(), "Best detection: %s, color_person: %ld, pointing: %d",
+    node_->get_logger(), "[IsPointing] Best detection: %s, color_person: %ld, pointing: %d",
     best_detection.unique_id.c_str(), best_detection.color_person,
     best_detection.pointing_direction);
 

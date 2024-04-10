@@ -8,7 +8,7 @@
               <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
               <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
             </RecoveryNode>
-            <TruncatePath distance="2.250000" input_path="{path}" output_path="{path}"/>
+            <TruncatePath distance="0.000000" input_path="{path}" output_path="{path}"/>
           </Sequence>
         </RateController>
         <RecoveryNode number_of_retries="1" name="FollowPath">

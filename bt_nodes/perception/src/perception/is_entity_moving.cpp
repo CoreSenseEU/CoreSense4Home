@@ -46,7 +46,6 @@ IsEntityMoving::tick()
 {
   if (status() == BT::NodeStatus::IDLE) {
     config().blackboard->get("tf_buffer", tf_buffer_);
-    config().blackboard->get("cam_frame", cam_frame_);
   }
   getInput("frame", frame_);
   getInput("check_time", check_time_);

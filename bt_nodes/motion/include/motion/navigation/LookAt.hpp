@@ -21,6 +21,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "rclcpp/rclcpp.hpp"
+#include <tf2_ros/buffer.h>
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -57,6 +58,8 @@ private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
   std::vector<std::string> tf_frames_;
   std::string tf_frame_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+
 };
 
 }  // namespace navigation

@@ -36,6 +36,12 @@ LookAt::tick()
   getInput("tf_frames", tf_frames_);
   getInput("tf_frame", tf_frame_);
 
+   if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");
+    config().blackboard->get("tf_buffer", tf_buffer_);
+  }
+
+
   std::string goal_frame;
 
   if (tf_frames_.size() == 0 && !tf_frame_.empty()) {
@@ -44,7 +50,14 @@ LookAt::tick()
     goal_frame = tf_frames_[0];
   } else {
     RCLCPP_ERROR(node_->get_logger(), "No goal frame provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
+  }
+
+  if (!tf_buffer_->canTransform("map", tf_frame_,
+    tf2::TimePointZero))
+  {
+    RCLCPP_ERROR(node_->get_logger(), "Can't transform %s to map", tf_frame_.c_str());
+    return BT::NodeStatus::RUNNING;
   }
 
   attention_system_msgs::msg::AttentionPoints attention_points_msg;

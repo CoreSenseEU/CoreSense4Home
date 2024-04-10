@@ -8,6 +8,7 @@ from scipy.spatial.transform import Rotation as R
 import numpy as np
 C = 1.15
 
+
 class FollowPerson(Node):
     def __init__(self):
         super().__init__('follow_person')
@@ -29,7 +30,7 @@ class FollowPerson(Node):
                 "head_1_link", "person_0", rclpy.time.Time())
             transform_head_2 = self.tfBuffer.lookup_transform(
                 "head_2_link", "person_0", rclpy.time.Time())
-            
+        
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException):
             self.get_logger().warn("Could not get transform")
@@ -52,7 +53,7 @@ class FollowPerson(Node):
     def compute_pitch(self, translation):
         pitch = np.arctan2(translation.y, translation.x)       
         return pitch
-    
+
     def compute_euler(self, rotation):
         # Convert quaternion to euler angles using scipy
         r = R.from_quat([rotation.x, rotation.y, rotation.z, rotation.w])

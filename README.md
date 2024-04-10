@@ -9,6 +9,27 @@ See [Software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/Software
 ```bash
 ros2 launch robocup_bringup navigation.launch.py
 ```
+### Launch current carry my luggage implementation
+
+First kill move_group node inside tiago robot. Then in separate terminals launch:
+
+```bash
+ros2 launch robocup_bringup navigation_follow.launch.py rviz:=True
+```
+```bash
+ros2 launch attention_system attention.launch.py
+```
+```bash
+ros2 launch robocup_bringup carry_my_luggage_dependencies.launch.py
+``` 
+```bash
+ros2 launch whisper_bringup whisper.launch.py
+```
+Finally:
+
+```bash
+ros2 run bt_test carry_my_luggage_test
+```
 
 ### Follow navigation with small objects
 ```bash

@@ -20,7 +20,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition
-from launch_ros.actions import Node
+# from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -31,9 +31,9 @@ def generate_launch_description():
 
     # Configuration Variables
     use_sim_time = LaunchConfiguration('use_sim_time')
-    slam = LaunchConfiguration('slam')
+    # slam = LaunchConfiguration('slam')
     rviz = LaunchConfiguration('rviz')
-    map_file = LaunchConfiguration('map')
+    # map_file = LaunchConfiguration('map')
     params_file = LaunchConfiguration('params_file')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -64,21 +64,23 @@ def generate_launch_description():
 
     pcl_to_laser_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pcl_to_laser_dir, 'launch', 'sample_pointcloud_to_laserscan_launch.py')
+            os.path.join(pcl_to_laser_dir,
+                         'launch',
+                         'sample_pointcloud_to_laserscan_launch.py')
         ),
     )
 
-    localization_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(nav2_dir, 'launch', 'localization_launch.py')
-        ),
-        launch_arguments={
-            'use_sim_time': use_sim_time,
-            'slam': slam,
-            'map': map_file,
-            'params_file': params_file
-        }.items(),
-    )
+    # localization_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(nav2_dir, 'launch', 'localization_launch.py')
+    #     ),
+    #     launch_arguments={
+    #         'use_sim_time': use_sim_time,
+    #         'slam': slam,
+    #         'map': map_file,
+    #         'params_file': params_file
+    #     }.items(),
+    # )
 
     slam_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -100,14 +102,14 @@ def generate_launch_description():
         }.items()
     )
 
-    navigation_system_node = Node(
-        package='navigation_system',
-        executable='navigation_system_node',
-        name='navigation_system_node',
-        output='screen',
-        parameters=[{'nodes': [],
-                     'mode': 'amcl'}]
-    )
+    # navigation_system_node = Node(
+    #     package='navigation_system',
+    #     executable='navigation_system_node',
+    #     name='navigation_system_node',
+    #     output='screen',
+    #     parameters=[{'nodes': [],
+    #                  'mode': 'amcl'}]
+    # )
 
     rviz_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

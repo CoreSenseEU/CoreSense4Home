@@ -30,7 +30,7 @@ class FollowPerson(Node):
                 "head_1_link", "person_0", rclpy.time.Time())
             transform_head_2 = self.tfBuffer.lookup_transform(
                 "head_2_link", "person_0", rclpy.time.Time())
-        
+
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException):
             self.get_logger().warn("Could not get transform")
@@ -51,7 +51,7 @@ class FollowPerson(Node):
         return yaw
 
     def compute_pitch(self, translation):
-        pitch = np.arctan2(translation.y, translation.x)       
+        pitch = np.arctan2(translation.y, translation.x)
         return pitch
 
     def compute_euler(self, rotation):

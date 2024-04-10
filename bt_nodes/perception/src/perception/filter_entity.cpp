@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-#include <utility>
-#include <limits>
-
 #include "perception/filter_entity.hpp"
 
-#include "behaviortree_cpp_v3/behavior_tree.h"
+#include <limits>
+#include <string>
+#include <utility>
 
+#include "behaviortree_cpp_v3/behavior_tree.h"
 
 namespace perception
 {
@@ -27,41 +26,33 @@ namespace perception
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-FilterEntity::FilterEntity(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+FilterEntity::FilterEntity(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  
   getInput("lambda", lambda_);
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
-  setOutput("filtered_frame", frame_  + "_filtered");
-
-
+  setOutput("filtered_frame", frame_ + "_filtered");
 }
 
-void
-FilterEntity::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "FilterEntity halted");
-}
+void FilterEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FilterEntity halted");}
 
 geometry_msgs::msg::TransformStamped FilterEntity::update_state_observer(
   const geometry_msgs::msg::TransformStamped & entity)
 {
-  filtered_entity_.transform.translation.x = filtered_entity_.transform.translation.x + lambda_ *
-    (entity.transform.translation.x - filtered_entity_.transform.translation.x);
-  filtered_entity_.transform.translation.y = filtered_entity_.transform.translation.y + lambda_ *
-    (entity.transform.translation.y - filtered_entity_.transform.translation.y);
-  filtered_entity_.transform.translation.z = filtered_entity_.transform.translation.z + lambda_ *
-    (entity.transform.translation.z - filtered_entity_.transform.translation.z);
+  filtered_entity_.transform.translation.x =
+    filtered_entity_.transform.translation.x +
+    lambda_ * (entity.transform.translation.x - filtered_entity_.transform.translation.x);
+  filtered_entity_.transform.translation.y =
+    filtered_entity_.transform.translation.y +
+    lambda_ * (entity.transform.translation.y - filtered_entity_.transform.translation.y);
+  filtered_entity_.transform.translation.z =
+    filtered_entity_.transform.translation.z +
+    lambda_ * (entity.transform.translation.z - filtered_entity_.transform.translation.z);
   filtered_entity_.header.stamp = entity.header.stamp;
 
   return filtered_entity_;
@@ -74,9 +65,7 @@ geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(
   return filtered_entity_;
 }
 
-
-BT::NodeStatus
-FilterEntity::tick()
+BT::NodeStatus FilterEntity::tick()
 {
   getInput("frame", frame_);
   RCLCPP_INFO(node_->get_logger(), "IsMoving filtering frame %s", frame_.c_str());
@@ -84,15 +73,11 @@ FilterEntity::tick()
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
 
   try {
-    entity_transform_now_msg = tf_buffer_->lookupTransform(
-      "map",
-      frame_,
-      tf2::TimePointZero);
+    entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
 
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "Could not transform %s to %s: %s",
-      frame_.c_str(), "map", ex.what());
+      node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "map", ex.what());
     RCLCPP_INFO(node_->get_logger(), "Cannot transform");
 
     return BT::NodeStatus::SUCCESS;
@@ -111,8 +96,6 @@ FilterEntity::tick()
 
 }  // namespace perception
 
-
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<perception::FilterEntity>("FilterEntity");
 }

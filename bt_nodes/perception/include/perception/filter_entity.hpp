@@ -15,19 +15,17 @@
 #ifndef PERCEPTION__FILTER_ENTITY_HPP_
 #define PERCEPTION__FILTER_ENTITY_HPP_
 
-#include <string>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include "tf2_ros/transform_broadcaster.h"
-
 #include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -37,9 +35,7 @@ using namespace std::chrono_literals;
 class FilterEntity : public BT::ActionNodeBase
 {
 public:
-  explicit FilterEntity(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit FilterEntity(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();

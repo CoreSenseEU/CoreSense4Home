@@ -15,27 +15,23 @@
 #ifndef PERCEPTION__IS_MOVING_HPP_
 #define PERCEPTION__IS_MOVING_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
 #include "perception_system/PerceptionListener.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float64.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -45,23 +41,18 @@ using namespace std::chrono_literals;
 class IsMoving : public BT::ConditionNode
 {
 public:
-  explicit IsMoving(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit IsMoving(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<std::string>("frame"),
+      {BT::InputPort<std::string>("frame"),
         BT::InputPort<float>(
-          "velocity_tolerance",
-          "Tolerance in velocity to consider the human stopped"),
+          "velocity_tolerance", "Tolerance in velocity to consider the human stopped"),
         BT::InputPort<float>("threshold_time", "Lag time to consider the human stopped"),
-        BT::InputPort<float>("position_buffer_dimension", "Human position buffer dimension")
-      });
+        BT::InputPort<float>("position_buffer_dimension", "Human position buffer dimension")});
   }
 
 private:
@@ -81,7 +72,6 @@ private:
   void add_position(const geometry_msgs::msg::TransformStamped & new_position);
   double compute_velocity();
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr publisher_;
-
 };
 
 }  // namespace perception

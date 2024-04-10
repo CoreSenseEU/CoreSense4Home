@@ -15,17 +15,16 @@
 #ifndef NAVIGATION__MOVE_TO_HPP_
 #define NAVIGATION__MOVE_TO_HPP_
 
-#include <string>
-
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "nav2_msgs/action/navigate_to_pose.hpp"
-
-#include "motion/navigation/ctrl_support/BTActionNode.hpp"
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
+
+#include <string>
+
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "motion/navigation/ctrl_support/BTActionNode.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
 
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
@@ -36,13 +35,11 @@
 namespace navigation
 {
 
-class MoveTo
-  : public navigation::BtActionNode<nav2_msgs::action::NavigateToPose>
+class MoveTo : public navigation::BtActionNode<nav2_msgs::action::NavigateToPose>
 {
 public:
   explicit MoveTo(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -53,11 +50,8 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<double>("distance_tolerance"),
-        BT::InputPort<std::string>("tf_frame"),
-        BT::InputPort<bool>("will_finish")
-      });
+      {BT::InputPort<double>("distance_tolerance"), BT::InputPort<std::string>("tf_frame"),
+        BT::InputPort<bool>("will_finish")});
   }
 
 private:

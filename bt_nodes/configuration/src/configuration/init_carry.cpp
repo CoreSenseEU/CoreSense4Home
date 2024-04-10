@@ -17,9 +17,7 @@
 namespace configuration
 {
 
-InitCarry::InitCarry(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+InitCarry::InitCarry(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -29,24 +27,20 @@ InitCarry::InitCarry(
   node_->declare_parameter("offer_pose", "offer");
   node_->declare_parameter("person_id", 001122334455);
 
-  tf_buffer_ =
-    std::make_shared<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 }
 
-BT::NodeStatus
-InitCarry::tick()
+BT::NodeStatus InitCarry::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "InitCarry ticked");
   std::vector<double> pose_;
 
-  if (node_->has_parameter("cam_frame") &&
-    node_->has_parameter("home_position") &&
-    node_->has_parameter("home_pose") &&
-    node_->has_parameter("offer_pose") &&
+  if (
+    node_->has_parameter("cam_frame") && node_->has_parameter("home_position") &&
+    node_->has_parameter("home_pose") && node_->has_parameter("offer_pose") &&
     node_->has_parameter("person_id"))
   {
     try {
@@ -89,15 +83,10 @@ InitCarry::tick()
   }
 }
 
-void
-InitCarry::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "InitCarry halted");
-}
+void InitCarry::halt() {RCLCPP_INFO(node_->get_logger(), "InitCarry halted");}
 
 }  // namespace configuration
 
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<configuration::InitCarry>("InitCarry");
 }

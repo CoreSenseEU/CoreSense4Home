@@ -15,21 +15,19 @@
 #ifndef NAVIGATION__CLEAR_MAP_AT_GOAL_HPP_
 #define NAVIGATION__CLEAR_MAP_AT_GOAL_HPP_
 
-#include <string>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "nav2_msgs/action/navigate_to_pose.hpp"
+#include <string>
 
 #include "behaviortree_cpp_v3/action_node.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-
-#include "nav2_costmap_2d/costmap_2d_ros.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_costmap_2d/clear_costmap_service.hpp"
+#include "nav2_costmap_2d/costmap_2d_ros.hpp"
 #include "nav2_costmap_2d/costmap_layer.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
 
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
@@ -40,20 +38,16 @@
 namespace navigation
 {
 
-class ClearMapAtGoal : public BT::SyncActionNode 
+class ClearMapAtGoal : public BT::SyncActionNode
 {
 public:
-  explicit ClearMapAtGoal(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit ClearMapAtGoal(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<geometry_msgs::msg::PoseStamped>("input_goal", "Original Goal"),
-        BT::InputPort<double>("radius", "Radius to clear")
-      });
+      {BT::InputPort<geometry_msgs::msg::PoseStamped>("input_goal", "Original Goal"),
+        BT::InputPort<double>("radius", "Radius to clear")});
   }
 
   BT::NodeStatus tick();
@@ -67,8 +61,8 @@ private:
   // tf2_ros::TransformListener tf_listener_;
   // bool will_finish_;
   void clearLayerRegion(
-  std::shared_ptr<nav2_costmap_2d::CostmapLayer> & costmap, double pose_x, double pose_y, double reset_distance,
-  bool invert);
+    std::shared_ptr<nav2_costmap_2d::CostmapLayer> & costmap, double pose_x, double pose_y,
+    double reset_distance, bool invert);
 
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;

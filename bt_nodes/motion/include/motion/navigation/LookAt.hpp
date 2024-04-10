@@ -15,18 +15,18 @@
 #ifndef NAVIGATION__LOOK_AT_HPP_
 #define NAVIGATION__LOOK_AT_HPP_
 
-#include <string>
-#include <memory>
+#include <tf2_ros/buffer.h>
 
+#include <memory>
+#include <string>
+
+#include "attention_system_msgs/msg/attention_points.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "rclcpp/rclcpp.hpp"
-#include <tf2_ros/buffer.h>
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-#include "attention_system_msgs/msg/attention_points.hpp"
-
 #include "std_msgs/msg/string.hpp"
 
 namespace navigation
@@ -35,9 +35,7 @@ namespace navigation
 class LookAt : public BT::ActionNodeBase
 {
 public:
-  explicit LookAt(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -45,10 +43,8 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<std::vector<std::string>>("tf_frames"),
-        BT::InputPort<std::string>("tf_frame")
-      });
+      {BT::InputPort<std::vector<std::string>>("tf_frames"),
+        BT::InputPort<std::string>("tf_frame")});
   }
 
 private:
@@ -59,7 +55,6 @@ private:
   std::vector<std::string> tf_frames_;
   std::string tf_frame_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
-
 };
 
 }  // namespace navigation

@@ -15,35 +15,29 @@
 #ifndef NAVIGATION__FOLLOW_ENTITY_HPP_
 #define NAVIGATION__FOLLOW_ENTITY_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "geometry_msgs/msg/quaternion.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
-
-#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
-
 #include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
 #include "navigation_system_interfaces/srv/set_mode.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2/utils.h"
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/utils.h"
 
 namespace navigation
 {
@@ -51,9 +45,7 @@ namespace navigation
 class FollowEntity : public BT::ActionNodeBase
 {
 public:
-  explicit FollowEntity(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit FollowEntity(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -69,7 +61,6 @@ public:
   }
 
 private:
-
   void map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg);
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
   void check_robot_inside_map();
@@ -78,7 +69,8 @@ private:
   std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr entity_pose_pub_;
   rclcpp::Client<navigation_system_interfaces::srv::SetMode>::SharedPtr set_mode_client_;
-  rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr set_truncate_distance_client_;
+  rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
+    set_truncate_distance_client_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_;

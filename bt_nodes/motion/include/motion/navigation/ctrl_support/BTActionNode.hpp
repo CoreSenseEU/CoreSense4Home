@@ -32,8 +32,7 @@ class BtActionNode : public BT::ActionNodeBase
 {
 public:
   BtActionNode(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf)
   : BT::ActionNodeBase(xml_tag_name, conf), action_name_(action_name)
   {
@@ -57,9 +56,7 @@ public:
 
   BtActionNode() = delete;
 
-  virtual ~BtActionNode()
-  {
-  }
+  virtual ~BtActionNode() {}
 
   // Create instance of an action server
   void createActionClient(const std::string & action_name)
@@ -78,52 +75,35 @@ public:
   {
     BT::PortsList basic = {
       BT::InputPort<std::string>("server_name", "Action server name"),
-      BT::InputPort<std::chrono::milliseconds>("server_timeout")
-    };
+      BT::InputPort<std::chrono::milliseconds>("server_timeout")};
     basic.insert(addition.begin(), addition.end());
 
     return basic;
   }
 
-  static BT::PortsList providedPorts()
-  {
-    return providedBasicPorts({});
-  }
+  static BT::PortsList providedPorts() {return providedBasicPorts({});}
 
   // Derived classes can override any of the following methods to hook into the
   // processing for the action: on_tick, on_wait_for_result, and on_success
 
   // Could do dynamic checks, such as getting updates to values on the blackboard
-  virtual void on_tick()
-  {
-  }
+  virtual void on_tick() {}
 
   // There can be many loop iterations per tick. Any opportunity to do something after
   // a timeout waiting for a result that hasn't been received yet
-  virtual void on_wait_for_result()
-  {
-  }
+  virtual void on_wait_for_result() {}
 
   // Called upon successful completion of the action. A derived class can override this
   // method to put a value on the blackboard, for example.
-  virtual BT::NodeStatus on_success()
-  {
-    return BT::NodeStatus::SUCCESS;
-  }
+  virtual BT::NodeStatus on_success() {return BT::NodeStatus::SUCCESS;}
 
   // Called when a the action is aborted. By default, the node will return FAILURE.
   // The user may override it to return another value, instead.
-  virtual BT::NodeStatus on_aborted()
-  {
-    return BT::NodeStatus::FAILURE;
-  }
+  virtual BT::NodeStatus on_aborted() {return BT::NodeStatus::FAILURE;}
 
   // Called when a the action is cancelled. By default, the node will return SUCCESS.
   // The user may override it to return another value, instead.
-  virtual BT::NodeStatus on_cancelled()
-  {
-    return BT::NodeStatus::SUCCESS;
-  }
+  virtual BT::NodeStatus on_cancelled() {return BT::NodeStatus::SUCCESS;}
 
   // The main override required by a BT action
   BT::NodeStatus tick() override
@@ -152,7 +132,8 @@ public:
       on_wait_for_result();
 
       auto goal_status = goal_handle_->get_status();
-      if (goal_updated_ && (goal_status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
+      if (
+        goal_updated_ && (goal_status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
         goal_status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED))
       {
         goal_updated_ = false;
@@ -189,13 +170,13 @@ public:
   {
     if (should_cancel_goal()) {
       auto future_cancel = action_client_->async_cancel_goal(goal_handle_);
-      if (rclcpp::spin_until_future_complete(
+      if (
+        rclcpp::spin_until_future_complete(
           node_->get_node_base_interface(), future_cancel, server_timeout_) !=
         rclcpp::FutureReturnCode::SUCCESS)
       {
         RCLCPP_ERROR(
-          node_->get_logger(),
-          "Failed to cancel action server for %s", action_name_.c_str());
+          node_->get_logger(), "Failed to cancel action server for %s", action_name_.c_str());
       }
     }
 
@@ -218,7 +199,6 @@ protected:
            status == action_msgs::msg::GoalStatus::STATUS_EXECUTING;
   }
 
-
   void on_new_goal_received()
   {
     goal_result_available_ = false;
@@ -236,7 +216,8 @@ protected:
 
     auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
 
-    if (rclcpp::spin_until_future_complete(
+    if (
+      rclcpp::spin_until_future_complete(
         node_->get_node_base_interface(), future_goal_handle, server_timeout_) !=
       rclcpp::FutureReturnCode::SUCCESS)
     {
@@ -273,7 +254,6 @@ protected:
   // new action goal is sent or canceled
   std::chrono::milliseconds server_timeout_;
 };
-
 
 }  // namespace navigation
 

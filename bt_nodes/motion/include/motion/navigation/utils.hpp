@@ -15,17 +15,18 @@
 #ifndef NAVIGATION__UTILS_HPP_
 #define NAVIGATION__UTILS_HPP_
 
-#include "ament_index_cpp/get_package_share_directory.hpp"
-#include <iostream>
-#include <fstream>
-#include <string>
 #include <cstring>
+#include <fstream>
+#include <iostream>
+#include <string>
 
+#include "ament_index_cpp/get_package_share_directory.hpp"
 
 namespace navigation
 {
 
-std::string nav_to_pose_truncated_xml = R"(<root main_tree_to_execute="MainTree">
+std::string nav_to_pose_truncated_xml =
+  R"(<root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <RecoveryNode number_of_retries="6" name="NavigateRecovery">
       <PipelineSequence name="NavigateWithReplanning">
@@ -59,7 +60,8 @@ std::string nav_to_pose_truncated_xml = R"(<root main_tree_to_execute="MainTree"
   </BehaviorTree>
 </root>)";
 
-std::string dynamic_following_xml = R"(<root main_tree_to_execute="MainTree">
+std::string dynamic_following_xml =
+  R"(<root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <PipelineSequence name="NavigateWithReplanning">
       <RateController hz="1.0">
@@ -90,8 +92,7 @@ std::string modify_truncate_distance(std::string xml, double distance)
   std::string distance_str = std::to_string(distance);
   std::string to_find = "distance=\"";
   std::size_t found = xml.find(to_find);
-  if (found != std::string::npos)
-  {
+  if (found != std::string::npos) {
     std::size_t start = found + to_find.size();
     std::size_t end = xml.find("\"", start);
     xml.replace(start, end - start, distance_str);
@@ -100,15 +101,13 @@ std::string modify_truncate_distance(std::string xml, double distance)
 }
 
 // generate a temp file with the given content, as input the distance to truncate the path
-inline
-std::string generate_xml_file(std::string content, double distance)
+inline std::string generate_xml_file(std::string content, double distance)
 {
   std::string temp_file = "/tmp/bt_xml_XXXXXX";
-  char *temp_file_c = new char[temp_file.length() + 1];
+  char * temp_file_c = new char[temp_file.length() + 1];
   strcpy(temp_file_c, temp_file.c_str());
   int fd = mkstemp(temp_file_c);
-  if (fd == -1)
-  {
+  if (fd == -1) {
     std::cerr << "Error creating temp file" << std::endl;
     return "";
   }
@@ -116,7 +115,7 @@ std::string generate_xml_file(std::string content, double distance)
   file << modify_truncate_distance(content, distance);
   file.close();
   return std::string(temp_file_c);
-} 
+}
 
 }  // namespace navigation
 

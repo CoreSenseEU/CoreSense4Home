@@ -20,20 +20,20 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "perception/bt_service_node.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "perception_system_interfaces/srv/isolate_pc_background.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
+#include "perception/bt_service_node.hpp"
+#include "perception_system_interfaces/srv/isolate_pc_background.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace perception
 {
 
-class ExtractCollisionScene : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>
+class ExtractCollisionScene
+  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>
 {
 public:
   explicit ExtractCollisionScene(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -42,14 +42,10 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object")
-      });
+      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object")});
   }
-
-
 };
 
-} // namespace perception
+}  // namespace perception
 
-#endif // PERCEPTION__EXTRACT_COLLISION_SCENE_HPP_
+#endif  // PERCEPTION__EXTRACT_COLLISION_SCENE_HPP_

@@ -4,8 +4,8 @@
 #include "nav2_costmap_2d/footprint.hpp"
 #include "rclcpp/parameter_events_filter.hpp"
 
-using nav2_costmap_2d::LETHAL_OBSTACLE;
 using nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE;
+using nav2_costmap_2d::LETHAL_OBSTACLE;
 using nav2_costmap_2d::NO_INFORMATION;
 
 namespace navigation
@@ -22,10 +22,9 @@ ClearPeopleLayer::ClearPeopleLayer()
 // This method is called at the end of plugin initialization.
 // It contains ROS parameter(s) declaration and initialization
 // of need_recalculation_ variable.
-void
-ClearPeopleLayer::onInitialize()
+void ClearPeopleLayer::onInitialize()
 {
-  auto node = node_.lock(); 
+  auto node = node_.lock();
   declareParameter("enabled", rclcpp::ParameterValue(true));
   node->get_parameter(name_ + "." + "enabled", enabled_);
 
@@ -36,10 +35,9 @@ ClearPeopleLayer::onInitialize()
 // The method is called to ask the plugin: which area of costmap it needs to update.
 // Inside this method window bounds are re-calculated if need_recalculation_ is true
 // and updated independently on its value.
-void
-ClearPeopleLayer::updateBounds(
-  double /*robot_x*/, double /*robot_y*/, double /*robot_yaw*/, double * min_x,
-  double * min_y, double * max_x, double * max_y)
+void ClearPeopleLayer::updateBounds(
+  double /*robot_x*/, double /*robot_y*/, double /*robot_yaw*/, double * min_x, double * min_y,
+  double * max_x, double * max_y)
 {
   if (need_recalculation_) {
     last_min_x_ = *min_x;
@@ -72,13 +70,13 @@ ClearPeopleLayer::updateBounds(
 
 // The method is called when footprint was changed.
 // Here it just resets need_recalculation_ variable.
-void
-ClearPeopleLayer::onFootprintChanged()
+void ClearPeopleLayer::onFootprintChanged()
 {
   need_recalculation_ = true;
 
-  RCLCPP_DEBUG(rclcpp::get_logger(
-      "nav2_costmap_2d"), "ClearPeopleLayer::onFootprintChanged(): num footprint points: %lu",
+  RCLCPP_DEBUG(
+    rclcpp::get_logger("nav2_costmap_2d"),
+    "ClearPeopleLayer::onFootprintChanged(): num footprint points: %lu",
     layered_costmap_->getFootprint().size());
 }
 
@@ -86,11 +84,8 @@ ClearPeopleLayer::onFootprintChanged()
 // It updates the costmap within its window bounds.
 // Inside this method the costmap gradient is generated and is writing directly
 // to the resulting costmap master_grid without any merging with previous layers.
-void
-ClearPeopleLayer::updateCosts(
-  nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j,
-  int max_i,
-  int max_j)
+void ClearPeopleLayer::updateCosts(
+  nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j, int max_i, int max_j)
 {
   if (!enabled_) {
     return;
@@ -130,7 +125,7 @@ ClearPeopleLayer::updateCosts(
     for (int i = min_i; i < max_i; i++) {
       int index = master_grid.getIndex(i, j);
       // setting the gradient cost
-      unsigned char cost = (LETHAL_OBSTACLE - gradient_index*GRADIENT_FACTOR)%255;
+      unsigned char cost = (LETHAL_OBSTACLE - gradient_index * GRADIENT_FACTOR) % 255;
       if (gradient_index <= GRADIENT_SIZE) {
         gradient_index++;
       } else {

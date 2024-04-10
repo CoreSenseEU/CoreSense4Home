@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "motion/navigation/clear_map_at_goal.hpp"
+
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+
 #include <string>
 #include <utility>
 
-
-#include "motion/navigation/clear_map_at_goal.hpp"
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include "rclcpp_lifecycle/lifecycle_node.hpp"
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
-
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 namespace navigation
 {
@@ -29,23 +28,19 @@ namespace navigation
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-
-ClearMapAtGoal::ClearMapAtGoal(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+ClearMapAtGoal::ClearMapAtGoal(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::SyncActionNode(xml_tag_name, conf),
-costmap_ros_(std::make_shared<nav2_costmap_2d::Costmap2DROS>("costmap")),
-radius_(0.0)
+  costmap_ros_(std::make_shared<nav2_costmap_2d::Costmap2DROS>("costmap")),
+  radius_(0.0)
 {
   node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
   costmap_ros_->on_configure(rclcpp_lifecycle::State());
 }
 
-BT::NodeStatus
-ClearMapAtGoal::tick()
+BT::NodeStatus ClearMapAtGoal::tick()
 {
   setStatus(BT::NodeStatus::RUNNING);
-  
+
   geometry_msgs::msg::PoseStamped goal;
   getInput("input_goal", goal);
   getInput("radius", radius_);
@@ -72,13 +67,13 @@ ClearMapAtGoal::tick()
       }
     }
   }
-   RCLCPP_INFO(node_->get_logger(), "Cleared succeeded");
+  RCLCPP_INFO(node_->get_logger(), "Cleared succeeded");
   return BT::NodeStatus::SUCCESS;
 }
 
 void ClearMapAtGoal::clearLayerRegion(
-  std::shared_ptr<nav2_costmap_2d::CostmapLayer> & costmap, double pose_x, double pose_y, double reset_distance,
-  bool invert)
+  std::shared_ptr<nav2_costmap_2d::CostmapLayer> & costmap, double pose_x, double pose_y,
+  double reset_distance, bool invert)
 {
   std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> lock(*(costmap->getMutex()));
 
@@ -98,15 +93,11 @@ void ClearMapAtGoal::clearLayerRegion(
   costmap->addExtraBounds(ox, oy, ox + width, oy + height);
 }
 
-
 }  // namespace navigation
-
 
 BT_REGISTER_NODES(factory)
 {
-  BT::NodeBuilder builder =
-    [](const std::string & name, const BT::NodeConfiguration & config)
-    {
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<navigation::ClearMapAtGoal>(name, config);
     };
 

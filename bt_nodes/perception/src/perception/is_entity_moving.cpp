@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "perception/is_entity_moving.hpp"
+
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
-#include <limits>
-
-#include "perception/is_entity_moving.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "perception_system/PerceptionUtils.hpp"
-
 
 namespace perception
 {
@@ -29,9 +28,7 @@ namespace perception
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-IsEntityMoving::IsEntityMoving(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+IsEntityMoving::IsEntityMoving(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -41,8 +38,7 @@ IsEntityMoving::IsEntityMoving(
   //   std::make_shared<tf2_ros::TransformListener>(*tf_buffer_)
 }
 
-BT::NodeStatus
-IsEntityMoving::tick()
+BT::NodeStatus IsEntityMoving::tick()
 {
   if (status() == BT::NodeStatus::IDLE) {
     config().blackboard->get("tf_buffer", tf_buffer_);
@@ -53,8 +49,7 @@ IsEntityMoving::tick()
   // RCLCPP_INFO(node_->get_logger(), "IsEntityMoving ticked");
   RCLCPP_DEBUG(node_->get_logger(), "IsEntityMoving ticked");
 
-  if (has_stoped_ && (node_->now().seconds() - first_time_.seconds()) <= check_time_)
-  {
+  if (has_stoped_ && (node_->now().seconds() - first_time_.seconds()) <= check_time_) {
     RCLCPP_INFO(node_->get_logger(), "IsEntityMoving waiting!!");
     return BT::NodeStatus::SUCCESS;
   }
@@ -65,44 +60,40 @@ IsEntityMoving::tick()
   rclcpp::Time when = node_->get_clock()->now() - rclcpp::Duration(check_time_, 0);
 
   try {
-    entity_transform_now_msg = tf_buffer_->lookupTransform(
-      "map",
-      frame_,
-      tf2::TimePointZero);
-    entity_transform_then_msg = tf_buffer_->lookupTransform(
-      "map",
-      frame_,
-      when,
-      500ms);
+    entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
+    entity_transform_then_msg = tf_buffer_->lookupTransform("map", frame_, when, 500ms);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "Could not transform %s to %s: %s",
-      frame_.c_str(), "map", ex.what());
+      node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "map", ex.what());
     has_stoped_ = false;
-    return BT::NodeStatus::SUCCESS; //ASSUME IS MOVING
+    return BT::NodeStatus::SUCCESS;  //ASSUME IS MOVING
   }
 
-  auto distance = std::hypot((entity_transform_now_msg.transform.translation.x - entity_transform_then_msg.transform.translation.x),
-                (entity_transform_now_msg.transform.translation.y - entity_transform_then_msg.transform.translation.y));
+  auto distance = std::hypot(
+    (entity_transform_now_msg.transform.translation.x -
+    entity_transform_then_msg.transform.translation.x),
+    (entity_transform_now_msg.transform.translation.y -
+    entity_transform_then_msg.transform.translation.y));
   RCLCPP_INFO(node_->get_logger(), "Distance: %f", distance);
-  RCLCPP_INFO(node_->get_logger(), "Distance in X %f", entity_transform_now_msg.transform.translation.x - entity_transform_then_msg.transform.translation.x);
-  RCLCPP_INFO(node_->get_logger(), "Distance in Y %f", entity_transform_now_msg.transform.translation.y - entity_transform_then_msg.transform.translation.y);
+  RCLCPP_INFO(
+    node_->get_logger(), "Distance in X %f",
+    entity_transform_now_msg.transform.translation.x -
+    entity_transform_then_msg.transform.translation.x);
+  RCLCPP_INFO(
+    node_->get_logger(), "Distance in Y %f",
+    entity_transform_now_msg.transform.translation.y -
+    entity_transform_then_msg.transform.translation.y);
 
-  if (distance >= distance_tolerance_)
-  {
+  if (distance >= distance_tolerance_) {
     has_stoped_ = false;
     return BT::NodeStatus::SUCCESS;
   }
   has_stoped_ = true;
   first_time_ = node_->now();
   return BT::NodeStatus::FAILURE;
-
-
 }
 
-
 }  // namespace perception
-
 
 BT_REGISTER_NODES(factory)
 {

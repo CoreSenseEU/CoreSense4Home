@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
 #include <memory>
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-#include "behaviortree_cpp_v3/utils/shared_library.h"
-#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#include <string>
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
-
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "rclcpp/rclcpp.hpp"
-
 
 int main(int argc, char * argv[])
 {
@@ -40,7 +37,7 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("init_carry_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_pointing_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("extract_entity_color_bt_node"));  
+  factory.registerFromPlugin(loader.getOSName("extract_entity_color_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_predefined_bt_node"));
   factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));

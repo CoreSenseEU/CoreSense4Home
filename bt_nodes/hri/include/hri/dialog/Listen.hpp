@@ -31,8 +31,7 @@ class Listen : public dialog::BtActionNode<whisper_msgs::action::STT>
 {
 public:
   explicit Listen(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -46,6 +45,6 @@ public:
 private:
 };
 
-} // namespace dialog
+}  // namespace dialog
 
-#endif // HRI__LISTEN_HPP_
+#endif  // HRI__LISTEN_HPP_

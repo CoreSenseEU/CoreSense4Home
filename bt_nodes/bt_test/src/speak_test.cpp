@@ -1,10 +1,8 @@
+#include "ament_index_cpp/get_package_share_directory.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include "behaviortree_cpp_v3/utils/shared_library.h"
-
-#include "ament_index_cpp/get_package_share_directory.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char * argv[])
@@ -31,8 +29,7 @@ int main(int argc, char * argv[])
   bool finish = false;
   while (!finish && rclcpp::ok()) {
     status = tree.rootNode()->executeTick();
-    finish = (status == BT::NodeStatus::SUCCESS) ||
-      (status == BT::NodeStatus::FAILURE);
+    finish = (status == BT::NodeStatus::SUCCESS) || (status == BT::NodeStatus::FAILURE);
 
     rclcpp::spin_some(node);
     rate.sleep();

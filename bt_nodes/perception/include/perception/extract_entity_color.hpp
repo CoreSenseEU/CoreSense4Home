@@ -15,27 +15,23 @@
 #ifndef PERCEPTION__EXTRACT_COLOR_HPP_
 #define PERCEPTION__EXTRACT_COLOR_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
 #include "perception_system/PerceptionListener.hpp"
 #include "perception_system_interfaces/msg/detection_array.hpp"
-
 #include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -45,9 +41,7 @@ using pl = perception_system::PerceptionListener;
 class ExtractEntityColor : public BT::ActionNodeBase
 {
 public:
-  explicit ExtractEntityColor(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit ExtractEntityColor(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -55,17 +49,14 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<std::string>("interest"),
-        BT::InputPort<float>("confidence"),
-        BT::OutputPort<std::int64_t>("person_id")
-      });
+      {BT::InputPort<std::string>("interest"), BT::InputPort<float>("confidence"),
+        BT::OutputPort<std::int64_t>("person_id")});
   }
 
 private:
-
   rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr detected_objs_sub_;
+  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr
+    detected_objs_sub_;
   perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};
 
   std::string interest_;

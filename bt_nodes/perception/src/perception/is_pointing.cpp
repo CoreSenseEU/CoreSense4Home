@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "perception/is_pointing.hpp"
+
 #include <string>
 #include <utility>
 
-#include "perception/is_pointing.hpp"
-#include "perception_system/PerceptionUtils.hpp"
-
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
-
+#include "perception_system/PerceptionUtils.hpp"
 
 namespace perception
 {
@@ -30,9 +28,7 @@ using namespace std::placeholders;
 
 using pl = perception_system::PerceptionListener;
 
-IsPointing::IsPointing(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+IsPointing::IsPointing(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -48,10 +44,8 @@ IsPointing::IsPointing(
   // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
-
   getInput("cam_frame", camera_frame_);
 }
-
 
 // Distance between two transformations
 double tfs_distance(
@@ -80,27 +74,23 @@ geometry_msgs::msg::TransformStamped tfs_mean(
   return mean;
 }
 
-int
-IsPointing::publicTF_map2object(
+int IsPointing::publicTF_map2object(
   const perception_system_interfaces::msg::Detection & detected_object)
 {
   geometry_msgs::msg::TransformStamped map2camera_msg;
   try {
-    map2camera_msg = tf_buffer_->lookupTransform(
-      "map", camera_frame_,
-      tf2::TimePointZero);
+    map2camera_msg = tf_buffer_->lookupTransform("map", camera_frame_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "[IsPointing] Could not transform %s to %s: %s",
-      "map", camera_frame_.c_str(), ex.what());
+      node_->get_logger(), "[IsPointing] Could not transform %s to %s: %s", "map",
+      camera_frame_.c_str(), ex.what());
     return -1;
   }
 
   tf2::Transform camera2object;
   camera2object.setOrigin(
     tf2::Vector3(
-      detected_object.center3d.position.x,
-      detected_object.center3d.position.y,
+      detected_object.center3d.position.x, detected_object.center3d.position.y,
       detected_object.center3d.position.z));
   camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
@@ -114,26 +104,20 @@ IsPointing::publicTF_map2object(
 
   map2object_msg.transform = tf2::toMsg(map2object);
 
-
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
-  if (detected_object.pointing_direction == 2 )
-  {
+  if (detected_object.pointing_direction == 2) {
     map2object_msg.child_frame_id = "right_bag";
     bag_frame_ = "right_bag";
-    map2object_msg.transform.translation.x -= 0.4; // + or - ?
-  } else if (detected_object.pointing_direction == 4)
-  {
-    map2object_msg.transform.translation.x += 0.4; // + or - ?
+    map2object_msg.transform.translation.x -= 0.4;  // + or - ?
+  } else if (detected_object.pointing_direction == 4) {
+    map2object_msg.transform.translation.x += 0.4;  // + or - ?
     bag_frame_ = "left_bag";
     map2object_msg.child_frame_id = "left_bag";
-  } else if (detected_object.pointing_direction == 3)
-  {
+  } else if (detected_object.pointing_direction == 3) {
     bag_frame_ = "center_bag";
-    map2object_msg.transform.translation.y -= 0.4; // + or - ?
+    map2object_msg.transform.translation.y -= 0.4;  // + or - ?
     map2object_msg.child_frame_id = "center_bag";
-  }
-  else
-  {
+  } else {
     return -1;
   }
 
@@ -158,16 +142,13 @@ IsPointing::publicTF_map2object(
       }
     }
   }
-  RCLCPP_INFO(
-    node_->get_logger(), "[IsPointing] Bag direction %s",
-    bag_frame_.c_str());
+  RCLCPP_INFO(node_->get_logger(), "[IsPointing] Bag direction %s", bag_frame_.c_str());
 
   tf_static_broadcaster_->sendTransform(person_pose_);
   return 0;
 }
 
-BT::NodeStatus
-IsPointing::tick()
+BT::NodeStatus IsPointing::tick()
 {
   pl::getInstance()->set_interest("person", true);
   pl::getInstance()->update(30);
@@ -191,14 +172,10 @@ IsPointing::tick()
   perception_system_interfaces::msg::Detection best_detection;
 
   std::sort(
-      detections.begin(), detections.end(),
-      [this](const auto & a, const auto & b) {
-        return perception_system::diffIDs(
-          this->person_id_,
-          a.color_person) <
-        perception_system::diffIDs(this->person_id_, b.color_person);
-      }
-  );
+    detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
+      return perception_system::diffIDs(this->person_id_, a.color_person) <
+      perception_system::diffIDs(this->person_id_, b.color_person);
+    });
 
   best_detection = detections[0];
 
@@ -218,8 +195,6 @@ IsPointing::tick()
 
 }  // namespace perception
 
-
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<perception::IsPointing>("IsPointing");
 }

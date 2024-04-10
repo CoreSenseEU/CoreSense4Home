@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "perception/is_moving.hpp"
+
+#include <limits>
 #include <string>
 #include <utility>
-#include <limits>
-
-#include "perception/is_moving.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "perception_system/PerceptionUtils.hpp"
-
 
 namespace perception
 {
@@ -28,19 +27,14 @@ namespace perception
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-IsMoving::IsMoving(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+IsMoving::IsMoving(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
   config().blackboard->get("cam_frame", cam_frame_);
 
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   getInput("frame", frame_);
   getInput("velocity_tolerance", velocity_tolerance_);
@@ -48,11 +42,9 @@ IsMoving::IsMoving(
   getInput("position_buffer_dimension", position_buffer_dimension_);
   position_buffer_.reserve(position_buffer_dimension_);
   publisher_ = node_->create_publisher<std_msgs::msg::Float64>("velocita", 10);
-
 }
 
-void IsMoving::add_position(
-  const geometry_msgs::msg::TransformStamped & new_position)
+void IsMoving::add_position(const geometry_msgs::msg::TransformStamped & new_position)
 {
   // RCLCPP_INFO(node_->get_logger(), "Adding position to buffer dim: %d", position_buffer_.size());
   if (position_buffer_.size() == position_buffer_dimension_) {
@@ -72,12 +64,12 @@ double IsMoving::compute_velocity()
   bool at_least_one_couple = false;
 
   for (size_t i = 1; i < position_buffer_.size(); i++) {
-    double delta_x = position_buffer_[i].transform.translation.x -
-      position_buffer_[i - 1].transform.translation.x;
-    double delta_y = position_buffer_[i].transform.translation.y -
-      position_buffer_[i - 1].transform.translation.y;
-    double time_2 = position_buffer_[i].header.stamp.sec +
-      position_buffer_[i].header.stamp.nanosec * 1e-9;
+    double delta_x =
+      position_buffer_[i].transform.translation.x - position_buffer_[i - 1].transform.translation.x;
+    double delta_y =
+      position_buffer_[i].transform.translation.y - position_buffer_[i - 1].transform.translation.y;
+    double time_2 =
+      position_buffer_[i].header.stamp.sec + position_buffer_[i].header.stamp.nanosec * 1e-9;
 
     double time_1 = position_buffer_[i - 1].header.stamp.sec +
       position_buffer_[i - 1].header.stamp.nanosec * 1e-9;
@@ -114,9 +106,7 @@ double IsMoving::compute_velocity()
   return total_velocity / (position_buffer_.size() - 1);
 }
 
-
-BT::NodeStatus
-IsMoving::tick()
+BT::NodeStatus IsMoving::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "IsMoving ticked");
 
@@ -124,10 +114,7 @@ IsMoving::tick()
   rclcpp::Time when = node_->get_clock()->now();
 
   try {
-    entity_transform_now_msg = tf_buffer_->lookupTransform(
-      "map",
-      frame_,
-      tf2::TimePointZero);
+    entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
     // Ottenere la posizione x, y, z dalla trasformazione
     double x = entity_transform_now_msg.transform.translation.x;
     double y = entity_transform_now_msg.transform.translation.y;
@@ -143,24 +130,24 @@ IsMoving::tick()
 
     // Stampa posizione e timestamp
     RCLCPP_INFO(
-      node_->get_logger(), "Position (x, y, z): %.2f, %.2f, %.2f, Timestamp: %.10f",
-      x, y, z, timestamp.nanoseconds() * 1e-9);
+      node_->get_logger(), "Position (x, y, z): %.2f, %.2f, %.2f, Timestamp: %.10f", x, y, z,
+      timestamp.nanoseconds() * 1e-9);
 
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "Could not transform %s to %s: %s",
-      frame_.c_str(), "map", ex.what());
+      node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "map", ex.what());
     RCLCPP_INFO(node_->get_logger(), "Cannot transform");
 
     return BT::NodeStatus::SUCCESS;
   }
   if (position_buffer_.empty()) {
     add_position(entity_transform_now_msg);
-  } else if (std::abs(
+  } else if (
+    std::abs(
       entity_transform_now_msg.header.stamp.sec +
       entity_transform_now_msg.header.stamp.nanosec * 1e-9 -
-      position_buffer_.back().header.stamp.sec -
-      position_buffer_.back().header.stamp.nanosec * 1 - 9) > 1e-10)
+      position_buffer_.back().header.stamp.sec - position_buffer_.back().header.stamp.nanosec * 1 -
+      9) > 1e-10)
   {
     add_position(entity_transform_now_msg);
   } else {
@@ -187,11 +174,9 @@ IsMoving::tick()
     first_time_stopped_ = position_buffer_.back().header.stamp;
     entity_stopped_ = true;
     RCLCPP_INFO(node_->get_logger(), "First time stopped %f", velocity);
-
   }
 
   if ((when.seconds() - first_time_stopped_.seconds()) > threshold_time_) {
-
     return BT::NodeStatus::FAILURE;
   }
 
@@ -200,8 +185,6 @@ IsMoving::tick()
 
 }  // namespace perception
 
-
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<perception::IsMoving>("IsMoving");
 }

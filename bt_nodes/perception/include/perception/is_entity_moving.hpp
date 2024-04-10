@@ -15,27 +15,23 @@
 #ifndef PERCEPTION__IS_ENTITY_MOVING_HPP_
 #define PERCEPTION__IS_ENTITY_MOVING_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
 #include <memory>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
 #include "perception_system/PerceptionListener.hpp"
-
 #include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -45,20 +41,17 @@ using namespace std::chrono_literals;
 class IsEntityMoving : public BT::ConditionNode
 {
 public:
-  explicit IsEntityMoving(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit IsEntityMoving(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<std::string>("frame"),
+      {BT::InputPort<std::string>("frame"),
         BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
-        BT::InputPort<float>("distance_tolerance", "distance tolerance to consider the entity is moving")
-      });
+        BT::InputPort<float>(
+          "distance_tolerance", "distance tolerance to consider the entity is moving")});
   }
 
 private:

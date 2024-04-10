@@ -21,22 +21,18 @@ namespace hri
 {
 
 GenerateTextFromObjects::GenerateTextFromObjects(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 }
 
-void
-GenerateTextFromObjects::halt()
+void GenerateTextFromObjects::halt()
 {
   RCLCPP_INFO(node_->get_logger(), "GenerateTextFromObjects halted");
 }
 
-
-BT::NodeStatus
-GenerateTextFromObjects::tick()
+BT::NodeStatus GenerateTextFromObjects::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "GenerateTextFromObjects ticked");
   rclcpp::spin_some(node_);
@@ -65,8 +61,7 @@ GenerateTextFromObjects::tick()
   return BT::NodeStatus::SUCCESS;
 }
 
-}  // namespace perception
-
+}  // namespace hri
 
 BT_REGISTER_NODES(factory)
 {

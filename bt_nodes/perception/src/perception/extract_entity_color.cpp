@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "perception/extract_entity_color.hpp"
+
+#include <limits>
 #include <string>
 #include <utility>
-#include <limits>
-
-#include "perception/extract_entity_color.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "perception_system/PerceptionUtils.hpp"
-
 
 namespace perception
 {
@@ -29,8 +28,7 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 ExtractEntityColor::ExtractEntityColor(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -40,11 +38,9 @@ ExtractEntityColor::ExtractEntityColor(
 
   // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
-
 }
 
-BT::NodeStatus
-ExtractEntityColor::tick()
+BT::NodeStatus ExtractEntityColor::tick()
 {
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(30);
@@ -53,7 +49,7 @@ ExtractEntityColor::tick()
   RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Interest %s", interest_.c_str());
   auto detections = pl::getInstance()->get_by_type(interest_);
 
-  if (detections.empty() ) {
+  if (detections.empty()) {
     RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] No detections");
     return BT::NodeStatus::FAILURE;
   }
@@ -61,28 +57,23 @@ ExtractEntityColor::tick()
   RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Processing detections...");
 
   std::sort(
-    detections.begin(), detections.end(),
-    [this](const auto & a, const auto & b) {
+    detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
       return a.center3d.position.z < b.center3d.position.z;
-    }
-  );
+    });
 
-  if(detections[0].score < threshold_){
-    RCLCPP_ERROR(node_->get_logger(), "[ExtractEntityColor] Detection confidence is below threshold");
+  if (detections[0].score < threshold_) {
+    RCLCPP_ERROR(
+      node_->get_logger(), "[ExtractEntityColor] Detection confidence is below threshold");
     return BT::NodeStatus::FAILURE;
   }
   setOutput("person_id", detections[0].color_person);
-  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Person color: %ld", detections[0].color_person);
+  RCLCPP_INFO(
+    node_->get_logger(), "[ExtractEntityColor] Person color: %ld", detections[0].color_person);
   return BT::NodeStatus::SUCCESS;
 }
-void
-ExtractEntityColor::halt()
-{
-  RCLCPP_DEBUG(node_->get_logger(), "ExtractEntityColor halted");
-}
+void ExtractEntityColor::halt() {RCLCPP_DEBUG(node_->get_logger(), "ExtractEntityColor halted");}
 
 }  // namespace perception
-
 
 BT_REGISTER_NODES(factory)
 {

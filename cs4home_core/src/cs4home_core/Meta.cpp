@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/Meta.hpp"
 
 namespace cs4home_core
 {
 
 Meta::Meta(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
+: parent_(parent) {}
 
-}
-
-bool
-Meta::configure()
-{
-  return true;
-}
+bool Meta::configure() {return true;}
 
 }  // namespace cs4home_core

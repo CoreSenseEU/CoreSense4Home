@@ -16,6 +16,8 @@
 #define NAVIGATION__LOOK_AT_HPP_
 
 #include <string>
+#include <memory>
+
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "rclcpp/rclcpp.hpp"
@@ -43,7 +45,8 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::string>("tf_frame"),
+        BT::InputPort<std::vector<std::string>>("tf_frames"),
+        BT::InputPort<std::string>("tf_frame")
       });
   }
 
@@ -52,6 +55,7 @@ private:
   geometry_msgs::msg::PoseStamped pose_;
   rclcpp::Publisher<attention_system_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
+  std::vector<std::string> tf_frames_;
   std::string tf_frame_;
 };
 

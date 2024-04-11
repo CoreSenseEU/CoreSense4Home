@@ -136,7 +136,12 @@ public:
       setStatus(BT::NodeStatus::RUNNING);
 
       // user defined callback
-      on_tick();
+      try {
+        on_tick();
+      } catch (const std::exception & e) {
+        std::cerr << e.what() << '\n';
+        return BT::NodeStatus::FAILURE;
+      }
 
       on_new_goal_received();
     }
@@ -261,7 +266,6 @@ protected:
   bool goal_result_available_{false};
   typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr goal_handle_;
   typename rclcpp_action::ClientGoalHandle<ActionT>::WrappedResult result_;
-
   // The node that will be used for any ROS operations
   typename NodeT::SharedPtr node_;
 

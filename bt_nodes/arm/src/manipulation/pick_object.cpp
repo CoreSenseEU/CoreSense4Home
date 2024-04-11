@@ -35,7 +35,7 @@ PickObject::PickObject(
 void PickObject::on_tick()
 {
 
-  RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "PickObject ticked");
   moveit_msgs::msg::CollisionObject::SharedPtr object_;
   getInput("object_to_pick", object_);
   goal_.object_goal = *object_;

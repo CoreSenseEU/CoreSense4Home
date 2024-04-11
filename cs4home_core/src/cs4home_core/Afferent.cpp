@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/Afferent.hpp"
 
 namespace cs4home_core
 {
 
 Afferent::Afferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
+: parent_(parent) {}
 
-}
-
-bool
-Afferent::configure()
-{
-  return true;
-}
+bool Afferent::configure() {return true;}
 
 }  // namespace cs4home_core

@@ -22,32 +22,36 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace dialog {
+namespace dialog
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 using json = nlohmann::json;
 
-Query::Query(const std::string &xml_tag_name, const std::string &action_name,
-             const BT::NodeConfiguration &conf)
-    : dialog::BtActionNode<llama_msgs::action::GenerateResponse>(
-          xml_tag_name, action_name, conf) {}
+Query::Query(
+  const std::string & xml_tag_name, const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: dialog::BtActionNode<llama_msgs::action::GenerateResponse>(
+    xml_tag_name, action_name, conf) {}
 
-void Query::on_tick() {
+void Query::on_tick()
+{
 
   RCLCPP_DEBUG(node_->get_logger(), "Query ticked");
   std::string text_;
   getInput("text", text_);
   getInput("intention", intention_);
   std::string prompt_ =
-      "Given the sentence \"" + text_ + "\", extract the " + intention_ +
-      " from the sentence and return "
-      "it with the following JSON format:\n" +
-      "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
+    "Given the sentence \"" + text_ + "\", extract the " + intention_ +
+    " from the sentence and return "
+    "it with the following JSON format:\n" +
+    "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
   goal_.prompt = prompt_;
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;
-  goal_.sampling_config.grammar = R"(root   ::= object
+  goal_.sampling_config.grammar =
+    R"(root   ::= object
 value  ::= object | array | string | number | ("true" | "false" | "null") ws
 
 object ::=
@@ -74,11 +78,13 @@ number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
 ws ::= ([ \t\n] ws)?)";
 }
 
-BT::NodeStatus Query::on_success() {
+BT::NodeStatus Query::on_success()
+{
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
 
   if (result_.result->response.text.empty() ||
-      result_.result->response.text == "{}") {
+    result_.result->response.text == "{}")
+  {
     return BT::NodeStatus::FAILURE;
   }
 
@@ -99,11 +105,12 @@ BT::NodeStatus Query::on_success() {
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string &name,
-                               const BT::NodeConfiguration &config) {
-    return std::make_unique<dialog::Query>(name, "/llama/generate_response",
-                                           config);
-  };
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Query>(
+        name, "/llama/generate_response",
+        config);
+    };
 
   factory.registerBuilder<dialog::Query>("Query", builder);
 }

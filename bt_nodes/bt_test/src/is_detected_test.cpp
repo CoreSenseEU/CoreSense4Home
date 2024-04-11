@@ -46,7 +46,7 @@ int main(int argc, char * argv[])
   blackboard->set("node", node);
 
   auto tf_broadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node);
-  
+
   geometry_msgs::msg::TransformStamped static_transform_stamped;
   static_transform_stamped.header.stamp = node->now();
   static_transform_stamped.header.frame_id = "head_front_camera_link";

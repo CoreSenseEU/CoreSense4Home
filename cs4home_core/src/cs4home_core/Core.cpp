@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/Core.hpp"
 
 namespace cs4home_core
 {
 
 Core::Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
+: parent_(parent) {}
 
-}
-
-bool
-Core::configure()
-{
-  return true;
-}
+bool Core::configure() {return true;}
 
 }  // namespace cs4home_core

@@ -15,6 +15,7 @@ find_package(whisper_msgs REQUIRED)
 find_package(llama_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
@@ -26,6 +27,7 @@ set(dependencies
   llama_msgs
   moveit_msgs
   shape_msgs
+  std_msgs
 )
 
 include_directories(include)

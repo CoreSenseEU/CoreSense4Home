@@ -17,6 +17,7 @@
 
 #include "audio_common_msgs/action/tts.hpp"
 #include "hri/dialog/Speak.hpp"
+#include "std_msgs/msg/string.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
@@ -30,7 +31,10 @@ Speak::Speak(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
-    action_name, conf) {}
+    action_name, conf) {
+    node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
+    this->publisher_=node_->create_publisher<std_msgs::msg::String>("say_text", 10);
+    }
 
 void Speak::on_tick()
 {
@@ -46,6 +50,10 @@ void Speak::on_tick()
   } else {
     goal_.text = text_;
   }
+
+      auto msg = std_msgs::msg::String();  
+      msg.data = goal_.text;
+  this->publisher_->publish(msg);
 }
 
 BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}

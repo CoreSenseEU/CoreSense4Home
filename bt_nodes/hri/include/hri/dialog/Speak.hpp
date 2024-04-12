@@ -22,6 +22,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
+#include "std_msgs/msg/string.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace dialog
@@ -46,6 +47,7 @@ public:
   }
 
 private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   // rclcpp::Node::SharedPtr node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;

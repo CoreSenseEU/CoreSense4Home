@@ -8,28 +8,40 @@ using nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE;
 using nav2_costmap_2d::LETHAL_OBSTACLE;
 using nav2_costmap_2d::NO_INFORMATION;
 
-namespace navigation
+namespace nav2_costmap_2d
 {
 
-ClearPeopleLayer::ClearPeopleLayer()
-: last_min_x_(-std::numeric_limits<float>::max()),
-  last_min_y_(-std::numeric_limits<float>::max()),
-  last_max_x_(std::numeric_limits<float>::max()),
-  last_max_y_(std::numeric_limits<float>::max())
-{
-}
-
+// ClearPeopleLayer::ClearPeopleLayer()
+// {}
+// // implement default destructor:
+// ClearPeopleLayer::~ClearPeopleLayer()
+// {}
 // This method is called at the end of plugin initialization.
 // It contains ROS parameter(s) declaration and initialization
 // of need_recalculation_ variable.
 void ClearPeopleLayer::onInitialize()
 {
-  auto node = node_.lock();
-  declareParameter("enabled", rclcpp::ParameterValue(true));
-  node->get_parameter(name_ + "." + "enabled", enabled_);
+  declareParameter("person_frame", rclcpp::ParameterValue("person_0"));
 
-  need_recalculation_ = false;
-  current_ = true;
+  const auto node = node_.lock();
+
+  if (!node) {
+    throw std::runtime_error("ClearPeopleLayer::onInitialize: Failed to lock node");
+  }
+  if (!tf_) {
+    throw std::runtime_error("ClearPeopleLayer::onInitialize: Failed to initialize tf buffer");
+  }
+  
+  // Declaring ROS parameters:
+  auto getString = [&](const std::string & parameter_name) {
+    std::string param{};
+    node->get_parameter(name_ + "." + parameter_name, param);
+    return param;
+  };
+
+  person_frame_ = getString("person_frame");
+  RCLCPP_INFO(logger_, "Initialized plugin clear_people_layer");
+
 }
 
 // The method is called to ask the plugin: which area of costmap it needs to update.
@@ -38,108 +50,85 @@ void ClearPeopleLayer::onInitialize()
 void ClearPeopleLayer::updateBounds(
   double /*robot_x*/, double /*robot_y*/, double /*robot_yaw*/, double * min_x, double * min_y,
   double * max_x, double * max_y)
-{
-  if (need_recalculation_) {
-    last_min_x_ = *min_x;
-    last_min_y_ = *min_y;
-    last_max_x_ = *max_x;
-    last_max_y_ = *max_y;
-    // For some reason when I make these -<double>::max() it does not
-    // work with Costmap2D::worldToMapEnforceBounds(), so I'm using
-    // -<float>::max() instead.
-    *min_x = -std::numeric_limits<float>::max();
-    *min_y = -std::numeric_limits<float>::max();
-    *max_x = std::numeric_limits<float>::max();
-    *max_y = std::numeric_limits<float>::max();
-    need_recalculation_ = false;
-  } else {
-    double tmp_min_x = last_min_x_;
-    double tmp_min_y = last_min_y_;
-    double tmp_max_x = last_max_x_;
-    double tmp_max_y = last_max_y_;
-    last_min_x_ = *min_x;
-    last_min_y_ = *min_y;
-    last_max_x_ = *max_x;
-    last_max_y_ = *max_y;
-    *min_x = std::min(tmp_min_x, *min_x);
-    *min_y = std::min(tmp_min_y, *min_y);
-    *max_x = std::max(tmp_max_x, *max_x);
-    *max_y = std::max(tmp_max_y, *max_y);
-  }
-}
-
-// The method is called when footprint was changed.
-// Here it just resets need_recalculation_ variable.
-void ClearPeopleLayer::onFootprintChanged()
-{
-  need_recalculation_ = true;
-
-  RCLCPP_DEBUG(
-    rclcpp::get_logger("nav2_costmap_2d"),
-    "ClearPeopleLayer::onFootprintChanged(): num footprint points: %lu",
-    layered_costmap_->getFootprint().size());
-}
+{}
 
 // The method is called when costmap recalculation is required.
 // It updates the costmap within its window bounds.
 // Inside this method the costmap gradient is generated and is writing directly
 // to the resulting costmap master_grid without any merging with previous layers.
 void ClearPeopleLayer::updateCosts(
-  nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j, int max_i, int max_j)
+  nav2_costmap_2d::Costmap2D & master_grid, int min_x, int min_y, int max_x, int max_y)
 {
   if (!enabled_) {
     return;
   }
 
-  // master_array - is a direct pointer to the resulting master_grid.
-  // master_grid - is a resulting costmap combined from all layers.
-  // By using this pointer all layers will be overwritten!
-  // To work with costmap layer and merge it with other costmap layers,
-  // please use costmap_ pointer instead (this is pointer to current
-  // costmap layer grid) and then call one of updates methods:
-  // - updateWithAddition()
-  // - updateWithMax()
-  // - updateWithOverwrite()
-  // - updateWithTrueOverwrite()
-  // In this case using master_array pointer is equal to modifying local costmap_
-  // pointer and then calling updateWithTrueOverwrite():
-  unsigned char * master_array = master_grid.getCharMap();
-  unsigned int size_x = master_grid.getSizeInCellsX(), size_y = master_grid.getSizeInCellsY();
-
-  // {min_i, min_j} - {max_i, max_j} - are update-window coordinates.
-  // These variables are used to update the costmap only within this window
-  // avoiding the updates of whole area.
-  //
-  // Fixing window coordinates with map size if necessary.
-  min_i = std::max(0, min_i);
-  min_j = std::max(0, min_j);
-  max_i = std::min(static_cast<int>(size_x), max_i);
-  max_j = std::min(static_cast<int>(size_y), max_j);
-
-  // Simply computing one-by-one cost per each cell
-  int gradient_index;
-  for (int j = min_j; j < max_j; j++) {
-    // Reset gradient_index each time when reaching the end of re-calculated window
-    // by OY axis.
-    gradient_index = 0;
-    for (int i = min_i; i < max_i; i++) {
-      int index = master_grid.getIndex(i, j);
-      // setting the gradient cost
-      unsigned char cost = (LETHAL_OBSTACLE - gradient_index * GRADIENT_FACTOR) % 255;
-      if (gradient_index <= GRADIENT_SIZE) {
-        gradient_index++;
-      } else {
-        gradient_index = 0;
-      }
-      master_array[index] = cost;
-    }
+  if (min_x >= max_x || min_y >= max_y) {
+    return;
   }
+
+  try {
+    person_transform_ = tf_->lookupTransform(
+            "map", person_frame_,
+            tf2::TimePointZero);
+  } catch (std::exception & ex) {
+    RCLCPP_ERROR(logger_, "ClearPeopleLayer::updateCosts error transforming map to %s : %s ", person_frame_.c_str(), ex.what());
+    return;
+  }
+  try {
+    removePerson(person_transform_, master_grid);
+  } catch (std::exception & ex) {
+    RCLCPP_ERROR(logger_, "%s", (std::string("Inner error: ") + ex.what()).c_str());
+  }
+
+  current_ = true;
 }
 
-}  // namespace navigation
+void ClearPeopleLayer::removePerson(
+  const geometry_msgs::msg::TransformStamped & person_transform,
+  nav2_costmap_2d::Costmap2D & master_grid)
+{
+  // Getting the person position in the costmap grid
+  unsigned int person_x, person_y;
+  if (!master_grid.worldToMap(person_transform.transform.translation.x,
+                              person_transform.transform.translation.x, person_x, person_y)) {
+    RCLCPP_ERROR(logger_, "ClearPeopleLayer::removePerson error transforming person to costmap grid");
+    return;
+  }
 
-// This is the macro allowing a navigation::ClearPeopleLayer class
+  // Getting the person radius in the costmap grid
+  double person_radius = 0.5;
+  int person_radius_cells = std::ceil(person_radius / master_grid.getResolution());
+
+  // Removing the person from the costmap grid
+  for (int j = person_y - person_radius_cells; j <= person_y + person_radius_cells; j++) {
+    for (int i = person_x - person_radius_cells; i <= person_x + person_radius_cells; i++) {
+      master_grid.worldToMapEnforceBounds(i, j, i, j);
+      int index = master_grid.getIndex(i, j);
+      master_grid.setCost(i, j, FREE_SPACE);
+    }
+  }
+  RCLCPP_ERROR(logger_, "ClearPeopleLayer::removePerson Person cleraed from costmap");
+}
+
+void ClearPeopleLayer::reset()
+{
+  current_ = false;
+}
+
+// bool ClearPeopleLayer::isBackground(uint8_t pixel) const
+// {
+//   bool is_obstacle =
+//     pixel == LETHAL_OBSTACLE ||
+//     pixel == INSCRIBED_INFLATED_OBSTACLE ||
+//     (pixel == NO_INFORMATION && no_information_is_obstacle_);
+//   return !is_obstacle;
+// }
+
+}  // namespace nav2_costmap_2d
+
+// This is the macro allowing a nav2_costmap_2d::ClearPeopleLayer class
 // to be registered in order to be dynamically loadable of base type nav2_costmap_2d::Layer.
 // Usually places in the end of cpp-file where the loadable class written.
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(navigation::ClearPeopleLayer, nav2_costmap_2d::Layer)
+PLUGINLIB_EXPORT_CLASS(nav2_costmap_2d::ClearPeopleLayer, nav2_costmap_2d::Layer)

@@ -38,9 +38,9 @@ set(dependencies
 
 include_directories(include)
 
-add_library(people_layer SHARED
+add_library(${PROJECT_NAME} SHARED
             src/motion/navigation/nav2_plugins/clear_people_layer.cpp)
-ament_target_dependencies(people_layer ${dependencies})
+ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 
 add_library(move_to_bt_node SHARED src/motion/navigation/MoveTo.cpp)
 list(APPEND plugin_libs move_to_bt_node)
@@ -61,17 +61,18 @@ endforeach()
 
 install(TARGETS
   ${plugin_libs}
-  people_layer
-  EXPORT ${PROJECT_NAME}
+  ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-pluginlib_export_plugin_description_file(nav2_costmap_2d clear_people_layer.xml)
-
 install(DIRECTORY include/
   DESTINATION include/
+)
+install(FILES clear_people_layer.xml
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
@@ -81,7 +82,10 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
-ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+pluginlib_export_plugin_description_file(nav2_costmap_2d clear_people_layer.xml)
 
 ament_package()

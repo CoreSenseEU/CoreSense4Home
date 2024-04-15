@@ -121,27 +121,7 @@ BT::NodeStatus FollowEntity::tick()
     return BT::NodeStatus::FAILURE;
   }
 
-  goal_pose_.header.frame_id = "base_footprint";
-  goal_pose_.header.stamp = node_->now();
-
-  // goal_pose_.pose.position.x = entity_transform_.transform.translation.x * ;
-  double magnitude = std::hypot(entity_transform_.transform.translation.x, entity_transform_.transform.translation.y);
-  double scale = (magnitude- substracted_distance_) / magnitude;
-
-
-  goal_pose_.pose.position.x = entity_transform_.transform.translation.x * std::max(scale, 0.0);
-  goal_pose_.pose.position.y = entity_transform_.transform.translation.y * std::max(scale, 0.0);
-  
-  tf2::Quaternion q;
-
-  if (entity_transform_.transform.translation.x == 0 && entity_transform_.transform.translation.y == 0) {
-    q.setRPY(0, 0, 0);
-  } else {
-    q.setRPY(0, 0, std::atan2(entity_transform_.transform.translation.y, entity_transform_.transform.translation.x));
-  }
-  
-  goal_pose_.pose.orientation = tf2::toMsg(q);
-
+  goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
   entity_pose_pub_->publish(goal_pose_);
 
   rclcpp::spin_some(node_->get_node_base_interface());
@@ -184,23 +164,7 @@ BT::NodeStatus FollowEntity::on_idle()
     return BT::NodeStatus::FAILURE;
   }
 
-  goal_pose_.header.frame_id = "base_footprint";
-  
-  double magnitude = std::hypot(entity_transform_.transform.translation.x, entity_transform_.transform.translation.y);
-  double scale = (magnitude - substracted_distance_) / magnitude;
-
-  goal_pose_.pose.position.x = entity_transform_.transform.translation.x * std::max(scale, 0.0);
-  goal_pose_.pose.position.y = entity_transform_.transform.translation.y * std::max(scale, 0.0);
-
-  tf2::Quaternion q;
-
-  if (entity_transform_.transform.translation.x == 0 && entity_transform_.transform.translation.y == 0) {
-    q.setRPY(0, 0, 0);
-  } else {
-    q.setRPY(0, 0, std::atan2(entity_transform_.transform.translation.y, entity_transform_.transform.translation.x));
-  }
-  
-  goal_pose_.pose.orientation = tf2::toMsg(q);
+  goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
   auto goal = nav2_msgs::action::NavigateToPose::Goal();
 
   xml_path_ = generate_xml_file(dynamic_following_xml, distance_tolerance_);
@@ -240,46 +204,31 @@ BT::NodeStatus FollowEntity::on_idle()
   return BT::NodeStatus::RUNNING;
 }
 
-// geometry_msgs::msg::PoseStamped get_goal_pose(const std::string & frame_id)
-// {
-//   geometry_msgs::msg::PoseStamped goal_pose;
-//   while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) && rclcpp::ok())
-//   {
-//     RCLCPP_INFO(
-//       node_->get_logger(), "Waiting for transform from base_footprint to %s", frame_to_follow_.c_str());
-//     rclcpp::spin_some(node_->get_node_base_interface());
-//     return BT::NodeStatus::FAILURE;
-//   }
 
-//   try {
-//     entity_transform_ = tf_buffer_->lookupTransform("base_footprint", frame_to_follow_, tf2::TimePointZero);
-//   } catch (const tf2::TransformException & ex) {
-//     RCLCPP_INFO(
-//       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
-//       ex.what());
-//     return BT::NodeStatus::FAILURE;
-//   }
+geometry_msgs::msg::PoseStamped get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform)
+{
+  geometry_msgs::msg::PoseStamped goal_pose;
 
-//   goal_pose.header.frame_id = "base_footprint";
+  goal_pose.header.frame_id = "base_footprint";
   
-//   double magnitude = std::hypot(entity_transform_.transform.translation.x, entity_transform_.transform.translation.y);
-//   double scale = (magnitude- substracted_distance_) / magnitude;
+  double magnitude = std::hypot(goal_transform.transform.translation.x, goal_transform.transform.translation.y);
+  double scale = (magnitude - distance_to_substract) / magnitude;
 
-//   goal_pose.pose.position.x = entity_transform_.transform.translation.x * std::max(scale, 0.0);
-//   goal_pose.pose.position.y = entity_transform_.transform.translation.y * std::max(scale, 0.0);
+  goal_pose.pose.position.x = goal_transform.transform.translation.x * std::max(scale, 0.0);
+  goal_pose.pose.position.y = goal_transform.transform.translation.y * std::max(scale, 0.0);
 
-//   tf2::Quaternion q;
+  tf2::Quaternion q;
 
-//   if (entity_transform_.transform.translation.x == 0 && entity_transform_.transform.translation.y == 0) {
-//     q.setRPY(0, 0, 0);
-//   } else {
-//     q.setRPY(0, 0, std::atan2(entity_transform_.transform.translation.y, entity_transform_.transform.translation.x));
-//   }
+  if (goal_transform.transform.translation.x == 0 && goal_transform.transform.translation.y == 0) {
+    q.setRPY(0, 0, 0);
+  } else {
+    q.setRPY(0, 0, std::atan2(goal_transform.transform.translation.y, goal_transform.transform.translation.x));
+  }
   
-//   goal_pose.pose.orientation = tf2::toMsg(q);
-//   return goal_pose;
+  goal_pose.pose.orientation = tf2::toMsg(q);
+  return goal_pose;
 
-// }
+}
 
 }  // namespace navigation
 

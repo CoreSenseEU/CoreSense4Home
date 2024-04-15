@@ -63,7 +63,7 @@ public:
 private:
   void map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg);
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
-  geometry_msgs::msg::PoseStamped get_goal_pose(const std::string & frame_id);
+  geometry_msgs::msg::PoseStamped get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform);
   void check_robot_inside_map();
   BT::NodeStatus on_idle();
   rclcpp::Node::SharedPtr node_;

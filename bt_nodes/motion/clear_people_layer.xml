@@ -1,4 +1,4 @@
-<library path="motion">
+<library path="clear_people_layer">
   <class type="nav2_costmap_2d::ClearPeopleLayer" base_class_type="nav2_costmap_2d::Layer">
     <description>This is an example plugin which delete detected person </description>
   </class>

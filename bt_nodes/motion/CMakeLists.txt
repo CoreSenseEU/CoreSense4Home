@@ -38,9 +38,9 @@ set(dependencies
 
 include_directories(include)
 
-add_library(${PROJECT_NAME} SHARED
+add_library(clear_people_layer SHARED
             src/motion/navigation/nav2_plugins/clear_people_layer.cpp)
-ament_target_dependencies(${PROJECT_NAME} ${dependencies})
+ament_target_dependencies(clear_people_layer ${dependencies})
 
 add_library(move_to_bt_node SHARED src/motion/navigation/MoveTo.cpp)
 list(APPEND plugin_libs move_to_bt_node)
@@ -61,7 +61,7 @@ endforeach()
 
 install(TARGETS
   ${plugin_libs}
-  ${PROJECT_NAME}
+  clear_people_layer
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -83,7 +83,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
+ament_export_libraries(clear_people_layer)
 ament_export_dependencies(${dependencies})
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 pluginlib_export_plugin_description_file(nav2_costmap_2d clear_people_layer.xml)

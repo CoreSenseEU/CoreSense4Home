@@ -16,34 +16,33 @@
 #define HRI__LISTEN_HPP_
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
-namespace dialog
-{
+namespace dialog {
 
-class Listen : public dialog::BtActionNode<whisper_msgs::action::STT>
-{
+class Listen : public dialog::BtActionNode<whisper_msgs::action::STT> {
 public:
-  explicit Listen(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
-    const BT::NodeConfiguration & conf);
+  explicit Listen(const std::string &xml_tag_name,
+                  const std::string &action_name,
+                  const BT::NodeConfiguration &conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
-  static BT::PortsList providedPorts()
-  {
+  static BT::PortsList providedPorts() {
     return BT::PortsList({BT::OutputPort<std::string>("listen_text")});
   }
 
 private:
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
 } // namespace dialog

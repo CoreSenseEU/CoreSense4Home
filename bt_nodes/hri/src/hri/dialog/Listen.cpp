@@ -12,36 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <string>
 #include <utility>
 
 #include "hri/dialog/Listen.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace dialog
-{
+namespace dialog {
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-Listen::Listen(
-  const std::string & xml_tag_name, const std::string & action_name,
-  const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
-    conf) {}
+Listen::Listen(const std::string &xml_tag_name, const std::string &action_name,
+               const BT::NodeConfiguration &conf)
+    : dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
+                                                      conf) {
+  this->publisher_start_ =
+      node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+}
 
-void Listen::on_tick()
-{
+void Listen::on_tick() {
 
   RCLCPP_DEBUG(node_->get_logger(), "Listen ticked");
   std::string text_;
   goal_ = whisper_msgs::action::STT::Goal();
+  auto msg_dialog_action = std_msgs::msg::Int8();
+
+  msg_dialog_action.data = 0;
+
+  this->publisher_start_->publish(msg_dialog_action);
 }
 
-BT::NodeStatus Listen::on_success()
-{
+BT::NodeStatus Listen::on_success() {
   fprintf(stderr, "%s\n", result_.result->text.c_str());
 
   if (result_.result->text.size() == 0) {
@@ -55,10 +61,10 @@ BT::NodeStatus Listen::on_success()
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
-    };
+  BT::NodeBuilder builder = [](const std::string &name,
+                               const BT::NodeConfiguration &config) {
+    return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
+  };
 
   factory.registerBuilder<dialog::Listen>("Listen", builder);
 }

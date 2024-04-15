@@ -22,26 +22,25 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
-namespace dialog
-{
+namespace dialog {
 
 class DialogConfirmation
-  : public dialog::BtActionNode<whisper_msgs::action::STT>
-{
+    : public dialog::BtActionNode<whisper_msgs::action::STT> {
 public:
-  explicit DialogConfirmation(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
-    const BT::NodeConfiguration & conf);
+  explicit DialogConfirmation(const std::string &xml_tag_name,
+                              const std::string &action_name,
+                              const BT::NodeConfiguration &conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
-  static BT::PortsList providedPorts() {return BT::PortsList({});}
+  static BT::PortsList providedPorts() { return BT::PortsList({}); }
 
 private:
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
 } // namespace dialog

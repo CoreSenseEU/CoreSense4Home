@@ -21,21 +21,25 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace dialog {
+namespace dialog
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-DialogConfirmation::DialogConfirmation(const std::string &xml_tag_name,
-                                       const std::string &action_name,
-                                       const BT::NodeConfiguration &conf)
-    : dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
-                                                      conf) {
+DialogConfirmation::DialogConfirmation(
+  const std::string & xml_tag_name,
+  const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
+    conf)
+{
   this->publisher_start_ =
-      node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
 }
 
-void DialogConfirmation::on_tick() {
+void DialogConfirmation::on_tick()
+{
 
   RCLCPP_DEBUG(node_->get_logger(), "DialogConfirmation ticked");
   std::string text_;
@@ -50,16 +54,18 @@ void DialogConfirmation::on_tick() {
   // goal_.text = text_;
 }
 
-BT::NodeStatus DialogConfirmation::on_success() {
+BT::NodeStatus DialogConfirmation::on_success()
+{
   fprintf(stderr, "%s\n", result_.result->text.c_str());
 
   if (result_.result->text.size() == 0) {
     return BT::NodeStatus::FAILURE;
   }
 
-  std::transform(result_.result->text.begin(), result_.result->text.end(),
-                 result_.result->text.begin(),
-                 [](unsigned char c) { return std::tolower(c); });
+  std::transform(
+    result_.result->text.begin(), result_.result->text.end(),
+    result_.result->text.begin(),
+    [](unsigned char c) {return std::tolower(c);});
   if (result_.result->text.find("yes") != std::string::npos) {
     return BT::NodeStatus::SUCCESS;
   } else {
@@ -70,12 +76,14 @@ BT::NodeStatus DialogConfirmation::on_success() {
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string &name,
-                               const BT::NodeConfiguration &config) {
-    return std::make_unique<dialog::DialogConfirmation>(name, "/whisper/listen",
-                                                        config);
-  };
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::DialogConfirmation>(
+        name, "/whisper/listen",
+        config);
+    };
 
-  factory.registerBuilder<dialog::DialogConfirmation>("DialogConfirmation",
-                                                      builder);
+  factory.registerBuilder<dialog::DialogConfirmation>(
+    "DialogConfirmation",
+    builder);
 }

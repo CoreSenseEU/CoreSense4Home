@@ -70,7 +70,6 @@ std::string dynamic_following_xml =
           <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
           <GoalUpdater input_goal="{goal}" output_goal="{updated_goal}">
               <Sequence>
-                <ClearMapAtGoal input_goal="{updated_goal}" radius="1.5"/>
                 <ComputePathToPose goal="{updated_goal}" path="{path}" planner_id="GridBased"/>
               </Sequence>    
           </GoalUpdater>

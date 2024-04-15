@@ -9,11 +9,11 @@
                     <Sequence>
                         <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="6" max_entities="1" order="depth"/>
                         <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{person_id}"/>
-                        <Condition ID="IsPointing" bag_frame="{bag_tf}" person_id="{person_id}" cam_frame="head_front_camera_link_color_optical_frame"/>
+                        <!-- <Condition ID="IsPointing" bag_frame="{bag_tf}" person_id="{person_id}" cam_frame="head_front_camera_link_color_optical_frame"/> -->
                     </Sequence>
                 <!-- </ForceFailure> -->
             </RetryUntilSuccessful>
-            <RetryUntilSuccessful num_attempts="-1">
+            <!-- <RetryUntilSuccessful num_attempts="-1">
                 <Action ID="MoveTo" distance_tolerance="3.0" tf_frame="{bag_tf}"/>
             </RetryUntilSuccessful>
             <Action ID="MoveToPredefined" pose="offer"/>
@@ -28,10 +28,10 @@
                 <Action ID="MoveToPredefined" pose="home"/>
             </Delay>
             <ReactiveSequence>
-                <!-- <Action ID="LookAt" tf_frame="person_0" /> -->
+                <Action ID="LookAt" tf_frame="person_0" />
                 <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
-            </ReactiveSequence>
-            <RetryUntilSuccessful num_attempts="-1">
+            </ReactiveSequence>-->
+            <RetryUntilSuccessful num_attempts="-1"> 
                 <Fallback>
                     <ReactiveSequence>
                         <RetryUntilSuccessful num_attempts="-1">
@@ -43,13 +43,13 @@
                         <!-- <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/> -->
                         <Action ID="FollowEntity" camera_frame="head_front_camera_link_color_optical_frame" distance_tolerance="1.0" frame_to_follow="person_0"/>
                     </ReactiveSequence>
-                    <ForceFailure>
+                    <!-- <ForceFailure>
                         <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
                     </ForceFailure>
-                    <Action ID="DialogConfirmation"/>
+                    <Action ID="DialogConfirmation"/> -->
                 </Fallback>
             </RetryUntilSuccessful>
-            <Action ID="MoveToPredefined" pose="offer"/>
+            <!-- <Action ID="MoveToPredefined" pose="offer"/>
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0"/>
                 <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
@@ -59,7 +59,7 @@
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>
             </Delay>
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/>
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/> -->
         </Sequence> 
     </BehaviorTree>
     <!-- ////////// -->

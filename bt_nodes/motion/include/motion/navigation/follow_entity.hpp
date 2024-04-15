@@ -63,6 +63,7 @@ public:
 private:
   void map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg);
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
+  geometry_msgs::msg::PoseStamped get_goal_pose(const std::string & frame_id);
   void check_robot_inside_map();
   BT::NodeStatus on_idle();
   rclcpp::Node::SharedPtr node_;
@@ -73,7 +74,9 @@ private:
     set_truncate_distance_client_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
-  double distance_tolerance_;
+  double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
+//   double magnitude;
+// double scale; 
   geometry_msgs::msg::TransformStamped entity_transform_;
   geometry_msgs::msg::TransformStamped robot_direction_;
   geometry_msgs::msg::PoseStamped goal_pose_;

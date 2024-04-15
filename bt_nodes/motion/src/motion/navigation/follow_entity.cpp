@@ -122,6 +122,7 @@ BT::NodeStatus FollowEntity::tick()
   }
 
   goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
+  goal_pose_.header.stamp = node_->now();
   entity_pose_pub_->publish(goal_pose_);
 
   rclcpp::spin_some(node_->get_node_base_interface());
@@ -205,7 +206,7 @@ BT::NodeStatus FollowEntity::on_idle()
 }
 
 
-geometry_msgs::msg::PoseStamped get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform)
+geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform)
 {
   geometry_msgs::msg::PoseStamped goal_pose;
 

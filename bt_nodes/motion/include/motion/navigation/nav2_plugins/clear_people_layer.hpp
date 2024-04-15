@@ -13,13 +13,12 @@ namespace nav2_costmap_2d
 class ClearPeopleLayer : public Layer
 {
 public:
-
   ClearPeopleLayer() = default;
   ~ClearPeopleLayer() = default;
 
 
   void reset() override;
- 
+
   void updateBounds(
     double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
     double * max_x, double * max_y) override;
@@ -28,13 +27,11 @@ public:
     int min_x, int min_y, int max_x, int max_y) override;
 
   bool isClearable() {return false;}
-  
-protected:
-   virtual void onInitialize() override;
 
+protected:
+  virtual void onInitialize() override;
 
 private:
-
   void removePerson(
     const geometry_msgs::msg::TransformStamped & person_transform,
     nav2_costmap_2d::Costmap2D & master_grid);

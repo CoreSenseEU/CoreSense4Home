@@ -31,13 +31,13 @@ void ClearPeopleLayer::onInitialize()
   if (!tf_) {
     throw std::runtime_error("ClearPeopleLayer::onInitialize: Failed to initialize tf buffer");
   }
-  
+
   // Declaring ROS parameters:
   auto getString = [&](const std::string & parameter_name) {
-    std::string param{};
-    node->get_parameter(name_ + "." + parameter_name, param);
-    return param;
-  };
+      std::string param{};
+      node->get_parameter(name_ + "." + parameter_name, param);
+      return param;
+    };
 
   person_frame_ = getString("person_frame");
   RCLCPP_INFO(logger_, "Initialized plugin clear_people_layer");
@@ -69,10 +69,12 @@ void ClearPeopleLayer::updateCosts(
 
   try {
     person_transform_ = tf_->lookupTransform(
-            "map", person_frame_,
-            tf2::TimePointZero);
+      "map", person_frame_,
+      tf2::TimePointZero);
   } catch (std::exception & ex) {
-    RCLCPP_ERROR(logger_, "ClearPeopleLayer::updateCosts error transforming map to %s : %s ", person_frame_.c_str(), ex.what());
+    RCLCPP_ERROR(
+      logger_, "ClearPeopleLayer::updateCosts error transforming map to %s : %s ",
+      person_frame_.c_str(), ex.what());
     return;
   }
   try {
@@ -90,9 +92,13 @@ void ClearPeopleLayer::removePerson(
 {
   // Getting the person position in the costmap grid
   unsigned int person_x, person_y;
-  if (!master_grid.worldToMap(person_transform.transform.translation.x,
-                              person_transform.transform.translation.x, person_x, person_y)) {
-    RCLCPP_ERROR(logger_, "ClearPeopleLayer::removePerson error transforming person to costmap grid");
+  if (!master_grid.worldToMap(
+      person_transform.transform.translation.x,
+      person_transform.transform.translation.x, person_x, person_y))
+  {
+    RCLCPP_ERROR(
+      logger_,
+      "ClearPeopleLayer::removePerson error transforming person to costmap grid");
     return;
   }
 

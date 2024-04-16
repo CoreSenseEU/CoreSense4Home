@@ -54,7 +54,6 @@ geometry_msgs::msg::TransformStamped FilterEntity::update_state_observer(
     filtered_entity_.transform.translation.z +
     lambda_ * (entity.transform.translation.z - filtered_entity_.transform.translation.z);
   filtered_entity_.header.stamp = entity.header.stamp;
-
   return filtered_entity_;
 }
 geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(
@@ -74,7 +73,11 @@ BT::NodeStatus FilterEntity::tick()
 
   try {
     entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
-
+    RCLCPP_INFO(
+      node_->get_logger(), "Position %s to %s: %f %f %f", frame_.c_str(), "map",
+      entity_transform_now_msg.transform.translation.x,
+      entity_transform_now_msg.transform.translation.y,
+      entity_transform_now_msg.transform.translation.z);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "map", ex.what());
@@ -89,6 +92,7 @@ BT::NodeStatus FilterEntity::tick()
     filtered_entity = initialize_state_observer(entity_transform_now_msg);
     state_obs_initialized_ = true;
   }
+  filtered_entity.child_frame_id = frame_ + "_filtered";
   tf_broadcaster_->sendTransform(filtered_entity);
   setOutput("filtered_frame", filtered_entity.child_frame_id);
   return BT::NodeStatus::SUCCESS;

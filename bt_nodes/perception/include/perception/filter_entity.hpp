@@ -55,7 +55,7 @@ private:
 
   std::string frame_;
   double lambda_;
-  bool state_obs_initialized_;
+  bool state_obs_initialized_ = false;
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

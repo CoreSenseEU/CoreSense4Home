@@ -23,6 +23,7 @@
 #include "hri/dialog/BTActionNode.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int8.hpp"
 
 namespace dialog
 {
@@ -49,6 +50,7 @@ public:
 
 private:
   std::string intention_;
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
 } // namespace dialog

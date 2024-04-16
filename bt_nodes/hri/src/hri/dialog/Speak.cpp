@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <string>
 #include <utility>
 
 #include "audio_common_msgs/action/tts.hpp"
 #include "hri/dialog/Speak.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "std_msgs/msg/string.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -27,47 +29,52 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 Speak::Speak(
-    const std::string           & xml_tag_name,
-    const std::string           & action_name,
-    const BT::NodeConfiguration & conf)
-    : dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name, action_name, conf)
+  const std::string & xml_tag_name, const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
+    action_name, conf)
 {
-    node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
-    this->publisher_ = node_->create_publisher<std_msgs::msg::String>("say_text", 10);
+  node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
+  this->publisher_ =
+    node_->create_publisher<std_msgs::msg::String>("say_text", 10);
+  this->publisher_start_ =
+    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
 }
 
-void
-Speak::on_tick()
+void Speak::on_tick()
 {
-    RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
-    std::string text_;
+  RCLCPP_DEBUG(node_->get_logger(), "Speak ticked");
+  std::string text_;
 
-    getInput("say_text", text_);
-    std::string param_;
+  getInput("say_text", text_);
+  std::string param_;
 
-    getInput("param", param_);
+  getInput("param", param_);
 
-    if (param_.length() > 0) {
-        goal_.text = text_ + " " + param_ + "?";
-    } else {
-        goal_.text = text_;
-    }
+  if (param_.length() > 0) {
+    goal_.text = text_ + " " + param_ + "?";
+  } else {
+    goal_.text = text_;
+  }
 
-    auto msg = std_msgs::msg::String();
+  auto msg = std_msgs::msg::String();
+  auto msg_dialog_action = std_msgs::msg::Int8();
 
-    msg.data = goal_.text;
-    this->publisher_->publish(msg);
+  msg.data = goal_.text;
+  msg_dialog_action.data = 1;
+
+  this->publisher_->publish(msg);
+  this->publisher_start_->publish(msg_dialog_action);
 }
 
-BT::NodeStatus Speak::on_success(){ return BT::NodeStatus::SUCCESS; }
+BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory)
-{
-    BT::NodeBuilder builder = [](const std::string & name,
-        const BT::NodeConfiguration & config){
-          return std::make_unique<dialog::Speak>(name, "/say", config);
-      };
+BT_REGISTER_NODES(factory) {
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Speak>(name, "/say", config);
+    };
 
-    factory.registerBuilder<dialog::Speak>("Speak", builder);
+  factory.registerBuilder<dialog::Speak>("Speak", builder);
 }

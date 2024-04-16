@@ -2,7 +2,7 @@
 
 ## Installation
 
-See [Software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/Software-Setup)
+See [Software setup]([https://github.com/CoreSenseEU/CoreSense4Home/wiki/Software-Setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/C-Software-Setup))
 
 ## Usage 
 ### Navigation

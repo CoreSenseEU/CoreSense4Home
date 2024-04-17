@@ -8,7 +8,7 @@
   <maintainer email="rodrigo.perez@urjc.es">rod</maintainer>
   <maintainer email="juancarlos.serrano@urjc.es">Juanca</maintainer>
   <maintainer email="alberto.gomezjacinto@urjc.es">Alberto</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache License, Version 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
@@ -19,6 +19,11 @@
   <depend>moveit_msgs</depend>
   <depend>shape_msgs</depend>
   <depend>rclpy</depend>
+  <depend>tf2_ros</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>rclcpp_action</depend>
   <depend>perception_system</depend>
 
   <test_depend>ament_lint_auto</test_depend>

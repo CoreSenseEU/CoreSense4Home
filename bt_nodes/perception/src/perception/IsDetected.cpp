@@ -64,11 +64,11 @@ BT::NodeStatus IsDetected::tick()
   auto detections = pl::getInstance()->get_by_type(interest_);
 
   if (detections.empty()) {
-    RCLCPP_INFO(node_->get_logger(), "[IsDetected] No detections");
+    // RCLCPP_WARNING(node_->get_logger(), "[IsDetected] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
-  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Processing detections...");
+  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing detections...");
 
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
@@ -83,7 +83,7 @@ BT::NodeStatus IsDetected::tick()
         return a.center3d.position.z < b.center3d.position.z;
       });
   }
-  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");
+  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 
   auto entity_counter = 0;
@@ -104,9 +104,9 @@ BT::NodeStatus IsDetected::tick()
       ++entity_counter;
     }
   }
-  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted and filtered");
+  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted and filtered");
   if (frames_.empty()) {
-    RCLCPP_INFO(node_->get_logger(), "[IsDetected] No detections after filter");
+    RCLCPP_ERROR(node_->get_logger(), "[IsDetected] No detections after filter");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -124,7 +124,7 @@ int IsDetected::publicTF_map2object(
   try {
     map2camera_msg = tf_buffer_->lookupTransform("map", cam_frame_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
-    RCLCPP_INFO(
+    RCLCPP_ERROR(
       node_->get_logger(), "Could not transform %s to %s: %s", "map", cam_frame_.c_str(),
       ex.what());
     return -1;

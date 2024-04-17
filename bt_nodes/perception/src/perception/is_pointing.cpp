@@ -78,6 +78,9 @@ int IsPointing::publicTF_map2object(
   const perception_system_interfaces::msg::Detection & detected_object)
 {
   geometry_msgs::msg::TransformStamped map2camera_msg;
+  perception_system_interfaces::msg::Detection modified_detection;
+  modified_detection = detected_object;
+
   try {
     map2camera_msg = tf_buffer_->lookupTransform("map", camera_frame_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
@@ -87,11 +90,25 @@ int IsPointing::publicTF_map2object(
     return -1;
   }
 
+  // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
+  if (detected_object.pointing_direction == 1) {
+    bag_frame_ = "right_bag";
+    modified_detection.center3d.position.x += 0.4;  // + or - ?
+  } else if (detected_object.pointing_direction == 3) {
+    modified_detection.center3d.position.x -= 0.4;  // + or - ?
+    bag_frame_ = "left_bag";
+  } else if (detected_object.pointing_direction == 2) {
+    bag_frame_ = "center_bag";
+    modified_detection.center3d.position.z -= 0.4;  // + or - ?
+  } else {
+    return -1;
+  }
+
   tf2::Transform camera2object;
   camera2object.setOrigin(
     tf2::Vector3(
-      detected_object.center3d.position.x, detected_object.center3d.position.y,
-      detected_object.center3d.position.z));
+      modified_detection.center3d.position.x, modified_detection.center3d.position.y,
+      modified_detection.center3d.position.z));
   camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
   tf2::Transform map2camera;
@@ -101,25 +118,10 @@ int IsPointing::publicTF_map2object(
   // create a transform message from tf2::Transform
   geometry_msgs::msg::TransformStamped map2object_msg;
   map2object_msg.header.frame_id = "map";
+  map2object_msg.child_frame_id = bag_frame_;
 
   map2object_msg.transform = tf2::toMsg(map2object);
-
-  // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
-  if (detected_object.pointing_direction == 2) {
-    map2object_msg.child_frame_id = "right_bag";
-    bag_frame_ = "right_bag";
-    map2object_msg.transform.translation.x -= 0.4;  // + or - ?
-  } else if (detected_object.pointing_direction == 4) {
-    map2object_msg.transform.translation.x += 0.4;  // + or - ?
-    bag_frame_ = "left_bag";
-    map2object_msg.child_frame_id = "left_bag";
-  } else if (detected_object.pointing_direction == 3) {
-    bag_frame_ = "center_bag";
-    map2object_msg.transform.translation.y -= 0.4;  // + or - ?
-    map2object_msg.child_frame_id = "center_bag";
-  } else {
-    return -1;
-  }
+  map2object_msg.transform.translation.z = 0.0;
 
   // if person_pose_ is not initialized, initialize it
   if (person_pose_.header.frame_id.empty()) {

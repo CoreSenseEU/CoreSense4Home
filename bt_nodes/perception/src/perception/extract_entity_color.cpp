@@ -46,15 +46,15 @@ BT::NodeStatus ExtractEntityColor::tick()
   pl::getInstance()->update(30);
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
-  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Interest %s", interest_.c_str());
+  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Interest in %s", interest_.c_str());
   auto detections = pl::getInstance()->get_by_type(interest_);
 
   if (detections.empty()) {
-    RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] No detections");
+    RCLCPP_ERROR(node_->get_logger(), "[ExtractEntityColor] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
-  RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Processing detections...");
+  RCLCPP_DEBUG(node_->get_logger(), "[ExtractEntityColor] Processing detections...");
 
   std::sort(
     detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
@@ -67,7 +67,7 @@ BT::NodeStatus ExtractEntityColor::tick()
     return BT::NodeStatus::FAILURE;
   }
   setOutput("person_id", detections[0].color_person);
-  RCLCPP_INFO(
+  RCLCPP_DEBUG(
     node_->get_logger(), "[ExtractEntityColor] Person color: %ld", detections[0].color_person);
   return BT::NodeStatus::SUCCESS;
 }

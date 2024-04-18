@@ -26,6 +26,10 @@ InitCarry::InitCarry(const std::string & xml_tag_name, const BT::NodeConfigurati
   node_->declare_parameter("home_pose", "home");
   node_->declare_parameter("offer_pose", "offer");
   node_->declare_parameter("person_id", 001122334455);
+  node_->declare_parameter("x_axis_max", 6.5);
+  node_->declare_parameter("x_axis_min", -3.0);
+  node_->declare_parameter("y_axis_max", 7.1);
+  node_->declare_parameter("y_axis_min", -2.0);
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -49,6 +53,10 @@ BT::NodeStatus InitCarry::tick()
       node_->get_parameter("home_pose", home_pose_);
       node_->get_parameter("offer_pose", offer_pose_);
       node_->get_parameter("person_id", person_id);
+      node_->get_parameter("x_axis_max", x_axis_max_);
+      node_->get_parameter("x_axis_min", x_axis_min_);
+      node_->get_parameter("y_axis_max", y_axis_max_);
+      node_->get_parameter("y_axis_min", y_axis_min_);
 
       home_position_.header.frame_id = "map";
       home_position_.pose.position.x = pose_[0];
@@ -64,6 +72,10 @@ BT::NodeStatus InitCarry::tick()
       setOutput("offer_pose", offer_pose_);
       setOutput("person_id", person_id);
       setOutput("home_position", home_position_);
+      setOutput("x_axis_max", x_axis_max_);
+      setOutput("x_axis_min", x_axis_min_);
+      setOutput("y_axis_max", y_axis_max_);
+      setOutput("y_axis_min", y_axis_min_);
 
       config().blackboard->set("tf_buffer", tf_buffer_);
       config().blackboard->set("tf_listener", tf_listener_);

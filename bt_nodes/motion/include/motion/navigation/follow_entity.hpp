@@ -57,11 +57,14 @@ public:
         BT::InputPort<std::string>("camera_frame"),
         BT::InputPort<std::string>("frame_to_follow"),
         BT::InputPort<double>("distance_tolerance"),
+        BT::InputPort<double>("x_axis_max"),
+        BT::InputPort<double>("x_axis_min"),
+        BT::InputPort<double>("y_axis_max"),
+        BT::InputPort<double>("y_axis_min"),
       });
   }
 
 private:
-  void map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg);
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
   geometry_msgs::msg::PoseStamped get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform);
   void check_robot_inside_map();
@@ -75,6 +78,7 @@ private:
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
+  double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
 //   double magnitude;
 // double scale; 
   geometry_msgs::msg::TransformStamped entity_transform_;
@@ -83,7 +87,6 @@ private:
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  std::shared_ptr<nav2_costmap_2d::Costmap2D> costmap_;
   geometry_msgs::msg::PoseWithCovarianceStamped current_pos_;
 
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr sub_map_;

@@ -47,6 +47,7 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("filter_entity_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_moving_bt_node"));
   factory.registerFromPlugin(loader.getOSName("follow_entity_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("configure_navigate_back_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/carry_my_luggage.xml";

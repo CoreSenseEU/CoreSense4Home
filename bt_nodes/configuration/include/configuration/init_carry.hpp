@@ -47,6 +47,10 @@ public:
         BT::OutputPort<std::string>("home_pose", "arm default pose"),
         BT::OutputPort<std::string>("offer_pose", "arm offering pose"),
         BT::OutputPort<int>("person_id", "person id by color detection in HSV"),
+        BT::OutputPort<double>("x_axis_max", "max x axis"),
+        BT::OutputPort<double>("x_axis_min", "min x axis"),
+        BT::OutputPort<double>("y_axis_max", "max y axis"),
+        BT::OutputPort<double>("y_axis_min", "min y axis"),
       });
   }
 
@@ -54,6 +58,7 @@ private:
   rclcpp::Node::SharedPtr node_;
   std::string cam_frame_, home_pose_, offer_pose_;
   int person_id;
+  double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
   geometry_msgs::msg::PoseStamped home_position_;
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;

@@ -37,8 +37,7 @@ FollowEntity::FollowEntity(const std::string & xml_tag_name, const BT::NodeConfi
   entity_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>("goal_update", 10);
   client_ =
     rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(node_, "navigate_to_pose");
-  sub_map_ = node_->create_subscription<nav_msgs::msg::OccupancyGrid>(
-    "map", qos, std::bind(&FollowEntity::map_callback, this, _1));
+  
   sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "amcl_pose", qos, std::bind(&FollowEntity::pose_callback, this, _1));
 
@@ -52,29 +51,16 @@ FollowEntity::FollowEntity(const std::string & xml_tag_name, const BT::NodeConfi
 void FollowEntity::pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg)
 {
   current_pos_ = *msg;
-  // std::cout << "got pose callback" << std::endl;
-}
-
-void FollowEntity::map_callback(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg)
-{
-  costmap_ = std::make_shared<nav2_costmap_2d::Costmap2D>(*msg);
-  // std::cout << "got map callback" << std::endl;
-  sub_map_ = nullptr;
 }
 
 void FollowEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FollowEntity halted");}
 
 void FollowEntity::check_robot_inside_map()
 {
-  int max_x, max_y, current_mx, current_my;
-  max_x = costmap_->getSizeInCellsX();
-  max_y = costmap_->getSizeInCellsY();
-  costmap_->worldToMapNoBounds(
-    current_pos_.pose.pose.position.x, current_pos_.pose.pose.position.y, current_mx, current_my);
-
-  if (current_mx <= max_x && current_my <= max_y) {
+  if (current_pos_.pose.pose.position.x <= x_axis_max_ && current_pos_.pose.pose.position.y <= y_axis_max_ &&
+      current_pos_.pose.pose.position.x >= x_axis_min_ && current_pos_.pose.pose.position.y >= y_axis_min_) 
+  {
   } else {
-    RCLCPP_INFO(node_->get_logger(), "Robot outside map, stopping");
     auto request = std::make_shared<navigation_system_interfaces::srv::SetMode::Request>();
     request->mode.id = 2;
     auto result = set_mode_client_->async_send_request(request);
@@ -101,15 +87,16 @@ BT::NodeStatus FollowEntity::tick()
     return on_idle();
   }
 
-  // if (costmap_ != nullptr && current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
-  //   check_robot_inside_map();
-  // }
+  if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
+    check_robot_inside_map();
+  }
 
   while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) && rclcpp::ok())
   {
     RCLCPP_INFO(
       node_->get_logger(), "Waiting for transform from map to %s", frame_to_follow_.c_str());
     rclcpp::spin_some(node_->get_node_base_interface());
+    // return BT::NodeStatus::IDLE;
   }
 
   try {
@@ -132,6 +119,7 @@ BT::NodeStatus FollowEntity::tick()
 
 BT::NodeStatus FollowEntity::on_idle()
 {
+
   config().blackboard->get("tf_buffer", tf_buffer_);
   RCLCPP_INFO(node_->get_logger(), "FollowEntity ticked IDLE");
   std::string camera_frame, frame_to_follow;
@@ -145,6 +133,22 @@ BT::NodeStatus FollowEntity::on_idle()
   }
   if (!getInput<double>("distance_tolerance", distance_tolerance_)) {
     RCLCPP_ERROR(node_->get_logger(), "distance_tolerance not provided");
+    return BT::NodeStatus::FAILURE;
+  }
+  if (!getInput<double>("x_axis_max", x_axis_max_)) {
+    RCLCPP_ERROR(node_->get_logger(), "x_axis_max not provided");
+    return BT::NodeStatus::FAILURE;
+  }
+  if (!getInput<double>("x_axis_min", x_axis_min_)) {
+    RCLCPP_ERROR(node_->get_logger(), "x_axis_min not provided");
+    return BT::NodeStatus::FAILURE;
+  }
+  if (!getInput<double>("y_axis_max", y_axis_max_)) {
+    RCLCPP_ERROR(node_->get_logger(), "y_axis_max not provided");
+    return BT::NodeStatus::FAILURE;
+  }
+  if (!getInput<double>("y_axis_min", y_axis_min_)) {
+    RCLCPP_ERROR(node_->get_logger(), "y_axis_min not provided");
     return BT::NodeStatus::FAILURE;
   }
 

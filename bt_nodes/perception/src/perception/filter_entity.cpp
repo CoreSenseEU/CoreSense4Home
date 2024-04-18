@@ -37,6 +37,7 @@ FilterEntity::FilterEntity(const std::string & xml_tag_name, const BT::NodeConfi
   getInput("lambda", lambda_);
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
   setOutput("filtered_frame", frame_ + "_filtered");
+  RCLCPP_INFO(node_->get_logger(), "FilterEntity initialized");
 }
 
 void FilterEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FilterEntity halted");}

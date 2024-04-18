@@ -147,6 +147,7 @@ target_link_libraries(carry_my_luggage_test
   arm::move_to_predefined_bt_node
   motion::move_to_bt_node
   motion::look_at_bt_node
+  motion::configure_navigate_back_bt_node
   hri::speak_bt_node
   hri::dialogConfirmation_bt_node
 )

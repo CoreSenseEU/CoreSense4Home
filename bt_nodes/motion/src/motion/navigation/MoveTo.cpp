@@ -47,14 +47,14 @@ void MoveTo::on_tick()
   getInput("will_finish", will_finish_);
 
   try {
-    map_to_goal = tf_buffer_.lookupTransform("map", tf_frame_, tf2::TimePointZero);
+    map_to_goal = tf_buffer_.lookupTransform("base_footprint", tf_frame_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform %s to %s: %s", "map", tf_frame_.c_str(), ex.what());
     throw BT::RuntimeError("Could not transform");
   }
 
-  goal.header.frame_id = "map";
+  goal.header.frame_id = "base_footprint";
   goal.pose.position.x = map_to_goal.transform.translation.x;
   goal.pose.position.y = map_to_goal.transform.translation.y;
 

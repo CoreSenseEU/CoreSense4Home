@@ -18,6 +18,8 @@ find_package(tf2 REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(navigation_system_interfaces REQUIRED)
+find_package(slam_toolbox REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -34,6 +36,8 @@ set(dependencies
   nav2_costmap_2d
   pluginlib
   navigation_system_interfaces
+  slam_toolbox
+  ament_index_cpp
 )
 
 include_directories(include)
@@ -50,6 +54,9 @@ list(APPEND plugin_libs look_at_bt_node)
 
 add_library(follow_entity_bt_node SHARED src/motion/navigation/follow_entity.cpp)
 list(APPEND plugin_libs follow_entity_bt_node)
+
+add_library(configure_navigate_back_bt_node SHARED src/motion/navigation/configure_navigate_back.cpp)
+list(APPEND plugin_libs configure_navigate_back_bt_node)
 
 add_library(clear_map_at_goal_bt_node SHARED src/motion/navigation/clear_map_at_goal.cpp)
 list(APPEND plugin_libs clear_map_at_goal_bt_node)

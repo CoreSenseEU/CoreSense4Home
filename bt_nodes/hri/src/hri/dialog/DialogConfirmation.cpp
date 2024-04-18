@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "hri/dialog/DialogConfirmation.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -31,7 +32,11 @@ DialogConfirmation::DialogConfirmation(
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
-    conf) {}
+    conf)
+{
+  this->publisher_start_ =
+    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+}
 
 void DialogConfirmation::on_tick()
 {
@@ -40,6 +45,11 @@ void DialogConfirmation::on_tick()
   std::string text_;
   // getInput("prompt", text_);
   goal_ = whisper_msgs::action::STT::Goal();
+  auto msg_dialog_action = std_msgs::msg::Int8();
+
+  msg_dialog_action.data = 0;
+
+  this->publisher_start_->publish(msg_dialog_action);
 
   // goal_.text = text_;
 }

@@ -19,6 +19,7 @@
 
 #include "hri/dialog/Query.hpp"
 #include "llama_msgs/action/generate_response.hpp"
+#include "std_msgs/msg/int8.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
@@ -33,7 +34,11 @@ Query::Query(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : dialog::BtActionNode<llama_msgs::action::GenerateResponse>(
-    xml_tag_name, action_name, conf) {}
+    xml_tag_name, action_name, conf)
+{
+  this->publisher_start_ =
+    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+}
 
 void Query::on_tick()
 {
@@ -76,6 +81,12 @@ number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
 
 # Optional space: by convention, applied in this grammar after literal chars when allowed
 ws ::= ([ \t\n] ws)?)";
+
+  auto msg_dialog_action = std_msgs::msg::Int8();
+
+  msg_dialog_action.data = 2;
+
+  this->publisher_start_->publish(msg_dialog_action);
 }
 
 BT::NodeStatus Query::on_success()

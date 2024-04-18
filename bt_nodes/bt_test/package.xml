@@ -7,15 +7,23 @@
   <maintainer email="rodrigo.perez@urjc.es">rod</maintainer>
   <maintainer email="juancarlos.serrano@urjc.es">Juanca</maintainer>
   <maintainer email="alberto.gomezjacinto@urjc.es">Alberto</maintainer>
-  <license>TODO: License declaration</license>
-
+  <license>Apache License, Version 2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>behaviortree_cpp_v3</depend>
+  <depend>geometry_msgs</depend>
+  <depend>audio_common_msgs</depend>
+  <depend>whisper_msgs</depend>
+  <depend>llama_msgs</depend>
   <depend>configuration</depend>
   <depend>motion</depend>
   <depend>perception</depend>
-  <depend>hri</depend>
   <depend>arm</depend>
+  <depend>tf2_ros</depend>
+  <depend>hri</depend>
+  <depend>perception_system_interfaces</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -23,8 +23,8 @@ LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & c
   config().blackboard->get("node", node_);
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   qos.transient_local().reliable();
-  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "/attention/attention_points", 1);
+  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
+    "attention/attention_command", 1);
 }
 
 BT::NodeStatus LookAt::tick()
@@ -49,26 +49,12 @@ BT::NodeStatus LookAt::tick()
     return BT::NodeStatus::RUNNING;
   }
 
-  if (!tf_buffer_->canTransform("map", tf_frame_, tf2::TimePointZero)) {
-    RCLCPP_ERROR(node_->get_logger(), "Can't transform %s to map", tf_frame_.c_str());
-    return BT::NodeStatus::RUNNING;
-  }
-
-  attention_system_msgs::msg::AttentionPoints attention_points_msg;
+  attention_system_msgs::msg::AttentionCommand attention_command_msg;
   RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", goal_frame.c_str());
 
-  attention_points_msg.instance_id = "look_at";
-  attention_points_msg.lifeness = rclcpp::Duration(5, 0);
-  attention_points_msg.time_in_point = rclcpp::Duration(0, 0);
+  attention_command_msg.frame_id_to_track = goal_frame;
 
-  geometry_msgs::msg::PointStamped point;
-  point.header.frame_id = goal_frame;
-  point.point.x = 0.0;
-  point.point.y = 0.0;
-  point.point.z = 0.0;
-
-  attention_points_msg.attention_points.push_back(point);
-  attention_points_pub_->publish(attention_points_msg);
+  attention_points_pub_->publish(attention_command_msg);
 
   rclcpp::spin_some(node_);
   RCLCPP_INFO(node_->get_logger(), "LookAt published attention points");

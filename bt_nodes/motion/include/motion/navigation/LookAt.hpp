@@ -20,7 +20,7 @@
 #include <memory>
 #include <string>
 
-#include "attention_system_msgs/msg/attention_points.hpp"
+#include "attention_system_msgs/msg/attention_command.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -50,7 +50,7 @@ public:
 private:
   rclcpp::Node::SharedPtr node_;
   geometry_msgs::msg::PoseStamped pose_;
-  rclcpp::Publisher<attention_system_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
+  rclcpp::Publisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr attention_points_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
   std::vector<std::string> tf_frames_;
   std::string tf_frame_;

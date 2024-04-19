@@ -30,16 +30,26 @@ SetWp::SetWp(
 BT::NodeStatus
 SetWp::tick()
 {
+  static tf2_ros::StaticTransformBroadcaster tf_broadcaster(node_);
+
   for (auto wp : wp_names_) {
     node_->declare_parameter("waypoints." + wp, std::vector<double>());
     std::vector<double> wp_pos;
     node_->get_parameter("waypoints." + wp, wp_pos);
-    geometry_msgs::msg::PoseStamped wp_pos_msg;
-    wp_pos_msg.header.frame_id = "map";
-    wp_pos_msg.pose.position.x = wp_pos[0];
-    wp_pos_msg.pose.position.y = wp_pos[1];
-    wp_pos_msg.pose.position.z = wp_pos[2];
-    config().blackboard->set(wp, wp_pos_msg);
+
+    geometry_msgs::msg::TransformStamped transformStamped;
+    transformStamped.header.stamp = node_->now();
+    transformStamped.header.frame_id = "map";
+    transformStamped.child_frame_id = wp;
+    transformStamped.transform.translation.x = wp_pos[0];
+    transformStamped.transform.translation.y = wp_pos[1];
+    transformStamped.transform.translation.z = wp_pos[2];
+    transformStamped.transform.rotation.x = 0.0;
+    transformStamped.transform.rotation.y = 0.0;
+    transformStamped.transform.rotation.z = 0.0;
+    transformStamped.transform.rotation.w = 1.0;
+
+    tf_broadcaster.sendTransform(transformStamped);
   }
 
   RCLCPP_INFO(node_->get_logger(), "SetWp ticked");

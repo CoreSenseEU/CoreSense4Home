@@ -126,7 +126,7 @@ def generate_launch_description():
             os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
         ),
         launch_arguments={
-            'model': 'yolov8x-pose.pt',
+            'model': 'yolov8n-pose.pt',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',
@@ -139,7 +139,7 @@ def generate_launch_description():
 
     carry_my_luggage = Node(
         package='bt_test',
-        executable='carry_my_luggage_test',
+        executable='receptionist_test',
         parameters=[carry_config],
         output='screen',
         namespace='perception_system'

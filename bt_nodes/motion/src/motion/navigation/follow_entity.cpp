@@ -66,10 +66,10 @@ void FollowEntity::check_robot_inside_map()
     auto result = set_mode_client_->async_send_request(request);
     if (rclcpp::spin_until_future_complete(node_, result) == rclcpp::FutureReturnCode::SUCCESS) {
       if (!result.get()->success) {
-        setStatus(BT::NodeStatus::FAILURE);
+        setStatus(BT::NodeStatus::RUNNING);
       }
     } else {
-      setStatus(BT::NodeStatus::FAILURE);
+      setStatus(BT::NodeStatus::RUNNING);
     }
   }
 }
@@ -83,7 +83,7 @@ BT::NodeStatus FollowEntity::tick()
 
   // }
 
-  if (status() == BT::NodeStatus::IDLE) {
+  if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
     return on_idle();
   }
 
@@ -105,7 +105,7 @@ BT::NodeStatus FollowEntity::tick()
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
       ex.what());
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
 
   goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
@@ -125,31 +125,31 @@ BT::NodeStatus FollowEntity::on_idle()
   std::string camera_frame, frame_to_follow;
   if (!getInput<std::string>("camera_frame", camera_frame_)) {
     RCLCPP_ERROR(node_->get_logger(), "camera_frame not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
   if (!getInput<std::string>("frame_to_follow", frame_to_follow_)) {
     RCLCPP_ERROR(node_->get_logger(), "frame_to_follow not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
   if (!getInput<double>("distance_tolerance", distance_tolerance_)) {
     RCLCPP_ERROR(node_->get_logger(), "distance_tolerance not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
   if (!getInput<double>("x_axis_max", x_axis_max_)) {
     RCLCPP_ERROR(node_->get_logger(), "x_axis_max not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
   if (!getInput<double>("x_axis_min", x_axis_min_)) {
     RCLCPP_ERROR(node_->get_logger(), "x_axis_min not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
   if (!getInput<double>("y_axis_max", y_axis_max_)) {
     RCLCPP_ERROR(node_->get_logger(), "y_axis_max not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
   if (!getInput<double>("y_axis_min", y_axis_min_)) {
     RCLCPP_ERROR(node_->get_logger(), "y_axis_min not provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
 
   while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) && rclcpp::ok())
@@ -157,7 +157,7 @@ BT::NodeStatus FollowEntity::on_idle()
     RCLCPP_INFO(
       node_->get_logger(), "Waiting for transform from base_footprint to %s", frame_to_follow_.c_str());
     rclcpp::spin_some(node_->get_node_base_interface());
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
 
   try {
@@ -166,7 +166,7 @@ BT::NodeStatus FollowEntity::on_idle()
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
       ex.what());
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
 
   goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
@@ -204,8 +204,10 @@ BT::NodeStatus FollowEntity::on_idle()
     rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
-    return BT::NodeStatus::FAILURE;
+    is_goal_sent_ = false;
+    return BT::NodeStatus::RUNNING;
   }
+   is_goal_sent_ = true;
   return BT::NodeStatus::RUNNING;
 }
 

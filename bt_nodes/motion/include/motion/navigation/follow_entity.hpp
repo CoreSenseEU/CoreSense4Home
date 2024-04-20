@@ -79,6 +79,7 @@ private:
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
   double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
+  bool is_goal_sent_ = false;
 //   double magnitude;
 // double scale; 
   geometry_msgs::msg::TransformStamped entity_transform_;

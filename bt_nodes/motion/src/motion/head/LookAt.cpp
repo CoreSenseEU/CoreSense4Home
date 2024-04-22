@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "motion/navigation/LookAt.hpp"
+#include "motion/head/LookAt.hpp"
 
-namespace navigation
+namespace head
 {
 
 LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
@@ -66,5 +66,5 @@ void LookAt::halt() {RCLCPP_INFO(node_->get_logger(), "LookAt halted");}
 }  // namespace navigation
 
 BT_REGISTER_NODES(factory) {
-  factory.registerNodeType<navigation::LookAt>("LookAt");
+  factory.registerNodeType<head::LookAt>("LookAt");
 }

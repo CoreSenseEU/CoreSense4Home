@@ -61,6 +61,9 @@ list(APPEND plugin_libs configure_navigate_back_bt_node)
 add_library(clear_map_at_goal_bt_node SHARED src/motion/navigation/clear_map_at_goal.cpp)
 list(APPEND plugin_libs clear_map_at_goal_bt_node)
 
+add_library(pan_bt_node SHARED src/motion/head/Pan.cpp)
+list(APPEND plugin_libs pan_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

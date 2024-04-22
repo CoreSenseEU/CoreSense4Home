@@ -29,7 +29,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "std_msgs/msg/string.hpp"
 
-namespace navigation
+namespace head
 {
 
 class LookAt : public BT::ActionNodeBase

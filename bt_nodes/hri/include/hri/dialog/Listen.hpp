@@ -16,12 +16,14 @@
 #define HRI__LISTEN_HPP_
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
@@ -43,6 +45,7 @@ public:
   }
 
 private:
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
 }  // namespace dialog

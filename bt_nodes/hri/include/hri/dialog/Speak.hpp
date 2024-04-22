@@ -16,6 +16,7 @@
 #define DIALOG__SPEAK_HPP_
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 
 #include "audio_common_msgs/action/tts.hpp"
@@ -23,6 +24,8 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int8.hpp"
+#include "std_msgs/msg/string.hpp"
 
 namespace dialog
 {
@@ -44,6 +47,8 @@ public:
   }
 
 private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
   // rclcpp::Node::SharedPtr node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;

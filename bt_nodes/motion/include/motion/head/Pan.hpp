@@ -9,47 +9,52 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions andGO2OBJECT
+// See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HRI__QUERY_HPP_
-#define HRI__QUERY_HPP_
+#ifndef HEAD__PAN_HPP_
+#define HEAD__PAN_HPP_
 
-#include <algorithm>
+
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "hri/dialog/BTActionNode.hpp"
-#include "llama_msgs/action/generate_response.hpp"
+#include "ctrl_support/BTActionNode.hpp"
+#include "control_msgs/action/follow_joint_trajectory.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/int8.hpp"
 
-namespace dialog
+namespace head
 {
 
-class Query : public dialog::BtActionNode<llama_msgs::action::GenerateResponse>
+class Pan : public motion::BtActionNode<control_msgs::action::FollowJointTrajectory>
 {
 public:
-  explicit Query(
-    const std::string & xml_tag_name, const std::string & action_name,
+  explicit Pan(
+    const std::string & xml_tag_name,
+    const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
+
   void on_tick() override;
+  void on_feedback() override;
   BT::NodeStatus on_success() override;
+  BT::NodeStatus on_aborted() override;
+  BT::NodeStatus on_cancelled() override;
+  
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("text"), BT::InputPort<std::string>("intention"),
-        BT::OutputPort<std::string>("intention_value")});
+      {
+        BT::InputPort<std::string>("tf_frame"),
+      });
   }
-
 private:
-  std::string intention_;
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  rclcpp::Node::SharedPtr node_;
+  BT::Optional<std::string> point_to_pan_;
 };
 
-}  // namespace dialog
+}  // namespace receptionist
 
-#endif  // HRI__QUERY_HPP_
+#endif  // RECEPTIONIST__BEHAVIOR_TREES_NODES__PAN_TO_POINT_HPP_

@@ -51,7 +51,7 @@ BT::NodeStatus IsDetected::tick()
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Person color: %ld", person_id_);
   pl::getInstance()->set_interest(interest_, true);
   pl::getInstance()->update(30);
-  // pl::getInstance()->publicTFinterest();
+
 
   rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
@@ -64,25 +64,22 @@ BT::NodeStatus IsDetected::tick()
   auto detections = pl::getInstance()->get_by_type(interest_);
 
   if (detections.empty()) {
-    // RCLCPP_WARNING(node_->get_logger(), "[IsDetected] No detections");
+    RCLCPP_WARN(node_->get_logger(), "[IsDetected] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing detections...");
 
   if (order_ == "color") {
-    // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
-    std::sort(
-      detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
+    pl::getInstance()->publicSortedTFinterest([this](const auto & a, const auto & b) {
         return perception_system::diffIDs(this->person_id_, a.color_person) <
         perception_system::diffIDs(this->person_id_, b.color_person);
       });
   } else if (order_ == "depth") {
-    std::sort(
-      detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
-        return a.center3d.position.z < b.center3d.position.z;
-      });
+    // it is the default sorting method
+    pl::getInstance()->publicSortedTFinterest();
   }
+  
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 
@@ -94,16 +91,11 @@ BT::NodeStatus IsDetected::tick()
       it = detections.erase(it);
     } else {
       frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
-      if (
-        publicTF_map2object(
-          detection, detection.class_name + "_" + std::to_string(entity_counter)) == -1)
-      {
-        return BT::NodeStatus::FAILURE;
-      }
       ++it;
       ++entity_counter;
     }
   }
+
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted and filtered");
   if (frames_.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[IsDetected] No detections after filter");

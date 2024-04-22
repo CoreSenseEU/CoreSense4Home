@@ -73,15 +73,15 @@ BT::NodeStatus FilterEntity::tick()
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
 
   try {
-    entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
+    entity_transform_now_msg = tf_buffer_->lookupTransform("odom", frame_, tf2::TimePointZero);
     RCLCPP_INFO(
-      node_->get_logger(), "Position %s to %s: %f %f %f", frame_.c_str(), "map",
+      node_->get_logger(), "Position %s to %s: %f %f %f", frame_.c_str(), "odom",
       entity_transform_now_msg.transform.translation.x,
       entity_transform_now_msg.transform.translation.y,
       entity_transform_now_msg.transform.translation.z);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "map", ex.what());
+      node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "odom", ex.what());
     RCLCPP_INFO(node_->get_logger(), "Cannot transform");
 
     return BT::NodeStatus::SUCCESS;

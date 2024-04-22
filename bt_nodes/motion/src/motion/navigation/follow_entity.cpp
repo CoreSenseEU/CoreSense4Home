@@ -72,6 +72,7 @@ void FollowEntity::check_robot_inside_map()
       setStatus(BT::NodeStatus::RUNNING);
     }
   }
+  is_goal_sent_ = false;
 }
 
 BT::NodeStatus FollowEntity::tick()

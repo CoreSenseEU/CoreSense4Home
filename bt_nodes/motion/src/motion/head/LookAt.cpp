@@ -12,29 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "motion/navigation/LookAt.hpp"
+#include "motion/head/LookAt.hpp"
 
-namespace navigation
+namespace head
 {
 
-LookAt::LookAt(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   qos.transient_local().reliable();
-  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionPoints>(
-    "/attention/attention_points", qos);
+  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
+    "attention/attention_command", 1);
 }
 
-BT::NodeStatus
-LookAt::tick()
+BT::NodeStatus LookAt::tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "LookAt ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "LookAt ticked");
   getInput("tf_frames", tf_frames_);
   getInput("tf_frame", tf_frame_);
+
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");
+    config().blackboard->get("tf_buffer", tf_buffer_);
+  }
 
   std::string goal_frame;
 
@@ -44,40 +46,25 @@ LookAt::tick()
     goal_frame = tf_frames_[0];
   } else {
     RCLCPP_ERROR(node_->get_logger(), "No goal frame provided");
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::RUNNING;
   }
 
-  attention_system_msgs::msg::AttentionPoints attention_points_msg;
+  attention_system_msgs::msg::AttentionCommand attention_command_msg;
   RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", goal_frame.c_str());
 
-  attention_points_msg.instance_id = "look_at";
-  attention_points_msg.lifeness = rclcpp::Duration(5, 0);
-  attention_points_msg.time_in_point = rclcpp::Duration(0, 0);
+  attention_command_msg.frame_id_to_track = goal_frame;
 
-  geometry_msgs::msg::PointStamped point;
-  point.header.frame_id = goal_frame;
-  point.point.x = 0.0;
-  point.point.y = 0.0;
-  point.point.z = 0.0;
-
-  attention_points_msg.attention_points.push_back(point);
-  attention_points_pub_->publish(attention_points_msg);
+  attention_points_pub_->publish(attention_command_msg);
 
   rclcpp::spin_some(node_);
   RCLCPP_INFO(node_->get_logger(), "LookAt published attention points");
   return BT::NodeStatus::SUCCESS;
 }
 
-void
-LookAt::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "LookAt halted");
-}
-
+void LookAt::halt() {RCLCPP_INFO(node_->get_logger(), "LookAt halted");}
 
 }  // namespace navigation
 
-BT_REGISTER_NODES(factory)
-{
-  factory.registerNodeType<navigation::LookAt>("LookAt");
+BT_REGISTER_NODES(factory) {
+  factory.registerNodeType<head::LookAt>("LookAt");
 }

@@ -12,53 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef NAVIGATION__LOOK_AT_HPP_
-#define NAVIGATION__LOOK_AT_HPP_
+#ifndef HEAD__PAN_HPP_
+#define HEAD__PAN_HPP_
+
 
 #include <string>
-#include <memory>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
+#include "ctrl_support/BTActionNode.hpp"
+#include "control_msgs/action/follow_joint_trajectory.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "nav2_msgs/action/navigate_to_pose.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "attention_system_msgs/msg/attention_points.hpp"
 
-#include "std_msgs/msg/string.hpp"
-
-namespace navigation
+namespace head
 {
 
-class LookAt : public BT::ActionNodeBase
+class Pan : public motion::BtActionNode<control_msgs::action::FollowJointTrajectory>
 {
 public:
-  explicit LookAt(
+  explicit Pan(
     const std::string & xml_tag_name,
+    const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
-  void halt();
-  BT::NodeStatus tick();
+
+  void on_tick() override;
+  void on_feedback() override;
+  BT::NodeStatus on_success() override;
+  BT::NodeStatus on_aborted() override;
+  BT::NodeStatus on_cancelled() override;
+  
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::vector<std::string>>("tf_frames"),
-        BT::InputPort<std::string>("tf_frame")
+        BT::InputPort<std::string>("tf_frame"),
       });
   }
-
 private:
   rclcpp::Node::SharedPtr node_;
-  geometry_msgs::msg::PoseStamped pose_;
-  rclcpp::Publisher<attention_system_msgs::msg::AttentionPoints>::SharedPtr attention_points_pub_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
-  std::vector<std::string> tf_frames_;
-  std::string tf_frame_;
+  BT::Optional<std::string> point_to_pan_;
 };
 
-}  // namespace navigation
+}  // namespace receptionist
 
-#endif  // NAVIGATION__LOOK_AT_HPP_
+#endif  // RECEPTIONIST__BEHAVIOR_TREES_NODES__PAN_TO_POINT_HPP_

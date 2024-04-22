@@ -22,7 +22,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
-namespace navigation
+namespace motion
 {
 
 using namespace std::chrono_literals;  // NOLINT
@@ -234,6 +234,10 @@ protected:
         }
       };
 
+    send_goal_options.feedback_callback =
+      std::bind(&BtActionNode::feedback_callback, this,
+      std::placeholders::_1, std::placeholders::_2);
+
     auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
 
     if (rclcpp::spin_until_future_complete(
@@ -247,6 +251,19 @@ protected:
     if (!goal_handle_) {
       throw std::runtime_error("Goal was rejected by the action server");
     }
+  }
+  
+  void feedback_callback(
+    typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr,
+    const typename ActionT::Feedback::ConstSharedPtr feedback)
+  {
+    config().blackboard->set("feedback", feedback);
+    on_feedback();
+  }
+
+  virtual void on_feedback()
+  {
+    
   }
 
   void increment_recovery_count()

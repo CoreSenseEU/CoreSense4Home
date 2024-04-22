@@ -66,7 +66,9 @@ public:
 
 private:
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
-  geometry_msgs::msg::PoseStamped get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform);
+  geometry_msgs::msg::PoseStamped get_goal_pose(
+    const double & distance_to_substract,
+    const geometry_msgs::msg::TransformStamped & goal_transform);
   void check_robot_inside_map();
   BT::NodeStatus on_idle();
   rclcpp::Node::SharedPtr node_;
@@ -81,7 +83,7 @@ private:
   double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
   bool is_goal_sent_ = false;
 //   double magnitude;
-// double scale; 
+// double scale;
   geometry_msgs::msg::TransformStamped entity_transform_;
   geometry_msgs::msg::TransformStamped robot_direction_;
   geometry_msgs::msg::PoseStamped goal_pose_;

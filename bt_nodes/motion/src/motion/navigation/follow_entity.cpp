@@ -37,7 +37,7 @@ FollowEntity::FollowEntity(const std::string & xml_tag_name, const BT::NodeConfi
   entity_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>("goal_update", 10);
   client_ =
     rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(node_, "navigate_to_pose");
-  
+
   sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "amcl_pose", qos, std::bind(&FollowEntity::pose_callback, this, _1));
 
@@ -57,8 +57,10 @@ void FollowEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FollowEntity halted
 
 void FollowEntity::check_robot_inside_map()
 {
-  if (current_pos_.pose.pose.position.x <= x_axis_max_ && current_pos_.pose.pose.position.y <= y_axis_max_ &&
-      current_pos_.pose.pose.position.x >= x_axis_min_ && current_pos_.pose.pose.position.y >= y_axis_min_) 
+  if (current_pos_.pose.pose.position.x <= x_axis_max_ &&
+    current_pos_.pose.pose.position.y <= y_axis_max_ &&
+    current_pos_.pose.pose.position.x >= x_axis_min_ &&
+    current_pos_.pose.pose.position.y >= y_axis_min_)
   {
   } else {
     auto request = std::make_shared<navigation_system_interfaces::srv::SetMode::Request>();
@@ -92,7 +94,9 @@ BT::NodeStatus FollowEntity::tick()
     check_robot_inside_map();
   }
 
-  while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) && rclcpp::ok())
+  while (!tf_buffer_->canTransform(
+      "base_footprint", frame_to_follow_,
+      tf2::TimePointZero) && rclcpp::ok())
   {
     RCLCPP_INFO(
       node_->get_logger(), "Waiting for transform from map to %s", frame_to_follow_.c_str());
@@ -101,7 +105,9 @@ BT::NodeStatus FollowEntity::tick()
   }
 
   try {
-    entity_transform_ = tf_buffer_->lookupTransform("base_footprint", frame_to_follow_, tf2::TimePointZero);
+    entity_transform_ = tf_buffer_->lookupTransform(
+      "base_footprint", frame_to_follow_,
+      tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
@@ -153,16 +159,21 @@ BT::NodeStatus FollowEntity::on_idle()
     return BT::NodeStatus::RUNNING;
   }
 
-  while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) && rclcpp::ok())
+  while (!tf_buffer_->canTransform(
+      "base_footprint", frame_to_follow_,
+      tf2::TimePointZero) && rclcpp::ok())
   {
     RCLCPP_INFO(
-      node_->get_logger(), "Waiting for transform from base_footprint to %s", frame_to_follow_.c_str());
+      node_->get_logger(), "Waiting for transform from base_footprint to %s",
+      frame_to_follow_.c_str());
     rclcpp::spin_some(node_->get_node_base_interface());
     return BT::NodeStatus::RUNNING;
   }
 
   try {
-    entity_transform_ = tf_buffer_->lookupTransform("base_footprint", frame_to_follow_, tf2::TimePointZero);
+    entity_transform_ = tf_buffer_->lookupTransform(
+      "base_footprint", frame_to_follow_,
+      tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
@@ -208,18 +219,22 @@ BT::NodeStatus FollowEntity::on_idle()
     is_goal_sent_ = false;
     return BT::NodeStatus::RUNNING;
   }
-   is_goal_sent_ = true;
+  is_goal_sent_ = true;
   return BT::NodeStatus::RUNNING;
 }
 
 
-geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform)
+geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(
+  const double & distance_to_substract,
+  const geometry_msgs::msg::TransformStamped & goal_transform)
 {
   geometry_msgs::msg::PoseStamped goal_pose;
 
   goal_pose.header.frame_id = "base_footprint";
-  
-  double magnitude = std::hypot(goal_transform.transform.translation.x, goal_transform.transform.translation.y);
+
+  double magnitude = std::hypot(
+    goal_transform.transform.translation.x,
+    goal_transform.transform.translation.y);
   double scale = (magnitude - distance_to_substract) / magnitude;
 
   goal_pose.pose.position.x = goal_transform.transform.translation.x * std::max(scale, 0.0);
@@ -230,9 +245,11 @@ geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(const double & dista
   if (goal_transform.transform.translation.x == 0 && goal_transform.transform.translation.y == 0) {
     q.setRPY(0, 0, 0);
   } else {
-    q.setRPY(0, 0, std::atan2(goal_transform.transform.translation.y, goal_transform.transform.translation.x));
+    q.setRPY(
+      0, 0,
+      std::atan2(goal_transform.transform.translation.y, goal_transform.transform.translation.x));
   }
-  
+
   goal_pose.pose.orientation = tf2::toMsg(q);
   return goal_pose;
 

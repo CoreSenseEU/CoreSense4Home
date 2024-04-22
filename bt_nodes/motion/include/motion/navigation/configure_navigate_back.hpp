@@ -42,8 +42,6 @@ namespace navigation
 {
 
 
-
-
 //             <Action ID="SetInitialPose" pose="{current_pose}"/>
 //             <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/>
 
@@ -54,7 +52,9 @@ namespace navigation
 class ConfigureNavigateBack : public BT::ActionNodeBase
 {
 public:
-  explicit ConfigureNavigateBack(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit ConfigureNavigateBack(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -67,7 +67,6 @@ public:
   }
 
 private:
-
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
   void initial_pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
   bool save_map(const std::string & map_name);
@@ -90,7 +89,7 @@ private:
   geometry_msgs::msg::TransformStamped entity_transform_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::QoS qos_;
- 
+
   std::string map_path_;
   std::int8_t mode_;
   bool is_initial_pose_ = false;
@@ -110,7 +109,7 @@ private:
 //   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
 //   double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
 // //   double magnitude;
-// // double scale; 
+// // double scale;
 //   geometry_msgs::msg::TransformStamped entity_transform_;
 //   geometry_msgs::msg::TransformStamped robot_direction_;
 //   geometry_msgs::msg::PoseStamped goal_pose_;

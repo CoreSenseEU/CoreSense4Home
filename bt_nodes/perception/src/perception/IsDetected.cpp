@@ -71,7 +71,8 @@ BT::NodeStatus IsDetected::tick()
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing detections...");
 
   if (order_ == "color") {
-    pl::getInstance()->publicSortedTFinterest([this](const auto & a, const auto & b) {
+    pl::getInstance()->publicSortedTFinterest(
+      [this](const auto & a, const auto & b) {
         return perception_system::diffIDs(this->person_id_, a.color_person) <
         perception_system::diffIDs(this->person_id_, b.color_person);
       });
@@ -79,7 +80,7 @@ BT::NodeStatus IsDetected::tick()
     // it is the default sorting method
     pl::getInstance()->publicSortedTFinterest();
   }
-  
+
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 

@@ -20,6 +20,7 @@ find_package(pluginlib REQUIRED)
 find_package(navigation_system_interfaces REQUIRED)
 find_package(slam_toolbox REQUIRED)
 find_package(ament_index_cpp REQUIRED)
+find_package(trajectory_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -38,6 +39,7 @@ set(dependencies
   navigation_system_interfaces
   slam_toolbox
   ament_index_cpp
+  trajectory_msgs
 )
 
 include_directories(include)

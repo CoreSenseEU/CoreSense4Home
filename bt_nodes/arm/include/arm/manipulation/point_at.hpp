@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef ARM_MANIPULATION__PICK_OBJECT_HPP_
-#define ARM_MANIPULATION__PICK_OBJECT_HPP_
+#ifndef ARM_MANIPULATION__POINT_AT_HPP_
+#define ARM_MANIPULATION__POINT_AT_HPP_
 
 #include <algorithm>
 #include <string>
@@ -51,9 +51,7 @@ public:
   }
 
 private:
-  // rclcpp::Node::SharedPtr node_;
-  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
-  //  tts_action_;
+
   geometry_msgs::msg::PoseStamped::SharedPtr pose_to_point_;
   std::string tf_frame_, base_frame_;
   tf2_ros::Buffer::SharedPtr tf_buffer_;
@@ -62,4 +60,4 @@ private:
 
 }  // namespace manipulation
 
-#endif  // arm_MANIPULATION__PICK_OBJECT_HPP_
+#endif  // ARM_MANIPULATION__POINT_AT_HPP_

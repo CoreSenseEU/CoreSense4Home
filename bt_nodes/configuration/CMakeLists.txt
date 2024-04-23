@@ -34,6 +34,9 @@ list(APPEND plugin_libs set_wp_bt_node)
 add_library(init_carry_bt_node SHARED src/configuration/init_carry.cpp)
 list(APPEND plugin_libs init_carry_bt_node)
 
+add_library(init_receptionist_bt_node SHARED src/configuration/init_receptionist.cpp)
+list(APPEND plugin_libs init_receptionist_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

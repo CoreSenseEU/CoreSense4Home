@@ -18,22 +18,22 @@
 #include <algorithm>
 #include <string>
 
-#include "manipulation_interfaces/action/move_to_predefined.hpp"
-#include "moveit_msgs/msg/collision_object.hpp"
+#include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "arm/manipulation/BTActionNode.hpp"
+#include "manipulation_interfaces/action/move_to_predefined.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace manipulation
 {
 
-class MoveToPredefined : public manipulation::BtActionNode<manipulation_interfaces::action::MoveToPredefined>
+class MoveToPredefined
+  : public manipulation::BtActionNode<manipulation_interfaces::action::MoveToPredefined>
 {
 public:
   explicit MoveToPredefined(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -41,9 +41,7 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList(
-      {BT::InputPort<std::string>(
-          "pose")});
+    return BT::PortsList({BT::InputPort<std::string>("pose")});
   }
 
 private:
@@ -54,6 +52,6 @@ private:
   std::string pose_;
 };
 
-} // namespace manipulation
+}  // namespace manipulation
 
-#endif // ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_
+#endif  // ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_

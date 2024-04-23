@@ -18,7 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+# from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 # from launch.actions import LogInfo, RegisterEventHandler
 # from launch.event_handlers import OnExecutionComplete
@@ -28,23 +28,23 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    package_dir = get_package_share_directory('robocup_bringup')
-    whisper_dir = get_package_share_directory('whisper_bringup')
+    # package_dir = get_package_share_directory('robocup_bringup')
+    # whisper_dir = get_package_share_directory('whisper_bringup')
     # audio_common_dir = get_package_share_directory('audio_common')
     move_group_dir = get_package_share_directory('tiago_mtc_examples')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
-    attention_dir = get_package_share_directory('attention_system')
+    # attention_dir = get_package_share_directory('attention_system')
     perception_dir = get_package_share_directory('perception_system')
 
-    carry_config = os.path.join(
-        package_dir,
-        'params',
-        'carry_params.yaml'
-        )
+    # carry_config = os.path.join(
+    #     package_dir,
+    #     'params',
+    #     'carry_params.yaml'
+    #     )
 
     # Configuration Variables
-    model_repo = LaunchConfiguration('model_repo')
-    model_filename = LaunchConfiguration('model_filename')
+    # model_repo = LaunchConfiguration('model_repo')
+    # model_filename = LaunchConfiguration('model_filename')
 
     declare_model_repo_cmd = DeclareLaunchArgument(
         'model_repo', default_value='ggerganov/whisper.cpp',
@@ -63,15 +63,15 @@ def generate_launch_description():
 
     # audio related launchers:
 
-    whisper_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(whisper_dir, 'launch', 'whisper.launch.py')
-        ),
-        launch_arguments={
-            'model_repo': model_repo,
-            'model_filename': model_filename
-        }.items()
-    )
+    # whisper_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(whisper_dir, 'launch', 'whisper.launch.py')
+    #     ),
+    #     launch_arguments={
+    #         'model_repo': model_repo,
+    #         'model_filename': model_filename
+    #     }.items()
+    # )
 
     audio_common_tts_node = Node(
         package='audio_common',
@@ -105,28 +105,28 @@ def generate_launch_description():
         )
     )
 
-    navigation = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'launch', 'navigation_follow.launch.py')
-        ),
-        launch_arguments={
-            'slam': 'True',
-            'rviz': 'True'
-        }.items()
-    )
+    # navigation = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(package_dir, 'launch', 'navigation_follow.launch.py')
+    #     ),
+    #     launch_arguments={
+    #         'slam': 'True',
+    #         'rviz': 'True'
+    #     }.items()
+    # )
 
-    attention = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(attention_dir, 'launch', 'attention.launch.py')
-        )
-    )
+    # attention = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(attention_dir, 'launch', 'attention.launch.py')
+    #     )
+    # )
 
     perception = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
         ),
         launch_arguments={
-            'model': 'yolov8x-pose.pt',
+            'model': 'yolov8n-pose.pt',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',
@@ -137,13 +137,13 @@ def generate_launch_description():
 
     )
 
-    carry_my_luggage = Node(
-        package='bt_test',
-        executable='carry_my_luggage_test',
-        parameters=[carry_config],
-        output='screen',
-        namespace='perception_system'
-    )
+    # carry_my_luggage = Node(
+    #     package='bt_test',
+    #     executable='carry_my_luggage_test',
+    #     parameters=[carry_config],
+    #     output='screen',
+    #     namespace='perception_system'
+    # )
 
     # wait_for_navigation = RegisterEventHandler(
     #          OnExecutionComplete(
@@ -155,14 +155,14 @@ def generate_launch_description():
 
     ld = LaunchDescription()
     ld.add_action(perception)
-    ld.add_action(attention)
-    ld.add_action(navigation)
+    # ld.add_action(attention)
+    # ld.add_action(navigation)
     ld.add_action(manipulation_server)
     ld.add_action(move_group)
-    ld.add_action(carry_my_luggage)
+    # ld.add_action(carry_my_luggage)
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
-    ld.add_action(whisper_cmd)
+    # ld.add_action(whisper_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
     ld.add_action(declare_log_level)

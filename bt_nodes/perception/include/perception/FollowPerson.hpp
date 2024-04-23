@@ -15,25 +15,21 @@
 #ifndef PERCEPTION__FOLLOW_PERSON_HPP_
 #define PERCEPTION__FOLLOW_PERSON_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-
-#include "rclcpp/rclcpp.hpp"
-
 #include "perception_system/PerceptionListener.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace perception
 {
@@ -41,9 +37,7 @@ namespace perception
 class FollowPerson : public BT::ActionNodeBase
 {
 public:
-  explicit FollowPerson(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit FollowPerson(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();

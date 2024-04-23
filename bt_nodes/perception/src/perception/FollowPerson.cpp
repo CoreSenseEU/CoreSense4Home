@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "perception/FollowPerson.hpp"
+
 #include <string>
 #include <utility>
 
-#include "perception/FollowPerson.hpp"
-#include "perception_system/PerceptionUtils.hpp"
-
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
-
+#include "perception_system/PerceptionUtils.hpp"
 
 namespace perception
 {
@@ -30,18 +28,14 @@ using namespace std::placeholders;
 
 using pl = perception_system::PerceptionListener;
 
-FollowPerson::FollowPerson(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+FollowPerson::FollowPerson(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
   // config().blackboard->get("perception_listener", perception_listener_);
 
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
@@ -52,11 +46,7 @@ FollowPerson::FollowPerson(
   getInput("camera_link", camera_link_);
 }
 
-void
-FollowPerson::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "FollowPerson halted");
-}
+void FollowPerson::halt() {RCLCPP_INFO(node_->get_logger(), "FollowPerson halted");}
 
 // Distance between two transformations
 double tfs_distance(
@@ -85,27 +75,23 @@ geometry_msgs::msg::TransformStamped tfs_mean(
   return mean;
 }
 
-int
-FollowPerson::publicTF_map2object(
+int FollowPerson::publicTF_map2object(
   const perception_system_interfaces::msg::Detection & detected_object)
 {
   geometry_msgs::msg::TransformStamped map2camera_msg;
   try {
-    map2camera_msg = tf_buffer_->lookupTransform(
-      "map", camera_link_,
-      tf2::TimePointZero);
+    map2camera_msg = tf_buffer_->lookupTransform("map", camera_link_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
-      node_->get_logger(), "Could not transform %s to %s: %s",
-      "map", camera_link_.c_str(), ex.what());
+      node_->get_logger(), "Could not transform %s to %s: %s", "map", camera_link_.c_str(),
+      ex.what());
     return -1;
   }
 
   tf2::Transform camera2object;
   camera2object.setOrigin(
     tf2::Vector3(
-      detected_object.center3d.position.x,
-      detected_object.center3d.position.y,
+      detected_object.center3d.position.x, detected_object.center3d.position.y,
       detected_object.center3d.position.z));
   camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
@@ -146,8 +132,7 @@ FollowPerson::publicTF_map2object(
   return 0;
 }
 
-BT::NodeStatus
-FollowPerson::tick()
+BT::NodeStatus FollowPerson::tick()
 {
   pl::getInstance()->set_interest("person", true);
   // pl::getInstance()->set_interest("chair", true);
@@ -196,8 +181,6 @@ FollowPerson::tick()
 
 }  // namespace perception
 
-
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<perception::FollowPerson>("FollowPerson");
 }

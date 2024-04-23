@@ -15,27 +15,23 @@
 #ifndef PERCEPTION__IS_ENTITY_MOVING_HPP_
 #define PERCEPTION__IS_ENTITY_MOVING_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
 #include <memory>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
 #include "perception_system/PerceptionListener.hpp"
-
 #include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -45,35 +41,32 @@ using namespace std::chrono_literals;
 class IsEntityMoving : public BT::ConditionNode
 {
 public:
-  explicit IsEntityMoving(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit IsEntityMoving(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<std::string>("frame"),
-        BT::InputPort<int>("max_iterations"),
+      {BT::InputPort<std::string>("frame"),
+        BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
         BT::InputPort<float>(
-          "velocity_tolerance",
-          "velocity tolerance to consider the entity is moving")
-      });
+          "distance_tolerance", "distance tolerance to consider the entity is moving")});
   }
 
 private:
   rclcpp::Node::SharedPtr node_;
 
   std::string frame_, cam_frame_;
-  float velocity_tolerance_;
+  float distance_tolerance_, check_time_;
 
   std::vector<geometry_msgs::msg::TransformStamped> entity_transforms_;
   std::vector<float> velocities_;
   int max_iterations_;
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  rclcpp::Time time_since_last_stop_;
+  rclcpp::Time first_time_;
+  bool has_stoped_{false};
 };
 
 }  // namespace perception

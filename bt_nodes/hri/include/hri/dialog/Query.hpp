@@ -28,13 +28,11 @@
 namespace dialog
 {
 
-class Query
-  : public dialog::BtActionNode<llama_msgs::action::GenerateResponse>
+class Query : public dialog::BtActionNode<llama_msgs::action::GenerateResponse>
 {
 public:
   explicit Query(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -43,8 +41,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("text"),
-        BT::InputPort<std::string>("intention"),
+      {BT::InputPort<std::string>("text"), BT::InputPort<std::string>("intention"),
         BT::OutputPort<std::string>("intention_value")});
   }
 
@@ -53,6 +50,6 @@ private:
   rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
-} // namespace dialog
+}  // namespace dialog
 
-#endif // HRI__QUERY_HPP_
+#endif  // HRI__QUERY_HPP_

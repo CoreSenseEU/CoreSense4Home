@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "hri/dialog/Query.hpp"
+
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -22,6 +24,7 @@
 #include "std_msgs/msg/int8.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "llama_msgs/action/generate_response.hpp"
 
 namespace dialog
 {
@@ -42,13 +45,11 @@ Query::Query(
 
 void Query::on_tick()
 {
-
   RCLCPP_DEBUG(node_->get_logger(), "Query ticked");
   std::string text_;
   getInput("text", text_);
   getInput("intention", intention_);
-  std::string prompt_ =
-    "Given the sentence \"" + text_ + "\", extract the " + intention_ +
+  std::string prompt_ = "Given the sentence \"" + text_ + "\", extract the " + intention_ +
     " from the sentence and return "
     "it with the following JSON format:\n" +
     "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
@@ -93,9 +94,7 @@ BT::NodeStatus Query::on_success()
 {
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
 
-  if (result_.result->response.text.empty() ||
-    result_.result->response.text == "{}")
-  {
+  if (result_.result->response.text.empty() || result_.result->response.text == "{}") {
     return BT::NodeStatus::FAILURE;
   }
 
@@ -104,7 +103,6 @@ BT::NodeStatus Query::on_success()
   fprintf(stderr, "%s\n", value_.c_str());
 
   if (value_.empty()) {
-
     return BT::NodeStatus::FAILURE;
   }
 
@@ -113,14 +111,12 @@ BT::NodeStatus Query::on_success()
   return BT::NodeStatus::SUCCESS;
 }
 
-} // namespace dialog
+}  // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::Query>(
-        name, "/llama/generate_response",
-        config);
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Query>(name, "/llama/generate_response", config);
     };
 
   factory.registerBuilder<dialog::Query>("Query", builder);

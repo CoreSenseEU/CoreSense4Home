@@ -25,7 +25,7 @@
 namespace dialog
 {
 
-using namespace std::chrono_literals; // NOLINT
+using namespace std::chrono_literals;  // NOLINT
 
 template<class ActionT, class NodeT = rclcpp::Node>
 class BtActionNode : public BT::ActionNodeBase
@@ -42,8 +42,7 @@ public:
 
     // Initialize the input and output messages
     goal_ = typename ActionT::Goal();
-    result_ =
-      typename rclcpp_action::ClientGoalHandle<ActionT>::WrappedResult();
+    result_ = typename rclcpp_action::ClientGoalHandle<ActionT>::WrappedResult();
 
     std::string remapped_action_name;
     if (getInput("server_name", remapped_action_name)) {
@@ -52,9 +51,7 @@ public:
     createActionClient(action_name_);
 
     // Give the derive class a chance to do any initialization
-    RCLCPP_INFO(
-      node_->get_logger(), "\"%s\" BtActionNode initialized",
-      xml_tag_name.c_str());
+    RCLCPP_INFO(node_->get_logger(), "\"%s\" BtActionNode initialized", xml_tag_name.c_str());
   }
 
   BtActionNode() = delete;
@@ -69,9 +66,7 @@ public:
     action_client_ = rclcpp_action::create_client<ActionT>(node_, action_name);
 
     // Make sure the server is actually there before continuing
-    RCLCPP_INFO(
-      node_->get_logger(), "Waiting for \"%s\" action server",
-      action_name.c_str());
+    RCLCPP_INFO(node_->get_logger(), "Waiting for \"%s\" action server", action_name.c_str());
     action_client_->wait_for_action_server();
   }
 
@@ -134,8 +129,8 @@ public:
       on_wait_for_result();
 
       auto goal_status = goal_handle_->get_status();
-      if (goal_updated_ &&
-        (goal_status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
+      if (
+        goal_updated_ && (goal_status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
         goal_status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED))
       {
         goal_updated_ = false;
@@ -172,15 +167,13 @@ public:
   {
     if (should_cancel_goal()) {
       auto future_cancel = action_client_->async_cancel_goal(goal_handle_);
-      if (rclcpp::spin_until_future_complete(
-          node_->get_node_base_interface(),
-          future_cancel, server_timeout_) !=
+      if (
+        rclcpp::spin_until_future_complete(
+          node_->get_node_base_interface(), future_cancel, server_timeout_) !=
         rclcpp::FutureReturnCode::SUCCESS)
       {
         RCLCPP_ERROR(
-          node_->get_logger(),
-          "Failed to cancel action server for %s",
-          action_name_.c_str());
+          node_->get_logger(), "Failed to cancel action server for %s", action_name_.c_str());
       }
     }
 
@@ -206,11 +199,9 @@ protected:
   void on_new_goal_received()
   {
     goal_result_available_ = false;
-    auto send_goal_options =
-      typename rclcpp_action::Client<ActionT>::SendGoalOptions();
+    auto send_goal_options = typename rclcpp_action::Client<ActionT>::SendGoalOptions();
     send_goal_options.result_callback =
-      [this](const typename rclcpp_action::ClientGoalHandle<
-          ActionT>::WrappedResult & result) {
+      [this](const typename rclcpp_action::ClientGoalHandle<ActionT>::WrappedResult & result) {
         // TODO(#1652): a work around until rcl_action interface is updated
         // if goal ids are not matched, the older goal call this callback so
         // ignore the result if matched, it must be processed (including
@@ -221,12 +212,12 @@ protected:
         }
       };
 
-    auto future_goal_handle =
-      action_client_->async_send_goal(goal_, send_goal_options);
+    auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
 
-    if (rclcpp::spin_until_future_complete(
-        node_->get_node_base_interface(), future_goal_handle,
-        server_timeout_) != rclcpp::FutureReturnCode::SUCCESS)
+    if (
+      rclcpp::spin_until_future_complete(
+        node_->get_node_base_interface(), future_goal_handle, server_timeout_) !=
+      rclcpp::FutureReturnCode::SUCCESS)
     {
       throw std::runtime_error("send_goal failed");
     }
@@ -242,11 +233,11 @@ protected:
     int recovery_count = 0;
     config().blackboard->get<int>(
       "number_recoveries",
-      recovery_count);                             // NOLINT
+      recovery_count);                              // NOLINT
     recovery_count += 1;
     config().blackboard->set<int>(
       "number_recoveries",
-      recovery_count);                             // NOLINT
+      recovery_count);                              // NOLINT
   }
 
   std::string action_name_;
@@ -267,6 +258,6 @@ protected:
   std::chrono::milliseconds server_timeout_;
 };
 
-} // namespace dialog
+}  // namespace dialog
 
-#endif // BR2_BT_PATROLLING__CTRL_SUPPORT__BTACTIONNODE_HPP_
+#endif  // BR2_BT_PATROLLING__CTRL_SUPPORT__BTACTIONNODE_HPP_

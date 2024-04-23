@@ -54,6 +54,7 @@ bt_navigator:
     - nav2_spin_cancel_bt_node
     - nav2_back_up_cancel_bt_node
     - nav2_drive_on_heading_cancel_bt_node
+    - clear_map_at_goal_bt_node
 
 bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:
@@ -231,6 +232,8 @@ global_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
+      clear_people_layer:
+        plugin: "nav2_costmap_2d::ClearPeopleLayer"
       always_send_full_costmap: True
 
 map_server:
@@ -349,7 +352,7 @@ slam_toolbox:
     loop_search_space_dimension: 8.0
     loop_search_space_resolution: 0.05
     loop_search_space_smear_deviation: 0.03
-    # map_file_name: /home/juanca/ros/coresense_ws/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
+    # map_file_name: /home/juan/workspaces/robocup/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
     # map_frame: map
     # map_start_pose:
     # - -0.9

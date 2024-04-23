@@ -146,7 +146,8 @@ def generate_launch_description():
         executable='carry_my_luggage_test',
         parameters=[carry_config],
         output='screen',
-        namespace='perception_system'
+        namespace='perception_system',
+        prefix=['xterm -e gdb -ex run --args']
     )
 
     # wait_for_navigation = RegisterEventHandler(

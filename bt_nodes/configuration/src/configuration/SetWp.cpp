@@ -17,9 +17,7 @@
 namespace configuration
 {
 
-SetWp::SetWp(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+SetWp::SetWp(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -27,8 +25,7 @@ SetWp::SetWp(
   node_->get_parameter("waypoints_names", wp_names_);
 }
 
-BT::NodeStatus
-SetWp::tick()
+BT::NodeStatus SetWp::tick()
 {
   for (auto wp : wp_names_) {
     node_->declare_parameter("waypoints." + wp, std::vector<double>());
@@ -47,15 +44,10 @@ SetWp::tick()
   return BT::NodeStatus::SUCCESS;
 }
 
-void
-SetWp::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "SetWp halted");
-}
+void SetWp::halt() {RCLCPP_INFO(node_->get_logger(), "SetWp halted");}
 
 }  // namespace configuration
 
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<configuration::SetWp>("SetWp");
 }

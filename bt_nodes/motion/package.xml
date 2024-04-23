@@ -16,12 +16,18 @@
   <depend>geometry_msgs</depend>
   <depend>nav2_msgs</depend>
   <depend>nav2_behavior_tree</depend>
+  <depend>nav2_costmap_2d</depend>
+  <depend>navigation_system_interfaces</depend>
+  
   <depend>attention_system</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>
-    <build_type>ament_cmake</build_type>
+    <costmap_2d plugin="${prefix}/clear_people_layer.xml" />
+	  <build_type>ament_cmake</build_type>
   </export>
+
+  
 </package>

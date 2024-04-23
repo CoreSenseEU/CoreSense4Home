@@ -15,26 +15,23 @@
 #ifndef PERCEPTION__ISDETECTED_HPP_
 #define PERCEPTION__ISDETECTED_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
 #include "perception_system/PerceptionListener.hpp"
-
+#include "perception_system_interfaces/msg/detection_array.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -44,25 +41,18 @@ using pl = perception_system::PerceptionListener;
 class IsDetected : public BT::ConditionNode
 {
 public:
-  explicit IsDetected(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit IsDetected(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<int>("max_entities"),
-        BT::InputPort<int>("person_id"),
-        BT::InputPort<std::string>("cam_frame"),
-        BT::InputPort<std::string>("interest"),
+      {BT::InputPort<int>("max_entities"), BT::InputPort<std::int64_t>("person_id"),
+        BT::InputPort<std::string>("cam_frame"), BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"),
-        BT::OutputPort<std::vector<std::string>>("frames")
-      });
+        BT::InputPort<double>("max_depth"), BT::OutputPort<std::vector<std::string>>("frames")});
   }
 
 private:
@@ -70,16 +60,21 @@ private:
     const perception_system_interfaces::msg::Detection & detected_object,
     const std::string & frame_name);
 
+  void detection_callback(perception_system_interfaces::msg::DetectionArray::SharedPtr msg);
+
   rclcpp::Node::SharedPtr node_;
+  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr
+    detected_objs_sub_;
+  perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};
 
   std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;
-  int max_entities_, person_id_;
+  int max_entities_;
+  std::int64_t person_id_;
   std::vector<std::string> frames_;
 
-  tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
 
 }  // namespace perception

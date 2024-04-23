@@ -15,25 +15,21 @@
 #ifndef PERCEPTION__IS_POINTING_HPP_
 #define PERCEPTION__IS_POINTING_HPP_
 
-#include <string>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <algorithm>
+#include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
-#include <tf2/transform_datatypes.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-
-#include "rclcpp/rclcpp.hpp"
-
 #include "perception_system/PerceptionListener.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace perception
 {
@@ -41,20 +37,15 @@ namespace perception
 class IsPointing : public BT::ConditionNode
 {
 public:
-  explicit IsPointing(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit IsPointing(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        // BT::InputPort<std::int64_t>("person_id"),
-        BT::InputPort<std::string>("cam_frame"),
-        BT::OutputPort<std::string>("bag_frame")
-      });
+      {BT::InputPort<std::int64_t>("person_id"), BT::InputPort<std::string>("cam_frame"),
+        BT::OutputPort<std::string>("bag_frame")});
   }
 
 private:
@@ -63,13 +54,12 @@ private:
   rclcpp::Node::SharedPtr node_;
 
   std::string camera_frame_, bag_frame_;
-  int64_t person_id_;
+  std::int64_t person_id_;
   geometry_msgs::msg::TransformStamped person_pose_;
   rclcpp::Time last_pose_;
 
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_broadcaster_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
 };
 
 }  // namespace perception

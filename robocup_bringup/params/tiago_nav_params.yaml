@@ -40,17 +40,17 @@ amcl:
     scan_topic: /scan
     set_initial_pose: true
     initial_pose:
-      x: 0.0
-      y: 0.0
+      x: 0.5156184016639794
+      y: 1.2985416281620732
       z: 0.0
-      yaw: 0.0
+      yaw: 1.6028087
 
 bt_navigator:
   ros__parameters:
     use_sim_time: False
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: /odom
+    odom_topic: /ground_truth_odom
     bt_loop_duration: 10
     default_server_timeout: 20
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
@@ -101,6 +101,7 @@ bt_navigator:
     - nav2_spin_cancel_bt_node
     - nav2_back_up_cancel_bt_node
     - nav2_drive_on_heading_cancel_bt_node
+    # - clear_map_at_goal_bt_node
 
 bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:
@@ -235,7 +236,7 @@ global_costmap:
       robot_radius: 0.275
       resolution: 0.05
       track_unknown_space: true
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "clear_people_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -257,6 +258,9 @@ global_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
+      clear_people_layer:
+        plugin: "nav2_costmap_2d::ClearPeopleLayer"
+        
       always_send_full_costmap: True
 
 map_server:
@@ -310,7 +314,7 @@ behavior_server:
     global_frame: odom
     robot_base_frame: base_link
     transform_tolerance: 0.1
-    use_sim_time: true
+    use_sim_time: False
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4
@@ -341,7 +345,65 @@ velocity_smoother:
     min_velocity: [-0.26, 0.0, -1.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
-    odom_topic: "odom"
+    odom_topic: "/ground_truth_odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
+
+slam_toolbox:
+  ros__parameters:
+    angle_variance_penalty: 1.0
+    base_frame: base_footprint
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_loss_function: None
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    coarse_angle_resolution: 0.0349
+    coarse_search_angle_offset: 0.349
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+    debug_logging: false
+    distance_variance_penalty: 0.5
+    do_loop_closing: true
+    enable_interactive_mode: true
+    fine_search_angle_offset: 0.00349
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_chain_size: 10
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+    loop_search_maximum_distance: 3.0
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+    # map_file_name: /home/juan/workspaces/robocup/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
+    # map_frame: map
+    # map_start_pose:
+    # - -0.9
+    # - 3.6
+    # - 1.56
+    map_update_interval: 0.1
+    max_laser_range: 20.0
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    minimum_time_interval: 0.1
+    minimum_travel_distance: 0.01
+    minimum_travel_heading: 0.01
+    mode: localization
+    odom_frame: odom
+    resolution: 0.05
+    scan_buffer_maximum_scan_distance: 10.0
+    scan_buffer_size: 10
+    scan_topic: /scan
+    solver_plugin: solver_plugins::CeresSolver
+    stack_size_to_use: 40000000
+    tf_buffer_duration: 30.0
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    transform_timeout: 0.2
+    use_response_expansion: true
+    use_scan_barycenter: true
+    use_scan_matching: true

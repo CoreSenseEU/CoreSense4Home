@@ -23,6 +23,7 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "perception_system_interfaces/msg/detection.hpp"
 
 #include <tf2/transform_datatypes.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -32,8 +33,7 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 
 #include "rclcpp/rclcpp.hpp"
-
-#include "perception_system/PerceptionListener.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
 {
@@ -60,7 +60,7 @@ public:
 private:
   int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object);
 
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string camera_link_;
   int64_t person_id_;

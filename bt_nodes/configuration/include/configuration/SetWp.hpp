@@ -18,7 +18,10 @@
 #include <string>
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
 namespace configuration
@@ -40,7 +43,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::vector<std::string> wp_names_;
 };
 

@@ -23,16 +23,15 @@
 #include "ament_index_cpp/get_package_share_directory.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  rclcpp::NodeOptions options;
-  options.automatically_declare_parameters_from_overrides(true);
-
-  auto node = rclcpp::Node::make_shared("init_carry_test", options);
+  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    "init_carry_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
@@ -48,13 +47,17 @@ int main(int argc, char * argv[])
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
 
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+
   rclcpp::Rate rate(10);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {
+    rclcpp::spin_some(node->get_node_base_interface());
+
     finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
 
-    rclcpp::spin_some(node);
     rate.sleep();
   }
 

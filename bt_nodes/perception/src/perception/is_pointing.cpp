@@ -46,10 +46,6 @@ IsPointing::IsPointing(
 
   tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
-
-
   getInput("cam_frame", camera_frame_);
 }
 
@@ -161,12 +157,11 @@ IsPointing::publicTF_map2object(
 BT::NodeStatus
 IsPointing::tick()
 {
-  pl::getInstance()->set_interest("person", true);
-  pl::getInstance()->update(true);
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
+  pl::getInstance(node_)->set_interest("person", true);
+  pl::getInstance(node_)->update(true);
 
   std::vector<perception_system_interfaces::msg::Detection> detections;
-  detections = pl::getInstance()->get_by_type("person");
+  detections = pl::getInstance(node_)->get_by_type("person");
 
   if (detections.empty()) {
     // RCLCPP_INFO(node_->get_logger(), "No detections");

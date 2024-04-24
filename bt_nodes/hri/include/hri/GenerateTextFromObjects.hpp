@@ -19,6 +19,8 @@
 #include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
@@ -50,7 +52,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   unsigned int selected_object_ = 0;
 };
 

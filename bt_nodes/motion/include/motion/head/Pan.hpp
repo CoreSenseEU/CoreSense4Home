@@ -23,6 +23,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace head
@@ -49,9 +50,12 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  // rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
-  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
+  // rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
+  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
+    joint_cmd_pub_;
   double joint_range_, period_;
 
   double get_joint_yaw(double period, double range, double time);

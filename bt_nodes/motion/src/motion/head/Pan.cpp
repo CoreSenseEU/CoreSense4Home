@@ -32,11 +32,13 @@ Pan::Pan(
 
   joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
     "/head_controller/joint_trajectory", 100);
+  joint_cmd_pub_->on_activate();
 }
 
 void
 Pan::halt()
 {
+  joint_cmd_pub_->on_deactivate();
 }
 
 double

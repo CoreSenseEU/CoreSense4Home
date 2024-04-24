@@ -44,7 +44,7 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<double>("range"), // in degrees
-        BT::InputPort<double>("period") // in ms
+        BT::InputPort<double>("period") // in seconds
       });
   }
 

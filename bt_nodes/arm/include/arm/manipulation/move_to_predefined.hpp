@@ -47,10 +47,6 @@ public:
   }
 
 private:
-  // rclcpp::Node::SharedPtr node_;
-  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
-  //  tts_action_;
-
   std::string pose_;
 };
 

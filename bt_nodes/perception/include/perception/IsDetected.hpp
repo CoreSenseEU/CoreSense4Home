@@ -35,6 +35,7 @@
 #include "perception_system/PerceptionListener.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
 {
@@ -70,15 +71,15 @@ private:
     const perception_system_interfaces::msg::Detection & detected_object,
     const std::string & frame_name);
 
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  tf2::BufferCore tf_buffer_;
+  tf2_ros::TransformListener tf_listener_;
 
   std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;
   int max_entities_, person_id_;
   std::vector<std::string> frames_;
 
-  tf2::BufferCore tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
 

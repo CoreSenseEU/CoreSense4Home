@@ -50,21 +50,16 @@ IsDetected::IsDetected(
   getInput("order", order_);
   getInput("max_depth", max_depth_);
   getInput("person_id", person_id_);
-
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
-
 }
 
 BT::NodeStatus
 IsDetected::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
-  pl::getInstance()->set_interest(interest_, true);
-  pl::getInstance()->update(35);
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
+  pl::getInstance(node_)->set_interest(interest_, true);
+  pl::getInstance(node_)->update(35);
 
-  auto detections = pl::getInstance()->get_by_type(interest_);
+  auto detections = pl::getInstance(node_)->get_by_type(interest_);
 
   if (detections.empty()) {
     // RCLCPP_INFO(node_->get_logger(), "No detections");

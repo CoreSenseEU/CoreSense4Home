@@ -19,6 +19,8 @@
 #include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <tf2_ros/buffer.h>
@@ -54,13 +56,12 @@ public:
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Subscription<yolov8_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
   yolov8_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-
 };
 
 }  // namespace perception

@@ -32,6 +32,7 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 #include "perception_system/PerceptionListener.hpp"
 
@@ -60,7 +61,7 @@ public:
 private:
   int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object);
 
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string camera_frame_, bag_frame_;
   int64_t person_id_;

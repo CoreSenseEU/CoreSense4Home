@@ -45,13 +45,6 @@ public:
       {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>(
           "object_to_pick")});
   }
-
-private:
-  // rclcpp::Node::SharedPtr node_;
-  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
-  //  tts_action_;
-
-  // std::string text_;
 };
 
 } // namespace manipulation

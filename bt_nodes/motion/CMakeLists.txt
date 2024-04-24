@@ -7,23 +7,27 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_cascade_lifecycle REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(nav2_behavior_tree REQUIRED)
 find_package(attention_system REQUIRED)
+find_package(attention_system_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
   rclcpp
+  rclcpp_cascade_lifecycle
   rclcpp_action
   behaviortree_cpp_v3
   geometry_msgs
   nav2_msgs
   nav2_behavior_tree
   attention_system
+  attention_system_msgs
 )
 
 include_directories(include)

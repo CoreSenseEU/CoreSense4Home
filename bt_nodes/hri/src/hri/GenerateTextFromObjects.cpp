@@ -39,7 +39,7 @@ BT::NodeStatus
 GenerateTextFromObjects::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "GenerateTextFromObjects ticked");
-  rclcpp::spin_some(node_);
+
   std::vector<moveit_msgs::msg::CollisionObject::SharedPtr> detected_objects = {};
   getInput("detected_objects", detected_objects);
 

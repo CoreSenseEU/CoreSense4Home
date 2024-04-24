@@ -27,6 +27,9 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"
@@ -61,7 +64,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   double distance_tolerance_;
   std::string tf_frame_;
   geometry_msgs::msg::PoseStamped pose_;

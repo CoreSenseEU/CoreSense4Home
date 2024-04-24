@@ -58,8 +58,6 @@ BT::NodeStatus
 ExtractObjectsFromScene::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "ExtractObjectsFromScene ticked");
-  rclcpp::spin_some(node_);
-
 
   if (last_detected_objs_ == nullptr) {
     RCLCPP_INFO(node_->get_logger(), "No objects detection yet");

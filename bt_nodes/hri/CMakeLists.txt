@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_cascade_lifecycle REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(audio_common_msgs REQUIRED)
@@ -20,6 +21,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
   rclcpp
+  rclcpp_cascade_lifecycle
   rclcpp_action
   behaviortree_cpp_v3
   audio_common_msgs

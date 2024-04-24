@@ -57,6 +57,6 @@ private:
   double get_joint_yaw(double period, double range, double time);
 };
 
-}  // namespace receptionist
+}  // namespace head
 
-#endif  // RECEPTIONIST__BEHAVIOR_TREES_NODES__PAN_TO_POINT_HPP_
+#endif  // HEAD__PAN_HPP_

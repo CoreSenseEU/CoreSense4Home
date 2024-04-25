@@ -4,7 +4,11 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action ID="SetWaypoints" name="set waypoints from ros params"/>
-            <Action ID="InitReceptionist" n="{n}"/>
+            <Action ID="InitReceptionist" cam_frame="{cam_frame}"
+                                          manipulation_frame="{man_frame}"
+                                          host_name="{h_name}"
+                                          host_drink="{h_drink}"
+                                          current_guest="{n}" />
             <Repeat num_cycles="2">
                 <Sequence>
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance"/>
@@ -20,7 +24,6 @@
                             </Delay>
                         </Fallback>
                     </RetryUntilSuccessful>
-                    <Action ID="StoreDetection" entity="person_0" id="{n}"/>
                     <Action ID="LookAt" tf_frame="person_0"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <SequenceStar>
@@ -38,6 +41,14 @@
                             </Sequence>
                         </SequenceStar>
                     </RetryUntilSuccessful>
+                    <Action ID="StoreDetection" name="{name_value}"
+                                                drink="{drink_value}"
+                                                id="{n}"
+                                                name_1="{name_1}"
+                                                name_2="{name_2}"
+                                                drink_1="{drink_1}"
+                                                drink_2="{drink_2}"/>
+                    <!-- <Action ID="ExtractInformationFromPicture"></Action> TODO -->
                     <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="party"/>
                     <ReactiveSequence>
@@ -46,7 +57,13 @@
                             <Condition ID="IsDetected" confidence="0.6" entity="person" frames="{frames}" max_depth="2" max_entities="1" order="depth_nearest"/>
                         </ReactiveFallback>
                         <Action ID="LookAt" tf_frame="{frames}"/>
-                        <Action ID="Speak" say_text="Hi, this is {name_value}, and their favorite drink is {favourite_drink}"/>
+                        <Switch2 variable="{n}"  case_1="1" case_2="2"  >
+                            <Action ID="Speak" say_text="Hi {h_name}, this is {name_1}, and their favorite drink is {drink_1}.
+                                                         By the way {name_1}. {h_name} enjoys {h_drink}"/>
+                            <Action ID="Speak" say_text="Hi {h_name} and {name_1}, this is {name_2}, and their favorite drink is {drink_2}.
+                                                         By the way {name_2}. {h_name} enjoys {h_drink} and {name_1} ejoys {drink_1}"/>
+                            <Action ID="Speak" say_text="Hi every one this is our new guest. Please have fun! "/>
+                        </Switch2>
                     </ReactiveSequence>
                     <ReactiveFallback>
                         <Condition ID="IsSittable" tf_frame="chair_frame"/>
@@ -56,7 +73,7 @@
                     <Action ID="LookAt" tf_frame="chair_frame"/>
                     <Action ID="Speak" say_text="Please, sit over there"/>
                     <Action ID="MoveArmToPredefined" position="home"/>
-                    <Action ID="AddGuestToCount" n="{n}"/>
+                    <Action ID="AddGuestToCount" id="{n}"/>
                 </Sequence>
             </Repeat>
         </Sequence>

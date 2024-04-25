@@ -23,12 +23,16 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "arm/manipulation/BTActionNode.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace manipulation
 {
 
-class MoveToPredefined : public manipulation::BtActionNode<manipulation_interfaces::action::MoveToPredefined>
+class MoveToPredefined : public manipulation::BtActionNode<
+    manipulation_interfaces::action::MoveToPredefined,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit MoveToPredefined(

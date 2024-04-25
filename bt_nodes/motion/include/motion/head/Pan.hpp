@@ -22,12 +22,15 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "ctrl_support/BTActionNode.hpp"
 #include "control_msgs/action/follow_joint_trajectory.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace head
 {
 
-class Pan : public motion::BtActionNode<control_msgs::action::FollowJointTrajectory>
+class Pan : public motion::BtActionNode<
+    control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Pan(
@@ -41,7 +44,7 @@ public:
   BT::NodeStatus on_success() override;
   BT::NodeStatus on_aborted() override;
   BT::NodeStatus on_cancelled() override;
-  
+
 
   static BT::PortsList providedPorts()
   {
@@ -50,6 +53,7 @@ public:
         BT::InputPort<std::string>("tf_frame"),
       });
   }
+
 private:
   rclcpp::Node::SharedPtr node_;
   BT::Optional<std::string> point_to_pan_;

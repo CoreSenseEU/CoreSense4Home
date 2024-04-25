@@ -44,7 +44,7 @@ public:
   }
 
 private:
-   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::string cam_frame_, home_pose_, offer_pose_;
   int person_id;
   geometry_msgs::msg::PoseStamped home_position_;

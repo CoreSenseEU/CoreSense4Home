@@ -57,7 +57,7 @@ int main(int argc, char * argv[])
   bool finish = false;
   while (!finish && rclcpp::ok()) {
     rclcpp::spin_some(node->get_node_base_interface());
- 
+
     finish = tree.rootNode()->executeTick() != BT::NodeStatus::SUCCESS;
 
     rate.sleep();

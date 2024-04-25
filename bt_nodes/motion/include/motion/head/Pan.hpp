@@ -30,7 +30,7 @@ namespace head
 {
 
 class Pan : public motion::BtActionNode<
-  control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Pan(
@@ -44,7 +44,7 @@ public:
   BT::NodeStatus on_success() override;
   BT::NodeStatus on_aborted() override;
   BT::NodeStatus on_cancelled() override;
-  
+
 
   static BT::PortsList providedPorts()
   {
@@ -53,6 +53,7 @@ public:
         BT::InputPort<std::string>("tf_frame"),
       });
   }
+
 private:
   rclcpp::Node::SharedPtr node_;
   BT::Optional<std::string> point_to_pan_;

@@ -33,7 +33,7 @@ namespace dialog
 
 class Query
   : public dialog::BtActionNode<
-  llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Query(

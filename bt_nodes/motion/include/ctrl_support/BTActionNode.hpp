@@ -235,7 +235,8 @@ protected:
       };
 
     send_goal_options.feedback_callback =
-      std::bind(&BtActionNode::feedback_callback, this,
+      std::bind(
+      &BtActionNode::feedback_callback, this,
       std::placeholders::_1, std::placeholders::_2);
 
     auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
@@ -252,7 +253,7 @@ protected:
       throw std::runtime_error("Goal was rejected by the action server");
     }
   }
-  
+
   void feedback_callback(
     typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr,
     const typename ActionT::Feedback::ConstSharedPtr feedback)
@@ -263,7 +264,7 @@ protected:
 
   virtual void on_feedback()
   {
-    
+
   }
 
   void increment_recovery_count()

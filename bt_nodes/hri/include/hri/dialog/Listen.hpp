@@ -33,7 +33,7 @@ namespace dialog
 {
 
 class Listen : public dialog::BtActionNode<
-  whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Listen(

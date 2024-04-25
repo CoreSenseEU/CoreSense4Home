@@ -35,7 +35,7 @@ namespace dialog
 {
 
 class Speak : public dialog::BtActionNode<
-  audio_common_msgs::action::TTS, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    audio_common_msgs::action::TTS, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Speak(

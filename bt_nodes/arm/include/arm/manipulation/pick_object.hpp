@@ -31,7 +31,7 @@ namespace manipulation
 {
 
 class PickObject : public manipulation::BtActionNode<
-  manipulation_interfaces::action::Pick, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    manipulation_interfaces::action::Pick, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit PickObject(

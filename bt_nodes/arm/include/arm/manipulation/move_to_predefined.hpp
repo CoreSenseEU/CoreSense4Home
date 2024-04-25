@@ -31,7 +31,8 @@ namespace manipulation
 {
 
 class MoveToPredefined : public manipulation::BtActionNode<
-  manipulation_interfaces::action::MoveToPredefined, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    manipulation_interfaces::action::MoveToPredefined,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit MoveToPredefined(

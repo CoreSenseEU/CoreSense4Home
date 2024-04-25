@@ -33,7 +33,7 @@ MoveTo::MoveTo(
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : motion::BtActionNode<
-  nav2_msgs::action::NavigateToPose, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    nav2_msgs::action::NavigateToPose, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf),
   tf_buffer_(),
   tf_listener_(tf_buffer_)

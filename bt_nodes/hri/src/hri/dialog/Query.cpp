@@ -34,7 +34,7 @@ Query::Query(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : dialog::BtActionNode<
-  llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
   publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);

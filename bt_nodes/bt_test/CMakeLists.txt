@@ -210,12 +210,9 @@ install(TARGETS
   follow_person_test
   init_carry
   carry_my_luggage_test
-<<<<<<< HEAD
   follow_entity_test
   filter_entity_test
-=======
   receptionist_test
->>>>>>> uwu/main
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

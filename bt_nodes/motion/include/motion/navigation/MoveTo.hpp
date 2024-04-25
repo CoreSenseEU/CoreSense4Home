@@ -33,7 +33,8 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
-
+#include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
+#include "motion/navigation/utils.hpp"
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"
@@ -66,11 +67,13 @@ public:
 private:
   rclcpp::Node::SharedPtr node_;
   double distance_tolerance_;
-  std::string tf_frame_;
+  std::string tf_frame_, xml_path_;
   geometry_msgs::msg::PoseStamped pose_;
   tf2::BufferCore tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
   bool will_finish_ = true;
+  rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
+    set_truncate_distance_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

@@ -152,7 +152,6 @@ target_link_libraries(carry_my_luggage_test
   hri::dialogConfirmation_bt_node
 )
 
-# carry my luggage test
 add_executable(follow_entity_test src/follow_entity_test.cpp)
 ament_target_dependencies(follow_entity_test ${dependencies})
 target_link_libraries(follow_entity_test

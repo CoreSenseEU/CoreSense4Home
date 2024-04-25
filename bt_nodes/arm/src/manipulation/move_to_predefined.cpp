@@ -28,8 +28,9 @@ using namespace std::placeholders;
 MoveToPredefined::MoveToPredefined(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: manipulation::BtActionNode<manipulation_interfaces::action::MoveToPredefined>(xml_tag_name,
-    action_name, conf) {}
+: manipulation::BtActionNode<
+  manipulation_interfaces::action::MoveToPredefined, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf) {}
 
 void MoveToPredefined::on_tick()
 {

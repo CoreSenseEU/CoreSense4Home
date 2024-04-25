@@ -26,7 +26,9 @@ Pan::Pan(
   const std::string & xml_tag_name,
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: motion::BtActionNode<control_msgs::action::FollowJointTrajectory>(xml_tag_name, action_name, conf)
+: motion::BtActionNode<
+  control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
 }

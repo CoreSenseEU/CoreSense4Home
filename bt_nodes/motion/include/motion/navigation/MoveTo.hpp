@@ -40,7 +40,7 @@ namespace navigation
 {
 
 class MoveTo
-  : public motion::BtActionNode<nav2_msgs::action::NavigateToPose>
+  : public motion::BtActionNode<nav2_msgs::action::NavigateToPose, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit MoveTo(

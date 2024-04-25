@@ -16,6 +16,7 @@ find_package(nav2_behavior_tree REQUIRED)
 find_package(attention_system REQUIRED)
 find_package(attention_system_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -30,6 +31,7 @@ set(dependencies
   attention_system
   attention_system_msgs
   trajectory_msgs
+  sensor_msgs
 )
 
 include_directories(include)

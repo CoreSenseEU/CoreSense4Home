@@ -23,16 +23,36 @@ using namespace std::chrono_literals;
 Pan::Pan(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(xml_tag_name, conf)
+: BT::ActionNodeBase(xml_tag_name, conf),
+  phase_(0.0)
 {
   config().blackboard->get("node", node_);
-  joint_range_ = 20.0 * M_PI / 180.0;
   joint_range_ = getInput<double>("range").value() * M_PI / 180.0;
   period_ = getInput<double>("period").value();
+
+  if (!joint_range_) {
+    // throw BT::RuntimeError("Missing required input [range]: ", joint_range_);
+    joint_range_.value() = 45.0 * M_PI / 180.0;
+  }
+  if (!period_) {
+    // throw BT::RuntimeError("Missing required input [period]: ", period_);
+    period_.value() = 5.0;
+  }
 
   joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
     "/head_controller/joint_trajectory", 100);
   joint_cmd_pub_->on_activate();
+
+  joint_state_sub_ = node_->create_subscription<sensor_msgs::msg::JointState>(
+    "/joint_states", 100,
+    [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
+      for (size_t i = 0; i < msg->name.size(); ++i) {
+        if (msg->name[i] == "head_1_joint") {
+          phase_ = msg->position[i];
+          break;
+        }
+      }
+    });
 }
 
 void
@@ -42,9 +62,9 @@ Pan::halt()
 }
 
 double
-Pan::get_joint_yaw(double period, double range, double time)
+Pan::get_joint_yaw(double period, double range, double time, double phase)
 {
-  return range * sin((2 * M_PI / period) * time);
+  return range * sin((2 * M_PI / period) * time + phase);
 }
 
 BT::NodeStatus
@@ -52,12 +72,14 @@ Pan::tick()
 {
   if (status() == BT::NodeStatus::IDLE) {
     start_time_ = node_->now();
+    phase_ = asin(phase_ / joint_range_.value());
+    joint_state_sub_ = nullptr;
   }
 
   trajectory_msgs::msg::JointTrajectory command_msg;
   auto elapsed = node_->now() - start_time_;
 
-  double yaw = get_joint_yaw(period_, joint_range_, elapsed.seconds());
+  double yaw = get_joint_yaw(period_.value(), joint_range_.value(), elapsed.seconds(), phase_);
 
   command_msg.joint_names = std::vector<std::string>{"head_1_joint", "head_2_joint"};
   command_msg.points.resize(1);

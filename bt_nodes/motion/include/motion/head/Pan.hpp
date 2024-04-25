@@ -23,6 +23,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -56,9 +57,11 @@ private:
   // rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
   rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
     joint_cmd_pub_;
-  double joint_range_, period_;
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
+  BT::Optional<double> joint_range_, period_;
+  double phase_;
 
-  double get_joint_yaw(double period, double range, double time);
+  double get_joint_yaw(double period, double range, double time, double phase);
 };
 
 }  // namespace head

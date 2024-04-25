@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "arm/manipulation/point_at.hpp"
-
+#include <math.h> 
 
 namespace manipulation
 {
@@ -49,9 +49,10 @@ void PointAt::on_tick()
       setStatus(BT::NodeStatus::FAILURE);
       return;
     }
-    goal_.pose.pose.position.x = transform_.transform.translation.x;
-    goal_.pose.pose.position.y = transform_.transform.translation.y;
-    goal_.pose.pose.position.z = transform_.transform.translation.z;
+    goal_.pose.pose.position.x = 0.5;
+    auto y = 0.5 / std::sin(std::atan2(transform_.transform.translation.y, transform_.transform.translation.x));
+    goal_.pose.pose.position.y = (std::isnan(y) || std::isinf(y)) ? 0.0 : (y); 
+    goal_.pose.pose.position.z = 0.5;
     goal_.pose.pose.orientation = transform_.transform.rotation;
     goal_.pose.header.frame_id = transform_.header.frame_id;
     return;

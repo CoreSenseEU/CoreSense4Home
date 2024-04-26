@@ -71,6 +71,7 @@ BT::NodeStatus
 Pan::tick()
 {
   if (status() == BT::NodeStatus::IDLE) {
+    node_->remove_activation("attention_server");
     start_time_ = node_->now();
     phase_ = asin(phase_ / joint_range_.value());
     joint_state_sub_ = nullptr;
@@ -91,7 +92,7 @@ Pan::tick()
   command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.00);
   joint_cmd_pub_->publish(command_msg);
 
-  return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::RUNNING;
 }
 
 }  // namespace motion

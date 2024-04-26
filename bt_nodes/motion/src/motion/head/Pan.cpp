@@ -64,7 +64,9 @@ Pan::halt()
 double
 Pan::get_joint_yaw(double period, double range, double time, double phase)
 {
-  return range * sin((2 * M_PI / period) * time + phase);
+  return std::clamp(
+    range * sin((2 * M_PI / period) * time + phase),
+    -1.3, 1.3); // TODO: remove hardcoded limits (TIAGo specific)
 }
 
 BT::NodeStatus

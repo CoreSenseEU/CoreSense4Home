@@ -32,10 +32,14 @@ Pan::Pan(
 
   if (!joint_range_) {
     // throw BT::RuntimeError("Missing required input [range]: ", joint_range_);
+    RCLCPP_WARN(
+      node_->get_logger(), "Missing required input [range]. Using default value 45.0 degrees");
     joint_range_.value() = 45.0 * M_PI / 180.0;
   }
   if (!period_) {
     // throw BT::RuntimeError("Missing required input [period]: ", period_);
+    RCLCPP_WARN(
+      node_->get_logger(), "Missing required input [period]. Using default value 5.0 seconds");
     period_.value() = 5.0;
   }
 
@@ -47,7 +51,7 @@ Pan::Pan(
     "/joint_states", 100,
     [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
       for (size_t i = 0; i < msg->name.size(); ++i) {
-        if (msg->name[i] == "head_1_joint") {
+        if (msg->name[i] == "head_1_joint") { // TODO: remove hardcoded joint name (TIAGo specific)
           phase_ = msg->position[i];
           break;
         }
@@ -84,7 +88,7 @@ Pan::tick()
 
   double yaw = get_joint_yaw(period_.value(), joint_range_.value(), elapsed.seconds(), phase_);
 
-  command_msg.joint_names = std::vector<std::string>{"head_1_joint", "head_2_joint"};
+  command_msg.joint_names = std::vector<std::string>{"head_1_joint", "head_2_joint"}; // TODO: remove hardcoded joint names (TIAGo specific)
   command_msg.points.resize(1);
   command_msg.points[0].positions.resize(2);
   command_msg.points[0].velocities.resize(2);

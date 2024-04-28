@@ -27,7 +27,9 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "perception_system/PerceptionListener.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -45,7 +47,8 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("cam_frame")
+      {BT::InputPort<std::string>("cam_frame"),
+       BT::OutputPort<std::string>("chair_frame"),
        });
   }
 
@@ -55,8 +58,12 @@ private:
 
   std::string camera_frame_, chair_frame_;
   std::int64_t person_id_;
+  perception_system_interfaces::msg::Detection person_detection_;
+  perception_system_interfaces::msg::Detection chair_detection_;
+  
 
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 
 
   std::vector<std::string> sit_objects_ = {"chair", "couch", "bench", "sofa"};
@@ -70,10 +77,16 @@ private:
   check_object_class(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 
   bool 
-  check_free_space(const geometry_msgs::msg::Point & bb1, const geometry_msgs::msg::Point & bb2 );
+  check_free_space(const perception_system_interfaces::msg::Detection & person_detection, const perception_system_interfaces::msg::Detection & chair_detection );
+
+  geometry_msgs::msg::Pose 
+  retrieve_3d_pose(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
   
-  geometry_msgs::msg::Point 
+  geometry_msgs::msg::Vector3
   retrieve_bb(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
+
+  perception_system_interfaces::msg::Detection
+  retrieve_detection(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 
 };
 

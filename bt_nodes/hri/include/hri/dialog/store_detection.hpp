@@ -40,9 +40,9 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::string>("name"),
+        BT::InputPort<std::string>("current_name"),
         BT::InputPort<std::string>("drink"),
-        BT::InputPort<int>("id"),
+        BT::InputPort<std::string>("guest_id"),
 
         BT::OutputPort<std::string>("name_1"),
         BT::OutputPort<std::string>("name_2"),
@@ -55,7 +55,7 @@ private:
   rclcpp::Node::SharedPtr node_;
 
   std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_;
-  int current_id_ = 0;
+  std::string current_id_ = "0";
 };
 
 }  // namespace hri

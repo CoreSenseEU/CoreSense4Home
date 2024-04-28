@@ -52,7 +52,7 @@ void Speak::on_tick()
   getInput("param", param_);
 
   if (param_.length() > 0) {
-    goal_.text = text_ + " " + param_ + "?";
+    goal_.text = text_ + " " + param_;
   } else {
     goal_.text = text_;
   }

@@ -14,6 +14,9 @@
 
 #include "motion/head/Pan.hpp"
 
+#include "lifecycle_msgs/msg/transition.hpp"
+#include "lifecycle_msgs/srv/change_state.hpp"
+
 
 namespace head
 {
@@ -37,6 +40,14 @@ Pan::Pan(
 void
 Pan::halt()
 {
+  auto client = node_->create_client<lifecycle_msgs::srv::ChangeState>("/attention_server/change_state");
+  while (!client->wait_for_service(std::chrono::seconds(1))) {
+    RCLCPP_INFO(node_->get_logger(), "[Pan] waiting for service '/attention_server/change_state' to appear...");
+  }
+  auto request = std::make_shared<lifecycle_msgs::srv::ChangeState::Request>();
+  request->transition.id = lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE;
+  auto result = client->async_send_request(request);
+  rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result);
 }
 
 double
@@ -48,8 +59,18 @@ Pan::get_joint_yaw(double period, double range, double time)
 BT::NodeStatus
 Pan::tick()
 {
+  RCLCPP_INFO(node_->get_logger(), "[Pan] ticked");
   if (status() == BT::NodeStatus::IDLE) {
     start_time_ = node_->now();
+    auto client = node_->create_client<lifecycle_msgs::srv::ChangeState>("/attention_server/change_state");
+    while (!client->wait_for_service(std::chrono::seconds(1))) {
+      RCLCPP_INFO(node_->get_logger(), "[Pan] waiting for service '/attention_server/change_state' to appear...");
+    }
+    auto request = std::make_shared<lifecycle_msgs::srv::ChangeState::Request>();
+    request->transition.id = lifecycle_msgs::msg::Transition::TRANSITION_DEACTIVATE;
+    auto result = client->async_send_request(request);
+    rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result);
+    return BT::NodeStatus::RUNNING;
   }
 
   trajectory_msgs::msg::JointTrajectory command_msg;
@@ -64,10 +85,10 @@ Pan::tick()
   command_msg.points[0].accelerations.resize(2);
   command_msg.points[0].positions[0] = yaw;
   command_msg.points[0].positions[1] = 0.0;
-  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.00);
+  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(1.5);
   joint_cmd_pub_->publish(command_msg);
 
-  return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::RUNNING;
 }
 
 }  // namespace motion

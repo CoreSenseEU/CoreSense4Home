@@ -49,12 +49,29 @@ void PointAt::on_tick()
       setStatus(BT::NodeStatus::FAILURE);
       return;
     }
-    goal_.pose.pose.position.x = 0.5;
-    auto y = 0.5 / std::sin(std::atan2(transform_.transform.translation.y, transform_.transform.translation.x));
-    goal_.pose.pose.position.y = (std::isnan(y) || std::isinf(y)) ? 0.0 : (y); 
-    goal_.pose.pose.position.z = 0.5;
-    goal_.pose.pose.orientation = transform_.transform.rotation;
-    goal_.pose.header.frame_id = transform_.header.frame_id;
+    // goal_.pose.pose.position.x = 0.5;
+    // auto y = 0.5*std::cos(std::atan2(transform_.transform.translation.y, transform_.transform.translation.x)) * std::sin(std::atan2(transform_.transform.translation.y, transform_.transform.translation.x));
+    // goal_.pose.pose.position.y = (std::isnan(y) || std::isinf(y)) ? 0.0 : (y); 
+    // goal_.pose.pose.position.z = 0.5;
+    // goal_.pose.pose.orientation = transform_.transform.rotation;
+    auto angle = std::atan2(transform_.transform.translation.y, transform_.transform.translation.x);
+    double desired_radius = 0.5;
+    auto x_point = desired_radius * std::cos(angle);
+    auto y_point = desired_radius * std::sin(angle);
+    goal_.pose.pose.position.x =  (std::isnan(x_point) || std::isinf(x_point)) ? 0.0 : (x_point); 
+    goal_.pose.pose.position.y = (std::isnan(y_point) || std::isinf(y_point)) ? 0.0 : (y_point); 
+    goal_.pose.pose.position.z = 1;
+    goal_.pose.header.frame_id = base_frame_;
+    auto orientation = tf2::Quaternion(0, 0, 0, 1);
+    orientation.setEuler(0, 0, angle);
+    goal_.pose.pose.orientation.x = orientation.x();
+    goal_.pose.pose.orientation.y = orientation.y();
+    goal_.pose.pose.orientation.z = orientation.z();
+    goal_.pose.pose.orientation.w = orientation.w();
+   
+    RCLCPP_INFO(node_->get_logger(), "Pointing from %s to %s", base_frame_.c_str(), transform_.header.frame_id.c_str());
+    RCLCPP_INFO(node_->get_logger(), "Pointing at %s", tf_frame_.c_str());
+    RCLCPP_INFO(node_->get_logger(), "Pointing to %f %f %f", goal_.pose.pose.position.x, goal_.pose.pose.position.y, goal_.pose.pose.position.z);
     return;
   }
 

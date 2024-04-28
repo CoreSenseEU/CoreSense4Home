@@ -21,6 +21,7 @@ find_package(navigation_system_interfaces REQUIRED)
 find_package(slam_toolbox REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(trajectory_msgs REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -40,6 +41,7 @@ set(dependencies
   slam_toolbox
   ament_index_cpp
   trajectory_msgs
+  lifecycle_msgs
 )
 
 include_directories(include)

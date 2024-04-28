@@ -185,7 +185,7 @@ target_link_libraries(receptionist_test
   hri::query_bt_node
   hri::dialogConfirmation_bt_node
   # motion::look_around_bt_node
-  # perception::is_sitiable_bt_node
+  perception::is_sittable_bt_node
   # arm::point_at_bt_node
   arm::move_to_predefined_bt_node
   # configuration::add_guest_to_count_bt_node

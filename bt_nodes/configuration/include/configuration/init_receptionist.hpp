@@ -49,7 +49,7 @@ public:
         BT::OutputPort<std::string>("entrance_wp", "frame to the the entrance wp"),
         BT::OutputPort<std::string>("host_name", "name of the host"),
         BT::OutputPort<std::string>("host_drink", "host's favorite drink"),
-        BT::OutputPort<int>("current_guest", "current guest_number STARTING FROM 1"),
+        BT::OutputPort<std::string>("current_guest", "current guest_number STARTING FROM 1"),
         BT::OutputPort<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer"),
         BT::OutputPort<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>("tf_static_broadcaster"),
         BT::OutputPort<std::shared_ptr<tf2_ros::TransformBroadcaster>>("tf_broadcaster")

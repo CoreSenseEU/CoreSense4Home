@@ -37,21 +37,21 @@ BT::NodeStatus StoreDetection::tick()
   RCLCPP_DEBUG(node_->get_logger(), "[StoreDetection} ticked");
   rclcpp::spin_some(node_);
   
-  getInput("name", current_name_);
+  getInput("current_name", current_name_);
   getInput("drink", current_drink_);
-  getInput("id", current_id_);
+  getInput("guest_id", current_id_);
 
   if (current_name_.empty() || current_drink_.empty()) {
     return BT::NodeStatus::FAILURE;
   }
 
-  if (current_id_ == 1) {
+  if (current_id_ == "1") {
     name_1_ = current_name_;
     drink_1_ = current_drink_;
     setOutput("name_1", name_1_);
     setOutput("drink_1", drink_1_);
     return BT::NodeStatus::SUCCESS;
-  } else if (current_id_ == 2) {
+  } else if (current_id_ == "2") {
     name_2_ = current_name_;
     drink_2_ = current_drink_;
     setOutput("name_2", name_2_);

@@ -19,6 +19,7 @@ find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(perception_system REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(backward_ros REQUIRED)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -38,6 +39,7 @@ set(dependencies
   behaviortree_cpp_v3
   perception_system
   OpenCV
+  backward_ros
 )
 
 include_directories(include)

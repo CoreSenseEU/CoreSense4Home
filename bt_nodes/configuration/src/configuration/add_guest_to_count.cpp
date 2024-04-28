@@ -25,13 +25,13 @@ AddGuestToCount::AddGuestToCount(const std::string & xml_tag_name, const BT::Nod
 
 BT::NodeStatus AddGuestToCount::tick()
 {
-  int id_{0};
-  getInput("id", id_);
-  if (id_ == 0)
+  std::string id_{"0"};
+  getInput("guest_id", id_);
+  if (id_ == "0")
   {
     return BT::NodeStatus::FAILURE;  
   }
-  setOutput("id", id_ + 1);
+  setOutput("guest_id", std::to_string(std::stoi(id_) + 1));
   return BT::NodeStatus::SUCCESS;  
  
 }

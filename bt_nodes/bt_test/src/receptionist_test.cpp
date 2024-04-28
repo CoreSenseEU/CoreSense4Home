@@ -38,20 +38,21 @@ int main(int argc, char * argv[])
   BT::SharedLibrary loader;
 
   factory.registerFromPlugin(loader.getOSName("set_wp_bt_node"));
-  // factory.registerFromPlugin(loader.getOSName("init_receptionist_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("init_receptionist_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
-  // factory.registerFromPlugin(loader.getOSName("store_detection_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("store_detection_bt_node"));
   factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
   factory.registerFromPlugin(loader.getOSName("listen_bt_node"));
   factory.registerFromPlugin(loader.getOSName("query_bt_node"));
   factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
-  // factory.registerFromPlugin(loader.getOSName("look_around_bt_node"));
-  // factory.registerFromPlugin(loader.getOSName("is_sitiable_bt_node"));
-  // factory.registerFromPlugin(loader.getOSName("point_at_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("pan_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("is_sittable_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("point_at_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_predefined_bt_node"));
-  // factory.registerFromPlugin(loader.getOSName("add_guest_to_count_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("add_guest_to_count_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("filter_entity_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/receptionist.xml";
@@ -62,7 +63,7 @@ int main(int argc, char * argv[])
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(30);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {

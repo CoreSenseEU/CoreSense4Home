@@ -34,7 +34,7 @@ public:
   {
     return BT::PortsList(
       {
-        BT::BidirectionalPort<int>("id"),
+        BT::BidirectionalPort<std::string>("guest_id"),
       });
   }
   

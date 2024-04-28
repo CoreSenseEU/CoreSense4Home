@@ -22,6 +22,7 @@ namespace nav2_costmap_2d
 void ClearPeopleLayer::onInitialize()
 {
   declareParameter("person_frame", rclcpp::ParameterValue("person_0"));
+  declareParameter("person_radius", rclcpp::ParameterValue(0.5));
 
   const auto node = node_.lock();
 
@@ -38,8 +39,15 @@ void ClearPeopleLayer::onInitialize()
       node->get_parameter(name_ + "." + parameter_name, param);
       return param;
     };
+  auto getDouble = [&](const std::string & parameter_name) {
+      double param{};
+      node->get_parameter(name_ + "." + parameter_name, param);
+      return param;
+    };
 
   person_frame_ = getString("person_frame");
+  person_radius_ = getDouble("person_radius");
+
   RCLCPP_INFO(logger_, "Initialized plugin clear_people_layer");
 
 }
@@ -50,7 +58,12 @@ void ClearPeopleLayer::onInitialize()
 void ClearPeopleLayer::updateBounds(
   double /*robot_x*/, double /*robot_y*/, double /*robot_yaw*/, double * min_x, double * min_y,
   double * max_x, double * max_y)
-{}
+{
+  (void) min_x;
+  (void) min_y;
+  (void) max_x;
+  (void) max_y;
+}
 
 // The method is called when costmap recalculation is required.
 // It updates the costmap within its window bounds.
@@ -59,9 +72,9 @@ void ClearPeopleLayer::updateBounds(
 void ClearPeopleLayer::updateCosts(
   nav2_costmap_2d::Costmap2D & master_grid, int min_x, int min_y, int max_x, int max_y)
 {
-  if (!enabled_) {
-    return;
-  }
+  // if (!enabled_) {
+  //   return;
+  // }
 
   if (min_x >= max_x || min_y >= max_y) {
     return;
@@ -94,7 +107,7 @@ void ClearPeopleLayer::removePerson(
   unsigned int person_x, person_y;
   if (!master_grid.worldToMap(
       person_transform.transform.translation.x,
-      person_transform.transform.translation.x, person_x, person_y))
+      person_transform.transform.translation.y, person_x, person_y))
   {
     RCLCPP_ERROR(
       logger_,
@@ -103,18 +116,18 @@ void ClearPeopleLayer::removePerson(
   }
 
   // Getting the person radius in the costmap grid
-  double person_radius = 0.5;
-  int person_radius_cells = std::ceil(person_radius / master_grid.getResolution());
+  int person_radius_cells = std::ceil(person_radius_ / master_grid.getResolution());
+
+  unsigned char * master = master_grid.getCharMap();
 
   // Removing the person from the costmap grid
   for (int j = person_y - person_radius_cells; j <= person_y + person_radius_cells; j++) {
     for (int i = person_x - person_radius_cells; i <= person_x + person_radius_cells; i++) {
-      master_grid.worldToMapEnforceBounds(i, j, i, j);
       int index = master_grid.getIndex(i, j);
-      master_grid.setCost(i, j, FREE_SPACE);
+      master[index] = FREE_SPACE;
+      // master_grid.setCost(i, j, FREE_SPACE);
     }
   }
-  RCLCPP_ERROR(logger_, "ClearPeopleLayer::removePerson Person cleraed from costmap");
 }
 
 void ClearPeopleLayer::reset()

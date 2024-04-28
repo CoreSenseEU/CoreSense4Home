@@ -38,6 +38,7 @@ private:
   double last_min_x_, last_min_y_, last_max_x_, last_max_y_;
   std::string person_frame_{};
   geometry_msgs::msg::TransformStamped person_transform_;
+  double person_radius_;
 
   // Indicates that the entire gradient should be recalculated next time.
   bool need_recalculation_;

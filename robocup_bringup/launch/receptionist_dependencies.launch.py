@@ -28,6 +28,7 @@ def generate_launch_description():
 
     move_group_dir = get_package_share_directory('tiago_mtc_examples')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
+    package_dir = get_package_share_directory('robocup_bringup')
     attention_dir = get_package_share_directory('attention_system')
     perception_dir = get_package_share_directory('perception_system')
     navigation_dir = get_package_share_directory('navigation_system')
@@ -65,6 +66,12 @@ def generate_launch_description():
         }.items()
     )
 
+    dialog = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_dir, 'launch', 'dialog.launch.py')
+        )
+    )
+
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(navigation_dir, 'launch', 'navigation_system.launch.py')
@@ -76,6 +83,7 @@ def generate_launch_description():
 
     ld = LaunchDescription()
     ld.add_action(navigation)
+    ld.add_action(dialog)
     ld.add_action(attention)
     ld.add_action(perception)
     ld.add_action(move_group)

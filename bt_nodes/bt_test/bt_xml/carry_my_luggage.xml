@@ -11,7 +11,7 @@
                     <Condition ID="IsPointing" bag_frame="{bag_tf}" person_id="{person_id}" cam_frame="head_front_camera_link_color_optical_frame"/>
                 </Sequence>
         </RetryUntilSuccessful>
-        <RetryUntilSuccessful num_attempts="-1">
+        <!-- <RetryUntilSuccessful num_attempts="-1">
             <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="{bag_tf}"/>
         </RetryUntilSuccessful>
         <Action ID="MoveToPredefined" pose="offer"/>
@@ -22,9 +22,9 @@
             <Action ID="LookAt" tf_frame="person_0" />
             <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
         </ReactiveSequence>
-        <!-- <Repeat num_cycles="5">
+        <Repeat num_cycles="5">
             <Action ID="LookAt" tf_frame="gripper_link" />
-        </Repeat> -->
+        </Repeat>
         <Delay delay_msec="5000">
             <Action ID="MoveToPredefined" pose="home"/>
         </Delay>
@@ -42,7 +42,7 @@
                             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                             <Action ID="LookAt" tf_frame="person_0_filtered"/>
                             <Condition ID="IsEntityMoving" distance_tolerance="1.2" frame="person_0" check_time="9.0"/>
-                            <!-- <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/> -->
+                            <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/>
                             <Action ID="FollowEntity" camera_frame="head_front_camera_link_color_optical_frame"
                             distance_tolerance="0.8"
                             frame_to_follow="person_0_filtered"
@@ -68,10 +68,10 @@
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>
             </Delay>
-            <!-- <RetryUntilSuccessful num_attempts="-1">
+            <RetryUntilSuccessful num_attempts="-1">
                 <Action ID="ConfigureNavigateBack"/>
-            </RetryUntilSuccessful> -->
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/>
+            </RetryUntilSuccessful>
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/> -->
         </Sequence> 
     </BehaviorTree>
     <!-- ////////// -->

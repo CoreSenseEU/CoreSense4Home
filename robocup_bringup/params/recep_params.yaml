@@ -2,5 +2,6 @@
   ros__parameters:
     waypoints_names: ["entrance", "party"]
     waypoints:
-      entrance: [-1.4, 6.82, 0.0]
+      entrance: [0.0, 0.0, 0.0]
       party: [-0.2, 4.33, 0.0]
+    # allow_duplicate_names: False

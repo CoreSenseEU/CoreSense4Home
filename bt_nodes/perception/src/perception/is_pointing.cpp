@@ -149,8 +149,6 @@ BT::NodeStatus IsPointing::tick()
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
   }
 
-
-  auto detections = pl::getInstance()->get_by_type("person");
   pl::getInstance(node_)->set_interest("person", true);
   pl::getInstance(node_)->update(true);
 

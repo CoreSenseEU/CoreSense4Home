@@ -24,7 +24,7 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
+#include "tf2_ros/static_transform_broadcaster.h"
 
 int main(int argc, char * argv[])
 {

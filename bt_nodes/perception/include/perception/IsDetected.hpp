@@ -58,7 +58,7 @@ public:
 private:
 
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 
   std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;

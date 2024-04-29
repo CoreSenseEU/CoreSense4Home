@@ -136,7 +136,7 @@ int FollowPerson::publicTF_map2object(
 BT::NodeStatus FollowPerson::tick()
 {
   pl::getInstance(node_)->set_interest("person", true);
-  // pl::getInstance()->set_interest("chair", true);
+  // pl::getInstance(node_)->set_interest("chair", true);
   pl::getInstance(node_)->update(30);
   pl::getInstance(node_)->publicTFinterest();
 

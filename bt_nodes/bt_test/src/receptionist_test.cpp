@@ -24,15 +24,24 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
   rclcpp::NodeOptions options;
+  // options.use_intra_process_comms(true);
+
   // options.automatically_declare_parameters_from_overrides(true);
 
-  auto node = rclcpp::Node::make_shared("receptionist", options);
+  // auto node = rclcpp::Node::make_shared("receptionist", options);
+  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>("receptionist","",options);
+  node->set_parameter(rclcpp::Parameter("allow_duplicate_names", false));
+
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
@@ -66,12 +75,17 @@ int main(int argc, char * argv[])
   rclcpp::Rate rate(30);
 
   bool finish = false;
+  std::thread queue_thread([&]() {
+    rclcpp::spin(node->get_node_base_interface());
+  });
+
   while (!finish && rclcpp::ok()) {
     finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
+    // rclcpp::spin_some(node->get_node_base_interface());
 
-    rclcpp::spin_some(node);
     rate.sleep();
   }
+  queue_thread.join();
 
   rclcpp::shutdown();
   return 0;

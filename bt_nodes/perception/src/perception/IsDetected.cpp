@@ -34,6 +34,8 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
 {
   config().blackboard->get("node", node_);
 
+  // node_->add_activation("perception_system/perception_people_detection")
+
   getInput("interest", interest_);
   getInput("cam_frame", cam_frame_);
   getInput("confidence", threshold_);
@@ -50,10 +52,9 @@ BT::NodeStatus IsDetected::tick()
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
     config().blackboard->get("tf_buffer", tf_buffer_);
-    config().blackboard->get("tf_broadcaster", tf_broadcaster_);
+    // config().blackboard->get("tf_broadcaster", tf_broadcaster_);
   }
 
-  auto detections = pl::getInstance()->get_by_type(interest_);
   RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
   pl::getInstance(node_)->set_interest(interest_, true);
   pl::getInstance(node_)->update(35);
@@ -112,42 +113,6 @@ BT::NodeStatus IsDetected::tick()
   frames_.clear();
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections published");
   return BT::NodeStatus::SUCCESS;
-}
-
-int IsDetected::publicTF_map2object(
-  const perception_system_interfaces::msg::Detection & detected_object,
-  const std::string & frame_name)
-{
-  geometry_msgs::msg::TransformStamped map2camera_msg;
-  try {
-    map2camera_msg = tf_buffer_->lookupTransform("map", cam_frame_, tf2::TimePointZero);
-  } catch (const tf2::TransformException & ex) {
-    RCLCPP_ERROR(
-      node_->get_logger(), "Could not transform %s to %s: %s", "map", cam_frame_.c_str(),
-      ex.what());
-    return -1;
-  }
-  tf2::Transform camera2object;
-  camera2object.setOrigin(
-    tf2::Vector3(
-      detected_object.center3d.position.x, detected_object.center3d.position.y,
-      detected_object.center3d.position.z));
-  camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
-
-  tf2::Transform map2camera;
-  tf2::fromMsg(map2camera_msg.transform, map2camera);
-
-  tf2::Transform map2object = map2camera * camera2object;
-  // create a transform message from tf2::Transform
-  geometry_msgs::msg::TransformStamped map2object_msg;
-
-  map2object_msg.header.stamp = node_->now();
-  map2object_msg.header.frame_id = "map";
-  map2object_msg.child_frame_id = frame_name;
-  map2object_msg.transform = tf2::toMsg(map2object);
-
-  tf_broadcaster_->sendTransform(map2object_msg);
-  return 0;
 }
 
 }  // namespace perception

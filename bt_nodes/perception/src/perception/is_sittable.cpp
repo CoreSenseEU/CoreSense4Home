@@ -33,34 +33,29 @@ IsSittable::IsSittable(const std::string & xml_tag_name, const BT::NodeConfigura
 {
   config().blackboard->get("node", node_);
 
-  // delete the following: 
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 }
 
 
 
 BT::NodeStatus IsSittable::tick()
 {
-  pl::getInstance()->set_interest("", true);
-  pl::getInstance()->set_interest("person", true);
-  pl::getInstance()->update(30);
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
-
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] ticked");
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
     config().blackboard->get("tf_buffer", tf_buffer_);
     getInput("cam_frame", camera_frame_); 
-    pl::getInstance()->set_interest("", true);
-    pl::getInstance()->set_interest("person", true);
-    pl::getInstance()->update(30);
-    rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
+    pl::getInstance(node_)->set_interest("", true);
+    pl::getInstance(node_)->set_interest("person", true);
+    pl::getInstance(node_)->update(30);
     return BT::NodeStatus::RUNNING;
   }
+  pl::getInstance(node_)->set_interest("", true);
+  pl::getInstance(node_)->set_interest("person", true);
+  pl::getInstance(node_)->update(30);
 
-  auto person_detections = pl::getInstance()->get_by_type("person");
-  auto chair_detections = pl::getInstance()->get_by_type("");
+
+  auto person_detections = pl::getInstance(node_)->get_by_type("person");
+  auto chair_detections = pl::getInstance(node_)->get_by_type("");
 
   if (person_detections.empty() && chair_detections.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[IsSittable] no detections found");

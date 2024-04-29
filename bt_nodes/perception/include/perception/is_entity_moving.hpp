@@ -55,7 +55,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string frame_, cam_frame_;
   float distance_tolerance_, check_time_;

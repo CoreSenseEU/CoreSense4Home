@@ -40,20 +40,12 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
   getInput("max_entities", max_entities_);
   getInput("order", order_);
   getInput("max_depth", max_depth_);
-
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  getInput("person_id", person_id_);
 }
 
 BT::NodeStatus IsDetected::tick()
 {
   getInput("person_id", person_id_);
-  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Person color: %ld", person_id_);
-  pl::getInstance()->set_interest(interest_, true);
-  pl::getInstance()->update(30);
-  // pl::getInstance()->publicTFinterest();
-
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
@@ -62,6 +54,11 @@ BT::NodeStatus IsDetected::tick()
   }
 
   auto detections = pl::getInstance()->get_by_type(interest_);
+  RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
+  pl::getInstance(node_)->set_interest(interest_, true);
+  pl::getInstance(node_)->update(35);
+
+  auto detections = pl::getInstance(node_)->get_by_type(interest_);
 
   if (detections.empty()) {
     // RCLCPP_WARNING(node_->get_logger(), "[IsDetected] No detections");
@@ -95,7 +92,7 @@ BT::NodeStatus IsDetected::tick()
     } else {
       frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
       if (
-        pl::getInstance()->publicTF(
+        pl::getInstance(node_)->publicTF(
           detection, std::to_string(entity_counter)) == -1)
       {
         return BT::NodeStatus::FAILURE;

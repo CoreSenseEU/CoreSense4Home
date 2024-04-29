@@ -19,9 +19,13 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
+
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2_ros/static_transform_broadcaster.h"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
+#include "geometry_msgs/msg/pose_stamped.hpp"
 
 namespace configuration
 {
@@ -37,7 +41,7 @@ public:
   static BT::PortsList providedPorts() {return BT::PortsList({});}
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::vector<std::string> wp_names_;
 };
 

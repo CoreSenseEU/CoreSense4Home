@@ -33,7 +33,7 @@ def generate_launch_description():
     carry_config = os.path.join(
         package_dir,
         'params',
-        'carry_params.yaml'
+        'carry_my_luggage.yaml'
         )
 
     carry_my_luggage = Node(

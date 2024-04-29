@@ -35,6 +35,9 @@
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 #include "motion/navigation/utils.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"
@@ -45,7 +48,8 @@ namespace navigation
 {
 
 class MoveTo
-  : public motion::BtActionNode<nav2_msgs::action::NavigateToPose>
+  : public motion::BtActionNode<nav2_msgs::action::NavigateToPose,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit MoveTo(
@@ -65,7 +69,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   double distance_tolerance_;
   std::string tf_frame_, xml_path_;
   geometry_msgs::msg::PoseStamped pose_;

@@ -23,14 +23,19 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
-#include "rclcpp/rclcpp.hpp"
+
 #include "std_msgs/msg/int8.hpp"
 #include "std_msgs/msg/string.hpp"
+
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 
 namespace dialog
 {
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS>
+class Speak : public dialog::BtActionNode<
+    audio_common_msgs::action::TTS, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Speak(
@@ -47,8 +52,9 @@ public:
   }
 
 private:
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr publisher_;
+  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+
   // rclcpp::Node::SharedPtr node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;

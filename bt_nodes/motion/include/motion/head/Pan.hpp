@@ -22,13 +22,17 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "ctrl_support/BTActionNode.hpp"
+#include "control_msgs/action/follow_joint_trajectory.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace head
 {
 
-class Pan : public BT::ActionNodeBase
+class Pan : public motion::BtActionNode<
+    control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Pan(
@@ -37,6 +41,12 @@ public:
 
   void halt();
   BT::NodeStatus tick();
+
+  void on_tick() override;
+  void on_feedback() override;
+  BT::NodeStatus on_success() override;
+  BT::NodeStatus on_aborted() override;
+  BT::NodeStatus on_cancelled() override;
 
 
   static BT::PortsList providedPorts()

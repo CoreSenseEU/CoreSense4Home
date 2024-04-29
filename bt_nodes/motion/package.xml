@@ -11,6 +11,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_cascade_lifecycle</depend>
   <depend>rclcpp_action</depend>
   <depend>behaviortree_cpp_v3</depend>
   <depend>geometry_msgs</depend>
@@ -20,6 +21,7 @@
   <depend>navigation_system_interfaces</depend>
   
   <depend>attention_system</depend>
+  <depend>attention_system_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

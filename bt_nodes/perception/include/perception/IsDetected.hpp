@@ -31,7 +31,7 @@
 #include "perception_system/PerceptionListener.hpp"
 #include "perception_system_interfaces/msg/detection_array.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "tf2_ros/transform_broadcaster.h"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
 {
@@ -56,25 +56,16 @@ public:
   }
 
 private:
-  int publicTF_map2object(
-    const perception_system_interfaces::msg::Detection & detected_object,
-    const std::string & frame_name);
 
-  void detection_callback(perception_system_interfaces::msg::DetectionArray::SharedPtr msg);
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr
-    detected_objs_sub_;
-  perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};
 
   std::string interest_, order_, cam_frame_;
   double threshold_, max_depth_;
   int max_entities_;
   std::int64_t person_id_;
   std::vector<std::string> frames_;
-
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  
 };
 
 }  // namespace perception

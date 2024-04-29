@@ -26,15 +26,37 @@ using namespace std::chrono_literals;
 Pan::Pan(
   const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(xml_tag_name, conf)
+: motion::BtActionNode<
+    control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
   joint_range_ = 20.0 * M_PI / 180.0;
   joint_range_ = getInput<double>("range").value() * M_PI / 180.0;
   period_ = getInput<double>("period").value();
 
-  joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-    "/head_controller/joint_trajectory", 100);
+
+void
+Pan::on_tick()
+{
+  rclcpp::spin_some(node_);
+  BT::Optional<std::string> frame_to_pan = getInput<std::string>("tf_frame");
+
+  if (!frame_to_pan) {
+    RCLCPP_ERROR(node_->get_logger(), "Pan: tf_frame is missing");
+    return;
+  }
+
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_INFO(node_->get_logger(), "Pan: tf_frame %s", frame_to_pan.value().c_str());
+    goal_.trajectory.joint_names = std::vector<std::string>{"head_1_joint", "head_2_joint"};
+    // trajectory_msgs::msg::JointTrajectoryPoint point;
+    // point.positions = std::vector<double>{point_to_pan_.value(), 0.0};
+    // point.time_from_start = rclcpp::Duration::from_seconds(5.0);
+
+    // goal_.trajectory.points.push_back(point);
+
+  }
 }
 
 void
@@ -96,5 +118,13 @@ Pan::tick()
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<head::Pan>("Pan");
+  BT::NodeBuilder builder = [](const std::string & name,
+      const BT::NodeConfiguration & config) {
+      return std::make_unique<head::Pan>(
+        name, "/head_controller/follow_joint_trajectory", config);
+    };
+
+  factory.registerBuilder<head::Pan>(
+    "Pan", builder);
+
 }

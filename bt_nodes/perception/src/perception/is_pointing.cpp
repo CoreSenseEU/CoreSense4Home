@@ -32,17 +32,6 @@ IsPointing::IsPointing(const std::string & xml_tag_name, const BT::NodeConfigura
 : BT::ConditionNode(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  // config().blackboard->get("perception_listener", perception_listener_);
-
-  // tf_buffer_ =
-  //   std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  // tf_listener_ =
-  //   std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  // tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
-
-  // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   getInput("cam_frame", camera_frame_);
 }
@@ -152,19 +141,21 @@ int IsPointing::publicTF_map2object(
 
 BT::NodeStatus IsPointing::tick()
 {
-  pl::getInstance()->set_interest("person", true);
-  pl::getInstance()->update(30);
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
 
   if (status() == BT::NodeStatus::IDLE) {
+    getInput("person_id", person_id_);
     RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");
     config().blackboard->get("tf_buffer", tf_buffer_);
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
   }
 
-  getInput("person_id", person_id_);
 
   auto detections = pl::getInstance()->get_by_type("person");
+  pl::getInstance(node_)->set_interest("person", true);
+  pl::getInstance(node_)->update(true);
+
+  std::vector<perception_system_interfaces::msg::Detection> detections;
+  detections = pl::getInstance(node_)->get_by_type("person");
 
   if (detections.empty()) {
     // RCLCPP_INFO(node_->get_logger(), "No detections");

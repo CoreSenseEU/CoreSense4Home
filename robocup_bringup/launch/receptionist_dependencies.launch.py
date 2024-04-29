@@ -18,7 +18,6 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
 # from launch.actions import LogInfo, RegisterEventHandler
 # from launch.event_handlers import OnExecutionComplete
 # import lifecycle_msgs
@@ -32,33 +31,6 @@ def generate_launch_description():
     attention_dir = get_package_share_directory('attention_system')
     perception_dir = get_package_share_directory('perception_system')
     navigation_dir = get_package_share_directory('navigation_system')
-    whisper_dir = get_package_share_directory('whisper_bringup')
-
-    # audio related launchers:
-
-    whisper_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(whisper_dir, 'launch', 'whisper.launch.py')
-        )
-    )
-    audio_common_player_node = Node(
-        package='audio_common',
-        executable='audio_player_node',
-        parameters=[
-            {'channels': 2},
-            {'device': -1}]
-    )
-
-    audio_common_tts_node = Node(
-        package='audio_common',
-        executable='tts_node',
-        parameters=[
-            {'chunk': 4096},
-            {'frame_id': ''},
-            {'model': 'tts_models/en/ljspeech/vits'},
-            {'speaker_wav': ''},
-            {'device': 'cuda'}]
-    )
 
     # manipulation launchers
     move_group = IncludeLaunchDescription(
@@ -84,7 +56,7 @@ def generate_launch_description():
             os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
         ),
         launch_arguments={
-            'model': 'yolov8n-pose.pt',
+            'model': 'yolov8n.pt',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',
@@ -99,19 +71,14 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
-            'mode': 'slam'
         }.items()
     )
 
     ld = LaunchDescription()
     ld.add_action(navigation)
     ld.add_action(attention)
-    ld.add_action(whisper_cmd)
-    ld.add_action(audio_common_player_node)
-    ld.add_action(audio_common_tts_node)
     ld.add_action(perception)
     ld.add_action(move_group)
     ld.add_action(manipulation_server)
 
     return ld
-

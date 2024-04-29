@@ -16,13 +16,13 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-# from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-# from launch.launch_description_sources import PythonLaunchDescriptionSource
-# from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-# from launch.actions import LogInfo, RegisterEventHandler
-# from launch.event_handlers import OnExecutionComplete
-# import lifecycle_msgs
+from launch.actions import LogInfo, RegisterEventHandler
+from launch.event_handlers import OnExecutionComplete
+import lifecycle_msgs
 # from launch_ros.events.lifecycle
 
 
@@ -30,20 +30,21 @@ def generate_launch_description():
 
     package_dir = get_package_share_directory('robocup_bringup')
 
-    carry_config = os.path.join(
+    config = os.path.join(
         package_dir,
         'params',
-        'carry_params.yaml'
+        'receptionist_params.yaml'
         )
 
-    carry_my_luggage = Node(
+    receptionist = Node(
         package='bt_test',
-        executable='carry_my_luggage_test',
-        parameters=[carry_config],
+        executable='receptionist_test',
+        parameters=[config],
         output='screen',
     )
 
     ld = LaunchDescription()
 
-    ld.add_action(carry_my_luggage)
+    ld.add_action(receptionist)
+
     return ld

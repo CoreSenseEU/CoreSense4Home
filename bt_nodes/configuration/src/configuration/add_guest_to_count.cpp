@@ -12,35 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__SET_WP_HPP_
-#define CONFIGURATION__SET_WP_HPP_
-
-#include <string>
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-#include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
+#include "configuration/add_guest_to_count.hpp"
 
 namespace configuration
 {
 
-class SetWp : public BT::ActionNodeBase
+AddGuestToCount::AddGuestToCount(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
 {
-public:
-  explicit SetWp(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  
+}
 
-  void halt();
-  BT::NodeStatus tick();
+BT::NodeStatus AddGuestToCount::tick()
+{
+  std::string id_{"0"};
+  getInput("guest_id", id_);
+  if (id_ == "0")
+  {
+    return BT::NodeStatus::FAILURE;  
+  }
+  setOutput("guest_id", std::to_string(std::stoi(id_) + 1));
+  return BT::NodeStatus::SUCCESS;  
+ 
+}
 
-  static BT::PortsList providedPorts() {return BT::PortsList({});}
-
-private:
-  rclcpp::Node::SharedPtr node_;
-  std::vector<std::string> wp_names_;
-};
+void AddGuestToCount::halt() {}
 
 }  // namespace configuration
 
-#endif  // CONFIGURATION__SET_WP_HPP_
+BT_REGISTER_NODES(factory) {
+  factory.registerNodeType<configuration::AddGuestToCount>("AddGuestToCount");
+}

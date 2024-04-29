@@ -215,7 +215,8 @@ protected:
       };
 
     send_goal_options.feedback_callback =
-      std::bind(&BtActionNode::feedback_callback, this,
+      std::bind(
+      &BtActionNode::feedback_callback, this,
       std::placeholders::_1, std::placeholders::_2);
 
     auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
@@ -233,18 +234,19 @@ protected:
       throw std::runtime_error("Goal was rejected by the action server");
     }
   }
-  
+
   void feedback_callback(
     typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr,
     const typename ActionT::Feedback::ConstSharedPtr feedback)
   {
-    config().blackboard->set("feedback", feedback);
+    // config().blackboard->set("feedback", feedback);
+    feedback_ = *feedback;
     on_feedback();
   }
 
   virtual void on_feedback()
   {
-    
+
   }
 
   void increment_recovery_count()
@@ -260,6 +262,7 @@ protected:
 
   // All ROS2 actions have a goal and a result
   typename ActionT::Goal goal_;
+  typename ActionT::Feedback feedback_;
   bool goal_updated_{false};
   bool goal_result_available_{false};
   typename rclcpp_action::ClientGoalHandle<ActionT>::SharedPtr goal_handle_;

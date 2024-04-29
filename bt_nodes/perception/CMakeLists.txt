@@ -18,6 +18,8 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(perception_system REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(backward_ros REQUIRED)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -36,6 +38,8 @@ set(dependencies
   rclcpp_action
   behaviortree_cpp_v3
   perception_system
+  OpenCV
+  backward_ros
 )
 
 include_directories(include)
@@ -66,6 +70,9 @@ list(APPEND plugin_libs is_pointing_bt_node)
 
 add_library(extract_entity_color_bt_node SHARED src/perception/extract_entity_color.cpp)
 list(APPEND plugin_libs extract_entity_color_bt_node)
+
+add_library(is_sittable_bt_node SHARED src/perception/is_sittable.cpp)
+list(APPEND plugin_libs is_sittable_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

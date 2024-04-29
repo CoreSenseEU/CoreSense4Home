@@ -151,8 +151,7 @@ target_link_libraries(carry_my_luggage_test
   hri::speak_bt_node
   hri::dialogConfirmation_bt_node
 )
-
-# carry my luggage test
+# Follow entity test
 add_executable(follow_entity_test src/follow_entity_test.cpp)
 ament_target_dependencies(follow_entity_test ${dependencies})
 target_link_libraries(follow_entity_test
@@ -170,6 +169,27 @@ target_link_libraries(follow_entity_test
 add_executable(filter_entity_test src/filter_entity_test.cpp)
 ament_target_dependencies(filter_entity_test ${dependencies})
 target_link_libraries(filter_entity_test perception::filter_entity_bt_node)
+
+# Receptionist test
+add_executable(receptionist_test src/receptionist_test.cpp)
+ament_target_dependencies(receptionist_test ${dependencies})
+target_link_libraries(receptionist_test
+  configuration::set_wp_bt_node
+  # configuration::init_receptionist_bt_node
+  motion::move_to_bt_node
+  hri::speak_bt_node
+  perception::is_detected_bt_node
+  # perception::store_detection_bt_node
+  motion::look_at_bt_node
+  hri::listen_bt_node
+  hri::query_bt_node
+  hri::dialogConfirmation_bt_node
+  # motion::look_around_bt_node
+  perception::is_sittable_bt_node
+  # arm::point_at_bt_node
+  arm::move_to_predefined_bt_node
+  # configuration::add_guest_to_count_bt_node
+)
 
 install(TARGETS
   set_wp_test
@@ -192,6 +212,7 @@ install(TARGETS
   carry_my_luggage_test
   follow_entity_test
   filter_entity_test
+  receptionist_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

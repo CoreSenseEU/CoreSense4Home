@@ -11,6 +11,8 @@ find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(manipulation_interfaces REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(geometry_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -22,6 +24,8 @@ set(dependencies
   rclcpp
   rclcpp_action
   manipulation_interfaces
+  tf2_ros
+  geometry_msgs
 )
 
 include_directories(include)
@@ -31,6 +35,9 @@ list(APPEND plugin_libs pick_bt_node)
 
 add_library(move_to_predefined_bt_node SHARED src/manipulation/move_to_predefined.cpp)
 list(APPEND plugin_libs move_to_predefined_bt_node)
+
+add_library(point_at_bt_node SHARED src/manipulation/point_at.cpp)
+list(APPEND plugin_libs point_at_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

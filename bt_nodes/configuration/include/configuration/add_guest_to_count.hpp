@@ -12,35 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__SET_WP_HPP_
-#define CONFIGURATION__SET_WP_HPP_
+#ifndef CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
+#define CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
 
-#include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
 
 namespace configuration
 {
 
-class SetWp : public BT::ActionNodeBase
+class AddGuestToCount : public BT::ActionNodeBase
 {
 public:
-  explicit SetWp(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit AddGuestToCount(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {return BT::PortsList({});}
-
-private:
-  rclcpp::Node::SharedPtr node_;
-  std::vector<std::string> wp_names_;
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {
+        BT::BidirectionalPort<std::string>("guest_id"),
+      });
+  }
+  
+  
 };
 
 }  // namespace configuration
 
-#endif  // CONFIGURATION__SET_WP_HPP_
+#endif  // CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_

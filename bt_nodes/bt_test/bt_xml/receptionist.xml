@@ -3,15 +3,19 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <Action ID="SetWaypoints" name="set waypoints from ros params"/>
-            <Action ID="InitReceptionist" n="{n}"/>
+            <Action ID="SetWp"/>
+            <Action ID="InitReceptionist" cam_frame="{cam_frame}"
+                                          manipulation_frame="{man_frame}"
+                                          host_name="{h_name}"
+                                          host_drink="{h_drink}"
+                                          current_guest="{n}" />
             <Repeat num_cycles="2">
                 <Sequence>
-                    <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance"/>
+                    <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance" will_finish="true"/>
                     <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Fallback>
-                            <Condition ID="IsDetected" confidence="0.6" entity="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                             <Inverter>
                                 <Action ID="Speak" say_text="I can't see you, can you please stand in front of me?"/>
                             </Inverter>
@@ -20,44 +24,152 @@
                             </Delay>
                         </Fallback>
                     </RetryUntilSuccessful>
-                    <Action ID="StoreDetection" entity="person_0" id="{n}"/>
-                    <Action ID="LookAt" tf_frame="person_0"/>
                     <RetryUntilSuccessful num_attempts="-1">
-                        <SequenceStar>
-                            <Sequence>
-                                <Action ID="Speak" say_text="What is your name?"/>
-                                <Action ID="Listen" listen_text="{understood}"/>
-                                <Action ID="Query" Intention="name" intention_value="{name_value}" text="{understood}"/>
-                                <Action ID="DialogConfirmation" prompt="Is your name {name_value}?"/>
-                            </Sequence>
-                            <Sequence>
-                                <Action ID="Speak" say_text="{name_value}, what would you like to drink?"/>
-                                <Action ID="Listen" listen_text="{understood}"/>
-                                <Action ID="Query" Intention="drink" intention_value="{drink_value}" text="{understood}"/>
-                                <Action ID="DialogConfirmation" prompt="Is {drink_value} your choice of preference?"/>
-                            </Sequence>
-                        </SequenceStar>
+                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                     </RetryUntilSuccessful>
+                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                    <Action ID="LookAt" tf_frame="person_0_filtered"/>                                        
+                    <RetryUntilSuccessful num_attempts="-1">
+                            <SequenceStar>
+                                <Sequence>
+                                    <Action ID="Speak" say_text="What's your name?"/>
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                                </ReactiveSequence>
+
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                                    <Action ID="Listen" listen_text="{text_value}"/>
+                                </ReactiveSequence>
+
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
+                                </ReactiveSequence>
+                                
+                                <Action ID="Speak" say_text="So you are" param="{name_value}"/>
+                                <Action ID="Speak" say_text="Please confirm"/>
+                                <ReactiveSequence>  
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                </ReactiveSequence>
+                                
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="DialogConfirmation" />
+                                </ReactiveSequence>
+                                </Sequence>
+
+                                <Sequence>
+                                    <Action ID="Speak" say_text="What's your favorite drink?"/>
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                </ReactiveSequence>
+
+                                <ReactiveSequence>Ç
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="Listen" listen_text="{text_value2}"/>
+                                </ReactiveSequence>
+
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="Query" text="{text_value2}" intention="drink" intention_value="{drink_value}"/>
+                                </ReactiveSequence>
+
+                                <Action ID="Speak" say_text="So it seems you like " param="{drink_value}"/>
+                                <Action ID="Speak" say_text="Please confirm"/>
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                </ReactiveSequence>
+
+
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="DialogConfirmation" />
+                                </ReactiveSequence>
+                                </Sequence>
+                            </SequenceStar>
+                    </RetryUntilSuccessful>
+                    <Action ID="StoreDetection" current_name="{name_value}"
+                                                drink="{drink_value}"
+                                                guest_id="{n}"
+                                                name_1="{name_1}"
+                                                name_2="{name_2}"
+                                                drink_1="{drink_1}"
+                                                drink_2="{drink_2}"/>
+                    <!-- <Action ID="ExtractInformationFromPicture"></Action> TODO -->
                     <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="party"/>
                     <ReactiveSequence>
                         <ReactiveFallback>
-                            <Action ID="LookAround" direction="left"/>
-                            <Condition ID="IsDetected" confidence="0.6" entity="person" frames="{frames}" max_depth="2" max_entities="1" order="depth_nearest"/>
+                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="{frames}" max_depth="3" max_entities="1" order="depth_nearest"/>
+                            <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                            <Action ID="Pan" period="3.0" range="45"/>
                         </ReactiveFallback>
-                        <Action ID="LookAt" tf_frame="{frames}"/>
-                        <Action ID="Speak" say_text="Hi, this is {name_value}, and their favorite drink is {favourite_drink}"/>
+                        <Action ID="LookAt" tf_frame="person_0_filtered"/>
+                        <Switch2 variable="{n}"  case_1="1" case_2="2"  >
+                            <Sequence>
+                                <Action ID="Speak" say_text="Hi" param="{h_name}"/>
+                                <Action ID="Speak" say_text=" this is" param="{name_1}"/>
+                                <Action ID="Speak" say_text=" and their favorite drink is" param="{drink_1}"/>
+                                <Action ID="Speak" say_text=" By the way" param="{name_1}"/>
+                                <Action ID="Speak" say_text="our host" param="{h_name}"/>
+                                <Action ID="Speak" say_text="enjoys" param="{h_drink}"/>
+                            </Sequence>
+                            <Sequence>
+                                <Action ID="Speak" say_text="Hi" param="{h_name}"/>
+                                <Action ID="Speak" say_text=" and" param="{name_1}"/>
+                                <Action ID="Speak" say_text=" this is" param="{name_2}"/>
+                                <Action ID="Speak" say_text=" and their favorite drink is" param="{drink_2}"/>
+                                <Action ID="Speak" say_text=" By the way" param="{name_2}"/>
+                                <Action ID="Speak" say_text="our host" param="{h_name}"/>
+                                <Action ID="Speak" say_text=" and our other guest" param="{name_1}"/>
+                                <Action ID="Speak" say_text="enjoy" param="{h_drink}"/>
+                                <Action ID="Speak" say_text="and " param="{drink_1}"/>
+                                <Action ID="Speak" say_text="respectively"/>
+                            </Sequence>
+                            <Action ID="Speak" say_text="Hi every one this is our new guest. Please have fun! "/>
+                        </Switch2>
                     </ReactiveSequence>
                     <ReactiveFallback>
-                        <Condition ID="IsSittable" tf_frame="chair_frame"/>
-                        <Action ID="LookAround" direction="left"/>
+                        <Condition ID="IsSittable" cam_frame="{cam_frame}" chair_frame="{chair_frame}"/>
+                        <Action ID="Pan" period="1.5" range="45"/>
                     </ReactiveFallback>
-                    <Action ID="PointAt" frame_to_point="chair_frame"/>
-                    <Action ID="LookAt" tf_frame="chair_frame"/>
+                    <Action ID="PointAt" tf_frame="person_0" base_frame="{man_frame}"/>
+                    <Action ID="LookAt" tf_frame="{chair_frame}"/>
                     <Action ID="Speak" say_text="Please, sit over there"/>
-                    <Action ID="MoveArmToPredefined" position="home"/>
-                    <Action ID="AddGuestToCount" n="{n}"/>
-                </Sequence>
+                    <Action ID="MoveToPredefined" pose="home"/>
+                    <Action ID="AddGuestToCount" guest_id="{n}"/>
+                </Sequence>  
             </Repeat>
         </Sequence>
     </BehaviorTree>

@@ -35,6 +35,10 @@ MoveTo::MoveTo(
   tf_listener_(tf_buffer_)
 {
   config().blackboard->get("node", node_);
+
+  set_truncate_distance_client_ =
+    node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>(
+    "navigation_system_node/set_truncate_distance");
 }
 
 void MoveTo::on_tick()
@@ -52,58 +56,43 @@ void MoveTo::on_tick()
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform %s to %s: %s", "map", tf_frame_.c_str(), ex.what());
-    throw BT::RuntimeError("Could not transform");
+    setStatus(BT::NodeStatus::RUNNING);
   }
 
   goal.header.frame_id = "map";
   goal.pose.position.x = map_to_goal.transform.translation.x;
   goal.pose.position.y = map_to_goal.transform.translation.y;
 
+  if (!set_truncate_distance_client_->wait_for_service(std::chrono::seconds(1))) {
+    RCLCPP_WARN(node_->get_logger(), "Waiting for action server to be up...");
+    setStatus(BT::NodeStatus::RUNNING);
+  }
+
   RCLCPP_INFO(
     node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s", goal.pose.position.x,
     goal.pose.position.y, goal.header.frame_id.c_str());
 
-  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/moveto.xml";
+  auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
 
-  std::ifstream input_file(xml_file);
-
-  if (!input_file.is_open()) {
-    std::cerr << "Error opening XML file." << std::endl;
-    // setStatus(BT::NodeStatus::FAILURE);
-    return;
-  }
-  std::string xml_content(
-    (std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
-  input_file.close();
-
-  size_t truncate_pos = xml_content.find("<TruncatePath");
-  if (truncate_pos != std::string::npos) {
-    size_t distance_pos = xml_content.find("distance=\"", truncate_pos);
-    if (distance_pos != std::string::npos) {
-      size_t end_qote_pos = xml_content.find("\"", distance_pos + 10);
-      if (end_qote_pos != std::string::npos) {
-        xml_content.replace(
-          distance_pos + 10, end_qote_pos - distance_pos - 10, std::to_string(distance_tolerance_));
-      }
+  request->distance = distance_tolerance_;
+  request->xml_content = nav_to_pose_truncated_xml;
+  auto future_request = set_truncate_distance_client_->async_send_request(request).share();
+  if (rclcpp::spin_until_future_complete(node_, future_request) ==
+  rclcpp::FutureReturnCode::SUCCESS)
+  {
+    RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
+    auto result = *future_request.get();
+    if (!result.success) {
+      RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED calling service");
+      setStatus(BT::NodeStatus::FAILURE);
     }
+    xml_path_ = result.xml_path;
   } else {
-    std::cerr << "Element not found in XML." << std::endl;
-    // setStatus(BT::NodeStatus::FAILURE);
-    return;
-  }
-  // Save the updated XML back to the same file
-  std::ofstream output_file(xml_file);
-  if (!output_file.is_open()) {
-    std::cerr << "Error opening output file." << std::endl;
-    // setStatus(BT::NodeStatus::FAILURE);
-    return;
+    RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED");
+    setStatus(BT::NodeStatus::FAILURE);
   }
 
-  output_file << xml_content;
-  output_file.close();
-
-  goal_.behavior_tree = xml_file;
+  goal_.behavior_tree = xml_path_;
   goal_.pose = goal;
 }
 

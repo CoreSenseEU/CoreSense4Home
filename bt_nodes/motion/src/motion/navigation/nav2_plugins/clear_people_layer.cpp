@@ -76,10 +76,6 @@ void ClearPeopleLayer::updateCosts(
   //   return;
   // }
 
-  if (min_x >= max_x || min_y >= max_y) {
-    return;
-  }
-
   try {
     person_transform_ = tf_->lookupTransform(
       "map", person_frame_,

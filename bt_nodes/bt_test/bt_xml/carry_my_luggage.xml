@@ -51,11 +51,11 @@
                             y_axis_max="{max_y}"
                             y_axis_min="{min_y}"/>
                         </ReactiveSequence>
-                        <ForceFailure>
-                            <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
-                        </ForceFailure>
                     </Fallback>
-                    <Action ID="DialogConfirmation"/>
+                    <Sequence>
+                        <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
+                        <Action ID="DialogConfirmation"/>
+                    </Sequence>
                 </ReactiveFallback>
             </RetryUntilSuccessful>
             <Action ID="MoveToPredefined" pose="offer"/>

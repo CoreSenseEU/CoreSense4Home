@@ -56,7 +56,7 @@ def generate_launch_description():
             os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
         ),
         launch_arguments={
-            'model': 'yolov8n-pose.pt',
+            'model': 'yolov8n.pt',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',

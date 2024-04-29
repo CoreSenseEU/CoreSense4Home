@@ -28,6 +28,10 @@ SetWp::SetWp(const std::string & xml_tag_name, const BT::NodeConfiguration & con
 BT::NodeStatus SetWp::tick()
 {
   static tf2_ros::StaticTransformBroadcaster tf_broadcaster(node_);
+  if (wp_names_.empty()) {
+    RCLCPP_ERROR(node_->get_logger(), "No waypoints to set");
+    return BT::NodeStatus::FAILURE;
+  }
 
   for (auto wp : wp_names_) {
     node_->declare_parameter("waypoints." + wp, std::vector<double>());

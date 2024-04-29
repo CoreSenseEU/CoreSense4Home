@@ -6,3 +6,7 @@
     home_pose: "home"
     offer_pose: "offer"
     person_id: 001122334455
+    waypoints_names: ["entrance", "party"]
+    waypoints:
+      entrance: [-1.4, 6.82, 0.0]
+      party: [-0.2, 4.33, 0.0]

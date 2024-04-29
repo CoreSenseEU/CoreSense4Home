@@ -33,19 +33,25 @@
                             <SequenceStar>
                                 <Sequence>
                                     <Action ID="Speak" say_text="What's your name?"/>
-                                <ReactiveSequence>  
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
                                     <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                                 </ReactiveSequence>
 
                                 <ReactiveSequence>
-                                <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                                     <Action ID="Listen" listen_text="{text_value}"/>
                                 </ReactiveSequence>
 
-                                <ReactiveSequence> 
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                <ReactiveSequence>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                     <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
                                 </ReactiveSequence>
@@ -53,12 +59,16 @@
                                 <Action ID="Speak" say_text="So you are" param="{name_value}"/>
                                 <Action ID="Speak" say_text="Please confirm"/>
                                 <ReactiveSequence>  
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                 </ReactiveSequence>
                                 
                                 <ReactiveSequence>
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                     <Action ID="DialogConfirmation" />
                                 </ReactiveSequence>
@@ -67,18 +77,24 @@
                                 <Sequence>
                                     <Action ID="Speak" say_text="What's your favorite drink?"/>
                                 <ReactiveSequence>
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                 </ReactiveSequence>
 
-                                <ReactiveSequence>
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                <ReactiveSequence>Ç
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                     <Action ID="Listen" listen_text="{text_value2}"/>
                                 </ReactiveSequence>
 
                                 <ReactiveSequence>
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                     <Action ID="Query" text="{text_value2}" intention="drink" intention_value="{drink_value}"/>
                                 </ReactiveSequence>
@@ -86,13 +102,17 @@
                                 <Action ID="Speak" say_text="So it seems you like " param="{drink_value}"/>
                                 <Action ID="Speak" say_text="Please confirm"/>
                                 <ReactiveSequence>
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                 </ReactiveSequence>
 
 
                                 <ReactiveSequence>
-                                    <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    <RetryUntilSuccessful num_attempts="-1">  
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                    </RetryUntilSuccessful>
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                     <Action ID="DialogConfirmation" />
                                 </ReactiveSequence>

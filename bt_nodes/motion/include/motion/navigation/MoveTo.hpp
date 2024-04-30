@@ -78,6 +78,9 @@ private:
   bool will_finish_ = true;
   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
     set_truncate_distance_client_;
+
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+  rclcpp::executors::SingleThreadedExecutor callback_executor_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

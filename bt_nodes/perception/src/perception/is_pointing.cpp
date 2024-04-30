@@ -86,10 +86,12 @@ int IsPointing::publicTF_map2object(
   } else if (detected_object.pointing_direction == 3) {
     modified_detection.center3d.position.x -= 0.4;  // + or - ?
     bag_frame_ = "left_bag";
-  } else if (detected_object.pointing_direction == 2) {
-    bag_frame_ = "center_bag";
-    modified_detection.center3d.position.z -= 0.4;  // + or - ?
-  } else {
+  } 
+  // else if (detected_object.pointing_direction == 2) {
+  //   bag_frame_ = "center_bag";
+  //   modified_detection.center3d.position.z -= 0.4;  // + or - ?
+  // } 
+  else {
     return -1;
   }
 

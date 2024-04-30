@@ -3,19 +3,16 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <!-- <Action ID="SetWp"/> -->
-            <RetryUntilSuccessful num_attempts="-1">
-                <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-            </RetryUntilSuccessful>
-            <!-- <Action ID="InitReceptionist" cam_frame="{cam_frame}"
+            <Action ID="SetWp"/>
+            <Action ID="InitReceptionist" cam_frame="{cam_frame}"
                                           manipulation_frame="{man_frame}"
                                           host_name="{h_name}"
                                           host_drink="{h_drink}"
-                                          current_guest="{n}" /> -->
-            <!-- <Repeat num_cycles="2">
+                                          current_guest="{n}" />
+            <Repeat num_cycles="2">
                 <Sequence>
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance" will_finish="true"/>
-                    <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
+                    <!-- <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Fallback>
                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
@@ -171,9 +168,9 @@
                     <Action ID="LookAt" tf_frame="{chair_frame}"/>
                     <Action ID="Speak" say_text="Please, sit over there"/>
                     <Action ID="MoveToPredefined" pose="home"/>
-                    <Action ID="AddGuestToCount" guest_id="{n}"/>
+                    <Action ID="AddGuestToCount" guest_id="{n}"/> -->
                 </Sequence>  
-            </Repeat> -->
+            </Repeat>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->

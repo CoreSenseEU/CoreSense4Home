@@ -37,9 +37,13 @@ MoveTo::MoveTo(
 {
   config().blackboard->get("node", node_);
 
+  callback_group_ =
+      node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  callback_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
+
   set_truncate_distance_client_ =
     node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>(
-    "navigation_system_node/set_truncate_distance");
+    "navigation_system_node/set_truncate_distance", rmw_qos_profile_services_default, callback_group_);
 }
 
 void MoveTo::on_tick()
@@ -78,7 +82,16 @@ void MoveTo::on_tick()
   request->distance = distance_tolerance_;
   request->xml_content = nav_to_pose_truncated_xml;
   auto future_request = set_truncate_distance_client_->async_send_request(request).share();
-  if (rclcpp::spin_until_future_complete(node_, future_request) ==
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+  callback_executor_.spin_some();
+
+  if (callback_executor_.spin_until_future_complete(future_request, std::chrono::milliseconds(500)) ==
   rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");

@@ -85,16 +85,20 @@ int main(int argc, char ** argv)
   rclcpp::Rate rate(30);
 
   bool finish = false;
-  // std::thread queue_thread([&]() {
-  //   rclcpp::spin(node->get_node_base_interface());
-  // });
+  std::thread queue_thread([&]() {
+    rclcpp::Rate node_rate(30);
+    while (rclcpp::ok()) {
+    rclcpp::spin_some(node->get_node_base_interface());
+    node_rate.sleep();
+    }
+  });
 
   while (!finish && rclcpp::ok()) {
+    // rclcpp::spin_some(node->get_node_base_interface());
     finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
-    rclcpp::spin_some(node->get_node_base_interface());
     rate.sleep();
   }
-  // queue_thread.join();
+  queue_thread.join();
 
   rclcpp::shutdown();
   return 0;

@@ -44,7 +44,8 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<double>("range"), // in degrees
-        BT::InputPort<double>("period") // in ms
+        BT::InputPort<double>("period"), // in seconds
+        BT::InputPort<double>("pitch_angle") // in degrees
       });
   }
 
@@ -72,6 +73,9 @@ private:
                                   -0.3,
                                   0.0};
   std::vector<double> times_from_start_{0.1, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0};
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
+  BT::Optional<double> joint_range_, period_, pitch_angle_;
+  double phase_;
 
   int current_position_{0};
 

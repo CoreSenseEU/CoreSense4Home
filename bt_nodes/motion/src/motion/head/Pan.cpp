@@ -32,7 +32,26 @@ Pan::Pan(
   joint_range_ = 20.0 * M_PI / 180.0;
   joint_range_ = getInput<double>("range").value() * M_PI / 180.0;
   period_ = getInput<double>("period").value();
+  pitch_angle_ = getInput<double>("pitch_angle").value() * M_PI / 180.0;
 
+  if (!joint_range_) {
+    // throw BT::RuntimeError("Missing required input [range]: ", joint_range_);
+    RCLCPP_WARN(
+      node_->get_logger(), "Missing required input [range]. Using default value 45.0 degrees");
+    joint_range_.value() = 45.0 * M_PI / 180.0;
+  }
+  if (!period_) {
+    // throw BT::RuntimeError("Missing required input [period]: ", period_);
+    RCLCPP_WARN(
+      node_->get_logger(), "Missing required input [period]. Using default value 5.0 seconds");
+    period_.value() = 5.0;
+  }
+  if (!pitch_angle_) {
+    // throw BT::RuntimeError("Missing required input [pitch_angle]: ", pitch_angle_);
+    RCLCPP_WARN(
+      node_->get_logger(), "Missing required input [pitch_angle]. Using default value 0.0 degrees");
+    pitch_angle_.value() = 0.0;
+  }
   joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
     "/head_controller/joint_trajectory", 100);
 }
@@ -84,8 +103,8 @@ Pan::tick()
   command_msg.points[0].velocities.resize(2);
   command_msg.points[0].accelerations.resize(2);
   command_msg.points[0].positions[0] = yaw;
-  command_msg.points[0].positions[1] = 0.0;
-  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.01);
+  command_msg.points[0].positions[1] = pitch_angle_.value();
+  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.00);
   joint_cmd_pub_->publish(command_msg);
 
   return BT::NodeStatus::RUNNING;

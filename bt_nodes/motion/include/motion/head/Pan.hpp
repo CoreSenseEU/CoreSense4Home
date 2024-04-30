@@ -46,7 +46,8 @@ public:
     return BT::PortsList(
       {
         BT::InputPort<double>("range"), // in degrees
-        BT::InputPort<double>("period") // in seconds
+        BT::InputPort<double>("period"), // in seconds
+        BT::InputPort<double>("pitch_angle") // in degrees
       });
   }
 
@@ -58,7 +59,7 @@ private:
   rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
     joint_cmd_pub_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-  BT::Optional<double> joint_range_, period_;
+  BT::Optional<double> joint_range_, period_, pitch_angle_;
   double phase_;
 
   double get_joint_yaw(double period, double range, double time, double phase);

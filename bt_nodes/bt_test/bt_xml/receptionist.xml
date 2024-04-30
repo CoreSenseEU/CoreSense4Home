@@ -8,9 +8,12 @@
                                           manipulation_frame="{man_frame}"
                                           host_name="{h_name}"
                                           host_drink="{h_drink}"
-                                          current_guest="{n}" />
+                                          current_guest="{n}"
+                                          attention_home="{attention_home}" />
             <Repeat num_cycles="2">
                 <Sequence>
+                    <!-- <Action ID="LookAt" tf_frame="{attention_home}"/>                                        
+
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance" will_finish="true"/>
                     <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
@@ -83,7 +86,7 @@
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                 </ReactiveSequence>
 
-                                <ReactiveSequence>Ç
+                                <ReactiveSequence>
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
@@ -125,9 +128,9 @@
                                                 name_1="{name_1}"
                                                 name_2="{name_2}"
                                                 drink_1="{drink_1}"
-                                                drink_2="{drink_2}"/>
+                                                drink_2="{drink_2}"/> -->
                     <!-- <Action ID="ExtractInformationFromPicture"></Action> TODO -->
-                    <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
+                    <!-- <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="party"/>
                     <ReactiveSequence>
                         <ReactiveFallback>
@@ -159,16 +162,18 @@
                             </Sequence>
                             <Action ID="Speak" say_text="Hi every one this is our new guest. Please have fun! "/>
                         </Switch2>
-                    </ReactiveSequence>
+                    </ReactiveSequence> -->
                     <ReactiveFallback>
-                        <Condition ID="IsSittable" cam_frame="{cam_frame}" chair_frame="{chair_frame}"/>
-                        <Action ID="Pan" period="1.5" range="45"/>
+                        <!-- <Condition ID="IsSittable" cam_frame="{cam_frame}" chair_frame="{chair_frame}"/> -->
+                        <Action ID="Pan" period="5" range="45"/>
                     </ReactiveFallback>
-                    <Action ID="PointAt" tf_frame="person_0" base_frame="{man_frame}"/>
-                    <Action ID="LookAt" tf_frame="{chair_frame}"/>
+                    <!-- <Action ID="LookAt" tf_frame="{chair_frame}"/>
+                    <Action ID="PointAt" tf_frame="{chair_frame}" base_frame="{man_frame}"/>
                     <Action ID="Speak" say_text="Please, sit over there"/>
                     <Action ID="MoveToPredefined" pose="home"/>
-                    <Action ID="AddGuestToCount" guest_id="{n}"/>
+                    <Action ID="LookAt" tf_frame="{attention_home}"/>
+
+                    <Action ID="AddGuestToCount" guest_id="{n}"/> -->
                 </Sequence>  
             </Repeat>
         </Sequence>

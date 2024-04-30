@@ -19,7 +19,8 @@
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="6" max_entities="1" order="depth"/>
             </RetryUntilSuccessful>
-            <Action ID="LookAt" tf_frame="person_0" />
+            <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+            <Action ID="LookAt" tf_frame="person_0_filtered" />
             <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
         </ReactiveSequence>
         <!-- <Repeat num_cycles="5">
@@ -29,11 +30,11 @@
             <Action ID="MoveToPredefined" pose="home"/>
         </Delay>
         <ReactiveSequence>
-            <Action ID="LookAt" tf_frame="person_0" />
+            <Action ID="LookAt" tf_frame="person_0_filtered" />
             <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
         </ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <ReactiveFallback>
+                <Sequence>
                     <Fallback>
                         <ReactiveSequence>
                             <RetryUntilSuccessful num_attempts="-1">
@@ -41,7 +42,7 @@
                             </RetryUntilSuccessful>
                             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                             <Action ID="LookAt" tf_frame="person_0_filtered"/>
-                            <Condition ID="IsEntityMoving" distance_tolerance="1.2" frame="person_0" check_time="9.0"/>
+                            <Condition ID="IsEntityMoving" distance_tolerance="1.2" frame="person_0_filtered" check_time="9.0"/>
                             <!-- <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/> -->
                             <Action ID="FollowEntity" camera_frame="head_front_camera_link_color_optical_frame"
                             distance_tolerance="0.8"
@@ -51,19 +52,29 @@
                             y_axis_max="{max_y}"
                             y_axis_min="{min_y}"/>
                         </ReactiveSequence>
-                    </Fallback>
-                    <Sequence>
                         <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
+                    </Fallback>
+                    <ReactiveSequence>
+                        <RetryUntilSuccessful num_attempts="-1">
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="8" max_entities="1" order="color"/>
+                        </RetryUntilSuccessful>
+                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                        <Action ID="LookAt" tf_frame="person_0_filtered"/>
+                        <ForceSuccess>
+                            <Action ID="GoalPublisher" 
+                            camera_frame="head_front_camera_link_color_optical_frame"
+                            distance_tolerance="0.8"
+                            frame_to_follow="person_0_filtered"/>  
+                        </ForceSuccess>
                         <Action ID="DialogConfirmation"/>
-                    </Sequence>
-                </ReactiveFallback>
+                    </ReactiveSequence>
+                </Sequence>
             </RetryUntilSuccessful>
             <Action ID="MoveToPredefined" pose="offer"/>
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0"/>
                 <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
             </ReactiveSequence>
-            <Action ID="LookAt" tf_frame="gripper_link" />
             <Action ID="MoveToPredefined" pose="home"/>
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>

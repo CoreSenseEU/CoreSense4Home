@@ -85,7 +85,7 @@ Pan::tick()
   command_msg.points[0].accelerations.resize(2);
   command_msg.points[0].positions[0] = yaw;
   command_msg.points[0].positions[1] = 0.0;
-  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(1.5);
+  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.01);
   joint_cmd_pub_->publish(command_msg);
 
   return BT::NodeStatus::RUNNING;

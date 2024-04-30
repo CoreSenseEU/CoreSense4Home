@@ -5,6 +5,8 @@
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
+    host_drink: "Jaggermeister"
+    host_name: "Alberto"
     person_id: 001122334455
     waypoints_names: ["entrance", "party"]
     waypoints:

@@ -97,10 +97,12 @@ int IsPointing::publicTF_map2object(
   } else if (detected_object.pointing_direction == 3) {
     modified_detection.center3d.position.x -= 0.4;  // + or - ?
     bag_frame_ = "left_bag";
-  } else if (detected_object.pointing_direction == 2) {
-    bag_frame_ = "center_bag";
-    modified_detection.center3d.position.z -= 0.4;  // + or - ?
-  } else {
+  } 
+  // else if (detected_object.pointing_direction == 2) {
+  //   bag_frame_ = "center_bag";
+  //   modified_detection.center3d.position.z -= 0.4;  // + or - ?
+  // }
+   else {
     return -1;
   }
 
@@ -187,7 +189,7 @@ BT::NodeStatus IsPointing::tick()
     best_detection.pointing_direction);
 
   int dev = publicTF_map2object(best_detection);
-  if (dev != 0) {
+  if (dev == -1) {
     return BT::NodeStatus::FAILURE;
   }
   setOutput("bag_frame", bag_frame_);

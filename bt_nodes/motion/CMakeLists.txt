@@ -68,6 +68,9 @@ list(APPEND plugin_libs clear_map_at_goal_bt_node)
 add_library(pan_bt_node SHARED src/motion/head/Pan.cpp)
 list(APPEND plugin_libs pan_bt_node)
 
+add_library(goal_publisher_bt_node SHARED src/motion/navigation/goal_publisher.cpp)
+list(APPEND plugin_libs goal_publisher_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

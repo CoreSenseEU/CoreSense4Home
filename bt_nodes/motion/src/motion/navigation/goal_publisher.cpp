@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "motion/navigation/follow_entity.hpp"
+#include "motion/navigation/goal_publisher.hpp"
 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
@@ -28,7 +28,7 @@ namespace navigation
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-FollowEntity::FollowEntity(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+GoalPublisher::GoalPublisher(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -38,60 +38,18 @@ FollowEntity::FollowEntity(const std::string & xml_tag_name, const BT::NodeConfi
   client_ =
     rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(node_, "navigate_to_pose");
 
-  sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
-    "amcl_pose", qos, std::bind(&FollowEntity::pose_callback, this, _1));
-
-  set_mode_client_ = node_->create_client<navigation_system_interfaces::srv::SetMode>(
-    "navigation_system_node/set_mode");
   set_truncate_distance_client_ =
     node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>(
     "navigation_system_node/set_truncate_distance");
 }
 
-void FollowEntity::pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg)
+void GoalPublisher::halt() {RCLCPP_INFO(node_->get_logger(), "GoalPublisher halted");}
+
+BT::NodeStatus GoalPublisher::tick()
 {
-  current_pos_ = *msg;
-}
-
-void FollowEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FollowEntity halted");}
-
-void FollowEntity::check_robot_inside_map()
-{
-  if (current_pos_.pose.pose.position.x <= x_axis_max_ &&
-    current_pos_.pose.pose.position.y <= y_axis_max_ &&
-    current_pos_.pose.pose.position.x >= x_axis_min_ &&
-    current_pos_.pose.pose.position.y >= y_axis_min_)
-  {
-  } else {
-    auto request = std::make_shared<navigation_system_interfaces::srv::SetMode::Request>();
-    request->mode.id = 2;
-    auto result = set_mode_client_->async_send_request(request);
-    if (rclcpp::spin_until_future_complete(node_, result) == rclcpp::FutureReturnCode::SUCCESS) {
-      if (!result.get()->success) {
-        setStatus(BT::NodeStatus::RUNNING);
-      }
-    } else {
-      setStatus(BT::NodeStatus::RUNNING);
-    }
-  }
-  is_goal_sent_ = false;
-}
-
-BT::NodeStatus FollowEntity::tick()
-{
-  // while (!set_mode_client_->wait_for_service(std::chrono::seconds(1)) ||
-  //        !set_truncate_distance_client_->wait_for_service(std::chrono::seconds(1))) {
-  //   RCLCPP_INFO(node_->get_logger(), "Waiting for action server to be up...");
-  //   return BT::NodeStatus::RUNNING;
-
-  // }
-
+ 
   if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
     return on_idle();
-  }
-
-  if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
-    check_robot_inside_map();
   }
 
   while (!tf_buffer_->canTransform(
@@ -112,7 +70,7 @@ BT::NodeStatus FollowEntity::tick()
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
       ex.what());
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
 
   goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
@@ -121,42 +79,26 @@ BT::NodeStatus FollowEntity::tick()
 
   rclcpp::spin_some(node_->get_node_base_interface());
 
-  return BT::NodeStatus::RUNNING;
+  return BT::NodeStatus::SUCCESS;
 }
 
-BT::NodeStatus FollowEntity::on_idle()
+BT::NodeStatus GoalPublisher::on_idle()
 {
 
   config().blackboard->get("tf_buffer", tf_buffer_);
-  RCLCPP_INFO(node_->get_logger(), "FollowEntity ticked IDLE");
+  RCLCPP_INFO(node_->get_logger(), "GoalPublisher ticked IDLE");
   std::string camera_frame, frame_to_follow;
   if (!getInput<std::string>("camera_frame", camera_frame_)) {
     RCLCPP_ERROR(node_->get_logger(), "camera_frame not provided");
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
   if (!getInput<std::string>("frame_to_follow", frame_to_follow_)) {
     RCLCPP_ERROR(node_->get_logger(), "frame_to_follow not provided");
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
   if (!getInput<double>("distance_tolerance", distance_tolerance_)) {
     RCLCPP_ERROR(node_->get_logger(), "distance_tolerance not provided");
-    return BT::NodeStatus::RUNNING;
-  }
-  if (!getInput<double>("x_axis_max", x_axis_max_)) {
-    RCLCPP_ERROR(node_->get_logger(), "x_axis_max not provided");
-    return BT::NodeStatus::RUNNING;
-  }
-  if (!getInput<double>("x_axis_min", x_axis_min_)) {
-    RCLCPP_ERROR(node_->get_logger(), "x_axis_min not provided");
-    return BT::NodeStatus::RUNNING;
-  }
-  if (!getInput<double>("y_axis_max", y_axis_max_)) {
-    RCLCPP_ERROR(node_->get_logger(), "y_axis_max not provided");
-    return BT::NodeStatus::RUNNING;
-  }
-  if (!getInput<double>("y_axis_min", y_axis_min_)) {
-    RCLCPP_ERROR(node_->get_logger(), "y_axis_min not provided");
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
 
   while (!tf_buffer_->canTransform(
@@ -167,7 +109,7 @@ BT::NodeStatus FollowEntity::on_idle()
       node_->get_logger(), "Waiting for transform from base_footprint to %s",
       frame_to_follow_.c_str());
     rclcpp::spin_some(node_->get_node_base_interface());
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
 
   try {
@@ -178,7 +120,7 @@ BT::NodeStatus FollowEntity::on_idle()
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
       ex.what());
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
 
   goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
@@ -190,6 +132,7 @@ BT::NodeStatus FollowEntity::on_idle()
   request->distance = distance_tolerance_;
   request->xml_content = dynamic_following_xml;
 
+
   auto future_request = set_truncate_distance_client_->async_send_request(request).share();
   if (rclcpp::spin_until_future_complete(node_, future_request) ==
   rclcpp::FutureReturnCode::SUCCESS)
@@ -198,12 +141,12 @@ BT::NodeStatus FollowEntity::on_idle()
     auto result = *future_request.get();
     if (!result.success) {
       RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED calling service");
-      return BT::NodeStatus::RUNNING;
+      return BT::NodeStatus::FAILURE;
     }
     xml_path_ = result.xml_path;
   } else {
     RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED");
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
 
   RCLCPP_INFO(node_->get_logger(), "Sending goal");
@@ -218,14 +161,14 @@ BT::NodeStatus FollowEntity::on_idle()
   {
     RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
     is_goal_sent_ = false;
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
   is_goal_sent_ = true;
-  return BT::NodeStatus::RUNNING;
+  return BT::NodeStatus::SUCCESS;
 }
 
 
-geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(
+geometry_msgs::msg::PoseStamped GoalPublisher::get_goal_pose(
   const double & distance_to_substract,
   const geometry_msgs::msg::TransformStamped & goal_transform)
 {
@@ -259,5 +202,5 @@ geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(
 }  // namespace navigation
 
 BT_REGISTER_NODES(factory) {
-  factory.registerNodeType<navigation::FollowEntity>("FollowEntity");
+  factory.registerNodeType<navigation::GoalPublisher>("GoalPublisher");
 }

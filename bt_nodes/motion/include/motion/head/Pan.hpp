@@ -23,6 +23,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace head
@@ -53,7 +54,6 @@ private:
   rclcpp::Node::SharedPtr node_;
   rclcpp::Time start_time_;
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
-  double joint_range_, period_;
   double yaw_limit_{1.3};
   double pitch_{0.05};
   std::vector<double> yaw_positions_{0.0, 
@@ -74,13 +74,13 @@ private:
                                   0.0};
   std::vector<double> times_from_start_{0.1, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0};
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-  BT::Optional<double> joint_range_, period_, pitch_angle_;
+  double joint_range_, period_, pitch_angle_;
   double phase_;
 
   int current_position_{0};
 
 
-  double get_joint_yaw(double period, double range, double time);
+  double get_joint_yaw(double period, double range, double time, double phase);
 };
 
 }  // namespace receptionist

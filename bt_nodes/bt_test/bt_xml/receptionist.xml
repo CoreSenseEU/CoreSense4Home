@@ -165,7 +165,7 @@
                     </ReactiveSequence> -->
                     <ReactiveFallback>
                         <!-- <Condition ID="IsSittable" cam_frame="{cam_frame}" chair_frame="{chair_frame}"/> -->
-                        <Action ID="Pan" period="5" range="45"/>
+                        <Action ID="Pan" period="5" range="45" pitch_angle="-10"/>
                     </ReactiveFallback>
                     <!-- <Action ID="LookAt" tf_frame="{chair_frame}"/>
                     <Action ID="PointAt" tf_frame="{chair_frame}" base_frame="{man_frame}"/>

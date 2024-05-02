@@ -61,7 +61,7 @@ void PointAt::on_tick()
     auto y_point = desired_radius * std::sin(angle);
     goal_.pose.pose.position.x =  (std::isnan(x_point) || std::isinf(x_point)) ? 0.0 : (x_point); 
     goal_.pose.pose.position.y = (std::isnan(y_point) || std::isinf(y_point)) ? 0.0 : (y_point); 
-    goal_.pose.pose.position.z = transform_.transform.translation.z;
+    goal_.pose.pose.position.z = transform_.transform.translation.z + 0.5;
     goal_.pose.header.frame_id = base_frame_;
     auto orientation = tf2::Quaternion(0, 0, 0, 1);
     orientation.setEuler(0, 0, angle);

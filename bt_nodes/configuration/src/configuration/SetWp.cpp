@@ -39,16 +39,14 @@ BT::NodeStatus SetWp::tick()
     node_->get_parameter("waypoints." + wp, wp_pos);
 
     geometry_msgs::msg::TransformStamped transformStamped;
-    transformStamped.header.stamp = node_->now();
+    // transformStamped.header.stamp = node_->now();
     transformStamped.header.frame_id = "map";
     transformStamped.child_frame_id = wp;
     transformStamped.transform.translation.x = wp_pos[0];
     transformStamped.transform.translation.y = wp_pos[1];
-    transformStamped.transform.translation.z = wp_pos[2];
-    transformStamped.transform.rotation.x = 0.0;
-    transformStamped.transform.rotation.y = 0.0;
-    transformStamped.transform.rotation.z = 0.0;
-    transformStamped.transform.rotation.w = 1.0;
+    tf2::Quaternion q;
+    q.setRPY(0, 0, wp_pos[2]);
+    transformStamped.transform.rotation = tf2::toMsg(q);
 
     tf_broadcaster.sendTransform(transformStamped);
   }

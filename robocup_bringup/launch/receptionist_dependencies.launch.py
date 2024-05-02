@@ -78,6 +78,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
+            'map': package_dir + '/maps/arena_portugal.yaml'
         }.items()
     )
 

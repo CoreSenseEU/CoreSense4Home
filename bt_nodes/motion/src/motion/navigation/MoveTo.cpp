@@ -50,6 +50,7 @@ void MoveTo::on_tick()
   getInput("tf_frame", tf_frame_);
   getInput("distance_tolerance", distance_tolerance_);
   getInput("will_finish", will_finish_);
+  getInput("is_truncated", is_truncated_);
 
   try {
     map_to_goal = tf_buffer_.lookupTransform("map", tf_frame_, tf2::TimePointZero);
@@ -62,6 +63,10 @@ void MoveTo::on_tick()
   goal.header.frame_id = "map";
   goal.pose.position.x = map_to_goal.transform.translation.x;
   goal.pose.position.y = map_to_goal.transform.translation.y;
+  goal.pose.orientation.x = map_to_goal.transform.rotation.x;
+  goal.pose.orientation.y = map_to_goal.transform.rotation.y;
+  goal.pose.orientation.z = map_to_goal.transform.rotation.z;
+  goal.pose.orientation.w = map_to_goal.transform.rotation.w;
 
   if (!set_truncate_distance_client_->wait_for_service(std::chrono::seconds(1))) {
     RCLCPP_WARN(node_->get_logger(), "Waiting for action server to be up...");
@@ -69,9 +74,16 @@ void MoveTo::on_tick()
   }
 
   RCLCPP_INFO(
-    node_->get_logger(), "Sending goal: x: %f, y: %f, in frame: %s", goal.pose.position.x,
-    goal.pose.position.y, goal.header.frame_id.c_str());
+    //print also the quaternion : 
+    node_->get_logger(), "Sending goal: x: %f, y: %f, qx: %f, qy: %f, qz: %f qw: %f  in frame: %s", goal.pose.position.x,
+    goal.pose.position.y,
+    goal.pose.orientation.x,
+    goal.pose.orientation.y,
+    goal.pose.orientation.z,
+    goal.pose.orientation.w,
+     goal.header.frame_id.c_str());
 
+  if (is_truncated_) {   
   auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
 
   request->distance = distance_tolerance_;
@@ -91,8 +103,9 @@ void MoveTo::on_tick()
     RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED");
     setStatus(BT::NodeStatus::FAILURE);
   }
-
   goal_.behavior_tree = xml_path_;
+  }
+  
   goal_.pose = goal;
 }
 

@@ -55,6 +55,7 @@ private:
   rclcpp::Time start_time_;
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
   double yaw_limit_{1.3};
+  double pitch_limit_{0.185};
   double pitch_{0.05};
   std::vector<double> yaw_positions_{0.0, 
                                   0.7,
@@ -74,7 +75,8 @@ private:
                                   0.0};
   std::vector<double> times_from_start_{0.1, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0};
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-  double joint_range_, period_, pitch_angle_;
+  double joint_range_, period_;
+  double pitch_angle_ = 0.0;
   double phase_;
 
   int current_position_{0};

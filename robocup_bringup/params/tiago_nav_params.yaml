@@ -39,11 +39,17 @@ amcl:
     z_short: 0.05
     scan_topic: /scan_raw
     set_initial_pose: true
+    #receptionist initial_pose:
     initial_pose:
-      x: 0.5156184016639794
-      y: 1.2985416281620732
+      x: 1.985
+      y: 0.449
       z: 0.0
-      yaw: 1.6028087
+      yaw: -2.572
+    # initial_pose:
+    #   x: 0.5156184016639794
+    #   y: 1.2985416281620732
+    #   z: 0.0
+    #   yaw: 1.6028087
 
 bt_navigator:
   ros__parameters:

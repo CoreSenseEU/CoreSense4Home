@@ -22,6 +22,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 namespace configuration
 {

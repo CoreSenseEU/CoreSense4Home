@@ -106,8 +106,8 @@ Pan::tick()
   command_msg.points[0].positions.resize(2);
   command_msg.points[0].velocities.resize(2);
   command_msg.points[0].accelerations.resize(2);
-  command_msg.points[0].positions[0] = yaw;
-  command_msg.points[0].positions[1] = pitch_angle_;
+  command_msg.points[0].positions[0] = std::clamp(yaw, -yaw_limit_, yaw_limit_);
+  command_msg.points[0].positions[1] = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
   command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.00);
   joint_cmd_pub_->publish(command_msg);
 

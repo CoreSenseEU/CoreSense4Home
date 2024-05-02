@@ -19,7 +19,8 @@ find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(perception_system REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(backward_ros REQUIRED)
+find_package(sensor_msgs REQUIRED)
+# find_package(backward_ros REQUIRED)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -39,7 +40,8 @@ set(dependencies
   behaviortree_cpp_v3
   perception_system
   OpenCV
-  backward_ros
+  sensor_msgs
+  # backward_ros
 )
 
 include_directories(include)
@@ -73,6 +75,9 @@ list(APPEND plugin_libs extract_entity_color_bt_node)
 
 add_library(is_sittable_bt_node SHARED src/perception/is_sittable.cpp)
 list(APPEND plugin_libs is_sittable_bt_node)
+
+add_library(is_door_open_bt_node SHARED src/perception/IsDoorOpen.cpp)
+list(APPEND plugin_libs is_door_open_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

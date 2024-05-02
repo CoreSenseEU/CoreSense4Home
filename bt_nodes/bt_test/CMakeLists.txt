@@ -191,6 +191,15 @@ target_link_libraries(receptionist_test
   # configuration::add_guest_to_count_bt_node
 )
 
+# Inspection test
+add_executable(inspection_test src/inspection_test.cpp)
+ament_target_dependencies(inspection_test ${dependencies})
+target_link_libraries(inspection_test
+  configuration::set_wp_bt_node
+  perception::is_door_open_bt_node
+  motion::move_to_bt_node
+)
+
 install(TARGETS
   set_wp_test
   look_at_test
@@ -213,6 +222,7 @@ install(TARGETS
   follow_entity_test
   filter_entity_test
   receptionist_test
+  inspection_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

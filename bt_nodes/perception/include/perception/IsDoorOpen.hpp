@@ -50,14 +50,16 @@ public:
 
    static BT::PortsList providedPorts()
   {
-    return BT::PortsList({});
+    return BT::PortsList({
+      BT::InputPort<float>("door_thfloatreshold", "Threshold to consider the door open")
+    });
   }
 
   void laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg);
 
 private:
 
-  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  rclcpp::Node::SharedPtr node_;
   float door_threshold_;
   bool door_open_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_sub_;

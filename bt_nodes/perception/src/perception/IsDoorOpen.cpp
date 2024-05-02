@@ -35,16 +35,17 @@ IsDoorOpen::IsDoorOpen(
   door_threshold_(2.0)
 {
   config().blackboard->get("node", node_);
-  config().blackboard->get("door_threshold", door_threshold_);
+  getInput("door_threshold", door_threshold_);
   laser_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
-    "/input_scan", 100, std::bind(&IsDoorOpen::laser_callback, this, _1));
+    "scan", 100, std::bind(&IsDoorOpen::laser_callback, this, _1));
   // config().blackboard->get("cam_frame", cam_frame_);
 }
 
 BT::NodeStatus
 IsDoorOpen::tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "IsDoorOpen ticked");
+  RCLCPP_INFO(node_->get_logger(), "IsDoorOpen ticked");
+  rclcpp::spin_some(node_);
   // if(door_open_)
   // {
   //   return BT::NodeStatus::SUCCESS;
@@ -62,7 +63,7 @@ IsDoorOpen::tick()
   auto mid = last_scan_->ranges.size() / 2;
   for(size_t i = mid -2; i<= mid + 2; i++)
   {
-    if(last_scan_->ranges[i] < door_threshold_)
+    if(last_scan_->ranges[i] > door_threshold_)
     {
       return BT::NodeStatus::SUCCESS;
     } else {
@@ -83,6 +84,7 @@ IsDoorOpen::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
   //     return;
   //   }
   // }
+  RCLCPP_INFO(node_->get_logger(), "Laser callback");
   last_scan_ = std::move(msg);
 }
   

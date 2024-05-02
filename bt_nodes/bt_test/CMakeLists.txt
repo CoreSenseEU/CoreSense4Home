@@ -199,13 +199,6 @@ target_link_libraries(inspection_test
   perception::is_door_open_bt_node
   motion::move_to_bt_node
 )
-add_executable(inspection_test src/inspection_test.cpp)
-ament_target_dependencies(inspection_test ${dependencies})
-target_link_libraries(inspection_test
-  configuration::set_wp_bt_node
-  perception::is_door_open_bt_node
-  motion::move_to_bt_node
-)
 
 install(TARGETS
   set_wp_test

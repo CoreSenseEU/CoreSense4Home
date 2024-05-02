@@ -11,8 +11,9 @@
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    "inspection_test_node");
+
+  auto node = rclcpp::Node::make_shared("inspection_test");
+
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
@@ -28,15 +29,15 @@ int main(int argc, char * argv[])
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
 
-  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  // node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  // node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(50);
 
   BT::NodeStatus status = BT::NodeStatus::RUNNING;
   bool finish = false;
   while (!finish && rclcpp::ok()) {
-    rclcpp::spin_some(node->get_node_base_interface());
+    rclcpp::spin_some(node);
 
     status = tree.rootNode()->executeTick();
     finish = (status == BT::NodeStatus::SUCCESS) ||

@@ -41,13 +41,15 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({BT::InputPort<std::string>("pose")});
+    return BT::PortsList({BT::InputPort<std::string>("pose"),
+                          BT::InputPort<std::string>("group_name")});
   }
 
 private:
   // rclcpp::Node::SharedPtr node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;
+  std::string group_name_{"arm_torso"};
 
   std::string pose_;
 };

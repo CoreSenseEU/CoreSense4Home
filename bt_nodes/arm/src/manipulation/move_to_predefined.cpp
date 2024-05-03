@@ -39,7 +39,8 @@ void MoveToPredefined::on_tick()
   RCLCPP_DEBUG(node_->get_logger(), "MoveToPredefined ticked");
 
   getInput("pose", pose_);
-  goal_.group_name = "arm_torso";
+  getInput("group_name", group_name_);
+  goal_.group_name = group_name_;
   goal_.goal_pose = pose_;
 }
 

@@ -71,7 +71,7 @@ private:
   bool is_place_to_sit_;
   std::string place_to_sit_;
   bool is_person_;
-  float threshold_{0.3};
+  float threshold_{0.45};
   float max_distance_{15.5};
 
   bool 

@@ -39,12 +39,18 @@ amcl:
     z_short: 0.05
     scan_topic: /scan_raw
     set_initial_pose: true
-    #receptionist initial_pose:
+    # receptionist initial_pose:
     initial_pose:
-      x: 1.985
-      y: 0.449
+      x: 0.99
+      y: 0.283
       z: 0.0
-      yaw: -2.572
+      yaw: -1.551
+
+    # inspection iniutial_pose:
+    # initial_pose:
+    #   x: -2.700
+    #   y: -0.641
+    #   yaw: 0.0
     # initial_pose:
     #   x: 0.5156184016639794
     #   y: 1.2985416281620732

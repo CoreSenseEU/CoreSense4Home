@@ -12,7 +12,7 @@
                 </Sequence>
         </RetryUntilSuccessful>
         <RetryUntilSuccessful num_attempts="-1">
-            <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="{bag_tf}"/>
+            <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.0" tf_frame="{bag_tf}"/>
         </RetryUntilSuccessful>
         <Action ID="MoveToPredefined" pose="offer"/>
         <ReactiveSequence>

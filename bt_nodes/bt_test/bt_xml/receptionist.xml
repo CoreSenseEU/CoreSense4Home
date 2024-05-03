@@ -12,7 +12,7 @@
                                           attention_home="{attention_home}" />
             <Repeat num_cycles="2">
                 <Sequence>
-                    <!-- <Action ID="LookAt" tf_frame="{attention_home}"/>                                        
+                    <Action ID="LookAt" tf_frame="{attention_home}"/>                                        
 
                     <Action ID="MoveTo" is_truncated="false" distance_tolerance="-1.0" tf_frame="entrance" will_finish="true"/>
                     <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
@@ -129,11 +129,11 @@
                                                 name_2="{name_2}"
                                                 drink_1="{drink_1}"
                                                 drink_2="{drink_2}"/>
-                    <Action ID="ExtractInformationFromPicture"></Action> TODO
+                    <!-- <Action ID="ExtractInformationFromPicture"></Action> TODO -->
                     <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
                     <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="party"/>
-                    <ReactiveSequence> -->
-                        <!-- <ReactiveFallback>
+                    <ReactiveSequence>
+                        <ReactiveFallback>
                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="{frames}" max_depth="3" max_entities="1" order="depth_nearest"/>
                             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                             <Action ID="Pan" period="10.0" range="30" pitch_angle="-10"/>
@@ -162,20 +162,18 @@
                             </Sequence>
                             <Action ID="Speak" say_text="Hi every one this is our new guest. Please have fun! "/>
                         </Switch2>
-                    </ReactiveSequence> -->
+                    </ReactiveSequence>
                     <ReactiveFallback>
-                        <ForceFailure>    
                             <Condition ID="IsSittable" cam_frame="{cam_frame}" chair_frame="{chair_frame}"/>
-                        </ForceFailure>
                         <Action ID="Pan" period="10.0" range="30" pitch_angle="-10"/>
                     </ReactiveFallback>
-                    <!-- <Action ID="LookAt" tf_frame="{chair_frame}"/> -->
-                    <!-- <Action ID="PointAt" tf_frame="{chair_frame}" base_frame="{man_frame}"/> -->
-                    <!--<Action ID="Speak" say_text="Please, sit over there"/>
+                    <Action ID="LookAt" tf_frame="{chair_frame}"/>
+                    <Action ID="PointAt" tf_frame="{chair_frame}" base_frame="{man_frame}"/>
+                    <Action ID="Speak" say_text="Please, sit over there"/>
                     <Action ID="MoveToPredefined" pose="home"/>
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
 
-                    <Action ID="AddGuestToCount" guest_id="{n}"/> -->
+                    <Action ID="AddGuestToCount" guest_id="{n}"/>
                 </Sequence>  
             </Repeat>
         </Sequence>

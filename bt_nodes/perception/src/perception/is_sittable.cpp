@@ -173,7 +173,7 @@ bool IsSittable::check_object_class(const std::string & obj, const std::vector<p
 
   for (auto const & result : msg )
   {
-    if (result.class_name == obj && result.score >= threshold_ && result.bbox3d.x > 0.5 && result.bbox3d.y > 0.5) {
+    if (result.class_name == obj && result.score >= threshold_ && result.center3d.position.z < 7.0) {
       ret = true;
     }
   }

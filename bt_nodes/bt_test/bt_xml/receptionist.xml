@@ -18,7 +18,7 @@
                     <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Fallback>
-                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
                             <Inverter>
                                 <Action ID="Speak" say_text="I can't see you, can you please stand in front of me?"/>
                             </Inverter>
@@ -60,7 +60,7 @@
                                 </ReactiveSequence>
                                 
                                 <Action ID="Speak" say_text="So you are" param="{name_value}"/>
-                                <Action ID="Speak" say_text="Please confirm"/>
+                                <Action ID="Speak" say_text="Please say yes or no"/>
                                 <ReactiveSequence>  
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
@@ -103,7 +103,7 @@
                                 </ReactiveSequence>
 
                                 <Action ID="Speak" say_text="So it seems you like " param="{drink_value}"/>
-                                <Action ID="Speak" say_text="Please confirm"/>
+                                <Action ID="Speak" say_text="Please say yes or no"/>
                                 <ReactiveSequence>
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>

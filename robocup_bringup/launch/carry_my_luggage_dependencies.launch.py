@@ -33,6 +33,7 @@ def generate_launch_description():
     perception_dir = get_package_share_directory('perception_system')
     navigation_dir = get_package_share_directory('navigation_system')
     whisper_dir = get_package_share_directory('whisper_bringup')
+    package_dir = get_package_share_directory('robocup_bringup')
 
     # audio related launchers:
 
@@ -99,7 +100,11 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
-            'mode': 'slam'
+            'mode': 'amcl',
+            'map': os.path.join(
+                                package_dir,
+                                'maps',
+                                'arena_portugal.yaml'),
         }.items()
     )
 

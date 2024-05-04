@@ -40,11 +40,11 @@ amcl:
     scan_topic: /scan_raw
     set_initial_pose: true
     # receptionist initial_pose:
-    initial_pose:
-      x: 0.99
-      y: 0.283
-      z: 0.0
-      yaw: -1.551
+    # initial_pose:
+    #   x: 0.99
+    #   y: 0.283
+    #   z: 0.0
+    #   yaw: -1.551
 
     # inspection iniutial_pose:
     # initial_pose:
@@ -56,6 +56,13 @@ amcl:
     #   y: 1.2985416281620732
     #   z: 0.0
     #   yaw: 1.6028087
+
+    # storing initial_pose:
+    initial_pose:
+      x: -2.315
+      y: -0.646
+      z: 0.0
+      yaw: -2.231
 
 bt_navigator:
   ros__parameters:
@@ -207,11 +214,11 @@ local_costmap:
       height: 3
       resolution: 0.05
       robot_radius: 0.29
-      plugins: ["voxel_layer", "inflation_layer", "clear_people_layer"]
+      plugins: ["obstacle_layer" ,"inflation_layer", "clear_people_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.35
+        inflation_radius: 0.4
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -239,6 +246,20 @@ local_costmap:
         plugin: "nav2_costmap_2d::ClearPeopleLayer"
         person_radious: 1.0
         person_frame: person_0_filtered
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan_raw
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
       always_send_full_costmap: True
 
 global_costmap:
@@ -273,7 +294,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.2
+        inflation_radius: 0.40
       clear_people_layer:
         plugin: "nav2_costmap_2d::ClearPeopleLayer"
         person_radious: 1.0

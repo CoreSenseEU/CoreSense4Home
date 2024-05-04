@@ -52,7 +52,9 @@ public:
         BT::InputPort<std::string>("cam_frame"), BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"), BT::OutputPort<std::vector<std::string>>("frames")});
+        BT::InputPort<double>("max_depth"), 
+        BT::OutputPort<std::vector<std::string>>("frames"),
+        BT::OutputPort<std::string>("best_detection")});
   }
 
 private:

@@ -200,6 +200,28 @@ target_link_libraries(inspection_test
   motion::move_to_bt_node
 )
 
+# Storing groceries test
+add_executable(storing_groceries_test src/storing_test.cpp)
+ament_target_dependencies(storing_groceries_test ${dependencies})
+target_link_libraries(storing_groceries_test
+  configuration::set_wp_bt_node
+  # configuration::init_receptionist_bt_node
+  motion::move_to_bt_node
+  hri::speak_bt_node
+  perception::is_detected_bt_node
+  # perception::store_detection_bt_node
+  motion::look_at_bt_node
+  hri::listen_bt_node
+  hri::query_bt_node
+  hri::dialogConfirmation_bt_node
+  # motion::look_around_bt_node
+  perception::is_sittable_bt_node
+  # arm::point_at_bt_node
+  arm::move_to_predefined_bt_node
+  perception::is_door_open_bt_node
+  # configuration::add_guest_to_count_bt_node
+)
+
 install(TARGETS
   set_wp_test
   look_at_test
@@ -223,6 +245,7 @@ install(TARGETS
   filter_entity_test
   receptionist_test
   inspection_test
+  storing_groceries_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

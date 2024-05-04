@@ -90,9 +90,9 @@ BT::NodeStatus FollowEntity::tick()
     return on_idle();
   }
 
-  if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
-    check_robot_inside_map();
-  }
+  // if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
+  //   check_robot_inside_map();
+  // }
 
   while (!tf_buffer_->canTransform(
       "base_footprint", frame_to_follow_,

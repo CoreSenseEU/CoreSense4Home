@@ -3,7 +3,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage"/>
+            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage, please point to the correct bag"/>
 
             <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
             <RetryUntilSuccessful num_attempts="-1">
@@ -15,16 +15,16 @@
                 </Sequence>
         </RetryUntilSuccessful>
         <RetryUntilSuccessful num_attempts="-1">
-            <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.0" tf_frame="{bag_tf}"/>
+            <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.2" tf_frame="{bag_tf}"/>
         </RetryUntilSuccessful>
         <Action ID="MoveToPredefined" pose="offer" group_name="arm_torso"/>
         <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
-        <Delay delay_msec="500">
+        <Delay delay_msec="140">
             <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
         </Delay>
         <ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="6" max_entities="1" order="depth"/>
+                <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="5" max_entities="1" order="depth"/>
             </RetryUntilSuccessful>
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
             <Action ID="LookAt" tf_frame="person_0_filtered" />
@@ -32,11 +32,11 @@
         <!-- <Repeat num_cycles="5">
             <Action ID="LookAt" tf_frame="gripper_link" />
         </Repeat> -->
-        <Delay delay_msec="5000">
-            <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
-        </Delay>
-        <Delay delay_msec="500">
+        <Delay delay_msec="140">
             <Action ID="MoveToPredefined" pose="close" group_name="gripper"/>
+        </Delay>
+        <Delay delay_msec="300">
+            <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
         </Delay>
         <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
         <ReactiveSequence>
@@ -47,14 +47,15 @@
                     <Fallback>
                         <ReactiveSequence>
                             <RetryUntilSuccessful num_attempts="-1">
-                                <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="2.5" max_entities="1" order="color"/>
+                                <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="6.7" max_entities="1" order="color"/>
                             </RetryUntilSuccessful>
                             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                             <Action ID="LookAt" tf_frame="person_0_filtered"/>
-                            <Condition ID="IsEntityMoving" distance_tolerance="1.2" frame="person_0_filtered" check_time="20.0"/>
+
+                            <Condition ID="IsEntityMoving" distance_tolerance="0.6" frame="person_0_filtered" check_time="9.0"/>
                             <!-- <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/> -->
                             <Action ID="FollowEntity" camera_frame="head_front_camera_link_color_optical_frame"
-                            distance_tolerance="0.8"
+                            distance_tolerance="0.2"
                             frame_to_follow="person_0_filtered"
                             x_axis_max="{max_x}"
                             x_axis_min="{min_x}"
@@ -84,6 +85,9 @@
                 <Action ID="LookAt" tf_frame="person_0"/>
                 <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
             </ReactiveSequence>
+            <Delay delay_msec="140">
+                <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+            </Delay>
             <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>

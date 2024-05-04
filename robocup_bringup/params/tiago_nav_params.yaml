@@ -1,11 +1,11 @@
 amcl:
   ros__parameters:
     use_sim_time: False
-    alpha1: 0.2
-    alpha2: 0.2
-    alpha3: 0.2
-    alpha4: 0.2
-    alpha5: 0.2
+    alpha1: 0.1
+    alpha2: 0.1
+    alpha3: 0.1
+    alpha4: 0.1
+    alpha5: 0.1
     base_frame_id: "base_footprint"
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
@@ -14,7 +14,7 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 100.0
+    laser_max_range: 5.0
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
     max_beams: 60
@@ -39,6 +39,10 @@ amcl:
     z_short: 0.05
     scan_topic: /scan_raw
     set_initial_pose: true
+    initial_pose:
+      x: 2.0
+      y: 3.6
+      yaw: 3.14
     # receptionist initial_pose:
     # initial_pose:
     #   x: 0.99
@@ -58,12 +62,13 @@ amcl:
     #   yaw: 1.6028087
 
     # storing initial_pose:
-    initial_pose:
-      x: -2.315
-      y: -0.646
-      z: 0.0
-      yaw: -2.231
-
+  #   initial_pose:
+  #     x: -2.315
+  #     y: -0.646
+  #     z: 0.0
+  #     yaw: -2.231
+  # # carry initial_pose
+    
 bt_navigator:
   ros__parameters:
     use_sim_time: False
@@ -218,7 +223,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.4
+        inflation_radius: 0.45
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -421,10 +426,12 @@ slam_toolbox:
     loop_search_space_smear_deviation: 0.03
     # map_file_name: /home/juan/workspaces/robocup/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
     # map_frame: map
-    # map_start_pose:
-    # - -0.9
-    # - 3.6
-    # - 1.56
+    map_start_pose:  #     # - 2.0
+#     # - 3.6
+#     # - 3.1416
+    - -2.0
+    - 3.6
+    - 3.1416
     map_update_interval: 0.1
     max_laser_range: 20.0
     minimum_angle_penalty: 0.9

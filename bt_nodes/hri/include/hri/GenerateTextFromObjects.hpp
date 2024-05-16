@@ -15,16 +15,13 @@
 #ifndef HRI__GENERATE_TEXT_FROM_OBJECTS_HPP_
 #define HRI__GENERATE_TEXT_FROM_OBJECTS_HPP_
 
-#include <functional>
 #include <chrono>
-
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include <functional>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "moveit_msgs/msg/collision_object.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 
 namespace hri
@@ -34,8 +31,7 @@ class GenerateTextFromObjects : public BT::ActionNodeBase
 {
 public:
   explicit GenerateTextFromObjects(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+    const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();

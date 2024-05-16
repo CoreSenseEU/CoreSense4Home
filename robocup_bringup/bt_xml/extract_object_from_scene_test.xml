@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <RetryUntilSuccessful num_attempts="-1">
+            <Action ID="ExtractObjectsFromScene" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
+        </RetryUntilSuccessful>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="ExtractObjectsFromScene">
+            <output_port name="detected_objects">CollisionObjects</output_port>
+            <output_port name="objects_count">Number of Objects</output_port>
+        </Action>
+        <Action ID="MoveTo">
+            <input_port default="0" name="distance_tolerance"/>
+            <input_port default="object1" name="tf_frame"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

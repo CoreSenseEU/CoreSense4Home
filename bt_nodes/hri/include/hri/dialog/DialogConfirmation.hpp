@@ -21,20 +21,21 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
 {
 
-class DialogConfirmation
-  : public dialog::BtActionNode<whisper_msgs::action::STT>
+class DialogConfirmation : public dialog::BtActionNode<whisper_msgs::action::STT>
 {
 public:
   explicit DialogConfirmation(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -46,6 +47,6 @@ private:
   rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
-} // namespace dialog
+}  // namespace dialog
 
-#endif // HRI__DIALOGCONFIRMATION_HPP_
+#endif  // HRI__DIALOGCONFIRMATION_HPP_

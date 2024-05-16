@@ -23,6 +23,7 @@ find_package(arm REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(hri REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
+# find_package(backward_ros REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -42,6 +43,7 @@ set(dependencies
   arm
   geometry_msgs
   perception_system_interfaces
+  # backward_ros
 )
 
 # Set WP test
@@ -143,11 +145,83 @@ target_link_libraries(carry_my_luggage_test
   perception::is_detected_bt_node
   perception::is_pointing_bt_node
   perception::is_entity_moving_bt_node
+  perception::extract_entity_color_bt_node
   arm::move_to_predefined_bt_node
   motion::move_to_bt_node
   motion::look_at_bt_node
+  motion::configure_navigate_back_bt_node
   hri::speak_bt_node
   hri::dialogConfirmation_bt_node
+)
+# Follow entity test
+add_executable(follow_entity_test src/follow_entity_test.cpp)
+ament_target_dependencies(follow_entity_test ${dependencies})
+target_link_libraries(follow_entity_test
+  configuration::init_carry_bt_node
+  perception::is_detected_bt_node
+  # perception::is_entity_moving_bt_node
+  # arm::move_to_predefined_bt_node
+  # motion::move_to_bt_node
+  motion::look_at_bt_node
+  motion::follow_entity_bt_node
+  # hri::speak_bt_node
+  # hri::dialogConfirmation_bt_node
+)
+# FilterEntity test
+add_executable(filter_entity_test src/filter_entity_test.cpp)
+ament_target_dependencies(filter_entity_test ${dependencies})
+target_link_libraries(filter_entity_test perception::filter_entity_bt_node)
+
+# Receptionist test
+add_executable(receptionist_test src/receptionist_test.cpp)
+ament_target_dependencies(receptionist_test ${dependencies})
+target_link_libraries(receptionist_test
+  configuration::set_wp_bt_node
+  # configuration::init_receptionist_bt_node
+  motion::move_to_bt_node
+  hri::speak_bt_node
+  perception::is_detected_bt_node
+  # perception::store_detection_bt_node
+  motion::look_at_bt_node
+  hri::listen_bt_node
+  hri::query_bt_node
+  hri::dialogConfirmation_bt_node
+  # motion::look_around_bt_node
+  perception::is_sittable_bt_node
+  # arm::point_at_bt_node
+  arm::move_to_predefined_bt_node
+  # configuration::add_guest_to_count_bt_node
+)
+
+# Inspection test
+add_executable(inspection_test src/inspection_test.cpp)
+ament_target_dependencies(inspection_test ${dependencies})
+target_link_libraries(inspection_test
+  configuration::set_wp_bt_node
+  perception::is_door_open_bt_node
+  motion::move_to_bt_node
+)
+
+# Storing groceries test
+add_executable(storing_groceries_test src/storing_test.cpp)
+ament_target_dependencies(storing_groceries_test ${dependencies})
+target_link_libraries(storing_groceries_test
+  configuration::set_wp_bt_node
+  # configuration::init_receptionist_bt_node
+  motion::move_to_bt_node
+  hri::speak_bt_node
+  perception::is_detected_bt_node
+  # perception::store_detection_bt_node
+  motion::look_at_bt_node
+  hri::listen_bt_node
+  hri::query_bt_node
+  hri::dialogConfirmation_bt_node
+  # motion::look_around_bt_node
+  perception::is_sittable_bt_node
+  # arm::point_at_bt_node
+  arm::move_to_predefined_bt_node
+  perception::is_door_open_bt_node
+  # configuration::add_guest_to_count_bt_node
 )
 
 install(TARGETS
@@ -169,6 +243,11 @@ install(TARGETS
   follow_person_test
   init_carry
   carry_my_luggage_test
+  follow_entity_test
+  filter_entity_test
+  receptionist_test
+  inspection_test
+  storing_groceries_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

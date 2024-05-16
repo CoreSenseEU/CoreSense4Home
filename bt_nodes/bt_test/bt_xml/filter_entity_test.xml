@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Repeat num_cycles="-1">
+            <Delay delay_msec="50">
+                <Action ID="FilterEntity" frame="person_0" lambda="0.2"/>
+            </Delay>
+        </Repeat>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="FilterEntity">
+            <input_port default="person_0" name="frame">Frame Name</input_port>
+            <input_port default="0.2" name="lambda">Filtering coefficient</input_port>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

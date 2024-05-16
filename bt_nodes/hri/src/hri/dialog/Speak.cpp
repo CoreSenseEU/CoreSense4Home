@@ -31,8 +31,9 @@ using namespace std::placeholders;
 Speak::Speak(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
-    action_name, conf)
+: dialog::BtActionNode<audio_common_msgs::action::TTS,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
 
@@ -56,7 +57,7 @@ void Speak::on_tick()
   getInput("param", param_);
 
   if (param_.length() > 0) {
-    goal_.text = text_ + " " + param_ + "?";
+    goal_.text = text_ + " " + param_;
   } else {
     goal_.text = text_;
   }
@@ -74,9 +75,9 @@ void Speak::on_tick()
 BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<dialog::Speak>(name, "/say", config);
     };
 

@@ -17,9 +17,7 @@
 namespace configuration
 {
 
-SetWp::SetWp(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+SetWp::SetWp(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -27,19 +25,30 @@ SetWp::SetWp(
   node_->get_parameter("waypoints_names", wp_names_);
 }
 
-BT::NodeStatus
-SetWp::tick()
+BT::NodeStatus SetWp::tick()
 {
+  static tf2_ros::StaticTransformBroadcaster tf_broadcaster(node_);
+  if (wp_names_.empty()) {
+    RCLCPP_ERROR(node_->get_logger(), "No waypoints to set");
+    return BT::NodeStatus::FAILURE;
+  }
+
   for (auto wp : wp_names_) {
     node_->declare_parameter("waypoints." + wp, std::vector<double>());
     std::vector<double> wp_pos;
     node_->get_parameter("waypoints." + wp, wp_pos);
-    geometry_msgs::msg::PoseStamped wp_pos_msg;
-    wp_pos_msg.header.frame_id = "map";
-    wp_pos_msg.pose.position.x = wp_pos[0];
-    wp_pos_msg.pose.position.y = wp_pos[1];
-    wp_pos_msg.pose.position.z = wp_pos[2];
-    config().blackboard->set(wp, wp_pos_msg);
+
+    geometry_msgs::msg::TransformStamped transformStamped;
+    // transformStamped.header.stamp = node_->now();
+    transformStamped.header.frame_id = "map";
+    transformStamped.child_frame_id = wp;
+    transformStamped.transform.translation.x = wp_pos[0];
+    transformStamped.transform.translation.y = wp_pos[1];
+    tf2::Quaternion q;
+    q.setRPY(0, 0, wp_pos[2]);
+    transformStamped.transform.rotation = tf2::toMsg(q);
+
+    tf_broadcaster.sendTransform(transformStamped);
   }
 
   RCLCPP_INFO(node_->get_logger(), "SetWp ticked");
@@ -47,15 +56,10 @@ SetWp::tick()
   return BT::NodeStatus::SUCCESS;
 }
 
-void
-SetWp::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "SetWp halted");
-}
+void SetWp::halt() {RCLCPP_INFO(node_->get_logger(), "SetWp halted");}
 
 }  // namespace configuration
 
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<configuration::SetWp>("SetWp");
 }

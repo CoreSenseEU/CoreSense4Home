@@ -12,17 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef BTSERVICENODE_HPP_
 #define BTSERVICENODE_HPP_
 
 #include <memory>
+#include <rclcpp/allocator/allocator_common.hpp>
+#include <rclcpp/executors.hpp>
 #include <string>
 
 #include "behaviortree_cpp_v3/action_node.h"
 #include "rclcpp/rclcpp.hpp"
-#include <rclcpp/executors.hpp>
-#include <rclcpp/allocator/allocator_common.hpp>
 
 namespace perception
 {
@@ -34,8 +33,7 @@ class BtServiceNode : public BT::ActionNodeBase
 {
 public:
   BtServiceNode(
-    const std::string & xml_tag_name,
-    const std::string & service_name,
+    const std::string & xml_tag_name, const std::string & service_name,
     const BT::NodeConfiguration & conf)
   : BT::ActionNodeBase(xml_tag_name, conf), service_name_(service_name)
   {
@@ -59,9 +57,7 @@ public:
 
   BtServiceNode() = delete;
 
-  virtual ~BtServiceNode()
-  {
-  }
+  virtual ~BtServiceNode() {}
 
   // Create instance of an action server
   void createServiceClient(const std::string & service_name)
@@ -70,9 +66,7 @@ public:
     callback_group_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
     // Now that we have the ROS node to use, create the action client for this BT action
     service_client_ = node_->template create_client<ServiceT>(
-      service_name,
-      rmw_qos_profile_services_default,
-      callback_group_);
+      service_name, rmw_qos_profile_services_default, callback_group_);
 
     // Make sure the server is actually there before continuing
     RCLCPP_INFO(node_->get_logger(), "Waiting for \"%s\" service server", service_name.c_str());
@@ -85,32 +79,24 @@ public:
   {
     BT::PortsList basic = {
       BT::InputPort<std::string>("server_name", "Action server name"),
-      BT::InputPort<std::chrono::milliseconds>("server_timeout")
-    };
+      BT::InputPort<std::chrono::milliseconds>("server_timeout")};
     basic.insert(addition.begin(), addition.end());
 
     return basic;
   }
 
-  static BT::PortsList providedPorts()
-  {
-    return providedBasicPorts({});
-  }
+  static BT::PortsList providedPorts() {return providedBasicPorts({});}
 
   // Derived classes can override any of the following methods to hook into the
   // processing for the action: on_tick, on_wait_for_result, and on_success
 
   // Could do dynamic checks, such as getting updates to values on the blackboard
-  virtual void on_tick()
-  {
-  }
+  virtual void on_tick() {}
 
   /** Callback invoked when the response is received by the server.
    * It is up to the user to define if this returns SUCCESS or FAILURE.
    */
-  virtual void on_result()
-  {
-  }
+  virtual void on_result() {}
 
   // The main override required by a BT action
   BT::NodeStatus tick() override
@@ -126,7 +112,6 @@ public:
       on_tick();
 
       on_new_request_received();
-
     }
 
     // The following code corresponds to the "RUNNING" loop
@@ -154,10 +139,7 @@ public:
 
   // The other (optional) override required by a BT action. In this case, we
   // make sure to cancel the ROS2 action if it is still running.
-  void halt() override
-  {
-    setStatus(BT::NodeStatus::IDLE);
-  }
+  void halt() override {setStatus(BT::NodeStatus::IDLE);}
 
 protected:
   void on_new_request_received()
@@ -173,8 +155,7 @@ protected:
     auto future_request = service_client_->async_send_request(request_).share();
 
     auto ret = callback_group_executor_.spin_until_future_complete(
-      future_request, std::chrono::milliseconds(
-        5000));
+      future_request, std::chrono::milliseconds(5000));
 
     if (ret != rclcpp::FutureReturnCode::SUCCESS) {
       throw std::runtime_error("send_request failed");
@@ -183,8 +164,6 @@ protected:
       result_ = *future_request.get();
       future_request = {};
     }
-
-
   }
 
   void increment_recovery_count()
@@ -214,7 +193,6 @@ protected:
   // new action goal is sent or canceled
   std::chrono::milliseconds server_timeout_;
 };
-
 
 }  // namespace perception
 

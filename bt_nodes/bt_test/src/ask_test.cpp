@@ -1,17 +1,15 @@
+#include "ament_index_cpp/get_package_share_directory.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include "behaviortree_cpp_v3/utils/shared_library.h"
-
-#include "ament_index_cpp/get_package_share_directory.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node =  std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     "ask_test_node");
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
@@ -40,9 +38,8 @@ int main(int argc, char * argv[])
     rclcpp::spin_some(node->get_node_base_interface());
 
     status = tree.rootNode()->executeTick();
-    finish = (status == BT::NodeStatus::SUCCESS) ||
-      (status == BT::NodeStatus::FAILURE);
-    
+    finish = (status == BT::NodeStatus::SUCCESS) || (status == BT::NodeStatus::FAILURE);
+
     rate.sleep();
   }
   std::cout << "Ask Test Finished with status: " << status << std::endl;

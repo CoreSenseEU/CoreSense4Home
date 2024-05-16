@@ -56,7 +56,7 @@ private:
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
   double yaw_limit_{1.3};
   double pitch_limit_{0.185};
-  double pitch_{0.05};
+  double pitch_{0.92};
   std::vector<double> yaw_positions_{0.0, 
                                   0.7,
                                  0.7, 

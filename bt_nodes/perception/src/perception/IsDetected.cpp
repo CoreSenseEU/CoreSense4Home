@@ -84,10 +84,10 @@ BT::NodeStatus IsDetected::tick()
         return a.center3d.position.z < b.center3d.position.z;
       });
   }
-  auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
-    "/object_detected", 10);
+  // auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
+  //   "/object_detected", 10);
 
-  pub->publish(detections[0].image);
+  // pub->publish(detections[0].image);
 
   setOutput("best_detection", detections[0].class_name);
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");

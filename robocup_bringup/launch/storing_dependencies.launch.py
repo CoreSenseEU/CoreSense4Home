@@ -57,7 +57,7 @@ def generate_launch_description():
             os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
         ),
         launch_arguments={
-            'model': 'yolov8n.pt',
+            'model': '/home/juan/workspaces/robocup/src/CoreSense4Home/robocup_bringup/params/yolo_groceries.pt',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',
@@ -87,7 +87,7 @@ def generate_launch_description():
     ld.add_action(dialog)
     ld.add_action(attention)
     ld.add_action(perception)
-    # ld.add_action(move_group)
-    # ld.add_action(manipulation_server)
+    ld.add_action(move_group)
+    ld.add_action(manipulation_server)
 
     return ld

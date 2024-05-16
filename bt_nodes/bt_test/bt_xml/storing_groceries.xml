@@ -3,21 +3,18 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <!-- <Action ID="SetWp"/>
-            <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>
-            
+            <Action ID="SetWp"/>
+            <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>  
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
             </RetryUntilSuccessful>
-            -->
-            <!-- <Action ID="MoveTo" distance_tolerance="1" tf_frame="table"/> -->
-            <Repeat num_cycles="15">
-                <Sequence>
-                    
+            <Action ID="MoveTo" distance_tolerance="1" tf_frame="table"/>
+            <Repeat num_cycles="5">
+                <Sequence>                    
                     <RetryUntilSuccessful num_attempts="-1">
                     <ReactiveFallback>
                             <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="" max_depth="5" max_entities="1" order="depth"/>
-                        <Action ID="Pan" period="10.0" range="30" pitch_angle="-10.5"/>
+                            <Action ID="Pan" period="20.0" range="10" pitch_angle="-15.5"/>
                         </ReactiveFallback>
                     </RetryUntilSuccessful>
                     <RetryUntilSuccessful num_attempts="-1">
@@ -29,10 +26,44 @@
                                                    max_entities="1"
                                                    order="depth"
                                                    best_detection="{best_detection}"/>
+                        <Action ID="ExtractObjectsFromScene" detected_objects="{detected_objects}" objects_count="{objects_count}"/>
+                        <Action ID="GenerateTextFromObjects" detected_objects="{detected_objects}" output_text="{out_msg}" selected_object="{selected_object}" />
                     </RetryUntilSuccessful>
-                    <Action ID="Speak" say_text="I am detecting " param="{best_detection}"/>
-                    <Action ID="Speak" say_text="You can see it at my chest screen "/>
-                    <Action ID="Speak" say_text="Can you please put it on the cabinet?"/>
+                    <Action ID="Speak" say_text="I am detecting a " param="{out_msg}"/>
+                    <Action ID="Speak" say_text="Trying to pick it from the table "/>
+                    <RetryUntilSuccessful num_attempts="-1">
+                        <Action ID="ExtractCollisionScene" selected_object="{selected_object}"/>
+                    </RetryUntilSuccessful>
+                    <Action ID="PickObject" object_to_pick="{selected_object}"/>
+                    <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
+                    <!-- MoveToPredefined (inspect) which is lift the torso and move the head a little bit down -->
+                    <RetryUntilSuccessful num_attempts="-1">
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame"
+                                                   confidence="0.6"
+                                                   frames="{frames}"
+                                                   interest=""
+                                                   max_depth="5"
+                                                   max_entities="1"
+                                                   order="depth"
+                                                   best_detection="{best_detection}"/>
+                    </RetryUntilSuccessful>
+                    <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{out_msg}" selected_class_text="{selected_class}"/>
+                    <RetryUntilSuccessful num_attempts="-1">
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame"
+                                                   confidence="0.6"
+                                                   frames="{frames}"
+                                                   interest="{selected_class}"
+                                                   max_depth="5"
+                                                   max_entities="1"
+                                                   order="depth"
+                                                   best_detection="{best_detection}"/>
+                    </RetryUntilSuccessful>
+                    <Action ID="ExtractObjectsFromScene" interest_class="{selected_class}" 
+                                                         detected_objects="{detected_objects}"
+                                                         objects_count="{objects_count}"/>
+                    <Action ID="ExtractCabinetPlacePose" selected_object="{selected_object}" place_pose="{pose}"/>
+                    <Action ID="Place" object_to_place="{selected_object}" place_pose="{pose}"/>
+                    <Action ID="Speak" say_text="Going back to the table to pick an object"/>
                 </Sequence>
             </Repeat>
         </Sequence>

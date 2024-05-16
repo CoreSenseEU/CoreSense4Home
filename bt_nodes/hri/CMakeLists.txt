@@ -50,6 +50,9 @@ list(APPEND plugin_libs generate_text_from_objects_bt_node)
 add_library(store_detection_bt_node SHARED src/hri/dialog/store_detection.cpp)
 list(APPEND plugin_libs store_detection_bt_node)
 
+add_library(choose_from_classes_bt_node SHARED src/hri/dialog/choose_from_classes.cpp)
+list(APPEND plugin_libs choose_from_classes_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

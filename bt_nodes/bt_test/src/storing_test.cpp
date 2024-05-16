@@ -43,6 +43,9 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("pan_bt_node"));
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_door_open_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("move_to_predefined_bt_node"));
+
 
 
 

@@ -39,6 +39,9 @@ list(APPEND plugin_libs move_to_predefined_bt_node)
 add_library(point_at_bt_node SHARED src/manipulation/point_at.cpp)
 list(APPEND plugin_libs point_at_bt_node)
 
+add_library(place_bt_node SHARED src/manipulation/place_object.cpp)
+list(APPEND plugin_libs place_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

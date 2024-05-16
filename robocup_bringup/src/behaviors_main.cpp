@@ -21,7 +21,6 @@
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
-#include "geometry_msgs/msg/pose_stamped.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
@@ -32,19 +31,30 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    "lookat_test");
+    "behaviors_main");
+
+  std::vector<std::string> plugins;
+  std::string bt_xml_file;
+  node->declare_parameter("plugins", plugins);
+  node->declare_parameter("bt_xml_file", bt_xml_file);
+  node->get_parameter("plugins", plugins);
+  node->get_parameter("bt_xml_file", bt_xml_file);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
+  for (const auto & plugin : plugins) {
+    RCLCPP_INFO(node->get_logger(), "Loading BT Node: [%s]", plugin.c_str());
+    factory.registerFromPlugin(loader.getOSName(plugin));
+  }
 
-  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/lookat_test.xml";
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("robocup_bringup");
+  std::string xml_file = pkgpath + "/bt_xml/" + bt_xml_file;
+
+  RCLCPP_INFO(node->get_logger(), "Loading BT: [%s]", xml_file.c_str());
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
@@ -52,13 +62,13 @@ int main(int argc, char * argv[])
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
-  rclcpp::Rate rate(30);
+  rclcpp::Rate rate(10);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {
     rclcpp::spin_some(node->get_node_base_interface());
 
-    finish = tree.rootNode()->executeTick() != BT::NodeStatus::SUCCESS;
+    finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
 
     rate.sleep();
   }

@@ -40,7 +40,7 @@ def generate_launch_description():
     carry_config = os.path.join(
         package_dir,
         'params',
-        'carry_my_luggage.yaml'
+        'ask_test.yaml'
         )
 
     # Configuration Variables
@@ -147,7 +147,7 @@ def generate_launch_description():
         parameters=[carry_config],
         output='screen',
         namespace='',
-        prefix=['xterm -e gdb -ex run --args'],
+        # prefix=['xterm -e gdb -ex run --args'],
     )
 
     # wait_for_navigation = RegisterEventHandler(

@@ -34,7 +34,8 @@
 namespace dialog
 {
 
-class Speak : public dialog::BtActionNode<audio_common_msgs::action::TTS>
+class Speak : public dialog::BtActionNode<
+    audio_common_msgs::action::TTS, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit Speak(
@@ -53,8 +54,6 @@ public:
   }
 
 private:
-  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 

@@ -26,7 +26,9 @@ Pan::Pan(
   const std::string & xml_tag_name,
   const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: motion::BtActionNode<control_msgs::action::FollowJointTrajectory>(xml_tag_name, action_name, conf)
+: motion::BtActionNode<
+    control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
 }
@@ -51,7 +53,7 @@ Pan::on_tick()
     // point.time_from_start = rclcpp::Duration::from_seconds(5.0);
 
     // goal_.trajectory.points.push_back(point);
-     
+
   }
 }
 
@@ -78,7 +80,7 @@ Pan::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name,
-    const BT::NodeConfiguration & config) {
+      const BT::NodeConfiguration & config) {
       return std::make_unique<head::Pan>(
         name, "/head_controller/follow_joint_trajectory", config);
     };

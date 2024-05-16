@@ -27,9 +27,14 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include <string>
 
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
+#include "motion/navigation/utils.hpp"
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"
@@ -45,8 +50,7 @@ class MoveTo
 {
 public:
   explicit MoveTo(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -57,21 +61,22 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::InputPort<double>("distance_tolerance"),
-        BT::InputPort<std::string>("tf_frame"),
-        BT::InputPort<bool>("will_finish")
-      });
+      {BT::InputPort<double>("distance_tolerance"), BT::InputPort<std::string>("tf_frame"),
+        BT::InputPort<bool>("will_finish"),
+        BT::InputPort<bool>("is_truncated")});
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   double distance_tolerance_;
-  std::string tf_frame_;
+  std::string tf_frame_, xml_path_;
   geometry_msgs::msg::PoseStamped pose_;
   tf2::BufferCore tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
-  bool will_finish_;
+  bool will_finish_{true};
+  bool is_truncated_{false};
+  rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
+    set_truncate_distance_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

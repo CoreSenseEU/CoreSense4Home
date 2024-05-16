@@ -19,7 +19,10 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(perception_system REQUIRED)
-find_package(perception_system_interfaces REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(sensor_msgs REQUIRED)
+# find_package(backward_ros REQUIRED)
+
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -38,7 +41,9 @@ set(dependencies
   rclcpp_action
   behaviortree_cpp_v3
   perception_system
-  perception_system_interfaces
+  OpenCV
+  sensor_msgs
+  # backward_ros
 )
 
 include_directories(include)
@@ -58,8 +63,26 @@ list(APPEND plugin_libs extract_collision_scene_bt_node)
 add_library(is_entity_moving_bt_node SHARED src/perception/is_entity_moving.cpp)
 list(APPEND plugin_libs is_entity_moving_bt_node)
 
+add_library(is_moving_bt_node SHARED src/perception/is_moving.cpp)
+list(APPEND plugin_libs is_moving_bt_node)
+
+add_library(filter_entity_bt_node SHARED src/perception/filter_entity.cpp)
+list(APPEND plugin_libs filter_entity_bt_node)
+
 add_library(is_pointing_bt_node SHARED src/perception/is_pointing.cpp)
 list(APPEND plugin_libs is_pointing_bt_node)
+
+add_library(extract_entity_color_bt_node SHARED src/perception/extract_entity_color.cpp)
+list(APPEND plugin_libs extract_entity_color_bt_node)
+
+add_library(is_sittable_bt_node SHARED src/perception/is_sittable.cpp)
+list(APPEND plugin_libs is_sittable_bt_node)
+
+add_library(is_door_open_bt_node SHARED src/perception/IsDoorOpen.cpp)
+list(APPEND plugin_libs is_door_open_bt_node)
+
+add_library(extract_cabinet_place_pose_bt_node SHARED src/perception/extract_cabinet_place_pose.cpp)
+list(APPEND plugin_libs extract_cabinet_place_pose_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
@@ -80,6 +103,7 @@ DESTINATION include/
 
 install(PROGRAMS
   script/detection_test.py
+  script/attention_test.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

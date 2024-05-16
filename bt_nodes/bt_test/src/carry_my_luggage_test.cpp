@@ -12,19 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
 #include <memory>
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-#include "behaviortree_cpp_v3/utils/shared_library.h"
-#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#include <string>
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
-
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
 
 int main(int argc, char * argv[])
 {
@@ -42,13 +39,18 @@ int main(int argc, char * argv[])
   factory.registerFromPlugin(loader.getOSName("init_carry_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_pointing_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("extract_entity_color_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
   factory.registerFromPlugin(loader.getOSName("move_to_predefined_bt_node"));
   factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
   factory.registerFromPlugin(loader.getOSName("is_entity_moving_bt_node"));
   factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
-
+  factory.registerFromPlugin(loader.getOSName("filter_entity_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("is_moving_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("follow_entity_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("goal_publisher_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("configure_navigate_back_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/carry_my_luggage.xml";
@@ -59,10 +61,7 @@ int main(int argc, char * argv[])
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
 
-  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
-
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(30);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {

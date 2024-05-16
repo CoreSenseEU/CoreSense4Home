@@ -3,63 +3,114 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <Action ID="InitCarry"/>
+            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage, please point to the correct bag"/>
+
+            <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
             <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>
-                    <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="3" max_entities="1" order="color"/>
-                    <Condition ID="IsPointing" bag_frame="{bag_tf}" cam_frame="head_front_camera_link_color_optical_frame"/>
+                    <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="5" max_entities="1" order="depth"/>
+                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                    <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{person_id}"/>
+                    <Condition ID="IsPointing" bag_frame="{bag_tf}" person_id="{person_id}" cam_frame="head_front_camera_link_color_optical_frame"/>
                 </Sequence>
-            </RetryUntilSuccessful>
+        </RetryUntilSuccessful>
+        <RetryUntilSuccessful num_attempts="-1">
+            <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.2" tf_frame="{bag_tf}"/>
+        </RetryUntilSuccessful>
+        <Action ID="MoveToPredefined" pose="offer" group_name="arm_torso"/>
+        <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
+        <Delay delay_msec="140">
+            <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+        </Delay>
+        <ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="{bag_tf}" will_finish="true"/>
+                <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="5" max_entities="1" order="depth"/>
             </RetryUntilSuccessful>
-            <Action ID="MoveToPredefined" pose="offer"/>
-            <ReactiveSequence>  
-                <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
-                <Action ID="Speak" param="" say_text="please put the bag in my gripper"/>
-            </ReactiveSequence>
-            <Repeat num_cycles="5">
-                <Action ID="LookAt" tf_frame="gripper_link" tf_frames=""/>
-            </Repeat>
-            <Delay delay_msec="5000">
-                <Action ID="MoveToPredefined" pose="home"/>
-            </Delay>
-            <ReactiveSequence>
-                <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
-                <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
-            </ReactiveSequence>
+            <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+            <Action ID="LookAt" tf_frame="person_0_filtered" />
+        </ReactiveSequence>
+        <!-- <Repeat num_cycles="5">
+            <Action ID="LookAt" tf_frame="gripper_link" />
+        </Repeat> -->
+        <Delay delay_msec="140">
+            <Action ID="MoveToPredefined" pose="close" group_name="gripper"/>
+        </Delay>
+        <Delay delay_msec="300">
+            <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+        </Delay>
+        <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
+        <ReactiveSequence>
+            <Action ID="LookAt" tf_frame="person_0_filtered" />
+        </ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
-                <Fallback>
+                <Sequence>
+                    <Fallback>
+                        <ReactiveSequence>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="6.7" max_entities="1" order="color"/>
+                            </RetryUntilSuccessful>
+                            <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                            <Action ID="LookAt" tf_frame="person_0_filtered"/>
+
+                            <Condition ID="IsEntityMoving" distance_tolerance="0.6" frame="person_0_filtered" check_time="9.0"/>
+                            <!-- <Condition ID="IsMoving" frame="person_0" position_buffer_dimension="50" threshold_time="4.0" velocity_tolerance="0.003"/> -->
+                            <Action ID="FollowEntity" camera_frame="head_front_camera_link_color_optical_frame"
+                            distance_tolerance="0.2"
+                            frame_to_follow="person_0_filtered"
+                            x_axis_max="{max_x}"
+                            x_axis_min="{min_x}"
+                            y_axis_max="{max_y}"
+                            y_axis_min="{min_y}"/>
+                        </ReactiveSequence>
+                        <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
+                    </Fallback>
                     <ReactiveSequence>
                         <RetryUntilSuccessful num_attempts="-1">
-                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" frames="" interest="person" max_depth="6" max_entities="1" order="color"/>
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="2.5" max_entities="1" order="color"/>
                         </RetryUntilSuccessful>
-                        <Action ID="LookAt" tf_frame="person_0"/>
-                        <Condition ID="IsEntityMoving" velocity_tolerance="0.12" frame="person_0" max_iterations="100"/>
-                        <Action ID="MoveTo" distance_tolerance="0.2" tf_frame="person_0" will_finish="false"/>
+                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                        <Action ID="LookAt" tf_frame="person_0_filtered"/>
+                        <ForceSuccess>
+                            <Action ID="GoalPublisher" 
+                            camera_frame="head_front_camera_link_color_optical_frame"
+                            distance_tolerance="0.8"
+                            frame_to_follow="person_0_filtered"/>  
+                        </ForceSuccess>
+                        <Action ID="DialogConfirmation"/>
                     </ReactiveSequence>
-                    <ForceFailure>
-                        <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
-                    </ForceFailure>
-                    <Action ID="DialogConfirmation"/>
-                </Fallback>
+                </Sequence>
             </RetryUntilSuccessful>
-            <Action ID="MoveToPredefined" pose="offer"/>
+            <Action ID="MoveToPredefined" pose="offer" group_name="arm_torso"/>
             <ReactiveSequence>
-                <Action ID="LookAt" tf_frame="person_0" tf_frames=""/>
+                <Action ID="LookAt" tf_frame="person_0"/>
                 <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
             </ReactiveSequence>
-            <Action ID="LookAt"  tf_frame="gripper_link"/>
-            <Action ID="MoveToPredefined" pose="home"/>
+            <Delay delay_msec="140">
+                <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+            </Delay>
+            <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>
             </Delay>
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="odom"/>
-        </Sequence>
+            <!-- <RetryUntilSuccessful num_attempts="-1">
+                <Action ID="ConfigureNavigateBack"/>
+            </RetryUntilSuccessful> -->
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/>
+        </Sequence> 
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
         <Action ID="DialogConfirmation"/>
+        <Action ID="FilterEntity">
+            <output_port name="filtered_frame"/>
+            <input_port name="frame"/>
+            <input_port default="0.25" name="lambda"/>
+        </Action>
+        <Action ID="FollowEntity">
+            <input_port default="head_front_camera_link_color_optical_frame" name="camera_frame"/>
+            <input_port name="distance_tolerance"/>
+            <input_port name="frame_to_follow"/>
+        </Action>
         <Action ID="InitCarry"/>
         <Condition ID="IsDetected">
             <input_port default="head_front_camera_link_color_optical_frame" name="cam_frame"/>
@@ -70,10 +121,11 @@
             <input_port default="1" name="max_entities"/>
             <input_port default="depth_nearest" name="order">[depth, color]</input_port>
         </Condition>
-        <Condition ID="IsEntityMoving">
-            <input_port name="check_time"/>
-            <input_port name="distance_tolerance"/>
-            <input_port name="frame"/>
+        <Condition ID="IsMoving">
+            <input_port default="person_0" name="frame"/>
+            <input_port default="45" name="position_buffer_dimension"/>
+            <input_port default="1.5" name="threshold_time"/>
+            <input_port default="0.2" name="velocity_tolerance"/>
         </Condition>
         <Condition ID="IsPointing">
             <output_port name="bag_frame"/>

@@ -57,7 +57,7 @@ void Speak::on_tick()
   getInput("param", param_);
 
   if (param_.length() > 0) {
-    goal_.text = text_ + " " + param_ + "?";
+    goal_.text = text_ + " " + param_;
   } else {
     goal_.text = text_;
   }
@@ -75,9 +75,9 @@ void Speak::on_tick()
 BT::NodeStatus Speak::on_success() {return BT::NodeStatus::SUCCESS;}
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<dialog::Speak>(name, "/say", config);
     };
 

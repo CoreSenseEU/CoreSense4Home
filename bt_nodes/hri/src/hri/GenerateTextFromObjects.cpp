@@ -21,22 +21,18 @@ namespace hri
 {
 
 GenerateTextFromObjects::GenerateTextFromObjects(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 }
 
-void
-GenerateTextFromObjects::halt()
+void GenerateTextFromObjects::halt()
 {
   RCLCPP_INFO(node_->get_logger(), "GenerateTextFromObjects halted");
 }
 
-
-BT::NodeStatus
-GenerateTextFromObjects::tick()
+BT::NodeStatus GenerateTextFromObjects::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "GenerateTextFromObjects ticked");
 
@@ -52,9 +48,9 @@ GenerateTextFromObjects::tick()
     return BT::NodeStatus::FAILURE;
   }
 
-  std::string question = "Do you want that I take the ";
-  question += detected_objects.at(selected_object_)->id.c_str();
-  question += "?";
+  std::string question; 
+  // id is a string like apple_0 or banana_0 so we need to remove everthing after the _
+  question += detected_objects.at(selected_object_)->id.substr(0, detected_objects.at(selected_object_)->id.find("_"));
   setOutput("output_text", question);
 
   RCLCPP_INFO(
@@ -65,8 +61,7 @@ GenerateTextFromObjects::tick()
   return BT::NodeStatus::SUCCESS;
 }
 
-}  // namespace perception
-
+}  // namespace hri
 
 BT_REGISTER_NODES(factory)
 {

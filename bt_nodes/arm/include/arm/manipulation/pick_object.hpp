@@ -18,12 +18,11 @@
 #include <algorithm>
 #include <string>
 
-#include "manipulation_interfaces/action/pick.hpp"
-#include "moveit_msgs/msg/collision_object.hpp"
+#include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "arm/manipulation/BTActionNode.hpp"
-
+#include "manipulation_interfaces/action/pick.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
@@ -35,8 +34,7 @@ class PickObject : public manipulation::BtActionNode<
 {
 public:
   explicit PickObject(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -45,11 +43,10 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>(
-          "object_to_pick")});
+      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("object_to_pick")});
   }
 };
 
-} // namespace manipulation
+}  // namespace manipulation
 
-#endif // arm_MANIPULATION__PICK_OBJECT_HPP_
+#endif  // arm_MANIPULATION__PICK_OBJECT_HPP_

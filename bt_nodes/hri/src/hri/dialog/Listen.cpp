@@ -21,6 +21,7 @@
 #include "whisper_msgs/action/stt.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
 {
@@ -39,7 +40,6 @@ Listen::Listen(
 
 void Listen::on_tick()
 {
-
   RCLCPP_DEBUG(node_->get_logger(), "Listen ticked");
   std::string text_;
   goal_ = whisper_msgs::action::STT::Goal();
@@ -62,11 +62,11 @@ BT::NodeStatus Listen::on_success()
   return BT::NodeStatus::SUCCESS;
 }
 
-} // namespace dialog
+}  // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
     };
 

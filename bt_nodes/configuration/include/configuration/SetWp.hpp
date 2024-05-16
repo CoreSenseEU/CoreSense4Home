@@ -16,13 +16,14 @@
 #define CONFIGURATION__SET_WP_HPP_
 
 #include <string>
+
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
-#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 namespace configuration
 {
@@ -30,17 +31,12 @@ namespace configuration
 class SetWp : public BT::ActionNodeBase
 {
 public:
-  explicit SetWp(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit SetWp(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts()
-  {
-    return BT::PortsList({});
-  }
+  static BT::PortsList providedPorts() {return BT::PortsList({});}
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;

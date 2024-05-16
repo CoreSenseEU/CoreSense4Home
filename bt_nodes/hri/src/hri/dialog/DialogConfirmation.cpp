@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "hri/dialog/DialogConfirmation.hpp"
+
 #include <string>
 #include <utility>
 
@@ -20,6 +22,7 @@
 #include "whisper_msgs/action/stt.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
 {
@@ -28,8 +31,7 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 DialogConfirmation::DialogConfirmation(
-  const std::string & xml_tag_name,
-  const std::string & action_name,
+  const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : dialog::BtActionNode<whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
@@ -39,7 +41,6 @@ DialogConfirmation::DialogConfirmation(
 
 void DialogConfirmation::on_tick()
 {
-
   RCLCPP_DEBUG(node_->get_logger(), "DialogConfirmation ticked");
   std::string text_;
   // getInput("prompt", text_);
@@ -62,8 +63,7 @@ BT::NodeStatus DialogConfirmation::on_success()
   }
 
   std::transform(
-    result_.result->text.begin(), result_.result->text.end(),
-    result_.result->text.begin(),
+    result_.result->text.begin(), result_.result->text.end(), result_.result->text.begin(),
     [](unsigned char c) {return std::tolower(c);});
   if (result_.result->text.find("yes") != std::string::npos) {
     return BT::NodeStatus::SUCCESS;
@@ -72,17 +72,13 @@ BT::NodeStatus DialogConfirmation::on_success()
   }
 }
 
-} // namespace dialog
+}  // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::DialogConfirmation>(
-        name, "/whisper/listen",
-        config);
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::DialogConfirmation>(name, "/whisper/listen", config);
     };
 
-  factory.registerBuilder<dialog::DialogConfirmation>(
-    "DialogConfirmation",
-    builder);
+  factory.registerBuilder<dialog::DialogConfirmation>("DialogConfirmation", builder);
 }

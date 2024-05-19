@@ -31,18 +31,26 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 DialogConfirmation::DialogConfirmation(
-  const std::string & xml_tag_name, const std::string & action_name,
+  const std::string & xml_tag_name,
   const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
 {
-  publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+  config().blackboard->get("node", node_);
+  publisher_start_ =
+    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+  client_ = rclcpp_action::create_client<whisper_msgs::action::STT>(
+    node_, "whisper/listen");
 }
 
-void DialogConfirmation::on_tick()
+void DialogConfirmation::halt()
+{
+  RCLCPP_INFO(node_->get_logger(), "DialogConfirmation halted");
+}
+
+BT::NodeStatus DialogConfirmation::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "DialogConfirmation ticked");
-  std::string text_;
+  /* std::string text_;
   // getInput("prompt", text_);
   goal_ = whisper_msgs::action::STT::Goal();
   auto msg_dialog_action = std_msgs::msg::Int8();
@@ -51,34 +59,82 @@ void DialogConfirmation::on_tick()
 
   publisher_start_->publish(msg_dialog_action);
 
-  // goal_.text = text_;
+  // goal_.text = text_; */
+  if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
+    return on_idle();
+  }
+
+  if (text_.size() == 0) {
+    RCLCPP_ERROR(node_->get_logger(), "whisper not listen anything");
+    return BT::NodeStatus::FAILURE;
+  }
+
+  fprintf(stderr, "%s\n", text_.c_str());
+
+  std::transform(
+    text_.begin(), text_.end(), text_.begin(),
+    [](unsigned char c) {return std::tolower(c);});
+  if (text_.find("yes") != std::string::npos) {
+    return BT::NodeStatus::SUCCESS;
+  } else {
+    return BT::NodeStatus::FAILURE;
+  }
+
+  return BT::NodeStatus::RUNNING;
 }
 
-BT::NodeStatus DialogConfirmation::on_success()
+BT::NodeStatus DialogConfirmation::on_idle()
 {
+
+  auto goal = whisper_msgs::action::STT::Goal();
+  auto msg_dialog_action = std_msgs::msg::Int8();
+
+  RCLCPP_INFO(node_->get_logger(), "Sending goal");
+
+  msg_dialog_action.data = 0;
+  publisher_start_->publish(msg_dialog_action);
+
+  auto future_goal_handle = client_->async_send_goal(goal);
+  if (rclcpp::spin_until_future_complete(
+      node_->get_node_base_interface(),
+      future_goal_handle) ==
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
+    is_goal_sent_ = true;
+    auto result = *future_goal_handle.get();
+    text_ = result.result->text;
+
+    return BT::NodeStatus::RUNNING;
+
+  } else {
+    RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
+    is_goal_sent_ = false;
+    return BT::NodeStatus::RUNNING;
+  }
+
+  return BT::NodeStatus::RUNNING;
+}
+
+/* BT::NodeStatus DialogConfirmation::on_success() {
   fprintf(stderr, "%s\n", result_.result->text.c_str());
 
   if (result_.result->text.size() == 0) {
     return BT::NodeStatus::FAILURE;
   }
 
-  std::transform(
-    result_.result->text.begin(), result_.result->text.end(), result_.result->text.begin(),
-    [](unsigned char c) {return std::tolower(c);});
+  std::transform(result_.result->text.begin(), result_.result->text.end(),
+                 result_.result->text.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
   if (result_.result->text.find("yes") != std::string::npos) {
     return BT::NodeStatus::SUCCESS;
   } else {
     return BT::NodeStatus::FAILURE;
   }
-}
+} */
 
-}  // namespace dialog
+} // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory)
-{
-  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::DialogConfirmation>(name, "/whisper/listen", config);
-    };
+BT_REGISTER_NODES(factory) {
 
-  factory.registerBuilder<dialog::DialogConfirmation>("DialogConfirmation", builder);
+  factory.registerBuilder<dialog::DialogConfirmation>("DialogConfirmation");
 }

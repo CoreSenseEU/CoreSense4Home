@@ -24,6 +24,7 @@
 #include "hri/dialog/BTActionNode.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 #include "std_msgs/msg/int8.hpp"
@@ -32,16 +33,15 @@
 namespace dialog
 {
 
-class Listen : public dialog::BtActionNode<
-    whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class Listen : public BT::ActionNodeBase
 {
 public:
   explicit Listen(
-    const std::string & xml_tag_name, const std::string & action_name,
+    const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
+  void halt();
+  BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
@@ -49,7 +49,12 @@ public:
   }
 
 private:
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  BT::NodeStatus on_idle();
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  std::shared_ptr<rclcpp_action::Client<whisper_msgs::action::STT>> client_;
+  bool is_goal_sent_ = false;
+  std::string text_ = "";
 };
 
 }  // namespace dialog

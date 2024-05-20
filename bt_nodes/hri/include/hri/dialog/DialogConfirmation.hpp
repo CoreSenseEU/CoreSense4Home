@@ -24,10 +24,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 #include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace dialog
 {
@@ -46,10 +46,10 @@ public:
 
 private:
   BT::NodeStatus on_idle();
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
   std::shared_ptr<rclcpp_action::Client<whisper_msgs::action::STT>> client_;
-  std::string text_;
+  std::string text_ = "";
   bool is_goal_sent_ = false;
 };
 

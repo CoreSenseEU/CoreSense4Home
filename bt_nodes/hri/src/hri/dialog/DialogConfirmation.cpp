@@ -38,6 +38,7 @@ DialogConfirmation::DialogConfirmation(
   config().blackboard->get("node", node_);
   publisher_start_ =
     node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+  publisher_start_->on_activate();
   client_ = rclcpp_action::create_client<whisper_msgs::action::STT>(
     node_, "whisper/listen");
 }
@@ -60,6 +61,10 @@ BT::NodeStatus DialogConfirmation::tick()
   publisher_start_->publish(msg_dialog_action);
 
   // goal_.text = text_; */
+  auto msg_dialog_action = std_msgs::msg::Int8();
+  msg_dialog_action.data = 0;
+  publisher_start_->publish(msg_dialog_action);
+
   if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
     return on_idle();
   }
@@ -79,7 +84,7 @@ BT::NodeStatus DialogConfirmation::tick()
   } else {
     return BT::NodeStatus::FAILURE;
   }
-
+  
   return BT::NodeStatus::RUNNING;
 }
 
@@ -87,12 +92,8 @@ BT::NodeStatus DialogConfirmation::on_idle()
 {
 
   auto goal = whisper_msgs::action::STT::Goal();
-  auto msg_dialog_action = std_msgs::msg::Int8();
 
   RCLCPP_INFO(node_->get_logger(), "Sending goal");
-
-  msg_dialog_action.data = 0;
-  publisher_start_->publish(msg_dialog_action);
 
   auto future_goal_handle = client_->async_send_goal(goal);
   if (rclcpp::spin_until_future_complete(

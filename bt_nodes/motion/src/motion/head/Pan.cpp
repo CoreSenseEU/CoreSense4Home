@@ -27,22 +27,31 @@ Pan::Pan(
   phase_(0.0)
 {
   config().blackboard->get("node", node_);
-  joint_range_ = getInput<double>("range").value() * M_PI / 180.0;
-  period_ = getInput<double>("period").value();
+  // joint_range_ = 20.0 * M_PI / 180.0;
+  getInput("range", joint_range_);
+  joint_range_ = joint_range_ * M_PI / 180.0;
+  getInput("period", period_);
+  getInput("pitch_angle", pitch_angle_);
+  pitch_angle_= pitch_angle_ * M_PI / 180.0;
 
-  if (!joint_range_) {
-    // throw BT::RuntimeError("Missing required input [range]: ", joint_range_);
-    RCLCPP_WARN(
-      node_->get_logger(), "Missing required input [range]. Using default value 45.0 degrees");
-    joint_range_.value() = 45.0 * M_PI / 180.0;
-  }
-  if (!period_) {
-    // throw BT::RuntimeError("Missing required input [period]: ", period_);
-    RCLCPP_WARN(
-      node_->get_logger(), "Missing required input [period]. Using default value 5.0 seconds");
-    period_.value() = 5.0;
-  }
-
+  // if (!joint_range_) {
+  //   // throw BT::RuntimeError("Missing required input [range]: ", joint_range_);
+  //   RCLCPP_WARN(
+  //     node_->get_logger(), "Missing required input [range]. Using default value 45.0 degrees");
+  //   joint_range_.value() = 45.0 * M_PI / 180.0;
+  // }
+  // if (!period_) {
+  //   // throw BT::RuntimeError("Missing required input [period]: ", period_);
+  //   RCLCPP_WARN(
+  //     node_->get_logger(), "Missing required input [period]. Using default value 5.0 seconds");
+  //   period_.value() = 5.0;
+  // }
+  // if (!pitch_angle_) {
+  //   // throw BT::RuntimeError("Missing required input [pitch_angle]: ", pitch_angle_);
+  //   RCLCPP_WARN(
+  //     node_->get_logger(), "Missing required input [pitch_angle]. Using default value 0.0 degrees");
+  //   pitch_angle_.value() = 0.0;
+  // }
   joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
     "/head_controller/joint_trajectory", 100);
   joint_cmd_pub_->on_activate();
@@ -63,6 +72,7 @@ void
 Pan::halt()
 {
   joint_cmd_pub_->on_deactivate();
+  node_->add_activation("attention_server");
 }
 
 double
@@ -79,22 +89,22 @@ Pan::tick()
   if (status() == BT::NodeStatus::IDLE) {
     node_->remove_activation("attention_server");
     start_time_ = node_->now();
-    phase_ = asin(phase_ / joint_range_.value());
+    phase_ = asin(phase_ / joint_range_);
     joint_state_sub_ = nullptr;
   }
 
   trajectory_msgs::msg::JointTrajectory command_msg;
   auto elapsed = node_->now() - start_time_;
 
-  double yaw = get_joint_yaw(period_.value(), joint_range_.value(), elapsed.seconds(), phase_);
+  double yaw = get_joint_yaw(period_, joint_range_, elapsed.seconds(), phase_);
 
   command_msg.joint_names = std::vector<std::string>{"head_1_joint", "head_2_joint"}; // TODO: remove hardcoded joint names (TIAGo specific)
   command_msg.points.resize(1);
   command_msg.points[0].positions.resize(2);
   command_msg.points[0].velocities.resize(2);
   command_msg.points[0].accelerations.resize(2);
-  command_msg.points[0].positions[0] = yaw;
-  command_msg.points[0].positions[1] = 0.0;
+  command_msg.points[0].positions[0] = std::clamp(yaw, -yaw_limit_, yaw_limit_);
+  command_msg.points[0].positions[1] = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
   command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.00);
   joint_cmd_pub_->publish(command_msg);
 

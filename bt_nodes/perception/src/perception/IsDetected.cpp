@@ -20,6 +20,7 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "perception_system/PerceptionUtils.hpp"
+#include "sensor_msgs/msg/image.hpp"
 
 namespace perception
 {
@@ -84,7 +85,13 @@ BT::NodeStatus IsDetected::tick()
         return a.center3d.position.z < b.center3d.position.z;
       });
   }
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
+  // auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
+  //   "/object_detected", 10);
+
+  // pub->publish(detections[0].image);
+
+  setOutput("best_detection", detections[0].class_name);
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Max Depth: %f", max_depth_);

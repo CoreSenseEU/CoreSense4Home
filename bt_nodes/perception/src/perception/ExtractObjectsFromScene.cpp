@@ -52,6 +52,8 @@ void ExtractObjectsFromScene::detection_callback_(yolov8_msgs::msg::DetectionArr
 BT::NodeStatus ExtractObjectsFromScene::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "ExtractObjectsFromScene ticked");
+  getInput("interest_class", interest_class_);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
   if (last_detected_objs_ == nullptr) {
     RCLCPP_INFO(node_->get_logger(), "No objects detection yet");
@@ -78,6 +80,9 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
   for (auto const & detected_object : last_detected_objs_->detections) {
     if (detected_object.bbox3d.size.x >= 0.12 && detected_object.bbox3d.size.y >= 0.12) {
       RCLCPP_INFO(node_->get_logger(), "Ignoring too large object");
+      continue;
+    } else if (detected_object.class_name != interest_class_ && interest_class_ != "") {
+      RCLCPP_INFO(node_->get_logger(), "Ignoring object of class %s", detected_object.class_name.c_str());
       continue;
     }
 

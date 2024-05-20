@@ -80,6 +80,7 @@ std::string dynamic_following_xml =
         <Sequence>
           <FollowPath path="{truncated_path}" controller_id="FollowPath"/>
           <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
+          <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
         </Sequence>
       </KeepRunningUntilFailure>
     </PipelineSequence>

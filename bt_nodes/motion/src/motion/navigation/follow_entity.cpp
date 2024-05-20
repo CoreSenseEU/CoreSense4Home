@@ -90,9 +90,9 @@ BT::NodeStatus FollowEntity::tick()
     return on_idle();
   }
 
-  if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
-    check_robot_inside_map();
-  }
+  // if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
+  //   check_robot_inside_map();
+  // }
 
   while (!tf_buffer_->canTransform(
       "base_footprint", frame_to_follow_,
@@ -184,26 +184,27 @@ BT::NodeStatus FollowEntity::on_idle()
   goal_pose_ = get_goal_pose(substracted_distance_, entity_transform_);
   auto goal = nav2_msgs::action::NavigateToPose::Goal();
 
-  xml_path_ = generate_xml_file(dynamic_following_xml, distance_tolerance_);
-  // auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
-  // RCLCPP_INFO(node_->get_logger(), "Setting truncate distance to %f", distance_tolerance_);
-  // request->distance = distance_tolerance_;
+  // xml_path_ = generate_xml_file(dynamic_following_xml, distance_tolerance_);
+  auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
+  RCLCPP_INFO(node_->get_logger(), "Setting truncate distance to %f", distance_tolerance_);
+  request->distance = distance_tolerance_;
+  request->xml_content = dynamic_following_xml;
 
-  // auto future_request = set_truncate_distance_client_->async_send_request(request).share();
-  // if (rclcpp::spin_until_future_complete(node_, future_request) ==
-  // rclcpp::FutureReturnCode::SUCCESS)
-  // {
-  //   RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
-  //   auto result = *future_request.get();
-  //   if (!result.success) {
-  //     RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED calling service");
-  //     return BT::NodeStatus::FAILURE;
-  //   }
-  //   xml_path_ = result.xml_path;
-  // } else {
-  //   RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED");
-  //   return BT::NodeStatus::FAILURE;
-  // }
+  auto future_request = set_truncate_distance_client_->async_send_request(request).share();
+  if (rclcpp::spin_until_future_complete(node_, future_request) ==
+  rclcpp::FutureReturnCode::SUCCESS)
+  {
+    RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
+    auto result = *future_request.get();
+    if (!result.success) {
+      RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED calling service");
+      return BT::NodeStatus::RUNNING;
+    }
+    xml_path_ = result.xml_path;
+  } else {
+    RCLCPP_INFO(node_->get_logger(), "Truncate distance FAILED");
+    return BT::NodeStatus::RUNNING;
+  }
 
   RCLCPP_INFO(node_->get_logger(), "Sending goal");
 

@@ -65,7 +65,8 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<double>("distance_tolerance"), BT::InputPort<std::string>("tf_frame"),
-        BT::InputPort<bool>("will_finish")});
+        BT::InputPort<bool>("will_finish"),
+        BT::InputPort<bool>("is_truncated")});
   }
 
 private:
@@ -75,7 +76,8 @@ private:
   geometry_msgs::msg::PoseStamped pose_;
   tf2::BufferCore tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
-  bool will_finish_ = true;
+  bool will_finish_{true};
+  bool is_truncated_{false};
   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
     set_truncate_distance_client_;
 

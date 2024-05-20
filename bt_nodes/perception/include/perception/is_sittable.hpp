@@ -73,7 +73,8 @@ private:
   bool is_place_to_sit_;
   std::string place_to_sit_;
   bool is_person_;
-  float threshold_{0.65};
+  float threshold_{0.3};
+  float max_distance_{15.5};
 
   bool 
   check_object_class(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);

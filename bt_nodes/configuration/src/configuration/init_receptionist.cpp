@@ -58,7 +58,7 @@ BT::NodeStatus InitReceptionist::tick()
       //   node_->declare_parameter("waypoints." + wp, std::vector<double>());
       //   std::vector<double> wp_pos;
       //   node_->get_parameter("waypoints." + wp, wp_pos);
-      //   geometry_msgs::msg::TransformStamped wp_transform_msg;
+      //   geometry_msgs::msg::TransformStamped transform_msg;
       //   tf2::Quaternion q;
 
       //   if (wp.find("entrance")!=std::string::npos) {
@@ -68,15 +68,26 @@ BT::NodeStatus InitReceptionist::tick()
       //   }        
         
       //   q.setRPY(0, 0, wp_pos[2]);
-      //   wp_transform_msg.header.frame_id = "map";
+      //   transform_msg.header.frame_id = "map";
 
-      //   wp_transform_msg.child_frame_id = wp;
-      //   wp_transform_msg.transform.translation.x = wp_pos[0];
-      //   wp_transform_msg.transform.translation.y = wp_pos[1];
-      //   wp_transform_msg.transform.rotation = tf2::toMsg(q);
-      //   tf_static_broadcaster_->sendTransform(wp_transform_msg);
+      //   transform_msg.child_frame_id = wp;
+      //   transform_msg.transform.translation.x = wp_pos[0];
+      //   transform_msg.transform.translation.y = wp_pos[1];
+      //   transform_msg.transform.rotation = tf2::toMsg(q);
+      //   tf_static_broadcaster_->sendTransform(transform_msg);
       //   rclcpp::spin_some(node_);
       // }
+
+      geometry_msgs::msg::TransformStamped transform_msg;
+
+      transform_msg.header.frame_id = "base_link";
+
+      transform_msg.child_frame_id = "attention_home";
+      transform_msg.transform.translation.x = 1.5;
+      transform_msg.transform.translation.z = 1.5;
+      tf_static_broadcaster_->sendTransform(transform_msg);
+      rclcpp::spin_some(node_->get_node_base_interface());
+
       std::string current_guest = "1";
       setOutput("cam_frame", cam_frame_);
       setOutput("manipulation_frame", manipulation_frame_);
@@ -89,6 +100,7 @@ BT::NodeStatus InitReceptionist::tick()
       setOutput("tf_listener", tf_listener_);
       setOutput("tf_broadcaster", tf_broadcaster_);
       setOutput("tf_static_broadcaster", tf_static_broadcaster_);
+      setOutput("attention_home", "attention_home");
 
       config().blackboard->set("tf_buffer", tf_buffer_);
       config().blackboard->set("tf_listener", tf_listener_);

@@ -57,7 +57,7 @@ BT::NodeStatus IsSittable::tick()
   auto person_detections = pl::getInstance(node_)->get_by_type("person");
   auto chair_detections = pl::getInstance(node_)->get_by_type("");
 
-  if (person_detections.empty() && chair_detections.empty()) {
+  if (chair_detections.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[IsSittable] no detections found");
     return BT::NodeStatus::FAILURE;
   } else if (!person_detections.empty()) {
@@ -70,6 +70,7 @@ BT::NodeStatus IsSittable::tick()
     is_place_to_sit_ = check_object_class(object, chair_detections);
     if (is_place_to_sit_) {
       place_to_sit_ = object;
+      chair_detection_ = retrieve_detection(place_to_sit_, chair_detections);
       break;
     }    
   }
@@ -97,6 +98,10 @@ BT::NodeStatus IsSittable::tick()
         tf2::Vector3(
           chair_detection_.center3d.position.x, chair_detection_.center3d.position.y,
           chair_detection_.center3d.position.z));
+    
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] cam_frame position %f %f %f", map2cam_msg.transform.translation.x, map2cam_msg.transform.translation.y, map2cam_msg.transform.translation.z);
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] chair center: %f %f %f", chair_detection_.center3d.position.x, chair_detection_.center3d.position.y, chair_detection_.center3d.position.z);
+
 
       camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
@@ -118,8 +123,6 @@ BT::NodeStatus IsSittable::tick()
   
   if (is_person_) {
     person_detection_ = retrieve_detection("person", person_detections);
-    chair_detection_ = retrieve_detection(place_to_sit_, chair_detections);
-
     if (check_free_space(person_detection_, chair_detection_)) {
       geometry_msgs::msg::TransformStamped map2cam_msg;
       try {
@@ -130,13 +133,14 @@ BT::NodeStatus IsSittable::tick()
         return BT::NodeStatus::FAILURE;
       }
 
-
       
       tf2::Transform camera2object;
       camera2object.setOrigin(
         tf2::Vector3(
           chair_detection_.center3d.position.x, chair_detection_.center3d.position.y,
           chair_detection_.center3d.position.z));
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] cam_frame position %f %f %f", map2cam_msg.transform.translation.x, map2cam_msg.transform.translation.y, map2cam_msg.transform.translation.z);
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] chair center: %f %f %f", chair_detection_.center3d.position.x, chair_detection_.center3d.position.y, chair_detection_.center3d.position.z);
 
       camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
@@ -168,7 +172,8 @@ bool IsSittable::check_object_class(const std::string & obj, const std::vector<p
 
   for (auto const & result : msg )
   {
-    if (result.class_name == obj && result.score >= threshold_) {
+    RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] object: %s, score: %f, Z: %f", result.class_name.c_str(), result.score, result.center3d.position.z);
+    if (result.class_name == obj && result.score >= threshold_ && result.center3d.position.z < 7.0) {
       ret = true;
     }
   }
@@ -184,17 +189,29 @@ bool IsSittable::check_free_space(const perception_system_interfaces::msg::Detec
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] chair bbox: %f %f", chair_detection.bbox3d.x, chair_detection.bbox3d.y);
   // position and bbx are in meters, convert to cm:
   
-  const auto rect1 = cv::Rect(person_detection.center3d.position.x*100 - person_detection.bbox3d.x*100/2, person_detection.center3d.position.y*100 - person_detection.bbox3d.y*100/2 , person_detection.bbox3d.x*100, person_detection.bbox3d.y*100);
-  const auto rect2 = cv::Rect(chair_detection.center3d.position.x*100 - chair_detection.bbox3d.x*100/2, chair_detection.center3d.position.y*100 - chair_detection.bbox3d.y*100/2 , chair_detection.bbox3d.x*100, chair_detection.bbox3d.y*100);
+  const auto r_person = cv::Rect(person_detection.center3d.position.x*100 - person_detection.bbox3d.x*100/2, person_detection.center3d.position.y*100 - person_detection.bbox3d.y*100/2 , person_detection.bbox3d.x*100, person_detection.bbox3d.y*100);
+  const auto r_chair = cv::Rect(chair_detection.center3d.position.x*100 - chair_detection.bbox3d.x*100/2, chair_detection.center3d.position.y*100 - chair_detection.bbox3d.y*100/2 , chair_detection.bbox3d.x*100, chair_detection.bbox3d.y*100);
 
-  RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] chair area: %d", rect2.area());
-  RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] person area: %d", rect1.area());
-  if (rect1.area() == 0 || rect2.area() == 0) {
+  RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] chair area: %d", r_chair.area());
+  RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] person area: %d", r_person.area());
+  if (r_person.area() == 0 || r_chair.area() == 0) {
     RCLCPP_ERROR(node_->get_logger(), "[IsSittable] area is 0");
     return false;
   }
+
+  auto intersection   = r_person & r_chair;
+  if (intersection.area() != 0) {
+    return true;
+  } else { // chair and person intersect
+    auto free_space = (r_chair.area() - intersection.area()) * 0.8; 
+    if (r_person.area() >= free_space)
+      return true;
+  }
+
+
+  /*
   std::vector<int> vect = {rect1.area(), rect2.area()};
-  std::sort(vect.begin(), vect.end());
+  std::sort(vect.begin(), vect.end()); // growing
 
   if (!((rect1 & rect2).area() > vect.back()*0.375)) {
     RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] free space");
@@ -205,6 +222,7 @@ bool IsSittable::check_free_space(const perception_system_interfaces::msg::Detec
     RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] free space");
     return true;
   }
+  */
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] no free space");
   return false;
 }
@@ -244,10 +262,11 @@ perception_system_interfaces::msg::Detection
 IsSittable::retrieve_detection(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg)
 {
   perception_system_interfaces::msg::Detection detection;
-
+  RCLCPP_INFO(node_->get_logger(), "[IsSittable] RETRIEVE DETECTION");
   for (auto const & result : msg )
   {
     if (result.class_name == obj && result.score >= threshold_) {
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] object: %s, score: %f, Z: %f", result.class_name.c_str(), result.score, result.center3d.position.z);
       detection = result;
     }
   }

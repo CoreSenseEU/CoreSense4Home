@@ -23,13 +23,15 @@
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "perception/bt_service_node.hpp"
 #include "perception_system_interfaces/srv/isolate_pc_background.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace perception
 {
 
 class ExtractCollisionScene
-  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>
+  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit ExtractCollisionScene(

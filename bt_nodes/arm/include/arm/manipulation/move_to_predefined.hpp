@@ -44,10 +44,14 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({BT::InputPort<std::string>("pose")});
+    return BT::PortsList({BT::InputPort<std::string>("pose"),
+                          BT::InputPort<std::string>("group_name")});
   }
 
 private:
+
+  std::string group_name_{"arm_torso"};
+
   std::string pose_;
 };
 

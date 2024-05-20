@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "arm/manipulation/pick_object.hpp"
+
 #include <string>
 #include <utility>
 
-#include "arm/manipulation/pick_object.hpp"
-#include "moveit_msgs/msg/collision_object.hpp"
-#include "manipulation_interfaces/action/pick.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "manipulation_interfaces/action/pick.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
 
 namespace manipulation
 {
@@ -35,7 +36,6 @@ PickObject::PickObject(
 
 void PickObject::on_tick()
 {
-
   RCLCPP_DEBUG(node_->get_logger(), "PickObject ticked");
   moveit_msgs::msg::CollisionObject::SharedPtr object_;
   getInput("object_to_pick", object_);
@@ -44,11 +44,11 @@ void PickObject::on_tick()
 
 BT::NodeStatus PickObject::on_success() {return BT::NodeStatus::SUCCESS;}
 
-} // namespace manipulation
+}  // namespace manipulation
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<manipulation::PickObject>(name, "/pick", config);
     };
 

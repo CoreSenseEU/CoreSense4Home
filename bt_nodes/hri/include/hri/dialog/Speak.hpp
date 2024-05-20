@@ -39,8 +39,7 @@ class Speak : public dialog::BtActionNode<
 {
 public:
   explicit Speak(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -49,21 +48,20 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("say_text"),
-        BT::InputPort<std::string>("param")});
+      {BT::InputPort<std::string>("say_text"), BT::InputPort<std::string>("param")});
   }
 
 private:
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 
-  // rclcpp::Node::SharedPtr node_;
+  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;
 
   // std::string text_;
 };
 
-} // namespace dialog
+}  // namespace dialog
 
-#endif // HRI__SPEAK_HPP_
+#endif  // HRI__SPEAK_HPP_

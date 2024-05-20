@@ -12,6 +12,8 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -22,6 +24,8 @@ set(dependencies
   behaviortree_cpp_v3
   geometry_msgs
   tf2_geometry_msgs
+  tf2
+  tf2_ros
 )
 
 include_directories(include)
@@ -31,6 +35,12 @@ list(APPEND plugin_libs set_wp_bt_node)
 
 add_library(init_carry_bt_node SHARED src/configuration/init_carry.cpp)
 list(APPEND plugin_libs init_carry_bt_node)
+
+add_library(init_receptionist_bt_node SHARED src/configuration/init_receptionist.cpp)
+list(APPEND plugin_libs init_receptionist_bt_node)
+
+add_library(add_guest_to_count_bt_node SHARED src/configuration/add_guest_to_count.cpp)
+list(APPEND plugin_libs add_guest_to_count_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

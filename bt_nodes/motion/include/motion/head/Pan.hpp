@@ -17,48 +17,76 @@
 
 
 #include <string>
+#include <iostream>
+#include <cmath>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "ctrl_support/BTActionNode.hpp"
-#include "control_msgs/action/follow_joint_trajectory.hpp"
-
-#include "rclcpp/rclcpp.hpp"
+#include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace head
 {
 
-class Pan : public motion::BtActionNode<
-    control_msgs::action::FollowJointTrajectory, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class Pan : public BT::ActionNodeBase
 {
 public:
   explicit Pan(
     const std::string & xml_tag_name,
-    const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
-
-  void on_tick() override;
-  void on_feedback() override;
-  BT::NodeStatus on_success() override;
-  BT::NodeStatus on_aborted() override;
-  BT::NodeStatus on_cancelled() override;
+  void halt();
+  BT::NodeStatus tick();
 
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::string>("tf_frame"),
+        BT::InputPort<double>("range"), // in degrees
+        BT::InputPort<double>("period"), // in seconds
+        BT::InputPort<double>("pitch_angle") // in degrees
       });
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
-  BT::Optional<std::string> point_to_pan_;
+  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  rclcpp::Time start_time_;
+  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
+    joint_cmd_pub_;
+  double yaw_limit_{1.3};
+  double pitch_limit_{0.185};
+  double pitch_{0.92};
+  std::vector<double> yaw_positions_{0.0, 
+                                  0.7,
+                                 0.7, 
+                                 0.7,
+                                 0.7, 
+                                 -0.7,
+                                 -0.7,
+                                 0.0};
+  std::vector<double> pitch_positions_{0.0, 
+                                  0.0,
+                                  0.3,
+                                  -0.3,
+                                  0.3,
+                                  0.3,
+                                  -0.3,
+                                  0.0};
+  std::vector<double> times_from_start_{0.1, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0};
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
+  double joint_range_, period_;
+  double pitch_angle_ = 0.0;
+  double phase_;
+
+  int current_position_{0};
+
+
+  double get_joint_yaw(double period, double range, double time, double phase);
 };
 
-}  // namespace receptionist
+}  // namespace head
 
-#endif  // RECEPTIONIST__BEHAVIOR_TREES_NODES__PAN_TO_POINT_HPP_
+#endif  // HEAD__PAN_HPP_

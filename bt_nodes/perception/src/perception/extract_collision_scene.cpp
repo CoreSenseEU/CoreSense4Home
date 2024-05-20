@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "perception/extract_collision_scene.hpp"
+
 #include <string>
 #include <utility>
 
-#include "perception/extract_collision_scene.hpp"
 #include "perception_system_interfaces/srv/isolate_pc_background.hpp"
 
 namespace perception
@@ -27,20 +28,20 @@ using namespace std::placeholders;
 ExtractCollisionScene::ExtractCollisionScene(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>(xml_tag_name,
-    action_name,
-    conf) {}
+: perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
+{
+}
 
 void ExtractCollisionScene::on_tick()
 {
-
   RCLCPP_DEBUG(node_->get_logger(), "ExtractCollisionScene ticked");
 
   moveit_msgs::msg::CollisionObject::SharedPtr selected_object;
   getInput("selected_object", selected_object);
 
   request_->classes = {selected_object->id.substr(0, selected_object->id.find('_'))};
-
 }
 
 void ExtractCollisionScene::on_result()
@@ -53,19 +54,16 @@ void ExtractCollisionScene::on_result()
     // setOutput("listen_text", result_.result->text);
     setStatus(BT::NodeStatus::FAILURE);
   }
-
-
 }
 
-} // namespace perception
+}  // namespace perception
 
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
-  BT::NodeBuilder builder = [](const std::string & name,
-      const BT::NodeConfiguration & config) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<perception::ExtractCollisionScene>(
-        name, "/isolate_pc_background",
-        config);
+        name, "/isolate_pc_background", config);
     };
 
   factory.registerBuilder<perception::ExtractCollisionScene>("ExtractCollisionScene", builder);

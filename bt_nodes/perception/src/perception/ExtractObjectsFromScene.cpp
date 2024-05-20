@@ -14,10 +14,10 @@
 
 #include "perception/ExtractObjectsFromScene.hpp"
 
-#include <tf2/transform_datatypes.h>
 #include <tf2/LinearMath/Quaternion.h>
-#include "geometry_msgs/msg/transform_stamped.hpp"
+#include <tf2/transform_datatypes.h>
 
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 using std::placeholders::_1;
@@ -27,8 +27,7 @@ namespace perception
 {
 
 ExtractObjectsFromScene::ExtractObjectsFromScene(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -36,15 +35,11 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(
   detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
     "/perception_system/detections_3d", 100,
     std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 }
 
-void
-ExtractObjectsFromScene::halt()
+void ExtractObjectsFromScene::halt()
 {
   RCLCPP_INFO(node_->get_logger(), "ExtractObjectsFromScene halted");
 }
@@ -54,10 +49,11 @@ void ExtractObjectsFromScene::detection_callback_(yolov8_msgs::msg::DetectionArr
   last_detected_objs_ = std::move(msg);
 }
 
-BT::NodeStatus
-ExtractObjectsFromScene::tick()
+BT::NodeStatus ExtractObjectsFromScene::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "ExtractObjectsFromScene ticked");
+  getInput("interest_class", interest_class_);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
   if (last_detected_objs_ == nullptr) {
     RCLCPP_INFO(node_->get_logger(), "No objects detection yet");
@@ -76,17 +72,17 @@ ExtractObjectsFromScene::tick()
 
   RCLCPP_INFO(node_->get_logger(), "Objects detected");
   RCLCPP_INFO(
-    node_->get_logger(), "Number of detected objects: %ld",
-    last_detected_objs_->detections.size());
+    node_->get_logger(), "Number of detected objects: %ld", last_detected_objs_->detections.size());
 
   std::vector<moveit_msgs::msg::CollisionObject::SharedPtr> detected_objects = {};
 
-
   auto header = last_detected_objs_->header;
   for (auto const & detected_object : last_detected_objs_->detections) {
-
     if (detected_object.bbox3d.size.x >= 0.12 && detected_object.bbox3d.size.y >= 0.12) {
       RCLCPP_INFO(node_->get_logger(), "Ignoring too large object");
+      continue;
+    } else if (detected_object.class_name != interest_class_ && interest_class_ != "") {
+      RCLCPP_INFO(node_->get_logger(), "Ignoring object of class %s", detected_object.class_name.c_str());
       continue;
     }
 
@@ -107,20 +103,18 @@ ExtractObjectsFromScene::tick()
 
     camera_2_object.setOrigin(
       tf2::Vector3(
-        detected_object.bbox3d.center.position.x,
-        detected_object.bbox3d.center.position.y,
+        detected_object.bbox3d.center.position.x, detected_object.bbox3d.center.position.y,
         detected_object.bbox3d.center.position.z));
     camera_2_object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
     geometry_msgs::msg::TransformStamped base_link_2_camera_msg;
     try {
       base_link_2_camera_msg = tf_buffer_->lookupTransform(
-        "base_link", "head_front_camera_link_color_optical_frame",
-        tf2::TimePointZero);
+        "base_link", "head_front_camera_link_color_optical_frame", tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
-        node_->get_logger(), "Could not transform %s to %s: %s",
-        "base_link", "head_front_camera_link_color_optical_frame", ex.what());
+        node_->get_logger(), "Could not transform %s to %s: %s", "base_link",
+        "head_front_camera_link_color_optical_frame", ex.what());
       return BT::NodeStatus::FAILURE;
     }
     tf2::fromMsg(base_link_2_camera_msg.transform, base_2_camera);
@@ -146,7 +140,6 @@ ExtractObjectsFromScene::tick()
 }
 
 }  // namespace perception
-
 
 BT_REGISTER_NODES(factory)
 {

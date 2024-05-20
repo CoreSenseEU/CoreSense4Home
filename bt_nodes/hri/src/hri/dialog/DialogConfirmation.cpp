@@ -47,7 +47,7 @@ void DialogConfirmation::halt()
   RCLCPP_INFO(node_->get_logger(), "DialogConfirmation halted");
 }
 
-BT::NodeStatus DialogConfirmation::on_tick()
+BT::NodeStatus DialogConfirmation::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "DialogConfirmation ticked");
   /* std::string text_;
@@ -97,20 +97,44 @@ BT::NodeStatus DialogConfirmation::on_idle()
   auto future_goal_handle = client_->async_send_goal(goal);
   if (rclcpp::spin_until_future_complete(
       node_->get_node_base_interface(),
-      future_goal_handle) ==
+      future_goal_handle) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
-    is_goal_sent_ = true;
+    /* is_goal_sent_ = true;
     auto result = *future_goal_handle.get();
-    text_ = result.result->text;
-
-    return BT::NodeStatus::RUNNING;
-
-  } else {
+    text_ = result.result->text; */
     RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
     is_goal_sent_ = false;
     return BT::NodeStatus::RUNNING;
   }
+
+  auto goal_handle = future_goal_handle.get();
+  if (!goal_handle) {
+    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected by server");
+    return BT::NodeStatus::RUNNING;
+  }
+
+  // Wait for the server to be done with the goal
+  auto result_future = client_->async_get_result(goal_handle);
+
+  RCLCPP_INFO(node_->get_logger(), "Waiting for result");
+  if (rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result_future) !=
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
+    RCLCPP_ERROR(node_->get_logger(), "get result call failed :(");
+    return BT::NodeStatus::RUNNING;
+  }
+
+  auto wrapped_result = result_future.get();
+
+  if(wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED)
+  {
+    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected");
+    return BT::NodeStatus::RUNNING;
+  }
+
+  is_goal_sent_ = true;
+  text_ = wrapped_result.result->text; 
 
   return BT::NodeStatus::RUNNING;
 }
@@ -136,5 +160,5 @@ BT::NodeStatus DialogConfirmation::on_idle()
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
 
-  factory.registerBuilder<dialog::DialogConfirmation>("DialogConfirmation");
+  factory.registerNodeType<dialog::DialogConfirmation>("DialogConfirmation");
 }

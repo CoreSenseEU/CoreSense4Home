@@ -29,16 +29,21 @@ namespace navigation
 MoveTo::MoveTo(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: motion::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name,
-    action_name, conf),
+: motion::BtActionNode<
+    nav2_msgs::action::NavigateToPose, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf),
   tf_buffer_(),
   tf_listener_(tf_buffer_)
 {
   config().blackboard->get("node", node_);
 
+  callback_group_ =
+      node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  callback_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
+
   set_truncate_distance_client_ =
     node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>(
-    "navigation_system_node/set_truncate_distance");
+    "navigation_system_node/set_truncate_distance", rmw_qos_profile_services_default, callback_group_);
 }
 
 void MoveTo::on_tick()

@@ -33,11 +33,10 @@ using namespace std::placeholders;
 DialogConfirmation::DialogConfirmation(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<whisper_msgs::action::STT>(xml_tag_name, action_name,
-    conf)
+: dialog::BtActionNode<whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
-  this->publisher_start_ =
-    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+  publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
 }
 
 void DialogConfirmation::on_tick()
@@ -50,7 +49,7 @@ void DialogConfirmation::on_tick()
 
   msg_dialog_action.data = 0;
 
-  this->publisher_start_->publish(msg_dialog_action);
+  publisher_start_->publish(msg_dialog_action);
 
   // goal_.text = text_;
 }

@@ -45,7 +45,7 @@ BT::NodeStatus
 IsDoorOpen::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "IsDoorOpen ticked");
-  rclcpp::spin_some(node_);
+  rclcpp::spin_some(node_->get_node_base_interface());
   // if(door_open_)
   // {
   //   return BT::NodeStatus::SUCCESS;

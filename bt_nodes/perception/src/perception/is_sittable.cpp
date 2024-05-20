@@ -33,34 +33,29 @@ IsSittable::IsSittable(const std::string & xml_tag_name, const BT::NodeConfigura
 {
   config().blackboard->get("node", node_);
 
-  // delete the following: 
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 }
 
 
 
 BT::NodeStatus IsSittable::tick()
 {
-  pl::getInstance()->set_interest("", true);
-  pl::getInstance()->set_interest("person", true);
-  pl::getInstance()->update(30);
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
-
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] ticked");
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
     config().blackboard->get("tf_buffer", tf_buffer_);
     getInput("cam_frame", camera_frame_); 
-    pl::getInstance()->set_interest("", true);
-    pl::getInstance()->set_interest("person", true);
-    pl::getInstance()->update(30);
-    rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
+    pl::getInstance(node_)->set_interest("", true);
+    pl::getInstance(node_)->set_interest("person", true);
+    pl::getInstance(node_)->update(30);
     return BT::NodeStatus::RUNNING;
   }
+  pl::getInstance(node_)->set_interest("", true);
+  pl::getInstance(node_)->set_interest("person", true);
+  pl::getInstance(node_)->update(30);
 
-  auto person_detections = pl::getInstance()->get_by_type("person");
-  auto chair_detections = pl::getInstance()->get_by_type("");
+
+  auto person_detections = pl::getInstance(node_)->get_by_type("person");
+  auto chair_detections = pl::getInstance(node_)->get_by_type("");
 
   if (chair_detections.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[IsSittable] no detections found");
@@ -75,6 +70,7 @@ BT::NodeStatus IsSittable::tick()
     is_place_to_sit_ = check_object_class(object, chair_detections);
     if (is_place_to_sit_) {
       place_to_sit_ = object;
+      chair_detection_ = retrieve_detection(place_to_sit_, chair_detections);
       break;
     }    
   }
@@ -102,6 +98,10 @@ BT::NodeStatus IsSittable::tick()
         tf2::Vector3(
           chair_detection_.center3d.position.x, chair_detection_.center3d.position.y,
           chair_detection_.center3d.position.z));
+    
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] cam_frame position %f %f %f", map2cam_msg.transform.translation.x, map2cam_msg.transform.translation.y, map2cam_msg.transform.translation.z);
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] chair center: %f %f %f", chair_detection_.center3d.position.x, chair_detection_.center3d.position.y, chair_detection_.center3d.position.z);
+
 
       camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
@@ -123,8 +123,6 @@ BT::NodeStatus IsSittable::tick()
   
   if (is_person_) {
     person_detection_ = retrieve_detection("person", person_detections);
-    chair_detection_ = retrieve_detection(place_to_sit_, chair_detections);
-
     if (check_free_space(person_detection_, chair_detection_)) {
       geometry_msgs::msg::TransformStamped map2cam_msg;
       try {
@@ -135,13 +133,14 @@ BT::NodeStatus IsSittable::tick()
         return BT::NodeStatus::FAILURE;
       }
 
-
       
       tf2::Transform camera2object;
       camera2object.setOrigin(
         tf2::Vector3(
           chair_detection_.center3d.position.x, chair_detection_.center3d.position.y,
           chair_detection_.center3d.position.z));
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] cam_frame position %f %f %f", map2cam_msg.transform.translation.x, map2cam_msg.transform.translation.y, map2cam_msg.transform.translation.z);
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] chair center: %f %f %f", chair_detection_.center3d.position.x, chair_detection_.center3d.position.y, chair_detection_.center3d.position.z);
 
       camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
@@ -173,6 +172,7 @@ bool IsSittable::check_object_class(const std::string & obj, const std::vector<p
 
   for (auto const & result : msg )
   {
+    RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] object: %s, score: %f, Z: %f", result.class_name.c_str(), result.score, result.center3d.position.z);
     if (result.class_name == obj && result.score >= threshold_ && result.center3d.position.z < 7.0) {
       ret = true;
     }
@@ -262,10 +262,11 @@ perception_system_interfaces::msg::Detection
 IsSittable::retrieve_detection(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg)
 {
   perception_system_interfaces::msg::Detection detection;
-
+  RCLCPP_INFO(node_->get_logger(), "[IsSittable] RETRIEVE DETECTION");
   for (auto const & result : msg )
   {
     if (result.class_name == obj && result.score >= threshold_) {
+      RCLCPP_INFO(node_->get_logger(), "[IsSittable] object: %s, score: %f, Z: %f", result.class_name.c_str(), result.score, result.center3d.position.z);
       detection = result;
     }
   }

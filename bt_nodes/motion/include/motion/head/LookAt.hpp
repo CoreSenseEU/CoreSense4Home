@@ -25,7 +25,10 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "std_msgs/msg/string.hpp"
 
@@ -48,10 +51,13 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+
   geometry_msgs::msg::PoseStamped pose_;
-  rclcpp::Publisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr attention_points_pub_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_pub_;
+
+  rclcpp_lifecycle::LifecyclePublisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr
+    attention_points_pub_;
+
   std::vector<std::string> tf_frames_;
   std::string tf_frame_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;

@@ -7,6 +7,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_cascade_lifecycle REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(yolov8_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
@@ -19,6 +20,7 @@ find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(perception_system REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(perception_system_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 # find_package(backward_ros REQUIRED)
 
@@ -27,6 +29,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
   rclcpp
+  rclcpp_cascade_lifecycle
   rclpy
   behaviortree_cpp_v3
   yolov8_msgs
@@ -40,6 +43,7 @@ set(dependencies
   behaviortree_cpp_v3
   perception_system
   OpenCV
+  perception_system_interfaces
   sensor_msgs
   # backward_ros
 )

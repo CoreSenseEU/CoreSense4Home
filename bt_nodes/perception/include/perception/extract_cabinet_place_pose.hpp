@@ -29,13 +29,15 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <tf2_ros/buffer.h>
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 
 namespace perception
 {
 
 class ExtractCabinetPlacePose
-  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>
+  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit ExtractCabinetPlacePose(

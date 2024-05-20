@@ -31,14 +31,19 @@ using namespace std::placeholders;
 Speak::Speak(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<audio_common_msgs::action::TTS>(xml_tag_name,
-    action_name, conf)
+: dialog::BtActionNode<audio_common_msgs::action::TTS,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
-  node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
+  config().blackboard->get("node", node_);
+
   this->publisher_ =
     node_->create_publisher<std_msgs::msg::String>("say_text", 10);
   this->publisher_start_ =
     node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+
+  this->publisher_->on_activate();
+  this->publisher_start_->on_activate();
 }
 
 void Speak::on_tick()

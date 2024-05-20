@@ -14,6 +14,7 @@
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_cascade_lifecycle</depend>
   <depend>behaviortree_cpp_v3</depend>
   <depend>yolov8_msgs</depend>
   <depend>moveit_msgs</depend>

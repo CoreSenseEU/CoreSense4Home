@@ -15,6 +15,9 @@
 #ifndef PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
 #define PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
 
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -52,7 +55,7 @@ public:
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Subscription<yolov8_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
   yolov8_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
   std::string interest_class_{""};

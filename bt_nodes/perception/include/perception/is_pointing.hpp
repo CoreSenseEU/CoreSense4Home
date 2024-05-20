@@ -28,8 +28,11 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "perception_system/PerceptionListener.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
+#include "perception_system/PerceptionListener.hpp"
 
 namespace perception
 {
@@ -51,7 +54,7 @@ public:
 private:
   int publicTF_map2object(const perception_system_interfaces::msg::Detection & detected_object);
 
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string camera_frame_, bag_frame_;
   std::int64_t person_id_;

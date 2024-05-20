@@ -36,6 +36,7 @@
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/utils.h"
 
@@ -71,7 +72,7 @@ private:
     const geometry_msgs::msg::TransformStamped & goal_transform);
   void check_robot_inside_map();
   BT::NodeStatus on_idle();
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr entity_pose_pub_;
   rclcpp::Client<navigation_system_interfaces::srv::SetMode>::SharedPtr set_mode_client_;

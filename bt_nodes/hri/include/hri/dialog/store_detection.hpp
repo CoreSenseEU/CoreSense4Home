@@ -22,6 +22,7 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 
 namespace hri
@@ -52,7 +53,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_;
   std::string current_id_ = "0";

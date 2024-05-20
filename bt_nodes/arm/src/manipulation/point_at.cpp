@@ -24,7 +24,8 @@ using namespace std::placeholders;
 PointAt::PointAt(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: manipulation::BtActionNode<manipulation_interfaces::action::MoveEndEffector>(xml_tag_name, action_name, conf)
+: manipulation::BtActionNode<manipulation_interfaces::action::MoveEndEffector,
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, action_name, conf)
 {
 }
 

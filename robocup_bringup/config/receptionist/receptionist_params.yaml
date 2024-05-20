@@ -1,0 +1,35 @@
+/**:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_link_color_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    waypoints_names: ["entrance", "party"]
+    # allow_duplicate_names: false
+    waypoints:
+      entrance: [2.985, -1.320, -2.986]
+      party: [5.683, -1.309, 0.158]
+
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    bt_xml_file: receptionist.xml
+    plugins:
+    - set_wp_bt_node
+    - init_receptionist_bt_node
+    - move_to_bt_node
+    - speak_bt_node
+    - is_detected_bt_node
+    - store_detection_bt_node
+    - look_at_bt_node
+    - listen_bt_node
+    - query_bt_node
+    - dialogConfirmation_bt_node
+    - pan_bt_node
+    - is_sittable_bt_node
+    - point_at_bt_node
+    - move_to_predefined_bt_node
+    - add_guest_to_count_bt_node
+    - filter_entity_bt_node

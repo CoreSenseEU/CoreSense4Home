@@ -55,7 +55,7 @@ private:
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 
-  // rclcpp::Node::SharedPtr node_;
+  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;
 

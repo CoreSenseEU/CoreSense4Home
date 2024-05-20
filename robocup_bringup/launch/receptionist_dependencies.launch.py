@@ -29,8 +29,7 @@ def generate_launch_description():
     move_group_dir = get_package_share_directory('tiago_mtc_examples')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     package_dir = get_package_share_directory('robocup_bringup')
-    attention_dir = get_package_share_directory('attention_system')
-    perception_dir = get_package_share_directory('perception_system')
+    yolo3d_dir = get_package_share_directory('yolov8_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
 
     # manipulation launchers
@@ -46,24 +45,27 @@ def generate_launch_description():
         )
     )
 
-    attention = IncludeLaunchDescription(
+    # real time launcher
+    real_time = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(attention_dir, 'launch', 'attention.launch.py')
+            os.path.join(package_dir, 'launch', 'real_time.launch.py')
         )
     )
 
-    perception = IncludeLaunchDescription(
+    yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(perception_dir, 'launch', 'perception3d.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
         ),
         launch_arguments={
+            # 'namespace': 'perception_system',
             'model': 'yolov8n.pt',
+            'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
-            'depth_image_units_divisor': '1000',
+            'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
             'target_frame': 'head_front_camera_link_color_optical_frame',
-            'namespace': 'perception_system'
-        }.items()
+            'threshold': '0.5'
+            }.items()
     )
 
     dialog = IncludeLaunchDescription(
@@ -78,14 +80,18 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
+            'map': package_dir + '/maps/ir_lab.yaml',
+            'params_file': package_dir + '/config/receptionist/tiago_nav_params.yaml',
+            'slam_params_file': package_dir + '/config/receptionist/tiago_nav_follow_params.yaml',
+            'nav_mode': 'amcl'
         }.items()
     )
 
     ld = LaunchDescription()
     ld.add_action(navigation)
     ld.add_action(dialog)
-    ld.add_action(attention)
-    ld.add_action(perception)
+    ld.add_action(yolo3d)
+    ld.add_action(real_time)
     ld.add_action(move_group)
     ld.add_action(manipulation_server)
 

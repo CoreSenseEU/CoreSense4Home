@@ -8,13 +8,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_cascade_lifecycle REQUIRED)
-
 find_package(arm REQUIRED)
 find_package(configuration REQUIRED)
 find_package(hri REQUIRED)
 find_package(motion REQUIRED)
 find_package(perception REQUIRED)
-
+find_package(attention_system REQUIRED)
+find_package(perception_system REQUIRED)
+find_package(backward_ros REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -27,6 +28,9 @@ set(dependencies
   hri
   motion
   perception
+  attention_system
+  perception_system
+  backward_ros
 )
 
 include_directories(include)
@@ -34,15 +38,16 @@ include_directories(include)
 add_executable(behaviors_main src/behaviors_main.cpp)
 ament_target_dependencies(behaviors_main ${dependencies})
 
+add_executable(real_time_main src/real_time_main.cpp)
+ament_target_dependencies(real_time_main ${dependencies})
 
-install(DIRECTORY bt_xml params
+install(DIRECTORY bt_xml launch config maps 
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch params maps DESTINATION share/${PROJECT_NAME})
-
 install(TARGETS
   behaviors_main
+  real_time_main
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

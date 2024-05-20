@@ -34,6 +34,7 @@
 #include "navigation_system_interfaces/msg/mode.hpp"
 #include "slam_toolbox/srv/save_map.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/utils.h"
@@ -87,7 +88,7 @@ private:
 
   geometry_msgs::msg::PoseWithCovarianceStamped current_pos_;
   geometry_msgs::msg::TransformStamped entity_transform_;
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::QoS qos_;
 
   std::string map_path_;
@@ -100,7 +101,7 @@ private:
 //   geometry_msgs::msg::PoseStamped get_goal_pose(const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform);
 //   void check_robot_inside_map();
 //   BT::NodeStatus on_idle();
-//   rclcpp::Node::SharedPtr node_;
+//   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 //   std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::NavigateToPose>> client_;
 //   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
 //     set_truncate_distance_client_;

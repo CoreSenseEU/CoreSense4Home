@@ -36,7 +36,7 @@ public:
     const BT::NodeConfiguration & conf)
   : BT::ActionNodeBase(xml_tag_name, conf), action_name_(action_name)
   {
-    node_ = config().blackboard->get<typename NodeT::SharedPtr>("node");
+    config().blackboard->get<typename NodeT::SharedPtr>("node", node_);
 
     server_timeout_ = 1s;
 

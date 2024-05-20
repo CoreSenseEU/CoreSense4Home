@@ -11,8 +11,8 @@
                                           current_guest="{n}" />
             <Repeat num_cycles="2">
                 <Sequence>
-                    <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance" will_finish="true"/>
-                    <!-- <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
+                    <!-- <Action ID="MoveTo" distance_tolerance="0" tf_frame="entrance" will_finish="true"/> -->
+                     <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Fallback>
                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
@@ -83,7 +83,7 @@
                                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
                                 </ReactiveSequence>
 
-                                <ReactiveSequence>Ç
+                                <ReactiveSequence>
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
@@ -119,7 +119,7 @@
                                 </Sequence>
                             </SequenceStar>
                     </RetryUntilSuccessful>
-                    <Action ID="StoreDetection" current_name="{name_value}"
+                    <!--<Action ID="StoreDetection" current_name="{name_value}"
                                                 drink="{drink_value}"
                                                 guest_id="{n}"
                                                 name_1="{name_1}"

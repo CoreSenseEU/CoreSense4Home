@@ -52,7 +52,7 @@ public:
   }
 
 private:
-  // rclcpp::Node::SharedPtr node_;
+  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
   // rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;

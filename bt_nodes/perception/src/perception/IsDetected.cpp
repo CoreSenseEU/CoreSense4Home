@@ -47,6 +47,7 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
 
 BT::NodeStatus IsDetected::tick()
 {
+  rclcpp::spin_some(node_->get_node_base_interface());
   getInput("person_id", person_id_);
 
   if (status() == BT::NodeStatus::IDLE) {

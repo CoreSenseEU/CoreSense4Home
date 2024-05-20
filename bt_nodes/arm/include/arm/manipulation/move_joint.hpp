@@ -12,44 +12,50 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef DIALOG__DIALOGCONFIRMATION_HPP_
-#define DIALOG__DIALOGCONFIRMATION_HPP_
+#ifndef ARM_MANIPULATION__MOVE_JOINT_HPP_
+#define ARM_MANIPULATION__MOVE_JOINT_HPP_
 
 #include <algorithm>
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "hri/dialog/BTActionNode.hpp"
+#include "manipulation_interfaces/action/move_joint.hpp"
+#include "moveit_msgs/msg/collision_object.hpp"
+#include "arm/manipulation/BTActionNode.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-#include "std_msgs/msg/int8.hpp"
-#include "whisper_msgs/action/stt.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
-namespace dialog
+namespace manipulation
 {
 
-class DialogConfirmation
-  : public dialog::BtActionNode<
-    whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class MoveJoint : public manipulation::BtActionNode<
+    manipulation_interfaces::action::MoveJoint,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
-  explicit DialogConfirmation(
+  explicit MoveJoint(
     const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
   BT::NodeStatus on_success() override;
 
-  static BT::PortsList providedPorts() {return BT::PortsList({});}
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList({BT::InputPort<std::string>("joint_name"),
+                          BT::InputPort<std::string>("group_name"),
+                          BT::InputPort<float>("joint_value")});
+  }
 
 private:
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+
+  std::string group_name_{"arm_torso"};
+  std::string joint_name_;
+  float joint_value_;
 };
 
-}  // namespace dialog
+}  // namespace manipulation
 
-#endif  // HRI__DIALOGCONFIRMATION_HPP_
+#endif  // ARM_MANIPULATION__MOVE_JOINT_HPP_

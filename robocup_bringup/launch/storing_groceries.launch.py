@@ -32,13 +32,14 @@ def generate_launch_description():
 
     config = os.path.join(
         package_dir,
-        'params',
+        'config',
+        'storing_groceries',
         'storing_params.yaml'
         )
 
     receptionist = Node(
-        package='bt_test',
-        executable='storing_groceries_test',
+        package='robocup_bringup',
+        executable='behaviors_main',
         parameters=[config],
         output='screen',
     )

@@ -50,7 +50,7 @@ def generate_launch_description():
     )
 
     audio_common_tts_node = Node(
-        package='audio_common',
+        package='tts_ros',
         executable='tts_node',
         parameters=[
             {'chunk': 4096},

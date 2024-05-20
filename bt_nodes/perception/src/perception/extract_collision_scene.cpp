@@ -63,7 +63,7 @@ BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<perception::ExtractCollisionScene>(
-        name, "/isolate_pc_background", config);
+        name, "perception_system/isolate_pc_background", config);
     };
 
   factory.registerBuilder<perception::ExtractCollisionScene>("ExtractCollisionScene", builder);

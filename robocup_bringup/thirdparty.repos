@@ -35,6 +35,10 @@ repositories:
     type: git
     url: https://github.com/fmrico/cascade_lifecycle.git
     version: rolling
+  ThirdParty/tts_ros:
+    type: git
+    url: https://github.com/mgonzs13/tts_ros
+    version: main
   systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git

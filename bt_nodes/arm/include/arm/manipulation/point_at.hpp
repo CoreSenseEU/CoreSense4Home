@@ -50,7 +50,9 @@ public:
     return BT::PortsList(
       {BT::InputPort<geometry_msgs::msg::PoseStamped::SharedPtr>("pose_to_point"),
        BT::InputPort<std::string>("tf_frame"),
-       BT::InputPort<std::string>("base_frame")});
+       BT::InputPort<std::string>("base_frame"),
+       BT::InputPort<double>("low_z"),
+       BT::InputPort<double>("high_z")});
   }
 
 private:
@@ -59,6 +61,7 @@ private:
   std::string tf_frame_, base_frame_;
   tf2_ros::Buffer::SharedPtr tf_buffer_;
   geometry_msgs::msg::TransformStamped transform_;
+  double low_z_{0.5}, high_z_{1.1};
 };
 
 }  // namespace manipulation

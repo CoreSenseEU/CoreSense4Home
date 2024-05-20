@@ -1,80 +1,9 @@
-amcl:
-  ros__parameters:
-    use_sim_time: False
-    alpha1: 0.1
-    alpha2: 0.1
-    alpha3: 0.1
-    alpha4: 0.1
-    alpha5: 0.1
-    base_frame_id: "base_footprint"
-    beam_skip_distance: 0.5
-    beam_skip_error_threshold: 0.9
-    beam_skip_threshold: 0.3
-    do_beamskip: false
-    global_frame_id: "map"
-    lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0
-    laser_max_range: 5.0
-    laser_min_range: -1.0
-    laser_model_type: "likelihood_field"
-    max_beams: 60
-    max_particles: 2000
-    min_particles: 500
-    odom_frame_id: "odom"
-    pf_err: 0.05
-    pf_z: 0.99
-    recovery_alpha_fast: 0.0
-    recovery_alpha_slow: 0.0
-    resample_interval: 1
-    robot_model_type: "nav2_amcl::DifferentialMotionModel"
-    save_pose_rate: 0.5
-    sigma_hit: 0.2
-    tf_broadcast: true
-    transform_tolerance: 1.0
-    update_min_a: 0.2
-    update_min_d: 0.25
-    z_hit: 0.5
-    z_max: 0.05
-    z_rand: 0.5
-    z_short: 0.05
-    scan_topic: /scan_raw
-    set_initial_pose: true
-    initial_pose:
-      x: 2.0
-      y: 3.6
-      yaw: 3.14
-    # receptionist initial_pose:
-    # initial_pose:
-    #   x: 0.99
-    #   y: 0.283
-    #   z: 0.0
-    #   yaw: -1.551
-
-    # inspection iniutial_pose:
-    # initial_pose:
-    #   x: -2.700
-    #   y: -0.641
-    #   yaw: 0.0
-    # initial_pose:
-    #   x: 0.5156184016639794
-    #   y: 1.2985416281620732
-    #   z: 0.0
-    #   yaw: 1.6028087
-
-    # storing initial_pose:
-  #   initial_pose:
-  #     x: -2.315
-  #     y: -0.646
-  #     z: 0.0
-  #     yaw: -2.231
-  # # carry initial_pose
-    
 bt_navigator:
   ros__parameters:
     use_sim_time: False
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: /odom
+    odom_topic: /mobile_base_controller/odom
     bt_loop_duration: 10
     default_server_timeout: 20
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
@@ -125,7 +54,7 @@ bt_navigator:
     - nav2_spin_cancel_bt_node
     - nav2_back_up_cancel_bt_node
     - nav2_drive_on_heading_cancel_bt_node
-    # - clear_map_at_goal_bt_node
+    - clear_map_at_goal_bt_node
 
 bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:
@@ -169,9 +98,9 @@ controller_server:
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.6
+      max_vel_x: 1.0
       max_vel_y: 0.0
-      max_vel_theta: 0.6
+      max_vel_theta: 1.0
       min_speed_xy: 0.0
       max_speed_xy: 0.6
       min_speed_theta: 0.0
@@ -215,15 +144,16 @@ local_costmap:
       robot_base_frame: base_link
       use_sim_time: False
       rolling_window: true
-      width: 3
-      height: 3
+      width: 2
+      height: 2
       resolution: 0.05
-      robot_radius: 0.29
-      plugins: ["obstacle_layer" ,"inflation_layer"]
+      robot_radius: 0.275
+      plugins: ["voxel_layer", "inflation_layer"]
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.45
+        inflation_radius: 0.55
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -235,7 +165,7 @@ local_costmap:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scan_raw
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -244,27 +174,19 @@ local_costmap:
           raytrace_min_range: 0.0
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
+        # pointcloud_scan:
+        #   topic: /scanner/point_cloud_scan
+        #   max_obstacle_height: 2.0
+        #   clearing: True
+        #   marking: True
+        #   data_type: "LaserScan"
+        #   raytrace_max_range: 3.0
+        #   raytrace_min_range: 0.0
+        #   obstacle_max_range: 2.5
+        #   obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
-      clear_people_layer:
-        plugin: "nav2_costmap_2d::ClearPeopleLayer"
-        person_radious: 1.0
-        person_frame: person_0_filtered
-      obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: True
-        observation_sources: scan
-        scan:
-          topic: /scan_raw
-          max_obstacle_height: 2.0
-          clearing: True
-          marking: True
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
       always_send_full_costmap: True
 
 global_costmap:
@@ -275,16 +197,16 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: False
-      robot_radius: 0.29
+      robot_radius: 0.275
       resolution: 0.05
       track_unknown_space: true
-      plugins: ["static_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "clear_people_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan_raw
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -293,19 +215,27 @@ global_costmap:
           raytrace_min_range: 0.0
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
+        # pointcloud_scan:
+        #   topic: /scanner/point_cloud_scan
+        #   max_obstacle_height: 2.0
+        #   clearing: True
+        #   marking: True
+        #   data_type: "LaserScan"
+        #   raytrace_max_range: 3.0
+        #   raytrace_min_range: 0.0
+        #   obstacle_max_range: 2.5
+        #   obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.40
+        inflation_radius: 0.55
       clear_people_layer:
         plugin: "nav2_costmap_2d::ClearPeopleLayer"
-        person_radious: 1.0
-        person_frame: person_0_filtered
-        enabled: True
-        
+        person_radious: 0.15
+        person_frame: person_0
       always_send_full_costmap: True
 
 map_server:
@@ -386,7 +316,7 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.26, 0.0, 1.0]
+    max_velocity: [0.36, 0.0, 1.0]
     min_velocity: [-0.26, 0.0, -1.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
@@ -426,12 +356,10 @@ slam_toolbox:
     loop_search_space_smear_deviation: 0.03
     # map_file_name: /home/juan/workspaces/robocup/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
     # map_frame: map
-    map_start_pose:  #     # - 2.0
-#     # - 3.6
-#     # - 3.1416
-    - -2.0
-    - 3.6
-    - 3.1416
+    # map_start_pose:
+    # - -0.9
+    # - 3.6
+    # - 1.56
     map_update_interval: 0.1
     max_laser_range: 20.0
     minimum_angle_penalty: 0.9
@@ -444,7 +372,7 @@ slam_toolbox:
     resolution: 0.05
     scan_buffer_maximum_scan_distance: 10.0
     scan_buffer_size: 10
-    scan_topic: /scan_raw
+    scan_topic: /scan
     solver_plugin: solver_plugins::CeresSolver
     stack_size_to_use: 40000000
     tf_buffer_duration: 30.0

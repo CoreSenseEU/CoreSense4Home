@@ -52,40 +52,17 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
-  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
-  double yaw_limit_{1.3};
-  double pitch_limit_{0.185};
-  double pitch_{0.92};
-  std::vector<double> yaw_positions_{0.0, 
-                                  0.7,
-                                 0.7, 
-                                 0.7,
-                                 0.7, 
-                                 -0.7,
-                                 -0.7,
-                                 0.0};
-  std::vector<double> pitch_positions_{0.0, 
-                                  0.0,
-                                  0.3,
-                                  -0.3,
-                                  0.3,
-                                  0.3,
-                                  -0.3,
-                                  0.0};
-  std::vector<double> times_from_start_{0.1, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0};
+  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
+    joint_cmd_pub_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-  double joint_range_, period_;
-  double pitch_angle_ = 0.0;
+  BT::Optional<double> joint_range_, period_, pitch_angle_;
   double phase_;
-
-  int current_position_{0};
-
 
   double get_joint_yaw(double period, double range, double time, double phase);
 };
 
-}  // namespace receptionist
+}  // namespace head
 
-#endif  // RECEPTIONIST__BEHAVIOR_TREES_NODES__PAN_TO_POINT_HPP_
+#endif  // HEAD__PAN_HPP_

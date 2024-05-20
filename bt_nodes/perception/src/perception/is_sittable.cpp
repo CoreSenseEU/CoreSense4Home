@@ -189,40 +189,50 @@ bool IsSittable::check_free_space(const perception_system_interfaces::msg::Detec
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] chair bbox: %f %f", chair_detection.bbox3d.x, chair_detection.bbox3d.y);
   // position and bbx are in meters, convert to cm:
   
-  const auto r_person = cv::Rect(person_detection.center3d.position.x*100 - person_detection.bbox3d.x*100/2, person_detection.center3d.position.y*100 - person_detection.bbox3d.y*100/2 , person_detection.bbox3d.x*100, person_detection.bbox3d.y*100);
-  const auto r_chair = cv::Rect(chair_detection.center3d.position.x*100 - chair_detection.bbox3d.x*100/2, chair_detection.center3d.position.y*100 - chair_detection.bbox3d.y*100/2 , chair_detection.bbox3d.x*100, chair_detection.bbox3d.y*100);
+  
+  const auto r_person = cv::Rect(person_detection.center3d.position.x*100 - person_detection.bbox3d.x*100/2,
+    person_detection.center3d.position.y*100 - person_detection.bbox3d.y*100/2 ,
+    person_detection.bbox3d.x*100, person_detection.bbox3d.y*100);
+  const auto r_chair = cv::Rect(chair_detection.center3d.position.x*100 - chair_detection.bbox3d.x*100/2,
+    chair_detection.center3d.position.y*100 - chair_detection.bbox3d.y*100/2 ,
+    chair_detection.bbox3d.x*100, chair_detection.bbox3d.y*100);
 
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] chair area: %d", r_chair.area());
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] person area: %d", r_person.area());
-  if (r_person.area() == 0 || r_chair.area() == 0) {
-    RCLCPP_ERROR(node_->get_logger(), "[IsSittable] area is 0");
+
+  if (r_person.area() <= 0 || r_chair.area() <= 0) {
+    RCLCPP_ERROR(node_->get_logger(), "[IsSittable] area is 0 or negative");
     return false;
   }
 
-  auto intersection   = r_person & r_chair;
-  if (intersection.area() != 0) {
+  auto intersection = r_person & r_chair;
+  if (intersection.area() == 0) {
     return true;
   } else { // chair and person intersect
-    auto free_space = (r_chair.area() - intersection.area()) * 0.8; 
-    if (r_person.area() >= free_space)
+    auto free_space = (r_chair.area() - intersection.area()) * 0.8;
+    if (r_person.area() >= free_space) {
+      auto r_free = r_chair - intersection; // free space (cv::Rect)
+      geometry_msgs::msg::Point free_space_center;
+      free_space_center.x = (r_free.x + r_free.width / 2.0) / 100.0;
+      free_space_center.y = (r_free.y + r_free.height / 2.0) / 100.0;
+      free_space_center.z = chair_detection.center3d.position.z;
+      geometry_msgs::msg::TransformStamped free_space_tf;
+      free_space_tf.header.stamp = node_->now();
+      free_space_tf.header.frame_id = camera_frame_;
+      free_space_tf.child_frame_id = "free_space";
+      free_space_tf.transform.translation.x = free_space_center.x;
+      free_space_tf.transform.translation.y = free_space_center.y;
+      free_space_tf.transform.translation.z = free_space_center.z;
+      free_space_tf.transform.rotation.x = 0.0;
+      free_space_tf.transform.rotation.y = 0.0;
+      free_space_tf.transform.rotation.z = 0.0;
+      free_space_tf.transform.rotation.w = 1.0;
+
+      tf_static_broadcaster_->sendTransform(free_space_tf);
+
       return true;
+    }
   }
-
-
-  /*
-  std::vector<int> vect = {rect1.area(), rect2.area()};
-  std::sort(vect.begin(), vect.end()); // growing
-
-  if (!((rect1 & rect2).area() > vect.back()*0.375)) {
-    RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] free space");
-    return true;
-  }
-
-  if (((rect1 | rect2).area() > vect[0]*2)) {
-    RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] free space");
-    return true;
-  }
-  */
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] no free space");
   return false;
 }

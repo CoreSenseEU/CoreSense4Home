@@ -35,6 +35,7 @@
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 #include "motion/navigation/utils.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"

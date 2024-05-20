@@ -23,6 +23,7 @@
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace hri
 {

@@ -38,6 +38,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/utils.h"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace navigation
 {

@@ -27,6 +27,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 #include "yolov8_msgs/msg/detection_array.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
 {
@@ -52,7 +53,7 @@ public:
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
 
 private:
-  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+    rclcpp::Node::SharedPtr node_;
   rclcpp::Subscription<yolov8_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
   yolov8_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
   std::string interest_class_{""};

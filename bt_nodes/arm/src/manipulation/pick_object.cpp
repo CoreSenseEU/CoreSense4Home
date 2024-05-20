@@ -30,7 +30,7 @@ using namespace std::placeholders;
 PickObject::PickObject(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: manipulation::BtActionNode<manipulation_interfaces::action::Pick>(xml_tag_name, action_name, conf)
+: manipulation::BtActionNode<manipulation_interfaces::action::Pick, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, action_name, conf)
 {
 }
 

@@ -60,7 +60,8 @@ private:
   // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;
-
+  std::shared_ptr<rclcpp_action::Client<audio_common_msgs::action::TTS>> client_;
+  bool is_goal_sent_ = false;
   // std::string text_;
 };
 

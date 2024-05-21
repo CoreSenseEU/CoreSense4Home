@@ -24,6 +24,8 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 
 #include "manipulation_interfaces/action/move_end_effector.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -32,7 +34,8 @@
 namespace manipulation
 {
 
-class PointAt : public manipulation::BtActionNode<manipulation_interfaces::action::MoveEndEffector>
+class PointAt : public manipulation::BtActionNode<
+    manipulation_interfaces::action::MoveEndEffector, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit PointAt(

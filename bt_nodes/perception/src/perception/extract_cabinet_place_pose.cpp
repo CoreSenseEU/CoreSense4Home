@@ -28,7 +28,8 @@ using namespace std::placeholders;
 ExtractCabinetPlacePose::ExtractCabinetPlacePose(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground>(
+: perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
 }

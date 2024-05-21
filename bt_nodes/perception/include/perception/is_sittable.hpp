@@ -33,6 +33,8 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "perception_system/PerceptionListener.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 
 namespace perception
 {
@@ -54,7 +56,7 @@ public:
 
 private:
 
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string camera_frame_, chair_frame_;
   std::int64_t person_id_;
@@ -71,7 +73,7 @@ private:
   bool is_place_to_sit_;
   std::string place_to_sit_;
   bool is_person_;
-  float threshold_{0.45};
+  float threshold_{0.3};
   float max_distance_{15.5};
 
   bool 

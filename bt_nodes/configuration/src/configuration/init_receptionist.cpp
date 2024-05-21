@@ -86,7 +86,7 @@ BT::NodeStatus InitReceptionist::tick()
       transform_msg.transform.translation.x = 1.5;
       transform_msg.transform.translation.z = 1.5;
       tf_static_broadcaster_->sendTransform(transform_msg);
-      rclcpp::spin_some(node_);
+      rclcpp::spin_some(node_->get_node_base_interface());
 
       std::string current_guest = "1";
       setOutput("cam_frame", cam_frame_);

@@ -17,6 +17,10 @@
 #include <string>
 #include <utility>
 
+#include "perception_system/PerceptionUtils.hpp"
+#include "perception_system/PerceptionListener.hpp"
+
+
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "perception_system/PerceptionUtils.hpp"
 
@@ -134,12 +138,10 @@ int FollowPerson::publicTF_map2object(
 
 BT::NodeStatus FollowPerson::tick()
 {
-  pl::getInstance()->set_interest("person", true);
-  // pl::getInstance()->set_interest("chair", true);
-  pl::getInstance()->update(30);
-  pl::getInstance()->publicTFinterest();
-
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
+  pl::getInstance(node_)->set_interest("person", true);
+  // pl::getInstance(node_)->set_interest("chair", true);
+  pl::getInstance(node_)->update(30);
+  pl::getInstance(node_)->publicTFinterest();
 
   std::vector<perception_system_interfaces::msg::Detection> detections;
   detections = pl::getInstance()->get_by_type("person");

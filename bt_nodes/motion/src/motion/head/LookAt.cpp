@@ -21,7 +21,7 @@ LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & c
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-
+  node_->add_activation("attention_server");
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
     "attention/attention_command", 1);
   attention_points_pub_->on_activate();
@@ -60,7 +60,11 @@ BT::NodeStatus LookAt::tick()
   return BT::NodeStatus::SUCCESS;
 }
 
-void LookAt::halt() {RCLCPP_INFO(node_->get_logger(), "LookAt halted");}
+void LookAt::halt()
+{
+  RCLCPP_INFO(node_->get_logger(), "LookAt halted");
+  node_->remove_activation("attention_server");
+}
 
 }  // namespace navigation
 

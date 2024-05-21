@@ -35,7 +35,7 @@ void StoreDetection::halt()
 BT::NodeStatus StoreDetection::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[StoreDetection} ticked");
-  rclcpp::spin_some(node_);
+  rclcpp::spin_some(node_->get_node_base_interface());
   
   getInput("current_name", current_name_);
   getInput("drink", current_drink_);

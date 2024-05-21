@@ -24,7 +24,6 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
-#include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace head
@@ -52,9 +51,11 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
-  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
+  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
+    joint_cmd_pub_;
   double yaw_limit_{1.3};
   double pitch_limit_{0.185};
   double pitch_{0.92};
@@ -86,6 +87,6 @@ private:
   double get_joint_yaw(double period, double range, double time, double phase);
 };
 
-}  // namespace receptionist
+}  // namespace head
 
-#endif  // RECEPTIONIST__BEHAVIOR_TREES_NODES__PAN_TO_POINT_HPP_
+#endif  // HEAD__PAN_HPP_

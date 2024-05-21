@@ -36,18 +36,17 @@ ExtractEntityColor::ExtractEntityColor(
   getInput("interest", interest_);
   getInput("confidence", threshold_);
 
-  // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  // pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  // pl::getInstance(node_)->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  // pl::getInstance(node_)->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 }
 
 BT::NodeStatus ExtractEntityColor::tick()
 {
-  pl::getInstance()->set_interest(interest_, true);
-  pl::getInstance()->update(30);
-  rclcpp::spin_some(pl::getInstance()->get_node_base_interface());
+  pl::getInstance(node_)->set_interest(interest_, true);
+  pl::getInstance(node_)->update(30);
 
   RCLCPP_INFO(node_->get_logger(), "[ExtractEntityColor] Interest in %s", interest_.c_str());
-  auto detections = pl::getInstance()->get_by_type(interest_);
+  auto detections = pl::getInstance(node_)->get_by_type(interest_);
 
   if (detections.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[ExtractEntityColor] No detections");

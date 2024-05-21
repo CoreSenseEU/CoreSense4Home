@@ -20,6 +20,7 @@ find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(perception_system REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(perception_system_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 # find_package(backward_ros REQUIRED)
 
@@ -42,6 +43,7 @@ set(dependencies
   behaviortree_cpp_v3
   perception_system
   OpenCV
+  perception_system_interfaces
   sensor_msgs
   # backward_ros
 )

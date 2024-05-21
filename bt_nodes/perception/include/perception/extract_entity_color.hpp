@@ -54,7 +54,7 @@ public:
   }
 
 private:
-  rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr
     detected_objs_sub_;
   perception_system_interfaces::msg::DetectionArray::SharedPtr last_detected_objs_ = {nullptr};

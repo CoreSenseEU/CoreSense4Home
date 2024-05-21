@@ -57,7 +57,7 @@ private:
   moveit_msgs::msg::CollisionObject::SharedPtr object_;
   geometry_msgs::msg::PoseStamped place_pose_;
   geometry_msgs::msg::TransformStamped transform_to_place_;
-  // rclcpp::Node::SharedPtr node_;
+  //   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;
 

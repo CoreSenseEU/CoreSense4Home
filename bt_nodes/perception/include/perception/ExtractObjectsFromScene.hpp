@@ -15,6 +15,9 @@
 #ifndef PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
 #define PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
 
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 

@@ -35,7 +35,9 @@
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 #include "motion/navigation/utils.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 // #include "rclcpp/rclcpp.hpp"
 // #include "nav2_msgs/action/compute_path_to_pose.hpp"
 // #include "nav2_msgs/action/follow_path.hpp"
@@ -78,6 +80,9 @@ private:
   bool is_truncated_{false};
   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
     set_truncate_distance_client_;
+
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+  rclcpp::executors::SingleThreadedExecutor callback_executor_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::ComputePathToPose>> compute_action_client_;
   // std::shared_ptr<rclcpp_action::Client<nav2_msgs::action::FollowPath>> follow_action_client_;
   // rclcpp_action::ClientGoalHandle<nav2_msgs::action::ComputePathToPose>::WrappedResult path_result_;

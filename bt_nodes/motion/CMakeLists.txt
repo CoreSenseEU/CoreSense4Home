@@ -23,6 +23,9 @@ find_package(slam_toolbox REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
+find_package(attention_system_msgs REQUIRED)
+find_package(trajectory_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -44,6 +47,9 @@ set(dependencies
   ament_index_cpp
   trajectory_msgs
   lifecycle_msgs
+  attention_system_msgs
+  trajectory_msgs
+  sensor_msgs
 )
 
 include_directories(include)

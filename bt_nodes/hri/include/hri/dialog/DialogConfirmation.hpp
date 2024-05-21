@@ -32,7 +32,9 @@
 namespace dialog
 {
 
-class DialogConfirmation : public BT::ActionNodeBase
+class DialogConfirmation
+  : public dialog::BtActionNode<
+    whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit DialogConfirmation(

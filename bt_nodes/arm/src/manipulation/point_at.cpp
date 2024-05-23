@@ -38,6 +38,8 @@ void PointAt::on_tick()
   getInput("pose_to_point", pose_to_point_);
   getInput("tf_frame", tf_frame_);
   getInput("base_frame", base_frame_);
+  getInput("low_z", low_z_);
+  getInput("high_z", high_z_);
 
   if (tf_frame_.empty() && pose_to_point_) {
     goal_.pose = *pose_to_point_;
@@ -61,8 +63,9 @@ void PointAt::on_tick()
     auto x_point = desired_radius * std::cos(angle);
     auto y_point = desired_radius * std::sin(angle);
     goal_.pose.pose.position.x =  (std::isnan(x_point) || std::isinf(x_point)) ? 0.0 : (x_point); 
-    goal_.pose.pose.position.y = (std::isnan(y_point) || std::isinf(y_point)) ? 0.0 : (y_point); 
-    goal_.pose.pose.position.z = transform_.transform.translation.z + 0.5;
+    goal_.pose.pose.position.y = (std::isnan(y_point) || std::isinf(y_point)) ? 0.0 : (y_point);
+    // if (transform_.transform.translation.z < low_z_) put 1.0 elif (transform_.transform.translation.z > high_z_) put 1.0 else put transform_.transform.translation.z
+    goal_.pose.pose.position.z = (transform_.transform.translation.z < low_z_) ? low_z_ : (transform_.transform.translation.z > high_z_) ? high_z_ : transform_.transform.translation.z;
     goal_.pose.header.frame_id = base_frame_;
     auto orientation = tf2::Quaternion(0, 0, 0, 1);
     orientation.setEuler(0, 0, angle);

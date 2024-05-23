@@ -79,7 +79,7 @@ private:
   bool 
   check_object_class(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 
-  bool 
+  std::tuple<bool, tf2::Transform>
   check_free_space(const perception_system_interfaces::msg::Detection & person_detection, const perception_system_interfaces::msg::Detection & chair_detection );
 
   geometry_msgs::msg::Pose 

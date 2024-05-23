@@ -107,6 +107,7 @@ Pan::tick()
   command_msg.points[0].positions[1] = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
   command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(0.00);
   joint_cmd_pub_->publish(command_msg);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
   return BT::NodeStatus::RUNNING;
 }

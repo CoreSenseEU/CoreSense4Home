@@ -5,11 +5,29 @@
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
-    host_drink: "Iced tea"
-    host_name: "Noah" 
-    person_id: 001122334455
-    waypoints_names: ["entrance", "table", "cabinet"]
+    waypoints_names: ["entrance", "table", "secure_pick" "cabinet"]
     waypoints:
       entrance: [-0.711, -0.612, -3.078]
-      table: [4.728, 0.146, 3.101]
-      cabinet: [4.728, 0.146, 1.57]
+      table: [5.567, 2.208, 0.351]
+      secure_pick: [5.567, 2.208, 1.9218]
+      cabinet: [4.968, 2.762,  1.824]
+
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    bt_xml_file: storing_groceries.xml
+    plugins:
+    - set_wp_bt_node
+    - move_to_bt_node
+    - is_detected_bt_node
+    - pan_bt_node
+    - speak_bt_node
+    - is_door_open_bt_node
+    - dialogConfirmation_bt_node
+    - move_to_predefined_bt_node
+    - move_joint_bt_node
+    - extract_object_from_scene_bt_node
+    - generate_text_from_objects_bt_node
+    - extract_collision_scene_bt_node
+    - pick_bt_node
+

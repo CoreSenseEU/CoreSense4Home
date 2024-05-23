@@ -16,3 +16,8 @@ perception_people_detection:
     target_frame: head_front_camera_link_color_optical_frame
     debug: true
 
+perception_objects_detection:
+  ros__parameters:
+    target_frame: head_front_camera_link_color_optical_frame
+    debug: true
+

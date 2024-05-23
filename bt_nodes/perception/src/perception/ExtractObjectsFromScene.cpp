@@ -33,7 +33,7 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(
   config().blackboard->get("node", node_);
 
   detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
-    "/perception_system/detections_3d", 100,
+    "detections_3d", 100,
     std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -51,12 +51,12 @@ void ExtractObjectsFromScene::detection_callback_(yolov8_msgs::msg::DetectionArr
 
 BT::NodeStatus ExtractObjectsFromScene::tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "ExtractObjectsFromScene ticked");
+  RCLCPP_INFO(node_->get_logger(), "[ExtractObjectsFromScene] ticked");
   getInput("interest_class", interest_class_);
   rclcpp::spin_some(node_->get_node_base_interface());
 
   if (last_detected_objs_ == nullptr) {
-    RCLCPP_INFO(node_->get_logger(), "No objects detection yet");
+    RCLCPP_ERROR(node_->get_logger(), "[ExtractObjectsFromScene] No objects detection yet");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -66,7 +66,7 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
   RCLCPP_INFO(node_->get_logger(), "Elapsed time: %f", seconds);
 
   if (elapsed > 1s) {
-    RCLCPP_INFO(node_->get_logger(), "No objects detection in the last second");
+    RCLCPP_ERROR(node_->get_logger(), "No objects detection in the last second");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -85,6 +85,8 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
       RCLCPP_INFO(node_->get_logger(), "Ignoring object of class %s", detected_object.class_name.c_str());
       continue;
     }
+
+    RCLCPP_INFO(node_->get_logger(), "[Extract] ADDING : %s", detected_object.class_name.c_str());
 
     shape_msgs::msg::SolidPrimitive obj_solid_primitive;
     obj_solid_primitive.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
@@ -134,6 +136,7 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
   ExtractObjectsFromScene::setOutput("objects_count", detected_objects.size());
   RCLCPP_INFO(node_->get_logger(), "---------------------------------------");
   if (detected_objects.empty()) {
+    RCLCPP_ERROR(node_->get_logger(), "[ExtractObject] No objects detected");
     return BT::NodeStatus::FAILURE;
   }
   return BT::NodeStatus::SUCCESS;

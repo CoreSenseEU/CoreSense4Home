@@ -15,7 +15,6 @@
 #ifndef CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
 #define CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
 
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
@@ -37,8 +36,6 @@ public:
         BT::BidirectionalPort<std::string>("guest_id"),
       });
   }
-  
-  
 };
 
 }  // namespace configuration

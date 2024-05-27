@@ -21,29 +21,27 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 ConfigureNavigateBack::ConfigureNavigateBack(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf),
   mode_(navigation_system_interfaces::msg::Mode::AMCL),
   qos_(rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable())
 {
   config().blackboard->get("node", node_);
-  map_path_ = ament_index_cpp::get_package_share_directory("robocup_bringup") +
-    "/maps/carry_mapped_arena";
+  map_path_ =
+    ament_index_cpp::get_package_share_directory("robocup_bringup") + "/maps/carry_mapped_arena";
   save_map_client_ = node_->create_client<slam_toolbox::srv::SaveMap>("slam_toolbox/save_map");
   set_mode_client_ = node_->create_client<navigation_system_interfaces::srv::SetMode>(
     "navigation_system_node/set_mode");
   load_map_client_ = node_->create_client<navigation_system_interfaces::srv::SetMap>(
     "navigation_system_node/set_map");
 
-  intial_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
-    "initialpose", 10);
+  intial_pose_pub_ =
+    node_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("initialpose", 10);
 
   // sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
   // "amcl_pose", qos_, std::bind(&ConfigureNavigateBack::pose_callback, this, _1));
   sub_initial_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "initialpose", qos_, std::bind(&ConfigureNavigateBack::initial_pose_callback, this, _1));
-
 }
 
 BT::NodeStatus ConfigureNavigateBack::tick()
@@ -69,7 +67,6 @@ BT::NodeStatus ConfigureNavigateBack::tick()
 
   current_pos_.pose.pose.orientation = entity_transform_.transform.rotation;
 
-
   bool success = true;
 
   if (!is_save_map_) {
@@ -94,7 +91,6 @@ BT::NodeStatus ConfigureNavigateBack::tick()
   } else {
     return BT::NodeStatus::FAILURE;
   }
-
 }
 
 void ConfigureNavigateBack::initial_pose_callback(
@@ -197,7 +193,8 @@ bool ConfigureNavigateBack::set_initial_pose(
   }
 }
 
-BT_REGISTER_NODES(factory) {
+BT_REGISTER_NODES(factory)
+{
   factory.registerNodeType<navigation::ConfigureNavigateBack>("ConfigureNavigateBack");
 }
 

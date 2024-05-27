@@ -5,12 +5,13 @@
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
-    waypoints_names: ["entrance", "table", "secure_pick" "cabinet"]
+    waypoints_names: ["entrance", "table", "secure_pick", "cabinet", "secure_place"]
     waypoints:
       entrance: [-0.711, -0.612, -3.078]
       table: [5.567, 2.208, 0.351]
       secure_pick: [5.567, 2.208, 1.9218]
-      cabinet: [4.968, 2.762,  1.824]
+      cabinet: [4.98, 2.87762,  1.716]
+      secure_place: [4.968, 2.2, 1.824]
 
 behaviors_main:
   ros__parameters:
@@ -30,4 +31,10 @@ behaviors_main:
     - generate_text_from_objects_bt_node
     - extract_collision_scene_bt_node
     - pick_bt_node
+    - choose_from_classes_bt_node
+    - extract_cabinet_place_pose_bt_node
+    - place_bt_node
+    - init_groceries_bt_node
+    - point_at_bt_node
+    - clear_octomap_bt_node
 

@@ -33,8 +33,7 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(
   config().blackboard->get("node", node_);
 
   detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
-    "detections_3d", 100,
-    std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
+    "detections_3d", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 }
@@ -82,7 +81,8 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
       RCLCPP_INFO(node_->get_logger(), "Ignoring too large object");
       continue;
     } else if (detected_object.class_name != interest_class_ && interest_class_ != "") {
-      RCLCPP_INFO(node_->get_logger(), "Ignoring object of class %s", detected_object.class_name.c_str());
+      RCLCPP_INFO(
+        node_->get_logger(), "Ignoring object of class %s", detected_object.class_name.c_str());
       continue;
     }
 

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__INIT_CARRY_HPP_
-#define CONFIGURATION__INIT_CARRY_HPP_
+#ifndef CONFIGURATION__INIT_GROCERIES_HPP_
+#define CONFIGURATION__INIT_GROCERIES_HPP_
 
 #include <string>
 #include <vector>
@@ -32,10 +32,10 @@
 namespace configuration
 {
 
-class InitReceptionist : public BT::ActionNodeBase
+class InitGroceries : public BT::ActionNodeBase
 {
 public:
-  explicit InitReceptionist(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit InitGroceries(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -73,4 +73,4 @@ private:
 
 }  // namespace configuration
 
-#endif  // CONFIGURATION__INIT_CARRY_HPP_
+#endif  // CONFIGURATION__INIT_GROCERIES_HPP_

@@ -19,12 +19,10 @@
 #include <string>
 #include <utility>
 
+#include "behaviortree_cpp_v3/behavior_tree.h"
 #include "hri/dialog/Query.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 #include "std_msgs/msg/int8.hpp"
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "llama_msgs/action/generate_response.hpp"
 
 namespace dialog
 {

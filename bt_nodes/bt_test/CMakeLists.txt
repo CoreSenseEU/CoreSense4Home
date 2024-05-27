@@ -140,7 +140,7 @@ target_link_libraries(follow_person_test perception::follow_person_bt_node)
 # find_person test
 add_executable(find_person_test src/find_person_test.cpp)
 ament_target_dependencies(find_person_test ${dependencies})
-target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node)
+target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node perception::is_gesturing_bt_node)
 
 # carry my luggage test
 add_executable(carry_my_luggage_test src/carry_my_luggage_test.cpp)

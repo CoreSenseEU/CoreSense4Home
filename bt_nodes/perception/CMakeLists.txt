@@ -53,6 +53,9 @@ include_directories(include)
 add_library(extract_object_from_scene_bt_node SHARED src/perception/ExtractObjectsFromScene.cpp)
 list(APPEND plugin_libs extract_object_from_scene_bt_node)
 
+add_library(convert_color_bt_node SHARED src/perception/convert_color.cpp)
+list(APPEND plugin_libs convert_color_bt_node)
+
 add_library(is_detected_bt_node SHARED src/perception/IsDetected.cpp)
 list(APPEND plugin_libs is_detected_bt_node)
 

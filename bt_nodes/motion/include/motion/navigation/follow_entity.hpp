@@ -83,8 +83,8 @@ private:
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
   double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
   bool is_goal_sent_ = false;
-//   double magnitude;
-// double scale;
+  //   double magnitude;
+  // double scale;
   geometry_msgs::msg::TransformStamped entity_transform_;
   geometry_msgs::msg::TransformStamped robot_direction_;
   geometry_msgs::msg::PoseStamped goal_pose_;

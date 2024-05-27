@@ -15,9 +15,6 @@
 #ifndef PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
 #define PERCEPTION__EXTRACT_OBJECTS_FROM_SCENE_HPP_
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -28,6 +25,7 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 #include "yolov8_msgs/msg/detection_array.hpp"
 
@@ -47,9 +45,9 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::string>("interest_class"),
-       BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
+        BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
           "detected_objects"),
-       BT::OutputPort<size_t>("objects_count")});
+        BT::OutputPort<size_t>("objects_count")});
   }
 
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);

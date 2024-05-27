@@ -26,23 +26,14 @@ using namespace std::placeholders;
 ClearOctomap::ClearOctomap(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: perception::BtServiceNode<std_srvs::srv::Empty,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+: perception::BtServiceNode<std_srvs::srv::Empty, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
-} 
-
-void ClearOctomap::on_tick()
-{
-  RCLCPP_INFO(node_->get_logger(), "ClearOctomap ticked");
 }
 
-void ClearOctomap::on_result()
-{
+void ClearOctomap::on_tick() {RCLCPP_INFO(node_->get_logger(), "ClearOctomap ticked");}
 
-  setStatus(BT::NodeStatus::SUCCESS);
-    
-}
+void ClearOctomap::on_result() {setStatus(BT::NodeStatus::SUCCESS);}
 
 }  // namespace perception
 
@@ -50,8 +41,7 @@ void ClearOctomap::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::ClearOctomap>(
-        name, "clear_octomap", config);
+      return std::make_unique<perception::ClearOctomap>(name, "clear_octomap", config);
     };
 
   factory.registerBuilder<perception::ClearOctomap>("ClearOctomap", builder);

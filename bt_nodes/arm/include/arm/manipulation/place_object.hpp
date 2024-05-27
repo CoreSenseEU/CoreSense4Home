@@ -15,16 +15,17 @@
 #ifndef ARM_MANIPULATION__PLACE_OBJECT_HPP_
 #define ARM_MANIPULATION__PLACE_OBJECT_HPP_
 
+#include <tf2_ros/buffer.h>
+
 #include <algorithm>
 #include <string>
 
 #include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "manipulation_interfaces/action/place.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include <tf2_ros/buffer.h>
+#include "manipulation_interfaces/action/place.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
@@ -32,8 +33,9 @@
 namespace manipulation
 {
 
-class PlaceObject : public manipulation::BtActionNode<manipulation_interfaces::action::Place,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class PlaceObject
+  : public manipulation::BtActionNode<
+    manipulation_interfaces::action::Place, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit PlaceObject(
@@ -47,13 +49,11 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("object_to_place"),
-       BT::InputPort<geometry_msgs::msg::PoseStamped>("place_pose"),
-       BT::InputPort<std::string>("base_frame")});
+        BT::InputPort<geometry_msgs::msg::PoseStamped>("place_pose"),
+        BT::InputPort<std::string>("base_frame")});
   }
 
 private:
-
-
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::string tf_to_place_, base_frame_;
   moveit_msgs::msg::CollisionObject::SharedPtr object_;

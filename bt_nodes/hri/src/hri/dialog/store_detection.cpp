@@ -20,23 +20,19 @@ using namespace std::chrono_literals;
 namespace hri
 {
 
-StoreDetection::StoreDetection(
-  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+StoreDetection::StoreDetection(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 }
 
-void StoreDetection::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "[StoreDetection] halted");
-}
+void StoreDetection::halt() {RCLCPP_INFO(node_->get_logger(), "[StoreDetection] halted");}
 
 BT::NodeStatus StoreDetection::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[StoreDetection} ticked");
   rclcpp::spin_some(node_->get_node_base_interface());
-  
+
   getInput("current_name", current_name_);
   getInput("drink", current_drink_);
   getInput("guest_id", current_id_);
@@ -63,7 +59,6 @@ BT::NodeStatus StoreDetection::tick()
 
 }  // namespace hri
 
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<hri::StoreDetection>("StoreDetection");
 }

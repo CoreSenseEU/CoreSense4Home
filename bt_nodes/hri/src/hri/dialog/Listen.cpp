@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "hri/dialog/Listen.hpp"
+
 #include <cstdint>
 #include <string>
 #include <utility>
 
-#include "hri/dialog/Listen.hpp"
-#include "std_msgs/msg/int8.hpp"
-#include "whisper_msgs/action/stt.hpp"
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog

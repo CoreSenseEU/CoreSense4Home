@@ -29,9 +29,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "perception_system/PerceptionListener.hpp"
-
 #include "perception_system_interfaces/msg/detection.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 

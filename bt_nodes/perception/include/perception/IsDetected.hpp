@@ -52,13 +52,11 @@ public:
         BT::InputPort<std::string>("cam_frame"), BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"), 
-        BT::OutputPort<std::vector<std::string>>("frames"),
+        BT::InputPort<double>("max_depth"), BT::OutputPort<std::vector<std::string>>("frames"),
         BT::OutputPort<std::string>("best_detection")});
   }
 
 private:
-
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 
@@ -67,7 +65,6 @@ private:
   int max_entities_;
   std::int64_t person_id_;
   std::vector<std::string> frames_;
-  
 };
 
 }  // namespace perception

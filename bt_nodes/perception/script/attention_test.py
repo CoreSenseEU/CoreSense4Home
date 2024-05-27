@@ -1,15 +1,16 @@
+from control_msgs.action import FollowJointTrajectory
+import numpy as np
 import rclpy
+from rclpy.action import ActionClient
 from rclpy.node import Node
+from scipy.spatial.transform import Rotation as R
 import tf2_ros
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from control_msgs.action import FollowJointTrajectory
-from rclpy.action import ActionClient
-from scipy.spatial.transform import Rotation as R
-import numpy as np
 C = 1.15
 
 
 class FollowPerson(Node):
+
     def __init__(self):
         super().__init__('follow_person')
         self.tfBuffer = tf2_ros.Buffer()
@@ -18,22 +19,22 @@ class FollowPerson(Node):
         self.follow_joint_traj_action_client = ActionClient(
             self, FollowJointTrajectory,
             'head_controller/follow_joint_trajectory')
-        print("Waiting for action server")
+        print('Waiting for action server')
         self.follow_joint_traj_action_client.wait_for_server()
-        print("Action server found")
+        print('Action server found')
         self.yaw_limit = (-1.3, 1.3)  # Yaw limits in radians
         self.pitch_limit = (-0.185, 0.185)  # Pitch limits in radians
 
     def timer_callback(self):
         try:
             transform_head_1 = self.tfBuffer.lookup_transform(
-                "head_1_link", "person_0", rclpy.time.Time())
+                'head_1_link', 'person_0', rclpy.time.Time())
             transform_head_2 = self.tfBuffer.lookup_transform(
-                "head_2_link", "person_0", rclpy.time.Time())
+                'head_2_link', 'person_0', rclpy.time.Time())
 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException):
-            self.get_logger().warn("Could not get transform")
+            self.get_logger().warn('Could not get transform')
             return
 
         yaw = self.compute_yaw(transform_head_1.transform.translation) * C
@@ -42,7 +43,7 @@ class FollowPerson(Node):
         yaw = max(self.yaw_limit[0], min(yaw, self.yaw_limit[1]))
         # pitch = 0.5
         # yaw = 0.5
-        print("Yaw: ", yaw, "Pitch: ", pitch)
+        print('Yaw: ', yaw, 'Pitch: ', pitch)
         self.send_goal(yaw, pitch)
 
     def compute_yaw(self, translation):
@@ -66,12 +67,12 @@ class FollowPerson(Node):
     def send_goal(self, yaw, pitch):
         goal_msg = FollowJointTrajectory.Goal()
         goal_msg.trajectory = JointTrajectory()
-        goal_msg.trajectory.joint_names = ["head_1_joint", "head_2_joint"]
+        goal_msg.trajectory.joint_names = ['head_1_joint', 'head_2_joint']
         point = JointTrajectoryPoint()
         point.positions = [yaw, pitch]
         point.time_from_start = rclpy.time.Duration(seconds=1).to_msg()
         goal_msg.trajectory.points.append(point)
-        print("Sending goal")
+        print('Sending goal')
         self.follow_joint_traj_action_client.send_goal_async(goal_msg)
 
 

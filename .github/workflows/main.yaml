@@ -23,6 +23,10 @@ jobs:
           required-ros-distributions: humble
       - name: Install nlohmann
         run: sudo apt -y install nlohmann-json3-dev
+      - name: Install ceres dependencies
+        run: sudo apt -y install libunwind-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev libgflags-dev
+      - name: Install ceres
+        run: sudo apt -y install libceres-dev
       - name: build and test
         uses: ros-tooling/action-ros-ci@0.3.3
         with:

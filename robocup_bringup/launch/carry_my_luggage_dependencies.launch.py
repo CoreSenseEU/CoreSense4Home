@@ -104,7 +104,8 @@ def generate_launch_description():
             'rviz': 'True',
             'mode': 'amcl',
             'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
-            'slam_params_file': package_dir + '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
+            'slam_params_file': package_dir +
+                    '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
             'map': os.path.join(
                                 package_dir,
                                 'maps',
@@ -123,4 +124,3 @@ def generate_launch_description():
     ld.add_action(manipulation_server)
 
     return ld
-

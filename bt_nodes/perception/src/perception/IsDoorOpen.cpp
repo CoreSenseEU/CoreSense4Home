@@ -21,18 +21,14 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 // #include "perception_system/PerceptionUtils.hpp"
 
-
 namespace perception
 {
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-IsDoorOpen::IsDoorOpen(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
-: BT::ConditionNode(xml_tag_name, conf),
-  door_threshold_(2.0)
+IsDoorOpen::IsDoorOpen(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+: BT::ConditionNode(xml_tag_name, conf), door_threshold_(2.0)
 {
   config().blackboard->get("node", node_);
   getInput("door_threshold", door_threshold_);
@@ -41,8 +37,7 @@ IsDoorOpen::IsDoorOpen(
   // config().blackboard->get("cam_frame", cam_frame_);
 }
 
-BT::NodeStatus
-IsDoorOpen::tick()
+BT::NodeStatus IsDoorOpen::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "IsDoorOpen ticked");
   rclcpp::spin_some(node_->get_node_base_interface());
@@ -54,17 +49,14 @@ IsDoorOpen::tick()
   // {
   //   return BT::NodeStatus::FAILURE;
   // }
- 
+
   // return BT::NodeStatus::SUCCESS; //test, change to SUCCESS
-  if(last_scan_ == nullptr)
-  {
+  if (last_scan_ == nullptr) {
     return BT::NodeStatus::FAILURE;
   }
   auto mid = last_scan_->ranges.size() / 2;
-  for(size_t i = mid -2; i<= mid + 2; i++)
-  {
-    if(last_scan_->ranges[i] > door_threshold_)
-    {
+  for (size_t i = mid - 2; i <= mid + 2; i++) {
+    if (last_scan_->ranges[i] > door_threshold_) {
       return BT::NodeStatus::SUCCESS;
     } else {
       return BT::NodeStatus::FAILURE;
@@ -72,8 +64,7 @@ IsDoorOpen::tick()
   }
 }
 
-void
-IsDoorOpen::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
+void IsDoorOpen::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
 {
   // auto mid = msg->ranges.size() / 2;
   // for(size_t i = mid -2; i<= mid + 2; i++)
@@ -87,13 +78,9 @@ IsDoorOpen::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
   RCLCPP_INFO(node_->get_logger(), "Laser callback");
   last_scan_ = std::move(msg);
 }
-  
-
 
 }  // namespace perception
 
-
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<perception::IsDoorOpen>("IsDoorOpen");
 }

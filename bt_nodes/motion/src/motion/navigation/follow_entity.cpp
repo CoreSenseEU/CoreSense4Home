@@ -57,7 +57,8 @@ void FollowEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FollowEntity halted
 
 void FollowEntity::check_robot_inside_map()
 {
-  if (current_pos_.pose.pose.position.x <= x_axis_max_ &&
+  if (
+    current_pos_.pose.pose.position.x <= x_axis_max_ &&
     current_pos_.pose.pose.position.y <= y_axis_max_ &&
     current_pos_.pose.pose.position.x >= x_axis_min_ &&
     current_pos_.pose.pose.position.y >= y_axis_min_)
@@ -94,9 +95,8 @@ BT::NodeStatus FollowEntity::tick()
   //   check_robot_inside_map();
   // }
 
-  while (!tf_buffer_->canTransform(
-      "base_footprint", frame_to_follow_,
-      tf2::TimePointZero) && rclcpp::ok())
+  while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) &&
+    rclcpp::ok())
   {
     RCLCPP_INFO(
       node_->get_logger(), "Waiting for transform from map to %s", frame_to_follow_.c_str());
@@ -105,9 +105,8 @@ BT::NodeStatus FollowEntity::tick()
   }
 
   try {
-    entity_transform_ = tf_buffer_->lookupTransform(
-      "base_footprint", frame_to_follow_,
-      tf2::TimePointZero);
+    entity_transform_ =
+      tf_buffer_->lookupTransform("base_footprint", frame_to_follow_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
@@ -126,7 +125,6 @@ BT::NodeStatus FollowEntity::tick()
 
 BT::NodeStatus FollowEntity::on_idle()
 {
-
   config().blackboard->get("tf_buffer", tf_buffer_);
   RCLCPP_INFO(node_->get_logger(), "FollowEntity ticked IDLE");
   std::string camera_frame, frame_to_follow;
@@ -159,9 +157,8 @@ BT::NodeStatus FollowEntity::on_idle()
     return BT::NodeStatus::RUNNING;
   }
 
-  while (!tf_buffer_->canTransform(
-      "base_footprint", frame_to_follow_,
-      tf2::TimePointZero) && rclcpp::ok())
+  while (!tf_buffer_->canTransform("base_footprint", frame_to_follow_, tf2::TimePointZero) &&
+    rclcpp::ok())
   {
     RCLCPP_INFO(
       node_->get_logger(), "Waiting for transform from base_footprint to %s",
@@ -171,9 +168,8 @@ BT::NodeStatus FollowEntity::on_idle()
   }
 
   try {
-    entity_transform_ = tf_buffer_->lookupTransform(
-      "base_footprint", frame_to_follow_,
-      tf2::TimePointZero);
+    entity_transform_ =
+      tf_buffer_->lookupTransform("base_footprint", frame_to_follow_, tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform base_footprint to %s: %s", frame_to_follow_.c_str(),
@@ -185,14 +181,16 @@ BT::NodeStatus FollowEntity::on_idle()
   auto goal = nav2_msgs::action::NavigateToPose::Goal();
 
   // xml_path_ = generate_xml_file(dynamic_following_xml, distance_tolerance_);
-  auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
+  auto request =
+    std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
   RCLCPP_INFO(node_->get_logger(), "Setting truncate distance to %f", distance_tolerance_);
   request->distance = distance_tolerance_;
   request->xml_content = dynamic_following_xml;
 
   auto future_request = set_truncate_distance_client_->async_send_request(request).share();
-  if (rclcpp::spin_until_future_complete(node_, future_request) ==
-  rclcpp::FutureReturnCode::SUCCESS)
+  if (
+    rclcpp::spin_until_future_complete(node_, future_request) ==
+    rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
     auto result = *future_request.get();
@@ -224,18 +222,15 @@ BT::NodeStatus FollowEntity::on_idle()
   return BT::NodeStatus::RUNNING;
 }
 
-
 geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(
-  const double & distance_to_substract,
-  const geometry_msgs::msg::TransformStamped & goal_transform)
+  const double & distance_to_substract, const geometry_msgs::msg::TransformStamped & goal_transform)
 {
   geometry_msgs::msg::PoseStamped goal_pose;
 
   goal_pose.header.frame_id = "base_footprint";
 
-  double magnitude = std::hypot(
-    goal_transform.transform.translation.x,
-    goal_transform.transform.translation.y);
+  double magnitude =
+    std::hypot(goal_transform.transform.translation.x, goal_transform.transform.translation.y);
   double scale = (magnitude - distance_to_substract) / magnitude;
 
   goal_pose.pose.position.x = goal_transform.transform.translation.x * std::max(scale, 0.0);
@@ -253,7 +248,6 @@ geometry_msgs::msg::PoseStamped FollowEntity::get_goal_pose(
 
   goal_pose.pose.orientation = tf2::toMsg(q);
   return goal_pose;
-
 }
 
 }  // namespace navigation

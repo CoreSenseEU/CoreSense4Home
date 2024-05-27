@@ -30,8 +30,8 @@ int main(int argc, char * argv[])
   rclcpp::NodeOptions options;
   // options.automatically_declare_parameters_from_overrides(true);
 
-  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    "carry_my_luggage", options);
+  auto node =
+    std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>("carry_my_luggage", options);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;

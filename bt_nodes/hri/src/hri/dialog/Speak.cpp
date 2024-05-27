@@ -12,45 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "hri/dialog/Speak.hpp"
+
 #include <cstdint>
 #include <string>
 #include <utility>
 
 #include "audio_common_msgs/action/tts.hpp"
-#include "hri/dialog/Speak.hpp"
+#include "behaviortree_cpp_v3/behavior_tree.h"
 #include "std_msgs/msg/int8.hpp"
 #include "std_msgs/msg/string.hpp"
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
 
 namespace dialog
 {
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-Speak::Speak(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
+Speak::Speak(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 
-  this->publisher_ =
-    node_->create_publisher<std_msgs::msg::String>("say_text", 10);
-  this->publisher_start_ =
-    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+  this->publisher_ = node_->create_publisher<std_msgs::msg::String>("say_text", 10);
+  this->publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
 
   this->publisher_->on_activate();
   this->publisher_start_->on_activate();
 
-  this->client_ = rclcpp_action::create_client<audio_common_msgs::action::TTS>(
-    node_, "/say");
+  this->client_ = rclcpp_action::create_client<audio_common_msgs::action::TTS>(node_, "/say");
 }
 
-void Speak::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "Speak halted");
-}
+void Speak::halt() {RCLCPP_INFO(node_->get_logger(), "Speak halted");}
 
 BT::NodeStatus Speak::tick()
 {
@@ -58,7 +50,7 @@ BT::NodeStatus Speak::tick()
   if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
     return on_idle();
   }
-  
+
   return BT::NodeStatus::RUNNING;
   /* std::string text_;
 
@@ -111,9 +103,8 @@ BT::NodeStatus Speak::on_idle()
   RCLCPP_INFO(node_->get_logger(), "Sending goal");
 
   auto future_goal_handle = client_->async_send_goal(goal);
-  if (rclcpp::spin_until_future_complete(
-      node_->get_node_base_interface(),
-      future_goal_handle) !=
+  if (
+    rclcpp::spin_until_future_complete(node_->get_node_base_interface(), future_goal_handle) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
     /* is_goal_sent_ = true;
@@ -134,7 +125,8 @@ BT::NodeStatus Speak::on_idle()
   auto result_future = client_->async_get_result(goal_handle);
 
   RCLCPP_INFO(node_->get_logger(), "Waiting for result");
-  if (rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result_future) !=
+  if (
+    rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result_future) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_ERROR(node_->get_logger(), "get result call failed :(");
@@ -143,8 +135,7 @@ BT::NodeStatus Speak::on_idle()
 
   auto wrapped_result = result_future.get();
 
-  if(wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED)
-  {
+  if (wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED) {
     RCLCPP_ERROR(node_->get_logger(), "Goal was rejected");
     return BT::NodeStatus::FAILURE;
   }
@@ -153,10 +144,9 @@ BT::NodeStatus Speak::on_idle()
 
   return BT::NodeStatus::SUCCESS;
 }
-}
+}  // namespace dialog
 // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory) {
-
   factory.registerNodeType<dialog::Speak>("Speak");
 }

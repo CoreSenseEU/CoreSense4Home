@@ -25,13 +25,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    "isdetected_test");
+  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>("isdetected_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;

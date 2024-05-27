@@ -29,8 +29,9 @@ using namespace std::placeholders;
 PlaceObject::PlaceObject(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: manipulation::BtActionNode<manipulation_interfaces::action::Place,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, action_name, conf)
+: manipulation::BtActionNode<
+    manipulation_interfaces::action::Place, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
 }
 
@@ -42,7 +43,6 @@ void PlaceObject::on_tick()
   // getInput("tf_to_place", tf_to_place_);
   getInput("place_pose", place_pose_);
   getInput("base_frame", base_frame_);
-
 
   // try
   // {
@@ -57,14 +57,13 @@ void PlaceObject::on_tick()
   // place_pose_.pose.position.x = transform_to_place_.transform.translation.x;
   // place_pose_.pose.position.y = transform_to_place_.transform.translation.y;
   // place_pose_.pose.position.z = transform_to_place_.transform.translation.z;
-  // place_pose_.pose.orientation = transform_to_place_.transform.rotation;  
+  // place_pose_.pose.orientation = transform_to_place_.transform.rotation;
 
   goal_.attached_object = *object_;
   goal_.place_pose = place_pose_;
-
 }
 
-BT::NodeStatus PlaceObject::on_success() 
+BT::NodeStatus PlaceObject::on_success()
 {
   if (result_.result->success) {
     return BT::NodeStatus::SUCCESS;

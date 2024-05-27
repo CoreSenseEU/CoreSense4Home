@@ -11,6 +11,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_cascade_lifecycle</depend>
   <depend>behaviortree_cpp_v3</depend>
+  <depend>backward_ros</depend>
 
   <exec_depend>arm</exec_depend>
   <exec_depend>configuration</exec_depend>

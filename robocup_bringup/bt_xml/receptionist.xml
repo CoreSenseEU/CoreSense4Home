@@ -140,7 +140,7 @@
                                 </Sequence>
                             </SequenceStar>
                     </RetryUntilSuccessful>
-                    <!-- <Action ID="StoreDetection" current_name="{name_value}"
+                    <Action ID="StoreDetection" current_name="{name_value}"
                                                 drink="{drink_value}"
                                                 guest_id="{n}"
                                                 name_1="{name_1}"
@@ -193,7 +193,7 @@
                     <Action ID="MoveToPredefined" pose="home"/>
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
 
-                    <Action ID="AddGuestToCount" guest_id="{n}"/> -->
+                    <Action ID="AddGuestToCount" guest_id="{n}"/>
                 </Sequence>  
             </Repeat>
         </Sequence>

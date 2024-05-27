@@ -30,14 +30,14 @@ MoveJoint::MoveJoint(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : manipulation::BtActionNode<
-    manipulation_interfaces::action::MoveJoint,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf) {}
+    manipulation_interfaces::action::MoveJoint, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
+{
+}
 
 void MoveJoint::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "MoveJoint ticked");
-
 
   getInput("joint_name", joint_name_);
   getInput("joint_value", joint_value_);
@@ -48,7 +48,8 @@ void MoveJoint::on_tick()
   goal_.joint_value = joint_value_;
 }
 
-BT::NodeStatus MoveJoint::on_success() {
+BT::NodeStatus MoveJoint::on_success()
+{
   return BT::NodeStatus::SUCCESS;
 
   // if (result_.result->success) {

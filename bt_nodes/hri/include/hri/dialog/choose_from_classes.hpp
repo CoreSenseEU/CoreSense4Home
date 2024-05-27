@@ -29,8 +29,9 @@
 namespace dialog
 {
 
-class ChooseFromClasses : public dialog::BtActionNode<llama_msgs::action::GenerateResponse,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class ChooseFromClasses
+  : public dialog::BtActionNode<
+    llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit ChooseFromClasses(
@@ -44,19 +45,18 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::vector<std::string>>("class_options"),
-       BT::InputPort<std::string>("target_class"),
-       BT::OutputPort<std::string>("selected_class"),
-       BT::OutputPort<std::string>("selected_class_text")});
+        BT::InputPort<std::string>("target_class"), BT::OutputPort<std::string>("selected_class"),
+        BT::OutputPort<std::string>("selected_class_text")});
   }
 
 private:
   std::string vector_to_string(const std::vector<std::string> & vec);
   std::string remove_suffix(const std::string & str, const std::string & suffix);
-  std::string retrieve_class(const std::string & text, const std::vector<std::string> & class_options);
+  std::string retrieve_class(
+    const std::string & text, const std::vector<std::string> & class_options);
 
   std::vector<std::string> class_options_;
   std::string target_class_;
- 
 };
 
 }  // namespace dialog

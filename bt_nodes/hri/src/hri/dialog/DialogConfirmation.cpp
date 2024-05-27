@@ -17,11 +17,9 @@
 #include <string>
 #include <utility>
 
+#include "behaviortree_cpp_v3/behavior_tree.h"
 #include "hri/dialog/DialogConfirmation.hpp"
 #include "std_msgs/msg/int8.hpp"
-#include "whisper_msgs/action/stt.hpp"
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog

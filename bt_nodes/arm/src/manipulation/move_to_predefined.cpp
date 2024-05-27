@@ -31,8 +31,9 @@ MoveToPredefined::MoveToPredefined(
   const BT::NodeConfiguration & conf)
 : manipulation::BtActionNode<
     manipulation_interfaces::action::MoveToPredefined,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf) {}
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, action_name, conf)
+{
+}
 
 void MoveToPredefined::on_tick()
 {
@@ -44,7 +45,7 @@ void MoveToPredefined::on_tick()
   goal_.goal_pose = pose_;
 }
 
-BT::NodeStatus MoveToPredefined::on_success() 
+BT::NodeStatus MoveToPredefined::on_success()
 {
   return BT::NodeStatus::SUCCESS;
   // if (result_.result->success) {

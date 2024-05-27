@@ -1,0 +1,12 @@
+<root>
+    <BehaviorTree ID="FindPerson">
+        <RetryUntilSuccessful num_attempts="-1">
+                <Action ID="ConvertColor" interest="bottom" color="red" color_hsv="{person_id}"/>
+                <ReactiveFallback>
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.3" person_id="{person_id}" interest="person" max_depth="2.5" max_entities="1" order="color"/>
+                        <Action ID="Pan" period="10.0" range="30" pitch_angle="-10"/>
+                </ReactiveFallback>
+                <Action ID="MoveTo" is_truncated="true"  distance_tolerance="2" tf_frame="person_0"/>
+        </RetryUntilSuccessful>
+    </BehaviorTree>
+</root>

@@ -23,12 +23,14 @@
 #include "hri/dialog/BTActionNode.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "std_msgs/msg/int8.hpp"
 
 namespace dialog
 {
 
-class ChooseFromClasses : public dialog::BtActionNode<llama_msgs::action::GenerateResponse>
+class ChooseFromClasses : public dialog::BtActionNode<llama_msgs::action::GenerateResponse,
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit ChooseFromClasses(

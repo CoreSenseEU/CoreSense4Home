@@ -48,7 +48,16 @@ void MoveJoint::on_tick()
   goal_.joint_value = joint_value_;
 }
 
-BT::NodeStatus MoveJoint::on_success() {return BT::NodeStatus::SUCCESS;}
+BT::NodeStatus MoveJoint::on_success() {
+  return BT::NodeStatus::SUCCESS;
+
+  // if (result_.result->success) {
+  //   return BT::NodeStatus::SUCCESS;
+  // } else {
+  //   RCLCPP_ERROR(node_->get_logger(), "MoveJoint failed");
+  //   return BT::NodeStatus::FAILURE;
+  // }
+}
 
 }  // namespace manipulation
 #include "behaviortree_cpp_v3/bt_factory.h"

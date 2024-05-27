@@ -27,11 +27,13 @@
 #include <tf2_ros/buffer.h>
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace manipulation
 {
 
-class PlaceObject : public manipulation::BtActionNode<manipulation_interfaces::action::Place>
+class PlaceObject : public manipulation::BtActionNode<manipulation_interfaces::action::Place,
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit PlaceObject(

@@ -12,56 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "arm/manipulation/move_to_predefined.hpp"
+#include "perception/clear_octomap.hpp"
 
 #include <string>
 #include <utility>
 
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "manipulation_interfaces/action/move_to_predefined.hpp"
-
-namespace manipulation
+namespace perception
 {
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-MoveToPredefined::MoveToPredefined(
+ClearOctomap::ClearOctomap(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: manipulation::BtActionNode<
-    manipulation_interfaces::action::MoveToPredefined,
+: perception::BtServiceNode<std_srvs::srv::Empty,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf) {}
-
-void MoveToPredefined::on_tick()
+    xml_tag_name, action_name, conf)
 {
-  RCLCPP_DEBUG(node_->get_logger(), "MoveToPredefined ticked");
+} 
 
-  getInput("pose", pose_);
-  getInput("group_name", group_name_);
-  goal_.group_name = group_name_;
-  goal_.goal_pose = pose_;
+void ClearOctomap::on_tick()
+{
+  RCLCPP_INFO(node_->get_logger(), "ClearOctomap ticked");
 }
 
-BT::NodeStatus MoveToPredefined::on_success() 
+void ClearOctomap::on_result()
 {
-  return BT::NodeStatus::SUCCESS;
-  // if (result_.result->success) {
-  //   return BT::NodeStatus::SUCCESS;
-  // } else {
-  //   RCLCPP_ERROR(node_->get_logger(), "MoveToPredefined failed");
-  //   return BT::NodeStatus::FAILURE;
-  // }
+
+  setStatus(BT::NodeStatus::SUCCESS);
+    
 }
 
-}  // namespace manipulation
+}  // namespace perception
+
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<manipulation::MoveToPredefined>(name, "/move_to_predefined", config);
+      return std::make_unique<perception::ClearOctomap>(
+        name, "clear_octomap", config);
     };
 
-  factory.registerBuilder<manipulation::MoveToPredefined>("MoveToPredefined", builder);
+  factory.registerBuilder<perception::ClearOctomap>("ClearOctomap", builder);
 }

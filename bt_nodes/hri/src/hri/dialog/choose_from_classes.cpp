@@ -37,7 +37,8 @@ using json = nlohmann::json;
 ChooseFromClasses::ChooseFromClasses(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: dialog::BtActionNode<llama_msgs::action::GenerateResponse>(
+: dialog::BtActionNode<llama_msgs::action::GenerateResponse,
+                       rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
  
@@ -55,7 +56,8 @@ void ChooseFromClasses::on_tick()
   std::string prompt_ = "From the following list of object classes: " + classes_string +
                       ", please select the one that is more related to the object class " +
                       remove_suffix(target_class_, "_") +
-                      ". Please return with the following format: answer:object_class";
+                      ". And return it with the following JSON format:\n" +                      
+                      "{\n\t\"answer\": \"object_class\"\n}";
 
   goal_.prompt = prompt_;
   goal_.reset = true;
@@ -97,23 +99,31 @@ BT::NodeStatus ChooseFromClasses::on_success()
     return BT::NodeStatus::FAILURE;
   }
 
-  std::string value_ = result_.result->response.text;
+  json response = json::parse(result_.result->response.text);
+
+  std::string value_ = response["answer"];
+
   if (value_.empty()) {
     return BT::NodeStatus::FAILURE;
   }
-  // the result_.result->response.text is in the format "answer:object_class" so we need to remove the "answer:"
-  value_ = value_.substr(value_.find(":") + 1);
+  
+  RCLCPP_INFO(node_->get_logger(), "[ChooseFromClasses] Llama plane answer: %s", value_.c_str());
 
 
-  setOutput("selected_class_text", value_);
+  RCLCPP_INFO(node_->get_logger(), "[ChooseFromClasses] Llama answer after removing suffix: %s", value_.c_str());
+
 
   std::string selected_class = retrieve_class(value_, class_options_);
 
+
   if (selected_class.empty()) {
+    RCLCPP_ERROR(node_->get_logger(), "[ChooseFromClasses] Selected class is empty");
     return BT::NodeStatus::FAILURE;
   }
 
   setOutput("selected_class", retrieve_class(value_, class_options_));
+  value_ = value_.substr(0, value_.find("_"));
+  setOutput("selected_class_text", value_);
 
   return BT::NodeStatus::SUCCESS;
 }
@@ -137,13 +147,17 @@ std::string ChooseFromClasses::remove_suffix(const std::string & str, const std:
 
 std::string ChooseFromClasses::retrieve_class(const std::string & text, const std::vector<std::string> & class_options)
 {
-
+  RCLCPP_INFO(node_->get_logger(), "[ChooseFromClasses] Retrieving from: %s in :", text.c_str());
   for (const auto & class_option : class_options) {
-    if (text.find(remove_suffix(class_option, "_")) != std::string::npos) {
+    RCLCPP_INFO(node_->get_logger(), "[ChooseFromClasses] %s", class_option.c_str());
+    if (text.substr(0, text.find("_")).find(class_option.substr(0, class_option.find("_"))) != std::string::npos) {
       return class_option;
+    } else
+    {
+      return "";
     }
+    
   }
-  return "";
 }
 
 }  // namespace dialog

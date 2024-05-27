@@ -38,7 +38,7 @@ void ExtractCabinetPlacePose::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "ExtractCabinetPlacePose ticked");
   getInput("selected_object", selected_object_);
-  config().blackboard->get("tf_buffer", tf_buffer_);
+  // config().blackboard->get("tf_buffer", tf_buffer_);
   
 
   request_->classes = {};
@@ -86,7 +86,7 @@ void ExtractCabinetPlacePose::on_result()
     setOutput("place_pose", place_pose);
     
   } else {
-    std::cout << "Failure" << std::endl;
+    std::cout << "Failure to send the goal" << std::endl;
     // setOutput("listen_text", result_.result->text);
     setStatus(BT::NodeStatus::FAILURE);
   }
@@ -99,7 +99,7 @@ BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
       return std::make_unique<perception::ExtractCabinetPlacePose>(
-        name, "/isolate_pc_background", config);
+        name, "perception_system/isolate_pc_background", config);
     };
 
   factory.registerBuilder<perception::ExtractCabinetPlacePose>("ExtractCabinetPlacePose", builder);

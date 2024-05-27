@@ -23,6 +23,9 @@
 #include <algorithm>
 #include <string>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <opencv2/opencv.hpp>
+#include <unordered_map>
+#include <cmath>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -58,9 +61,9 @@ private:
   std::string color_;
   int person_id_;
 
-  cv::Scalar getColorRGB(const std::string &colorName);
-  int64_t calculatePersonID(const cv::Scalar &hsv_up,
-                            const cv::Scalar &hsv_down);
+  cv::Scalar getColorRGB(const std::string & colorName);
+  int64_t calculatePersonID(const cv::Scalar & hsv_up,
+                            const cv::Scalar & hsv_down);
 };
 
 } // namespace perception

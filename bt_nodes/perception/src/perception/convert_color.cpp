@@ -41,29 +41,38 @@ void ConvertColor::halt() {
 
 BT::NodeStatus ConvertColor::tick() {
 
-  cv::Scalar rgbColorUp = getColorRGB(color_);
+  try{
 
-  // Convert RGB to HSV for the upper part
-  cv::Mat rgbMatUp(1, 1, CV_8UC3, rgbColorUp);
-  cv::Mat hsvMatUp;
-  cv::cvtColor(rgbMatUp, hsvMatUp, cv::COLOR_BGR2HSV);
+    cv::Scalar rgbColorUp = getColorRGB(color_);
 
-  if (interest_ == "top") {
-    cv::Vec3b hsvUp = hsvMatUp.at<cv::Vec3b>(0, 0);
-    // Set the lower part to a default value (black, which is HSV(0, 0, 0))
+    // Convert RGB to HSV for the upper part
+    cv::Mat rgbMatUp(1, 1, CV_8UC3, rgbColorUp);
+    cv::Mat hsvMatUp;
+    cv::cvtColor(rgbMatUp, hsvMatUp, cv::COLOR_BGR2HSV);
+
+    cv::Scalar hsvUp = cv::Scalar(0, 0, 0);
     cv::Scalar hsvDown = cv::Scalar(0, 0, 0);
 
-  } else if (interest_ == "bottom") {
-    cv::Scalar hsvUp = cv::Scalar(0, 0, 0);
-    cv::Vec3b hsvDown = hsvMatUp.at<cv::Vec3b>(0, 0);
+    if (interest_ == "top") {
+      hsvUp = hsvMatUp.at<cv::Vec3b>(0, 0);
+
+    } else if (interest_ == "bottom") {
+      hsvDown = hsvMatUp.at<cv::Vec3b>(0, 0);
+    }
+
+    int64_t person_id_ = calculatePersonID(hsvUp, hsvDown);
+
+    setOutput("person_id", person_id_);
+    RCLCPP_INFO(node_->get_logger(), "[ConvertColor] Person id: %ld", person_id_);
+
+    return BT::NodeStatus::SUCCESS;
+
+  }catch(const std::invalid_argument& e){
+    RCLCPP_ERROR(node_->get_logger(), "Invalid color");
+    return BT::NodeStatus::FAILURE;
   }
 
-  int64_t person_id = calculatePersonID(hsvUp, hsvDown);
-
-  setOutput("person_id", person_id_);
-  RCLCPP_INFO(node_->get_logger(), "[ConvertColor] Person id: %ld", person_id_);
-
-  return BT::NodeStatus::SUCCESS;
+  
 }
 
 cv::Scalar ConvertColor::getColorRGB(const std::string &colorName) {
@@ -82,7 +91,7 @@ cv::Scalar ConvertColor::getColorRGB(const std::string &colorName) {
     RCLCPP_DEBUG(node_->get_logger(), "[ConvertColor] Color found");
   } else {
     RCLCPP_ERROR(node_->get_logger(), "[ConvertColor] Color not found");
-    return BT::NodeStatus::FAILURE;
+    throw std::invalid_argument("Color invalid");
   }
 }
 

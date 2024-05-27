@@ -15,7 +15,7 @@
                     <Action ID="LookAt" tf_frame="{attention_home}"/>                                        
 
                     <Action ID="MoveTo" is_truncated="false" distance_tolerance="-1.0" tf_frame="entrance" will_finish="true"/>
-                    <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
+                    <Action ID="Speak" param="" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Fallback>
                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>

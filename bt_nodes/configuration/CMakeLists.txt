@@ -42,6 +42,9 @@ list(APPEND plugin_libs init_receptionist_bt_node)
 add_library(add_guest_to_count_bt_node SHARED src/configuration/add_guest_to_count.cpp)
 list(APPEND plugin_libs add_guest_to_count_bt_node)
 
+add_library(set_start_position_bt_node SHARED src/configuration/SetStartPosition.cpp)
+list(APPEND plugin_libs set_start_position_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

@@ -13,6 +13,6 @@ attention_server:
 
 perception_people_detection:
   ros__parameters:
-    target_frame: head_front_camera_link_color_optical_frame
+    target_frame: head_front_camera_rgb_frame
     debug: true
 

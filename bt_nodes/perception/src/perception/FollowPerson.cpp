@@ -43,8 +43,8 @@ FollowPerson::FollowPerson(const std::string & xml_tag_name, const BT::NodeConfi
 
   tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  pl::getInstance()->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  node_->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  node_->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   getInput("person_id", person_id_);
   getInput("camera_link", camera_link_);
@@ -144,7 +144,7 @@ BT::NodeStatus FollowPerson::tick()
   pl::getInstance(node_)->publicTFinterest();
 
   std::vector<perception_system_interfaces::msg::Detection> detections;
-  detections = pl::getInstance()->get_by_type("person");
+  detections = pl::getInstance(node_)->get_by_type("person");
 
   if (detections.empty()) {
     // RCLCPP_INFO(node_->get_logger(), "No detections");

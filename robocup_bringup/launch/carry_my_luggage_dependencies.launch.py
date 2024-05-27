@@ -33,6 +33,7 @@ def generate_launch_description():
     navigation_dir = get_package_share_directory('navigation_system')
     whisper_dir = get_package_share_directory('whisper_bringup')
     package_dir = get_package_share_directory('robocup_bringup')
+    bringup_dir = get_package_share_directory("rb1_navigation")
 
     # audio related launchers:
 
@@ -50,7 +51,7 @@ def generate_launch_description():
     )
 
     audio_common_tts_node = Node(
-        package='audio_common',
+        package='tts_ros',
         executable='tts_node',
         parameters=[
             {'chunk': 4096},
@@ -91,7 +92,7 @@ def generate_launch_description():
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_link_color_optical_frame',
+            'target_frame': 'head_front_camera_rgb_frame',
             'threshold': '0.5'
             }.items()
     )
@@ -106,9 +107,9 @@ def generate_launch_description():
             'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
             'slam_params_file': package_dir + '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
             'map': os.path.join(
-                                package_dir,
-                                'maps',
-                                'ir_lab.yaml'),
+                    bringup_dir,
+                    "maps/apartamento_leon",
+                    "apartamento_leon_gimp_con_mesa_tv.yaml"),
         }.items()
     )
 

@@ -80,15 +80,25 @@ int IsPointing::publicTF_map2object(
   }
 
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
+  for (int i = low_pointing_limit_; i <= high_pointing_limit_ ; i++) {
+    if (detected_object.pointing_direction != i) {
+      return -1;
+    }
+  }
+  
   if (detected_object.pointing_direction == 1) {
-    bag_frame_ = "right_bag";
+    output_frame_ = "right_bag";
     modified_detection.center3d.position.x += 0.4;  // + or - ?
   } else if (detected_object.pointing_direction == 3) {
     modified_detection.center3d.position.x -= 0.4;  // + or - ?
-    bag_frame_ = "left_bag";
+    output_frame_ = "left_bag";
+  } else if(detected_object.pointing_direction == 5 ||
+            detected_object.pointing_direction == 6 ||
+            detected_object.pointing_direction == 7) {
+    output_frame_ = "customer";
   }
   // else if (detected_object.pointing_direction == 2) {
-  //   bag_frame_ = "center_bag";
+  //   output_frame_ = "center_bag";
   //   modified_detection.center3d.position.z -= 0.4;  // + or - ?
   // }
   else {
@@ -109,7 +119,7 @@ int IsPointing::publicTF_map2object(
   // create a transform message from tf2::Transform
   geometry_msgs::msg::TransformStamped map2object_msg;
   map2object_msg.header.frame_id = "map";
-  map2object_msg.child_frame_id = bag_frame_;
+  map2object_msg.child_frame_id = output_frame_;
 
   map2object_msg.transform = tf2::toMsg(map2object);
   map2object_msg.transform.translation.z = 0.0;
@@ -135,7 +145,7 @@ int IsPointing::publicTF_map2object(
       }
     }
   }
-  RCLCPP_INFO(node_->get_logger(), "[IsPointing] Bag direction %s", bag_frame_.c_str());
+  RCLCPP_INFO(node_->get_logger(), "[IsPointing] Bag direction %s", output_frame_.c_str());
 
   tf_static_broadcaster_->sendTransform(person_pose_);
   return 0;
@@ -145,6 +155,8 @@ BT::NodeStatus IsPointing::tick()
 {
   if (status() == BT::NodeStatus::IDLE) {
     getInput("person_id", person_id_);
+    getInput("low_pointing_limit", low_pointing_limit_);
+    getInput("high_pointing_limit", high_pointing_limit_);
     RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");
     config().blackboard->get("tf_buffer", tf_buffer_);
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
@@ -171,17 +183,18 @@ BT::NodeStatus IsPointing::tick()
 
   best_detection = detections[0];
 
-  RCLCPP_INFO(
+  RCLCPP_DEBUG(
     node_->get_logger(), "[IsPointing] Best detection: %s, color_person: %ld, pointing: %d",
     best_detection.unique_id.c_str(), best_detection.color_person,
     best_detection.pointing_direction);
 
   int dev = publicTF_map2object(best_detection);
   if (dev == -1) {
+    RCLCPP_ERROR(node_->get_logger(), "[IsPointing] Error, invalid pointing direction");
     return BT::NodeStatus::FAILURE;
   }
-  setOutput("bag_frame", bag_frame_);
-  bag_frame_.clear();
+  setOutput("output_frame", output_frame_);
+  output_frame_.clear();
   return BT::NodeStatus::SUCCESS;
 }
 

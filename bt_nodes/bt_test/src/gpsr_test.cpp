@@ -35,25 +35,15 @@ int main(int argc, char *argv[]) {
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  /* factory.registerFromPlugin(loader.getOSName("init_carry_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("is_pointing_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("extract_entity_color_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("move_to_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("move_to_predefined_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("look_at_bt_node"));
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("is_entity_moving_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("listen_bt_node"));
   factory.registerFromPlugin(loader.getOSName("dialogConfirmation_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("filter_entity_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("is_moving_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("follow_entity_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("goal_publisher_bt_node"));
-  factory.registerFromPlugin(
-      loader.getOSName("configure_navigate_back_bt_node")); */
+  factory.registerFromPlugin(loader.getOSName("command_planning_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("deferred_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("setup_gpsr_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/gpsr.xml";
+  std::string xml_file = pkgpath + "/bt_xml/gpsr_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);

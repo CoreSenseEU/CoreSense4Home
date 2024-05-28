@@ -161,6 +161,7 @@ hri::speak_bt_node
 hri::dialogConfirmation_bt_node
 hri::listen_bt_node
 hri::query_bt_node
+hri::command_planning_bt_node
 arm::move_to_predefined_bt_node
 arm::pick_bt_node
 motion::move_to_bt_node
@@ -169,6 +170,8 @@ motion::configure_navigate_back_bt_node
 motion::pan_bt_node 
 motion::follow_entity_bt_node
 motion::goal_publisher_bt_node
+configuration::deferred_bt_node
+configuration::setup_gpsr_bt_node
 )
 
 # carry my luggage test

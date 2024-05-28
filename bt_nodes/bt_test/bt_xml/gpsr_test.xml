@@ -1,0 +1,18 @@
+<root>
+    <BehaviorTree ID="GPSR">
+        <Action ID="Speak" say_text="Hi, This is gentlebots." param=""/>
+        <RetryUntilSuccessful num_attempts="-1">
+            <Action ID="Speak" say_text="Tell me how I can help you." param=""/>
+            <Action ID="Listen" listen_text="{command}"/>
+            <Action ID="Speak" say_text="Did you say " param="{command}"/>
+            <Action ID="DialogConfirmation"/>
+        </RetryUntilSuccessful>
+        <RetryUntilSuccessful num_attempts="-1">
+            <Action ID="CommandPlanning" text="{command}" actions="{action_list}" bt_value="{bt_xml}"/>
+            <Action ID="Speak" say_text="Then I have to do the following actions " param="{action_list}"/>
+            <Action ID="Speak" say_text="This is correct?" param=""/>
+            <Action ID="DialogConfirmation"/>
+        </RetryUntilSuccessful>
+        <Action ID="DeferredBT" bt_pkg="" plugins="[IsDetected, ExtractObjectsFromScene, GenerateTextFromObjects, Speak, IsGesturing, ConvertColor, Pan, MoveTo, LookAt, FilterEntity, IsEntityMoving, FollowEntity, GoalPublisher, DialogConfirmation, MoveToPredefined, ExtractCollisionScene, PickObject, Listen, Query]" rel_path="" xml="{bt_xml}"/>
+    </BehaviorTree>
+</root>

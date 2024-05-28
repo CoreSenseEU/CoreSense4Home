@@ -16,6 +16,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
 find_package(llama_msgs REQUIRED)
+find_package(gpsr_msgs REQUIRED)
 find_package(configuration REQUIRED)
 find_package(motion REQUIRED)
 find_package(perception REQUIRED)
@@ -35,6 +36,7 @@ set(dependencies
   audio_common_msgs
   whisper_msgs
   llama_msgs
+  gpsr_msgs
   configuration
   motion
   perception
@@ -141,6 +143,33 @@ target_link_libraries(follow_person_test perception::follow_person_bt_node)
 add_executable(find_person_test src/find_person_test.cpp)
 ament_target_dependencies(find_person_test ${dependencies})
 target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node perception::is_gesturing_bt_node)
+
+# gpsr test
+add_executable(gpsr_test src/gpsr_test.cpp)
+ament_target_dependencies(gpsr_test ${dependencies})
+target_link_libraries(gpsr_test
+perception::is_detected_bt_node
+perception::extract_object_from_scene_bt_node
+perception::convert_color_bt_node
+perception::is_gesturing_bt_node
+perception::filter_entity_bt_node
+perception::is_entity_moving_bt_node
+perception::extract_entity_color_bt_node
+perception::extract_collision_scene_bt_node
+hri::generate_text_from_objects_bt_node
+hri::speak_bt_node
+hri::dialogConfirmation_bt_node
+hri::listen_bt_node
+hri::query_bt_node
+arm::move_to_predefined_bt_node
+arm::pick_bt_node
+motion::move_to_bt_node
+motion::look_at_bt_node
+motion::configure_navigate_back_bt_node
+motion::pan_bt_node 
+motion::follow_entity_bt_node
+motion::goal_publisher_bt_node
+)
 
 # carry my luggage test
 add_executable(carry_my_luggage_test src/carry_my_luggage_test.cpp)
@@ -254,6 +283,7 @@ install(TARGETS
   inspection_test
   storing_groceries_test
   find_person_test
+  gpsr_test
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

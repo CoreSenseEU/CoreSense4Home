@@ -30,7 +30,7 @@
                     <RetryUntilSuccessful num_attempts="-1">
                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                     </RetryUntilSuccessful>
-                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
                     <Action ID="LookAt" tf_frame="person_0_filtered"/>                                        
                     <RetryUntilSuccessful num_attempts="-1">
                             <SequenceStar>
@@ -46,14 +46,14 @@
                                         <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                         </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
                                     </ReactiveSequence>
 
                                     <ReactiveSequence>
                                         <RetryUntilSuccessful num_attempts="-1">  
                                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                         </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
                                         <Action ID="Listen" listen_text="{text_value}"/>
                                     </ReactiveSequence>
 
@@ -61,7 +61,7 @@
                                         <RetryUntilSuccessful num_attempts="-1">  
                                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                         </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                         <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
                                     </ReactiveSequence>
                                 
@@ -83,14 +83,14 @@
                                         <RetryUntilSuccessful num_attempts="-1">  
                                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                         </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                     </ReactiveSequence>
                                     
                                     <ReactiveSequence>
                                         <RetryUntilSuccessful num_attempts="-1">  
                                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                         </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                         <Action ID="DialogConfirmation" />
                                     </ReactiveSequence>
                                 </Sequence>
@@ -101,14 +101,14 @@
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                 </ReactiveSequence>
 
                                 <ReactiveSequence>
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                     <Action ID="Listen" listen_text="{text_value2}"/>
                                 </ReactiveSequence>
 
@@ -116,7 +116,7 @@
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                     <Action ID="Query" text="{text_value2}" intention="drink" intention_value="{drink_value}"/>
                                 </ReactiveSequence>
 
@@ -126,7 +126,7 @@
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                 </ReactiveSequence>
 
 
@@ -134,7 +134,7 @@
                                     <RetryUntilSuccessful num_attempts="-1">  
                                         <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                     </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/> 
+                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
                                     <Action ID="DialogConfirmation" />
                                 </ReactiveSequence>
                                 </Sequence>
@@ -152,7 +152,7 @@
                     <ReactiveSequence>
                         <ReactiveFallback>
                             <Condition ID="IsDetected" confidence="0.6" interest="person" frames="{frames}" max_depth="3" max_entities="1" order="depth_nearest"/>
-                            <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                            <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
                             <Action ID="Pan" period="10.0" range="30" pitch_angle="-10"/>
                         </ReactiveFallback> 
                          <Action ID="LookAt" tf_frame="person_0_filtered"/>

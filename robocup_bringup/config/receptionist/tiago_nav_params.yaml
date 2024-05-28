@@ -40,9 +40,9 @@ amcl:
     scan_topic: /scan
     set_initial_pose: true
     initial_pose:
-      x: 2.0
-      y: 3.6
-      yaw: 3.14
+      x: 2.335
+      y: 6.648
+      yaw: -0.103
     # receptionist initial_pose:
     # initial_pose:
     #   x: 0.99
@@ -181,10 +181,10 @@ controller_server:
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
       acc_lim_x: 0.2
       acc_lim_y: 0.0
-      acc_lim_theta: 0.4
+      acc_lim_theta: 0.5
       decel_lim_x: -0.2
       decel_lim_y: 0.0
-      decel_lim_theta: -0.4
+      decel_lim_theta: -0.5
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
@@ -388,10 +388,10 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.26, 0.0, 0.2]
-    min_velocity: [-0.26, 0.0, -0.2]
-    max_accel: [0.2, 0.0, 0.2]
-    max_decel: [-0.2, 0.0, -0.2]
+    max_velocity: [0.6, 0.0, 0.5]
+    min_velocity: [-0.6, 0.0, -0.5]
+    max_accel: [0.2, 0.0, 0.5]
+    max_decel: [-0.2, 0.0, -0.5]
     odom_topic: "/mobile_base_controller/odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

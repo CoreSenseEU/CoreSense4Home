@@ -41,7 +41,7 @@ void ConvertColor::halt() {
 
 BT::NodeStatus ConvertColor::tick() {
 
-  try{
+  try {
 
     cv::Scalar rgbColorUp = getColorRGB(color_);
 
@@ -63,25 +63,29 @@ BT::NodeStatus ConvertColor::tick() {
     int64_t person_id_ = calculatePersonID(hsvUp, hsvDown);
 
     setOutput("person_id", person_id_);
-    RCLCPP_INFO(node_->get_logger(), "[ConvertColor] Person id: %ld", person_id_);
+    RCLCPP_INFO(node_->get_logger(), "[ConvertColor] Person id: %ld",
+                person_id_);
 
     return BT::NodeStatus::SUCCESS;
 
-  }catch(const std::invalid_argument& e){
+  } catch (const std::invalid_argument &e) {
     RCLCPP_ERROR(node_->get_logger(), "Invalid color");
     return BT::NodeStatus::FAILURE;
   }
-
-  
 }
 
 cv::Scalar ConvertColor::getColorRGB(const std::string &colorName) {
 
   static const std::unordered_map<std::string, cv::Scalar> colorMap = {
-      {"red", cv::Scalar(0, 0, 255)},     {"green", cv::Scalar(0, 255, 0)},
-      {"blue", cv::Scalar(255, 0, 0)},    {"yellow", cv::Scalar(0, 255, 255)},
-      {"cyan", cv::Scalar(255, 255, 0)},  {"white", cv::Scalar(255, 255, 255)},
-      {"black", cv::Scalar(0, 0, 0)},     {"purple", cv::Scalar(128, 0, 128)},
+      {"red", cv::Scalar(0, 0, 255)},
+      {"green", cv::Scalar(0, 255, 0)},
+      {"blue", cv::Scalar(255, 0, 0)},
+      {"yellow", cv::Scalar(0, 255, 255)},
+      {"white", cv::Scalar(255, 255, 255)},
+      {"black", cv::Scalar(0, 0, 0)},
+      {"purple", cv::Scalar(128, 0, 128)},
+      {"orange", cv::Scalar(0, 165, 255)},
+      {"gray", cv::Scalar(128, 128, 128)},
       {"pink", cv::Scalar(255, 192, 203)}};
 
   auto it = colorMap.find(colorName);

@@ -6,7 +6,7 @@
             <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage, please point to the correct bag"/>
 
             <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
-            <Action ID="SetStartPosition" />
+            <Action ID="SetStartPosition" frame_name="start" />
 
             <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>

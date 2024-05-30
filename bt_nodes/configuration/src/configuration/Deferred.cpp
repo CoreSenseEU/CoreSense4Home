@@ -50,6 +50,7 @@ BT::NodeStatus Deferred::tick() {
     } else {
       std::cerr << "[DeferredBT] WARNING: No plugins provided" << std::endl;
     }
+
     if (by_content) {
       subtree_ =
           factory.createTreeFromText(bt_xml_.value(), config().blackboard);

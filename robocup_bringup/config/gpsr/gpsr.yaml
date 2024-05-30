@@ -1,0 +1,22 @@
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_rgb_frame"
+    home_position: [54.701, 1.360, 0.001]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    bt_xml_file: gpsr.xml
+    waypoints_names: ["kitchen"]
+    waypoints:
+      kitchen: [3.743, 6.523, 0.00]
+    plugins:
+      - dialogConfirmation_bt_node
+      - listen_bt_node
+      - follow_entity_bt_node
+      - speak_bt_node
+      - deferred_bt_node
+      - set_wp_bt_node
+      - command_planning_bt_node
+      - setup_gpsr_bt_node
+      - set_start_position_bt_node

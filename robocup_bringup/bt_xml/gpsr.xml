@@ -2,6 +2,8 @@
     <BehaviorTree ID="GPSR">
         <Sequence>
             <Action ID="SetupGPSR" plugins="{plugins}"/>
+            <Action ID="SetStartPosition" frame_name="instruction point" />
+            <Action ID="SetWp"/>
             <Action ID="Speak" say_text="Hi, This is gentlebots." param=""/>
             <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>

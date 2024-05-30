@@ -25,7 +25,6 @@ SetStartPosition::SetStartPosition(const std::string & xml_tag_name, const BT::N
 
 BT::NodeStatus SetStartPosition::tick()
 {
-  static tf2_ros::StaticTransformBroadcaster tf_broadcaster(node_);
   auto buffer = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
   auto static_broadcaster = config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>("tf_static_broadcaster");
 
@@ -33,9 +32,12 @@ BT::NodeStatus SetStartPosition::tick()
 
   t = buffer->lookupTransform("map", "base_footprint", tf2::TimePointZero);
 
+  std::string frame_name;
+  getInput<std::string>("frame_name", frame_name);
+
     geometry_msgs::msg::TransformStamped transformStamped;
     transformStamped.header.frame_id = "map";
-    transformStamped.child_frame_id = "start";
+    transformStamped.child_frame_id = frame_name;
     transformStamped.transform.translation.x = t.transform.translation.x;
     transformStamped.transform.translation.y = t.transform.translation.y;
     transformStamped.transform.rotation = t.transform.rotation;

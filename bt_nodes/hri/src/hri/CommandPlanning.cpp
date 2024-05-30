@@ -22,7 +22,6 @@
 #include "std_msgs/msg/int8.hpp"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
-#include "gpsr_msgs/srv/generate_plan.hpp"
 
 namespace hri {
 
@@ -30,67 +29,81 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 using json = nlohmann::json;
 
-CommandPlanning::CommandPlanning(const std::string &xml_tag_name,
-                                 const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {
+std::string joinActions(std::vector<std::string> actions) {
+  if (actions.empty()) {
+    return "";
+  }
+  
+  if (actions.size() == 1) {
+    return actions[0];
+  }
+
+  std::ostringstream oss;
+  for (size_t i = 0; i < actions.size(); ++i) {
+    if (i == actions.size() - 1) {
+      oss << "and " << actions[i];
+    } else {
+      oss << actions[i];
+      if (i != actions.size() - 2) {
+        oss << ", ";
+      } else {
+        oss << " ";
+      }
+    }
+  }
+
+  return oss.str();
+}
+
+CommandPlanning::CommandPlanning(
+  const std::string & xml_tag_name, const std::string & action_name,
+  const BT::NodeConfiguration & conf)
+: hri::BtServiceNode<gpsr_msgs::srv::GeneratePlan,
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
+{
   config().blackboard->get("node", node_);
-
-  this->publisher_start_ =
-      node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
-
-  callback_group_ = node_->create_callback_group(
-      rclcpp::CallbackGroupType::MutuallyExclusive);
-  callback_executor_.add_callback_group(callback_group_,
-                                        node_->get_node_base_interface());
-
-  this->generate_plan_client_ =
-      node_->create_client<gpsr_msgs::srv::GeneratePlan>(
-          "gpsr_planning", rmw_qos_profile_services_default, callback_group_);
+  publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("/dialog_action", 10);
 }
 
-void CommandPlanning::halt() {
-  RCLCPP_INFO(node_->get_logger(), "CommandPlanning halted");
-}
 
-BT::NodeStatus CommandPlanning::tick() {
-  RCLCPP_DEBUG(node_->get_logger(), "CommandPlanning ticked");
+void CommandPlanning::on_tick() {
+  RCLCPP_INFO(node_->get_logger(), "CommandPlanning ticked");
 
   std::string bt_ = "";
   std::string actions_ = "";
 
-  if (!generate_plan_client_->wait_for_service(std::chrono::seconds(1))) {
-    RCLCPP_WARN(node_->get_logger(), "Waiting for action server to be up...");
-    return BT::NodeStatus::RUNNING;
-  }
-
   getInput("command", command_);
 
   auto msg_dialog_action = std_msgs::msg::Int8();
-
   msg_dialog_action.data = 2;
-
   publisher_start_->publish(msg_dialog_action);
 
-  auto request = std::make_shared<gpsr_msgs::srv::GeneratePlan::Request>();
-  request->command = command_;
+  request_->command = command_;
+}
 
-  auto result = this->generate_plan_client_->async_send_request(request);
+void CommandPlanning::on_result() {
+  RCLCPP_INFO(node_->get_logger(), "CommandPlanning onResult");
 
-  if (rclcpp::spin_until_future_complete(node_, result) ==
-      rclcpp::FutureReturnCode::SUCCESS) {
-    bt_ = result.get()->bt_xml;
-  } else {
-    return BT::NodeStatus::FAILURE;
-  }
+  auto bt_ = result_.bt_xml;
+  auto actions_ = joinActions(result_.action_list);
 
   setOutput("bt_value", bt_);
   setOutput("actions", actions_);
-  return BT::NodeStatus::SUCCESS;
+
+  setStatus(BT::NodeStatus::SUCCESS);
 }
 
 } // namespace hri
-#include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
 
-  factory.registerNodeType<hri::CommandPlanning>("CommandPlanning");
+
+#include "behaviortree_cpp_v3/bt_factory.h"
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
+      return std::make_unique<hri::CommandPlanning>(
+        name, "gpsr_planning", config);
+    };
+
+  factory.registerBuilder<hri::CommandPlanning>("CommandPlanning", builder);
 }

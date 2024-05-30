@@ -17,11 +17,13 @@
 
 #include <algorithm>
 #include <string>
+#include <vector>
+#include <sstream>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "gpsr_msgs/srv/generate_plan.hpp"
-#include "hri/dialog/BTActionNode.hpp"
+#include "hri/bt_service_node.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -31,13 +33,17 @@
 
 namespace hri {
 
-class CommandPlanning : public BT::ActionNodeBase {
+class CommandPlanning
+  : public hri::BtServiceNode<gpsr_msgs::srv::GeneratePlan,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode> {
 public:
   explicit CommandPlanning(const std::string &xml_tag_name,
+                            const std::string & action_name,
                            const BT::NodeConfiguration &conf);
 
-  void halt();
-  BT::NodeStatus tick();
+  void on_tick() override;
+  void on_result() override;
+
   static BT::PortsList providedPorts() {
     return BT::PortsList({BT::InputPort<std::string>("command"),
                           BT::OutputPort<std::string>("actions"),
@@ -46,10 +52,7 @@ public:
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-  rclcpp::Client<gpsr_msgs::srv::GeneratePlan>::SharedPtr generate_plan_client_;
   std::string command_;
-  rclcpp::CallbackGroup::SharedPtr callback_group_;
-  rclcpp::executors::SingleThreadedExecutor callback_executor_;
   rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 

@@ -41,7 +41,7 @@ public:
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {return BT::PortsList({});}
+  static BT::PortsList providedPorts() {return BT::PortsList({BT::InputPort<std::string>("frame_name")});}
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;

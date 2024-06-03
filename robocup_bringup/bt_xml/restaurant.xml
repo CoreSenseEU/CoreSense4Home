@@ -3,24 +3,30 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <Action ID="InitRestaurant" attention_home="" start_location="{tf_bar}"/>
+            <Action ID="InitRestaurant" attention_home="{attention_home}"
+                                        order_1="{order_1}"
+                                        order_2="{order_2}"
+                                        order_3="{order_3}"
+                                        order_count="{n}"/>
             <KeepRunningUntilFailure>
                 <Sequence>
-                    <SubTree ID="find_waving_person"/>
-                    <Action ID="PublishCurrentPose" tf_location="{observation_point}"/>
-                    <Action ID="MoveTo" distance_tolerance="0.5" is_truncated="true" tf_frame="{tf_customer}"/>
-                    <SubTree ID="find_person"/>
+                    <SubTree ID="find_waving_person" __shared_blackboard="true" output_frame="{tf_customer}"/>
+                    <Action ID="SetStartPosition" initial_pose="{observation_point}" />
+                    <Action ID="LookAt" tf_frame="{attention_home}"/>
+                    <Action ID="MoveTo" distance_tolerance="0.5" is_truncated="true" tf_frame="customer"/>
+                    <SubTree ID="find_person" __shared_blackboard="true"/>
                     <Action ID="Speak" param="" say_text="Hi, I will be serving you today. Now I will be taking your order item by item"/>
-                    <SetBlackboard output_key="n_items" value="1"/>
-                    <SubTree ID="get_full_order"/>
-                    <Action ID="Speak" param="" say_text="Perfect, I already have your order complete. Thank you"/>
+                     <SubTree ID="get_full_order" __shared_blackboard="true"/>
+                    <!--<Action ID="Speak" param="" say_text="Perfect, I already have your order complete. Thank you"/>
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
                     <Action ID="MoveTo" distance_tolerance="0" is_truncated="false" tf_frame="{tf_bar}"/>
-                    <SubTree ID="find_person"/>
-                    <SubTree ID="collect_full_order"/>
+                    <SubTree ID="find_person" __shared_blackboard="true"/>
+                    <SubTree ID="collect_full_order" __shared_blackboard="true"/>
+                    <Action ID="SwitchYoloModel" model="yolov8n.pt"/>
                     <Action ID="MoveTo" distance_tolerance="0.5" is_truncated="true" tf_frame="{tf_customer}"/>
-                    <SubTree ID="deliver_order"/>
+                    <SubTree ID="deliver_order" __shared_blackboard="true"/>
                     <Action ID="MoveTo" distance_tolerance="0" is_truncated="" tf_frame="{observation_point}"/>
+                    <SetBlackboard output_key="{n}" value="1"/>  -->
                 </Sequence>
             </KeepRunningUntilFailure>
         </Sequence>
@@ -45,12 +51,125 @@
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="collect_full_order">
-        <Inverter>
-            <ReactiveSequence>
-                <Condition ID="MoreItems" order="{order}"/>
-                <SubTree ID="collect_order"/>
-            </ReactiveSequence>
-        </Inverter>
+        <Sequence>
+            <Action ID="Speak" param="{order_1}" say_text="The customer would like"/>
+            <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
+            </RetryUntilSuccessful>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Fallback>
+                    <Sequence>
+                        <Repeat num_cycles="6">
+                            <Condition ID="IsDetected" confidence="0.6"
+                            interest="{order_1}"
+                            max_depth="2"
+                            max_entities="1"
+                            order="depth_nearest"
+                            best_detection="{best_detection}"/>
+                        </Repeat>
+                        <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                        suffix="_"
+                                                        result="{possible_order}"/> 
+                        <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_1}" value_B="{possible_order}">
+                            <Sequence>
+                                <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
+                                <Delay delay_msec="3000">
+                                    <AlwaysSuccess/>
+                                </Delay>
+                            </Sequence>                
+                        </BlackboardCheckString>
+                    </Sequence>
+                    <Sequence>
+                        <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
+                        <Action ID="Speak" param="{order_1}" say_text="I asked you for"/>
+                        <Delay delay_msec="3000">
+                            <AlwaysFailure/>
+                        </Delay>
+                    </Sequence>
+                </Fallback>
+            </RetryUntilSuccessful>
+            <BlackboardCheckString return_on_mismatch="SUCCESS" value_A="{order_2}" value_B="">
+                <Action ID="Speak" say_text="Thanks mr barman"/>            
+            </BlackboardCheckString>
+            <Action ID="Speak" param="{order_2}" say_text="The customer would like"/>
+            <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
+            </RetryUntilSuccessful>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Fallback>
+                    <Sequence>
+                        <Repeat num_cycles="6">
+                            <Condition ID="IsDetected" confidence="0.6"
+                            interest="{order_2}"
+                            max_depth="2"
+                            max_entities="1"
+                            order="depth_nearest"
+                            best_detection="{best_detection}"/>
+                        </Repeat>
+                        <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                        suffix="_"
+                                                        result="{possible_order}"/> 
+                        <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_2}" value_B="{possible_order}">
+                            <Sequence>
+                                <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
+                                <Delay delay_msec="3000">
+                                    <AlwaysSuccess/>
+                                </Delay>
+                            </Sequence>                
+                        </BlackboardCheckString>
+                    </Sequence>
+                    <Sequence>
+                        <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
+                        <Action ID="Speak" param="{order_2}" say_text="I asked you for"/>
+                        <Delay delay_msec="3000">
+                            <AlwaysFailure/>
+                        </Delay>
+                    </Sequence>
+                </Fallback>
+            </RetryUntilSuccessful>
+            <BlackboardCheckString return_on_mismatch="SUCCESS" value_A="{order_3}" value_B="">
+                <Action ID="Speak" say_text="Thanks mr barman"/>
+            </BlackboardCheckString>
+            <Action ID="Speak" param="{order_3}" say_text="The customer would like"/>
+            <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
+            </RetryUntilSuccessful>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Fallback>
+                    <Sequence>
+                        <Repeat num_cycles="6">
+                            <Condition ID="IsDetected" confidence="0.6"
+                            interest="{order_3}"
+                            max_depth="2"
+                            max_entities="1"
+                            order="depth_nearest"
+                            best_detection="{best_detection}"/>
+                        </Repeat>
+                        <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                        suffix="_"
+                                                        result="{possible_order}"/> 
+                        <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_3}" value_B="{possible_order}">
+                            <Sequence>
+                                <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
+                                <Delay delay_msec="3000">
+                                    <AlwaysSuccess/>
+                                </Delay>
+                            </Sequence>                
+                        </BlackboardCheckString>
+                    </Sequence>
+                    <Sequence>
+                        <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
+                        <Action ID="Speak" param="{order_3}" say_text="I asked you for"/>
+                        <Delay delay_msec="3000">
+                            <AlwaysFailure/>
+                        </Delay>
+                    </Sequence>
+                </Fallback>
+            </RetryUntilSuccessful>
+        </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="collect_order">
@@ -60,7 +179,7 @@
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
             </RetryUntilSuccessful>
-            <SubTree ID="check_order_correct"/>
+            <SubTree ID="check_order_correct" __shared_blackboard="true"/>
             <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
             <Delay delay_msec="3000">
                 <AlwaysSuccess/>
@@ -82,28 +201,37 @@
         <Sequence>
             <Action ID="Speak" param="{order}" say_text="so you want to order a"/>
             <Action ID="Speak" param="" say_text="Please say yes or no"/>
-            <SubTree ID="confirm"/>
+            <SubTree ID="confirm" __shared_blackboard="true"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="confirm_wants_more">
         <Sequence>
             <Action ID="Speak" param="" say_text="Would you like to order more? Plase say yes or no"/>
-            <SubTree ID="confirm"/>
+            <SubTree ID="confirm" __shared_blackboard="true"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="deliver_order">
         <Sequence>
-            <SubTree ID="find_person"/>
+            <SubTree ID="find_person" __shared_blackboard="true"/>
             <Action ID="Speak" param="" say_text="Hi again, I already have your order, please pick all items from my basket"/>
+            <Delay delay_msec="3000">
+                <AlwaysSuccess/>
+            </Delay>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="find_person">
         <Sequence>
             <ReactiveFallback>
-                <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
+                <Condition ID="IsDetected" confidence="0.6"
+                                           frames=""
+                                           interest="person"
+                                           max_depth="2"
+                                           max_entities="1"
+                                           person_id="{person_id}"
+                                           order="color"/>
                 <Action ID="Pan" period="10" pitch_angle="0" range="45"/>
             </ReactiveFallback>
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
@@ -112,54 +240,116 @@
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="find_waving_person">
-        <Fallback>
-            <Timeout msec="15000">
-                <ReactiveFallback>
-                    <Action ID="IsWaving" cam_frame="head_front_camera_link_color_optical_frame" customer_frame="{tf_customer}"/>
-                    <Action ID="Pan" period="10" pitch_angle="0" range="45"/>
-                </ReactiveFallback>
-            </Timeout>
-            <ReactiveFallback>
-                <Action ID="IsWaving" cam_frame="head_front_camera_link_color_optical_frame" customer_frame="{tf_customer}"/>
-                <Action ID="Spin" speed="0.2"/>
-            </ReactiveFallback>
-        </Fallback>
+        <Sequence>
+            <Fallback>
+                <Timeout msec="15000">
+                    <ReactiveFallback>
+                        <Condition ID="IsPointing" 
+                                    output_frame="{tf_customer}"
+                                    low_pointing_limit="5"
+                                    high_pointing_limit="7"
+                                    cam_frame="head_front_camera_link_color_optical_frame"/>
+                        <Action ID="Pan" period="10" pitch_angle="0" range="45"/>
+                    </ReactiveFallback>
+                </Timeout>
+                <!-- <ReactiveFallback>
+                    <Condition ID="IsPointing" 
+                                output_frame="{tf_customer}"
+                                low_pointing_limit="5"
+                                high_pointing_limit="7"
+                                cam_frame="head_front_camera_link_color_optical_frame"/>
+                    <Spin spin_dist="6.28" server_name="spin" server_timeout="20" is_recovery="false"/>
+                </ReactiveFallback> -->
+            </Fallback>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Sequence>
+                    <Condition ID="IsDetected" confidence="0.6"
+                                            frames=""
+                                            interest="person"
+                                            max_depth="7"
+                                            max_entities="1" 
+                                            order="depth_nearest"/>
+                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                </Sequence>
+            </RetryUntilSuccessful>
+            <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{person_id}"/>
+        </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="get_full_order">
-        <Inverter>
-            <ReactiveSequence>
-                <Action ID="GetNumberOfOrder" n="{n}"/>
-                <Condition ID="MaybeMore" n_order="{n}"/>
-                <Switch3 case_1="1" case_2="2" case_3="3" variable="{n}">
-                    <SubTree ID="get_order_1"/>
-                    <SubTree ID="get_order_n"/>
-                    <SubTree ID="get_order_n"/>
-                </Switch3>
-            </ReactiveSequence>
-        </Inverter>
+        <Sequence>
+            <SubTree ID="get_order_1" __shared_blackboard="true"/>
+            <Action ID="Speak" say_text="Do you want to order anything else? please say yes or no"/>
+            <Fallback>
+                <Inverter>
+                    <SubTree ID="confirm" __shared_blackboard="true"/>
+                </Inverter>
+                <Switch2 case_1="2" case_2="3" variable="{n}">
+                    <SubTree ID="get_order_2" __shared_blackboard="true"/>
+                    <SubTree ID="get_order_3" __shared_blackboard="true"/>
+                    <Action ID="Speak" say_text="I can not process more than 3 orders, please wave again after i deliver you the current order"/>
+                </Switch2>
+            </Fallback>
+        </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="get_order_1">
         <Sequence>
             <Action ID="Speak" param="" say_text="What would you like to order first?"/>
-            <SubTree ID="listen"/>
-            <SubTree ID="query_order"/>
-            <SubTree ID="confirm_order"/>
-            <Action ID="SaveOrder" n_order="{n}" order="{order}"/>
+            <SubTree ID="listen" __shared_blackboard="true"/>
+            <ReactiveSequence>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
+                </RetryUntilSuccessful>
+                <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                <Action ID="Query" intention="order" intention_value="{order_1}" text="{understood}"/>
+            </ReactiveSequence>
+            <Sequence>
+                <Action ID="Speak" param="{order_1}" say_text="so you want to order a"/>
+                <Action ID="Speak" param="" say_text="Please say yes or no"/>
+                <SubTree ID="confirm" __shared_blackboard="true"/>
+            </Sequence>
+            <Action ID="IncrementVariable" variable="{n}"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
-    <BehaviorTree ID="get_order_n">
+    <BehaviorTree ID="get_order_2">
         <Sequence>
-            <SubTree ID="confirm_wants_more"/>
+            <Action ID="Speak" param="" say_text="What would you like to order next?"/>
+            <SubTree ID="listen"/>
+            <ReactiveSequence>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
+                </RetryUntilSuccessful>
+                <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                <Action ID="Query" intention="order" intention_value="{order_2}" text="{understood}"/>
+            </ReactiveSequence>
             <Sequence>
-                <Action ID="Speak" param="" say_text="What else would you like?"/>
-                <SubTree ID="listen"/>
-                <SubTree ID="query_order"/>
-                <SubTree ID="confirm_order"/>
-                <Action ID="SaveOrder" n_order="{n}" order="{order}"/>
+                <Action ID="Speak" param="{order_2}" say_text="so you want to order a"/>
+                <Action ID="Speak" param="" say_text="Please say yes or no"/>
+                <SubTree ID="confirm" __shared_blackboard="true"/>
             </Sequence>
+            <Action ID="IncrementVariable" variable="{n}"/>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="get_order_3">
+        <Sequence>
+            <Action ID="Speak" param="" say_text="What would you like to order last?"/>
+            <SubTree ID="listen" __shared_blackboard="true"/>
+            <ReactiveSequence>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
+                </RetryUntilSuccessful>
+                <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                <Action ID="Query" intention="order" intention_value="{order_3}" text="{understood}"/>
+            </ReactiveSequence>
+            <Sequence>
+                <Action ID="Speak" param="{order_3}" say_text="so you want to order a"/>
+                <Action ID="Speak" param="" say_text="Please say yes or no"/>
+                <SubTree ID="confirm" __shared_blackboard="true"/>
+            </Sequence>
+            <Action ID="IncrementVariable" variable="{n}"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -203,7 +393,7 @@
                 <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
             </RetryUntilSuccessful>
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
-            <Action ID="Query" Intention="order" intention_value="{order}" text="{understood}"/>
+            <Action ID="Query" intention="order" intention_value="{order}" text="{understood}"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -213,7 +403,7 @@
                 <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
             </RetryUntilSuccessful>
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
-            <Action ID="Query" Intention="desire" intention_value="{more}" text="{understood}"/>
+            <Action ID="Query" intention="desire" intention_value="{more}" text="{understood}"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -366,7 +556,7 @@
             <input_port name="frame_id"/>
         </Action>
         <Action ID="Query">
-            <input_port default="name" name="Intention"/>
+            <input_port default="name" name="intention"/>
             <output_port name="intention_value"/>
             <input_port name="text">what human said</input_port>
         </Action>

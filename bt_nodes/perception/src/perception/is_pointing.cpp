@@ -80,10 +80,17 @@ int IsPointing::publicTF_map2object(
   }
 
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
+  RCLCPP_INFO(node_->get_logger(), "[IsPointing] Low pointing limit %d High point limit %d", low_pointing_limit_, high_pointing_limit_);
+  bool is_in_limits = false;
   for (int i = low_pointing_limit_; i <= high_pointing_limit_ ; i++) {
-    if (detected_object.pointing_direction != i) {
-      return -1;
+    RCLCPP_INFO(node_->get_logger(), "[IsPointing] Pointing direction %d", detected_object.pointing_direction);
+    if (detected_object.pointing_direction == i) {
+      is_in_limits = true;
+      break;
     }
+  }
+  if (!is_in_limits) {
+    return -1;
   }
   
   if (detected_object.pointing_direction == 1) {
@@ -157,19 +164,20 @@ BT::NodeStatus IsPointing::tick()
     getInput("person_id", person_id_);
     getInput("low_pointing_limit", low_pointing_limit_);
     getInput("high_pointing_limit", high_pointing_limit_);
-    RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");
+    RCLCPP_INFO(node_->get_logger(), "IsPointing ticked");
     config().blackboard->get("tf_buffer", tf_buffer_);
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
   }
 
   pl::getInstance(node_)->set_interest("person", true);
   pl::getInstance(node_)->update(true);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
   std::vector<perception_system_interfaces::msg::Detection> detections;
   detections = pl::getInstance(node_)->get_by_type("person");
 
   if (detections.empty()) {
-    // RCLCPP_INFO(node_->get_logger(), "No detections");
+    RCLCPP_ERROR(node_->get_logger(), "No detections");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -183,7 +191,7 @@ BT::NodeStatus IsPointing::tick()
 
   best_detection = detections[0];
 
-  RCLCPP_DEBUG(
+  RCLCPP_INFO(
     node_->get_logger(), "[IsPointing] Best detection: %s, color_person: %ld, pointing: %d",
     best_detection.unique_id.c_str(), best_detection.color_person,
     best_detection.pointing_direction);

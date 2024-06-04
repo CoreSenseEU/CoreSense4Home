@@ -30,14 +30,7 @@ FilterEntity::FilterEntity(const std::string & xml_tag_name, const BT::NodeConfi
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-
-  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
-  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  getInput("lambda", lambda_);
-  tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
-  setOutput("filtered_frame", frame_ + "_filtered");
-  RCLCPP_INFO(node_->get_logger(), "FilterEntity initialized");
+  RCLCPP_DEBUG(node_->get_logger(), "FilterEntity initialized");
 }
 
 void FilterEntity::halt() {RCLCPP_INFO(node_->get_logger(), "FilterEntity halted");}
@@ -67,8 +60,14 @@ geometry_msgs::msg::TransformStamped FilterEntity::initialize_state_observer(
 
 BT::NodeStatus FilterEntity::tick()
 {
-  getInput("frame", frame_);
-  RCLCPP_INFO(node_->get_logger(), "IsMoving filtering frame %s", frame_.c_str());
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "FilterEntity ticked");
+    getInput("frame", frame_);
+    getInput("lambda", lambda_);
+    config().blackboard->get("tf_buffer", tf_buffer_);
+    config().blackboard->get("tf_broadcaster", tf_broadcaster_);
+  }
+  RCLCPP_DEBUG(node_->get_logger(), "FilterEntity filtering frame %s", frame_.c_str());
 
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
 

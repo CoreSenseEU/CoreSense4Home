@@ -15,21 +15,24 @@
 behaviors_main:
   ros__parameters:
     use_sim_time: False
-    bt_xml_file: receptionist.xml
+    bt_xml_file: restaurant.xml
     plugins:
+    - init_restaurant_bt_node
     - set_wp_bt_node
-    - init_receptionist_bt_node
+    - is_pointing_bt_node
+    - nav2_spin_action_bt_node
+    - extract_entity_color_bt_node
     - move_to_bt_node
     - speak_bt_node
     - is_detected_bt_node
-    - store_detection_bt_node
+    - set_start_position_bt_node
     - look_at_bt_node
     - listen_bt_node
     - query_bt_node
     - dialogConfirmation_bt_node
     - pan_bt_node
-    - is_sittable_bt_node
-    - point_at_bt_node
     - move_to_predefined_bt_node
     - increment_variable_bt_node
     - filter_entity_bt_node
+    - remove_string_suffix_bt_node
+    - switch_yolo_model_bt_node

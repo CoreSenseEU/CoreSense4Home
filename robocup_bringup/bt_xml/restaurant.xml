@@ -16,17 +16,18 @@
                     <Action ID="MoveTo" distance_tolerance="0.5" is_truncated="true" tf_frame="customer"/>
                     <SubTree ID="find_person" __shared_blackboard="true"/>
                     <Action ID="Speak" param="" say_text="Hi, I will be serving you today. Now I will be taking your order item by item"/>
-                     <SubTree ID="get_full_order" __shared_blackboard="true"/>
-                    <!--<Action ID="Speak" param="" say_text="Perfect, I already have your order complete. Thank you"/>
+                    <SubTree ID="get_full_order" __shared_blackboard="true"/>
+                    <Action ID="Speak" param="" say_text="Perfect, I already have your order complete. Thank you"/>
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
-                    <Action ID="MoveTo" distance_tolerance="0" is_truncated="false" tf_frame="{tf_bar}"/>
+                    <Action ID="MoveTo" distance_tolerance="0" is_truncated="false" tf_frame="{observation_point}"/>
                     <SubTree ID="find_person" __shared_blackboard="true"/>
                     <SubTree ID="collect_full_order" __shared_blackboard="true"/>
                     <Action ID="SwitchYoloModel" model="yolov8n.pt"/>
                     <Action ID="MoveTo" distance_tolerance="0.5" is_truncated="true" tf_frame="{tf_customer}"/>
                     <SubTree ID="deliver_order" __shared_blackboard="true"/>
+                    <Action ID="SwitchYoloModel" model="yolov8n-pose.pt"/>
                     <Action ID="MoveTo" distance_tolerance="0" is_truncated="" tf_frame="{observation_point}"/>
-                    <SetBlackboard output_key="{n}" value="1"/>  -->
+                    <SetBlackboard output_key="{n}" value="1"/> 
                 </Sequence>
             </KeepRunningUntilFailure>
         </Sequence>
@@ -51,125 +52,131 @@
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="collect_full_order">
-        <Sequence>
-            <Action ID="Speak" param="{order_1}" say_text="The customer would like"/>
-            <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
-            </RetryUntilSuccessful>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Fallback>
-                    <Sequence>
-                        <Repeat num_cycles="6">
-                            <Condition ID="IsDetected" confidence="0.6"
-                            interest="{order_1}"
-                            max_depth="2"
-                            max_entities="1"
-                            order="depth_nearest"
-                            best_detection="{best_detection}"/>
-                        </Repeat>
-                        <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
-                                                        suffix="_"
-                                                        result="{possible_order}"/> 
-                        <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_1}" value_B="{possible_order}">
-                            <Sequence>
-                                <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
-                                <Delay delay_msec="3000">
-                                    <AlwaysSuccess/>
-                                </Delay>
-                            </Sequence>                
-                        </BlackboardCheckString>
-                    </Sequence>
-                    <Sequence>
-                        <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
-                        <Action ID="Speak" param="{order_1}" say_text="I asked you for"/>
-                        <Delay delay_msec="3000">
-                            <AlwaysFailure/>
-                        </Delay>
-                    </Sequence>
-                </Fallback>
-            </RetryUntilSuccessful>
-            <BlackboardCheckString return_on_mismatch="SUCCESS" value_A="{order_2}" value_B="">
-                <Action ID="Speak" say_text="Thanks mr barman"/>            
-            </BlackboardCheckString>
-            <Action ID="Speak" param="{order_2}" say_text="The customer would like"/>
-            <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
-            </RetryUntilSuccessful>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Fallback>
-                    <Sequence>
-                        <Repeat num_cycles="6">
-                            <Condition ID="IsDetected" confidence="0.6"
-                            interest="{order_2}"
-                            max_depth="2"
-                            max_entities="1"
-                            order="depth_nearest"
-                            best_detection="{best_detection}"/>
-                        </Repeat>
-                        <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
-                                                        suffix="_"
-                                                        result="{possible_order}"/> 
-                        <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_2}" value_B="{possible_order}">
-                            <Sequence>
-                                <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
-                                <Delay delay_msec="3000">
-                                    <AlwaysSuccess/>
-                                </Delay>
-                            </Sequence>                
-                        </BlackboardCheckString>
-                    </Sequence>
-                    <Sequence>
-                        <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
-                        <Action ID="Speak" param="{order_2}" say_text="I asked you for"/>
-                        <Delay delay_msec="3000">
-                            <AlwaysFailure/>
-                        </Delay>
-                    </Sequence>
-                </Fallback>
-            </RetryUntilSuccessful>
-            <BlackboardCheckString return_on_mismatch="SUCCESS" value_A="{order_3}" value_B="">
-                <Action ID="Speak" say_text="Thanks mr barman"/>
-            </BlackboardCheckString>
-            <Action ID="Speak" param="{order_3}" say_text="The customer would like"/>
-            <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
-            </RetryUntilSuccessful>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Fallback>
-                    <Sequence>
-                        <Repeat num_cycles="6">
-                            <Condition ID="IsDetected" confidence="0.6"
-                            interest="{order_3}"
-                            max_depth="2"
-                            max_entities="1"
-                            order="depth_nearest"
-                            best_detection="{best_detection}"/>
-                        </Repeat>
-                        <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
-                                                        suffix="_"
-                                                        result="{possible_order}"/> 
-                        <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_3}" value_B="{possible_order}">
-                            <Sequence>
-                                <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
-                                <Delay delay_msec="3000">
-                                    <AlwaysSuccess/>
-                                </Delay>
-                            </Sequence>                
-                        </BlackboardCheckString>
-                    </Sequence>
-                    <Sequence>
-                        <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
-                        <Action ID="Speak" param="{order_3}" say_text="I asked you for"/>
-                        <Delay delay_msec="3000">
-                            <AlwaysFailure/>
-                        </Delay>
-                    </Sequence>
-                </Fallback>
-            </RetryUntilSuccessful>
-        </Sequence>
+        <Fallback>
+            <Sequence>
+                <Action ID="Speak" param="{order_1}" say_text="The customer would like"/>
+                <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                </RetryUntilSuccessful>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Fallback>
+                        <Sequence>
+                            <Repeat num_cycles="6">
+                                <Condition ID="IsDetected" confidence="0.6"
+                                interest="{order_1}"
+                                max_depth="2"
+                                max_entities="1"
+                                order="depth_nearest"
+                                best_detection="{best_detection}"/>
+                            </Repeat>
+                            <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                            suffix="_"
+                                                            result="{possible_order}"/> 
+                            <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_1}" value_B="{possible_order}">
+                                <Sequence>
+                                    <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
+                                    <Delay delay_msec="3000">
+                                        <AlwaysSuccess/>
+                                    </Delay>
+                                </Sequence>                
+                            </BlackboardCheckString>
+                        </Sequence>
+                        <Sequence>
+                            <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
+                            <Action ID="Speak" param="{order_1}" say_text="I asked you for"/>
+                            <Delay delay_msec="3000">
+                                <AlwaysFailure/>
+                            </Delay>
+                        </Sequence>
+                    </Fallback>
+                </RetryUntilSuccessful>
+                <BlackboardCheckString return_on_mismatch="SUCCESS" value_A="{order_2}" value_B="">
+                    <Action ID="Speak" say_text="Thanks mr barman"/>            
+                </BlackboardCheckString>
+            </Sequence>
+            <Sequence>
+                <Action ID="Speak" param="{order_2}" say_text="The customer would like"/>
+                <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                </RetryUntilSuccessful>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Fallback>
+                        <Sequence>
+                            <Repeat num_cycles="6">
+                                <Condition ID="IsDetected" confidence="0.6"
+                                interest="{order_2}"
+                                max_depth="2"
+                                max_entities="1"
+                                order="depth_nearest"
+                                best_detection="{best_detection}"/>
+                            </Repeat>
+                            <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                            suffix="_"
+                                                            result="{possible_order}"/> 
+                            <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_2}" value_B="{possible_order}">
+                                <Sequence>
+                                    <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
+                                    <Delay delay_msec="3000">
+                                        <AlwaysSuccess/>
+                                    </Delay>
+                                </Sequence>                
+                            </BlackboardCheckString>
+                        </Sequence>
+                        <Sequence>
+                            <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
+                            <Action ID="Speak" param="{order_2}" say_text="I asked you for"/>
+                            <Delay delay_msec="3000">
+                                <AlwaysFailure/>
+                            </Delay>
+                        </Sequence>
+                    </Fallback>
+                </RetryUntilSuccessful>
+            </Sequence>
+            <Sequence>
+                <BlackboardCheckString return_on_mismatch="SUCCESS" value_A="{order_3}" value_B="">
+                    <Action ID="Speak" say_text="Thanks mr barman"/>
+                </BlackboardCheckString>
+                <Action ID="Speak" param="{order_3}" say_text="The customer would like"/>
+                <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                </RetryUntilSuccessful>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Fallback>
+                        <Sequence>
+                            <Repeat num_cycles="6">
+                                <Condition ID="IsDetected" confidence="0.6"
+                                interest="{order_3}"
+                                max_depth="2"
+                                max_entities="1"
+                                order="depth_nearest"
+                                best_detection="{best_detection}"/>
+                            </Repeat>
+                            <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                            suffix="_"
+                                                            result="{possible_order}"/> 
+                            <BlackboardCheckString return_on_mismatch="FAILURE" value_A="{order_3}" value_B="{possible_order}">
+                                <Sequence>
+                                    <Action ID="Speak" param="" say_text="Fantastic, please put it into the basket"/>
+                                    <Delay delay_msec="3000">
+                                        <AlwaysSuccess/>
+                                    </Delay>
+                                </Sequence>                
+                            </BlackboardCheckString>
+                        </Sequence>
+                        <Sequence>
+                            <Action ID="Speak" param="" say_text="Do not try to cheat dear barman"/>
+                            <Action ID="Speak" param="{order_3}" say_text="I asked you for"/>
+                            <Delay delay_msec="3000">
+                                <AlwaysFailure/>
+                            </Delay>
+                        </Sequence>
+                    </Fallback>
+                </RetryUntilSuccessful>
+            </Sequence>
+        </Fallback>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="collect_order">
@@ -232,7 +239,7 @@
                                            max_entities="1"
                                            person_id="{person_id}"
                                            order="color"/>
-                <Action ID="Pan" period="10" pitch_angle="0" range="45"/>
+                <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
             </ReactiveFallback>
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
             <Action ID="LookAt" tf_frame="person_0_filtered"/>
@@ -294,29 +301,31 @@
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="get_order_1">
-        <Sequence>
-            <Action ID="Speak" param="" say_text="What would you like to order first?"/>
-            <SubTree ID="listen" __shared_blackboard="true"/>
-            <ReactiveSequence>
-                <RetryUntilSuccessful num_attempts="-1">
-                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
-                </RetryUntilSuccessful>
-                <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
-                <Action ID="Query" intention="order" intention_value="{order_1}" text="{understood}"/>
-            </ReactiveSequence>
+        <RetryUntilSuccessful num_attempts="-1">
             <Sequence>
-                <Action ID="Speak" param="{order_1}" say_text="so you want to order a"/>
-                <Action ID="Speak" param="" say_text="Please say yes or no"/>
-                <SubTree ID="confirm" __shared_blackboard="true"/>
+                <Action ID="Speak" param="" say_text="What would you like to order first?"/>
+                <SubTree ID="listen" __shared_blackboard="true"/>
+                <ReactiveSequence>
+                    <RetryUntilSuccessful num_attempts="-1">
+                        <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
+                    </RetryUntilSuccessful>
+                    <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
+                    <Action ID="Query" intention="order" intention_value="{order_1}" text="{understood}"/>
+                </ReactiveSequence>
+                <Sequence>
+                    <Action ID="Speak" param="{order_1}" say_text="so you want to order a"/>
+                    <Action ID="Speak" param="" say_text="Please say yes or no"/>
+                    <SubTree ID="confirm" __shared_blackboard="true"/>
+                </Sequence>
+                <Action ID="IncrementVariable" variable="{n}"/>
             </Sequence>
-            <Action ID="IncrementVariable" variable="{n}"/>
-        </Sequence>
+        </RetryUntilSuccessful>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="get_order_2">
         <Sequence>
             <Action ID="Speak" param="" say_text="What would you like to order next?"/>
-            <SubTree ID="listen"/>
+            <SubTree ID="listen" __shared_blackboard="true"/>
             <ReactiveSequence>
                 <RetryUntilSuccessful num_attempts="-1">
                     <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>

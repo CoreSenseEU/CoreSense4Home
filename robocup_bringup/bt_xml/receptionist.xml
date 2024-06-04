@@ -44,7 +44,7 @@
                                     </ReactiveSequence>
                                     <ReactiveSequence>
                                         <RetryUntilSuccessful num_attempts="-1">  
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
+                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
                                         </RetryUntilSuccessful>
                                         <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
                                     </ReactiveSequence>
@@ -193,7 +193,7 @@
                     <Action ID="MoveToPredefined" pose="home"/>
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
 
-                    <Action ID="AddGuestToCount" guest_id="{n}"/>
+                    <Action ID="IncrementVariable" variable="{n}"/>
                 </Sequence>  
             </Repeat>
         </Sequence>

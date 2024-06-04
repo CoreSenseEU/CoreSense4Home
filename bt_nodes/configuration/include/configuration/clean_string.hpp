@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
-#define CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
+#ifndef CONFIGURATION__CLEAN_STRING_HPP_
+#define CONFIGURATION__CLEAN_STRING_HPP_
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -21,10 +21,10 @@
 namespace configuration
 {
 
-class AddGuestToCount : public BT::ActionNodeBase
+class CleanString : public BT::ActionNodeBase
 {
 public:
-  explicit AddGuestToCount(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit CleanString(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -33,11 +33,14 @@ public:
   {
     return BT::PortsList(
       {
-        BT::BidirectionalPort<std::string>("guest_id"),
+        BT::InputPort<std::string>("string_to_clean"),
+        BT::OutputPort<std::string>("result")
       });
   }
+private:
+  std::string string_to_clean_, result_;
 };
 
 }  // namespace configuration
 
-#endif  // CONFIGURATION__ADD_GUEST_TO_COUNT_HPP_
+#endif  // CONFIGURATION__CLEAN_STRING_HPP_

@@ -12,31 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__SET_START_POSITION_HPP_
-#define CONFIGURATION__SET_START_POSITION_HPP_
-
-#include <string>
+#ifndef CONFIGURATION__REMOVE_STRING_SUFFIX_HPP_
+#define CONFIGURATION__REMOVE_STRING_SUFFIX_HPP_
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
-#include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
-#include "tf2_ros/buffer.h"
-#include "tf2_ros/transform_listener.h"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-
 namespace configuration
 {
 
-class SetStartPosition : public BT::ActionNodeBase
+class RemoveStringSuffix : public BT::ActionNodeBase
 {
 public:
-  explicit SetStartPosition(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit RemoveStringSuffix(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -45,13 +33,17 @@ public:
   {
     return BT::PortsList(
       {
-        BT::OutputPort<std::string>("initial_pose")
-      });}
-
+        BT::InputPort<std::string>("string_to_remove"),
+        BT::InputPort<std::string>("suffix"),
+        BT::OutputPort<std::string>("result")
+      });
+  }
 private:
-  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::string string_to_remove_;
+  std::string suffix_;
+  std::string result_;
 };
 
 }  // namespace configuration
 
-#endif  // CONFIGURATION__SET_START_POSITION_HPP_
+#endif  // CONFIGURATION__REMOVE_STRING_SUFFIX_HPP_

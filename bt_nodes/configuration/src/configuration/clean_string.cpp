@@ -12,33 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "configuration/add_guest_to_count.hpp"
+#include "configuration/clean_string.hpp"
 
 namespace configuration
 {
 
-AddGuestToCount::AddGuestToCount(
+CleanString::CleanString(
   const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
 }
 
-BT::NodeStatus AddGuestToCount::tick()
+BT::NodeStatus CleanString::tick()
 {
-  std::string id_{"0"};
-  getInput("guest_id", id_);
-  if (id_ == "0") {
+  getInput("string_to_clean", string_to_clean_);
+  if (string_to_clean_.empty()) 
+  { 
     return BT::NodeStatus::FAILURE;
   }
-  setOutput("guest_id", std::to_string(std::stoi(id_) + 1));
+
+  string_to_clean_.erase(std::remove_if(string_to_clean_.begin(), string_to_clean_.end(), [](unsigned char c){ return !std::isalnum(c); } ), string_to_clean_.end());
+  std::transform(string_to_clean_.begin(), string_to_clean_.end(), string_to_clean_.begin(),
+    [](unsigned char c){ return std::tolower(c); });
+
+  result_ = string_to_clean_;
+  setOutput("result", result_);
   return BT::NodeStatus::SUCCESS;
 }
 
-void AddGuestToCount::halt() {}
+void CleanString::halt() {}
 
 }  // namespace configuration
 
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<configuration::AddGuestToCount>("AddGuestToCount");
+  factory.registerNodeType<configuration::CleanString>("CleanString");
 }

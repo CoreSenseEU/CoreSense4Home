@@ -40,9 +40,9 @@ amcl:
     scan_topic: /scan
     set_initial_pose: true
     initial_pose:
-      x: 2.335
-      y: 6.648
-      yaw: -0.103
+      x: 1.234
+      y: 6.636
+      yaw: 1.515
     # receptionist initial_pose:
     # initial_pose:
     #   x: 0.99
@@ -171,20 +171,19 @@ controller_server:
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.6
+      max_vel_x: 1.0
       max_vel_y: 0.0
-      max_vel_theta: 0.5
+      max_vel_theta: 2.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.6
-      min_speed_theta: 0.0
+      max_speed_xy: 1.0
       # Add high threshold velocity for turtlebot 3 issue.
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-      acc_lim_x: 0.2
+      acc_lim_x: 1.0
       acc_lim_y: 0.0
-      acc_lim_theta: 0.5
-      decel_lim_x: -0.2
+      acc_lim_theta: 2.0
+      decel_lim_x: -1.0
       decel_lim_y: 0.0
-      decel_lim_theta: -0.5
+      decel_lim_theta: -2.0
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
@@ -363,9 +362,9 @@ behavior_server:
     transform_tolerance: 0.1
     use_sim_time: False
     simulate_ahead_time: 2.0
-    max_rotational_vel: 0.5
+    max_rotational_vel: 1.0
     min_rotational_vel: 0.3
-    rotational_acc_lim: 3.2
+    rotational_acc_lim: 0.2
 
 robot_state_publisher:
   ros__parameters:
@@ -388,10 +387,10 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.6, 0.0, 0.5]
-    min_velocity: [-0.6, 0.0, -0.5]
-    max_accel: [0.2, 0.0, 0.5]
-    max_decel: [-0.2, 0.0, -0.5]
+    max_velocity: [0.5, 0.0, 1.0]
+    min_velocity: [-0.2, 0.0, -1.0]
+    max_accel: [1.0, 0.0, 2.0]
+    max_decel: [-1.0, 0.0, -2.0]
     odom_topic: "/mobile_base_controller/odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

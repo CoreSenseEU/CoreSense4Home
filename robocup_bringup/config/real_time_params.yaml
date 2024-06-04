@@ -13,15 +13,11 @@ attention_server:
 
 perception_people_detection:
   ros__parameters:
-<<<<<<< HEAD
-    target_frame: head_front_camera_rgb_frame
-=======
-    target_frame: head_front_camera_link_color_optical_frame
+    target_frame: base_footprint
     debug: true
 
 perception_objects_detection:
   ros__parameters:
-    target_frame: head_front_camera_link_color_optical_frame
->>>>>>> coresense/adaptation_cascade
+    target_frame: base_footprint
     debug: true
 

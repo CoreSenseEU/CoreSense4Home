@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     use_sim_time: False
-    cam_frame: "head_front_camera_color_optical_frame"
+    cam_frame: "base_footprint"
     home_position: [2.335, 6.648, -0.103]
     home_pose: "home"
     offer_pose: "offer"
@@ -9,7 +9,7 @@
     waypoints_names: ["entrance", "party"]
     # allow_duplicate_names: false
     waypoints:
-      entrance: [2.335, 6.648, -0.103]
+      entrance: [1.234, 6.636, 1.515]
       party: [1.455, 4.915, -0.433]
 
 behaviors_main:

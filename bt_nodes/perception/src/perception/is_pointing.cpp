@@ -70,8 +70,10 @@ int IsPointing::publicTF_map2object(
   perception_system_interfaces::msg::Detection modified_detection;
   modified_detection = detected_object;
 
+  RCLCPP_INFO(node_->get_logger(), "[IsPointing] Detected object frame_id %s", detected_object.header.frame_id.c_str());
+
   try {
-    map2camera_msg = tf_buffer_->lookupTransform("map", camera_frame_, tf2::TimePointZero);
+    map2camera_msg = tf_buffer_->lookupTransform("map", "base_footprint", tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "[IsPointing] Could not transform %s to %s: %s", "map",
@@ -82,9 +84,9 @@ int IsPointing::publicTF_map2object(
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
   if (detected_object.pointing_direction == 1) {
     bag_frame_ = "right_bag";
-    modified_detection.center3d.position.x += 0.4;  // + or - ?
+    modified_detection.center3d.position.y += 0.4;  // + or - ?
   } else if (detected_object.pointing_direction == 3) {
-    modified_detection.center3d.position.x -= 0.4;  // + or - ?
+    modified_detection.center3d.position.y -= 0.4;  // + or - ?
     bag_frame_ = "left_bag";
   } 
   // else if (detected_object.pointing_direction == 2) {

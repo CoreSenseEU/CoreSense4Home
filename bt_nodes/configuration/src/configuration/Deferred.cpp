@@ -19,7 +19,7 @@ namespace configuration
 
 Deferred::Deferred(const std::string &xml_tag_name,
                        const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {}
+    : BT::ActionNodeBase(xml_tag_name, conf) {    }
 
 void Deferred::halt() {}
 
@@ -52,6 +52,9 @@ BT::NodeStatus Deferred::tick() {
     }
 
     if (by_content) {
+      auto node = config().blackboard->get<std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode>>("node");
+      RCLCPP_INFO(node->get_logger(), bt_xml_.value().c_str());;
+
       subtree_ =
           factory.createTreeFromText(bt_xml_.value(), config().blackboard);
     } else {
@@ -60,9 +63,22 @@ BT::NodeStatus Deferred::tick() {
           rel_path_.value();
       subtree_ = factory.createTreeFromFile(xml_path, config().blackboard);
     }
+    try {
+      auto pub_blackboard = config().blackboard->get<std::shared_ptr<BT::PublisherZMQ>>("publisher_zmq");
+      pub_blackboard.reset();
+    } catch (const std::exception &e) {
+      std::cerr << "[DeferredBT] WARNING: No publisher_zmq found" << std::endl;
+    }
+
+    publisher_zmq_ = std::make_unique<BT::PublisherZMQ>(subtree_, 10, 2666, 2667);
   }
 
-  return subtree_.rootNode()->executeTick();
+  auto state = subtree_.rootNode()->executeTick();
+
+ if (state == BT::NodeStatus::FAILURE || state == BT::NodeStatus::SUCCESS) {
+    publisher_zmq_.reset();
+  } 
+  return state;
 }
 
 }  // namespace configuration

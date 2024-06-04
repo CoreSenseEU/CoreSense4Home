@@ -133,7 +133,7 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
     RCLCPP_INFO(node_->get_logger(), "Object Found Id: %s", (obj_ptr->id).c_str());
   }
   ExtractObjectsFromScene::setOutput("detected_objects", detected_objects);
-  ExtractObjectsFromScene::setOutput("objects_count", detected_objects.size());
+  ExtractObjectsFromScene::setOutput("objects_count", std::to_string(detected_objects.size()));
   RCLCPP_INFO(node_->get_logger(), "---------------------------------------");
   if (detected_objects.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[ExtractObject] No objects detected");

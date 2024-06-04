@@ -92,7 +92,7 @@ def generate_launch_description():
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_rgb_frame',
+            'target_frame': 'base_footprint',
             'threshold': '0.5'
             }.items()
     )

@@ -174,6 +174,43 @@ configuration::deferred_bt_node
 configuration::setup_gpsr_bt_node
 )
 
+list(APPEND GPSR_TESTS
+  gpsr_answerquiz_test gpsr_countobject_test gpsr_findperson_test gpsr_followperson_test
+  gpsr_guideperson_test gpsr_moveto_test gpsr_offerobject_test gpsr_speak_test
+)
+
+# gpsr tests
+foreach(test ${GPSR_TESTS})
+  add_executable(${test} src/${test}.cpp)
+  ament_target_dependencies(${test} ${dependencies})
+  target_link_libraries(${test}
+    perception::is_detected_bt_node
+    perception::extract_object_from_scene_bt_node
+    perception::convert_color_bt_node
+    perception::is_gesturing_bt_node
+    perception::filter_entity_bt_node
+    perception::is_entity_moving_bt_node
+    perception::extract_entity_color_bt_node
+    perception::extract_collision_scene_bt_node
+    hri::generate_text_from_objects_bt_node
+    hri::speak_bt_node
+    hri::dialogConfirmation_bt_node
+    hri::listen_bt_node
+    hri::query_bt_node
+    hri::command_planning_bt_node
+    arm::move_to_predefined_bt_node
+    arm::pick_bt_node
+    motion::move_to_bt_node
+    motion::look_at_bt_node
+    motion::configure_navigate_back_bt_node
+    motion::pan_bt_node 
+    motion::follow_entity_bt_node
+    motion::goal_publisher_bt_node
+    configuration::deferred_bt_node
+    configuration::setup_gpsr_bt_node
+  )
+endforeach()
+
 # carry my luggage test
 add_executable(carry_my_luggage_test src/carry_my_luggage_test.cpp)
 ament_target_dependencies(carry_my_luggage_test ${dependencies})
@@ -286,7 +323,17 @@ install(TARGETS
   inspection_test
   storing_groceries_test
   find_person_test
+  
   gpsr_test
+  gpsr_answerquiz_test
+  gpsr_countobject_test
+  gpsr_findperson_test
+  gpsr_followperson_test
+  gpsr_guideperson_test
+  gpsr_moveto_test
+  gpsr_offerobject_test
+  gpsr_speak_test
+
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

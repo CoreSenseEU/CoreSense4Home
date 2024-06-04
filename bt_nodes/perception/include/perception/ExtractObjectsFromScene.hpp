@@ -50,13 +50,13 @@ public:
       {BT::InputPort<std::string>("interest_class"),
        BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
           "detected_objects"),
-       BT::OutputPort<size_t>("objects_count")});
+       BT::OutputPort<std::string>("objects_count")});
   }
 
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
 
 private:
-    rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Subscription<yolov8_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
   yolov8_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
   std::string interest_class_{""};

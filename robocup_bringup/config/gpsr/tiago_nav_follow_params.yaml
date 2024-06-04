@@ -10,6 +10,7 @@ bt_navigator:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+    default_nav_to_pose_bt_xml: ""
     plugin_lib_names:
     - nav2_compute_path_to_pose_action_bt_node
     - nav2_compute_path_through_poses_action_bt_node
@@ -97,20 +98,20 @@ controller_server:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
       min_vel_x: 0.0
-      max_vel_x: 0.6
+      min_vel_y: 0.0
+      max_vel_x: 1.0
       max_vel_y: 0.0
-      max_vel_theta: 0.5
+      max_vel_theta: 2.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.6
-      min_speed_theta: 0.0
+      max_speed_xy: 1.0
       # Add high threshold velocity for turtlebot 3 issue.
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-      acc_lim_x: 0.2
+      acc_lim_x: 1.0
       acc_lim_y: 0.0
-      acc_lim_theta: 0.5
-      decel_lim_x: -0.2
+      acc_lim_theta: 2.0
+      decel_lim_x: -1.0
       decel_lim_y: 0.0
-      decel_lim_theta: -0.5
+      decel_lim_theta: -2.0
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
@@ -292,7 +293,7 @@ behavior_server:
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4
-    rotational_acc_lim: 3.2
+    rotational_acc_lim: 2.0
 
 robot_state_publisher:
   ros__parameters:
@@ -315,10 +316,10 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.6, 0.0, 0.5]
-    min_velocity: [-0.6, 0.0, -0.5]
-    max_accel: [0.2, 0.0, 0.5]
-    max_decel: [-0.2, 0.0, -0.5]
+    max_velocity: [0.5, 0.0, 1.0]
+    min_velocity: [-0.2, 0.0, -1.0]
+    max_accel: [1.0, 0.0, 2.0]
+    max_decel: [-1.0, 0.0, -2.0]
     odom_topic: "/mobile_base_controller/odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

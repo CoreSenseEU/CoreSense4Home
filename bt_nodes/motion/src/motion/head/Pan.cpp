@@ -48,6 +48,9 @@ Pan::Pan(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
   //     node_->get_logger(), "Missing required input [pitch_angle]. Using default value 0.0 degrees");
   //   pitch_angle_.value() = 0.0;
   // }
+  RCLCPP_DEBUG(
+    node_->get_logger(), "Pan: range: %f, period: %f, pitch_angle: %f", joint_range_, period_,
+    pitch_angle_);
   joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
     "/head_controller/joint_trajectory", 100);
   joint_cmd_pub_->on_activate();
@@ -78,6 +81,7 @@ double Pan::get_joint_yaw(double period, double range, double time, double phase
 
 BT::NodeStatus Pan::tick()
 {
+  rclcpp::spin_some(node_->get_node_base_interface());
   if (status() == BT::NodeStatus::IDLE) {
     node_->remove_activation("attention_server");
     start_time_ = node_->now();

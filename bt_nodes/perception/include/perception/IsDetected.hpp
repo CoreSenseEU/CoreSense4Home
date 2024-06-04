@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <string>
+#include <map>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -29,6 +30,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "perception_system/PerceptionListener.hpp"
+#include "perception_system/PerceptionUtils.hpp"
 #include "perception_system_interfaces/msg/detection_array.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
@@ -53,6 +55,7 @@ public:
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("order"), // todo: enum map or string?
         BT::InputPort<double>("max_depth"), 
+        BT::InputPort<std::string>("color"),
         BT::OutputPort<std::vector<std::string>>("frames"),
         BT::OutputPort<std::string>("best_detection")});
   }
@@ -67,7 +70,13 @@ private:
   int max_entities_;
   std::int64_t person_id_;
   std::vector<std::string> frames_;
-  
+  std::string color_;
+
+  double hue_threshold_{10.0};
+  double saturation_threshold_{0.2};
+  double value_threshold_{0.2};
+
+  std::map<std::string, cv::Scalar> colors_;
 };
 
 }  // namespace perception

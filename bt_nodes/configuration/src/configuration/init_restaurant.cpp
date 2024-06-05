@@ -35,8 +35,7 @@ BT::NodeStatus InitRestaurant::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[InitRestaurant] ticked");
 
-  if (node_->has_parameter("cam_frame"))
-  {
+  if (node_->has_parameter("cam_frame")) {
     node_->get_parameter("cam_frame", cam_frame_);
 
     geometry_msgs::msg::TransformStamped transform_msg;

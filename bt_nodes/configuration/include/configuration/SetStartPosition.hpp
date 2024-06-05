@@ -46,7 +46,8 @@ public:
     return BT::PortsList(
       {
         BT::OutputPort<std::string>("initial_pose")
-      });}
+      });
+  }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;

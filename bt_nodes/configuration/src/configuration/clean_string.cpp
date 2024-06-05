@@ -26,14 +26,17 @@ CleanString::CleanString(
 BT::NodeStatus CleanString::tick()
 {
   getInput("string_to_clean", string_to_clean_);
-  if (string_to_clean_.empty()) 
-  { 
+  if (string_to_clean_.empty()) {
     return BT::NodeStatus::FAILURE;
   }
 
-  string_to_clean_.erase(std::remove_if(string_to_clean_.begin(), string_to_clean_.end(), [](unsigned char c){ return !std::isalnum(c); } ), string_to_clean_.end());
-  std::transform(string_to_clean_.begin(), string_to_clean_.end(), string_to_clean_.begin(),
-    [](unsigned char c){ return std::tolower(c); });
+  string_to_clean_.erase(
+    std::remove_if(
+      string_to_clean_.begin(), string_to_clean_.end(),
+      [](unsigned char c) {return !std::isalnum(c);}), string_to_clean_.end());
+  std::transform(
+    string_to_clean_.begin(), string_to_clean_.end(), string_to_clean_.begin(),
+    [](unsigned char c) {return std::tolower(c);});
 
   result_ = string_to_clean_;
   setOutput("result", result_);

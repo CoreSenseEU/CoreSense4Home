@@ -37,6 +37,7 @@ public:
         BT::OutputPort<std::string>("result")
       });
   }
+
 private:
   std::string string_to_clean_, result_;
 };

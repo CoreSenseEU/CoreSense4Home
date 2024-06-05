@@ -46,11 +46,11 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::int64_t>("person_id"),
-       BT::InputPort<std::string>("cam_frame"),
-       BT::InputPort<int>("low_pointing_limit"),
-       BT::InputPort<int>("high_pointing_limit"),
-       BT::OutputPort<std::string>("output_frame")
-       });
+        BT::InputPort<std::string>("cam_frame"),
+        BT::InputPort<int>("low_pointing_limit"),
+        BT::InputPort<int>("high_pointing_limit"),
+        BT::OutputPort<std::string>("output_frame")
+      });
   }
 
 private:

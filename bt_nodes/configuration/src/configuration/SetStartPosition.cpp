@@ -17,7 +17,9 @@
 namespace configuration
 {
 
-SetStartPosition::SetStartPosition(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+SetStartPosition::SetStartPosition(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -26,18 +28,17 @@ SetStartPosition::SetStartPosition(const std::string & xml_tag_name, const BT::N
 BT::NodeStatus SetStartPosition::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "SetStartPosition ticked");
-  
+
   auto buffer = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
-  auto static_broadcaster = config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>("tf_static_broadcaster");
+  auto static_broadcaster =
+    config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>(
+    "tf_static_broadcaster");
 
   geometry_msgs::msg::TransformStamped t;
 
-  try
-  {
+  try {
     t = buffer->lookupTransform("map", "base_footprint", tf2::TimePointZero);
-  }
-  catch(const tf2::TransformException& e)
-  {
+  } catch (const tf2::TransformException & e) {
     RCLCPP_ERROR(node_->get_logger(), "Transform error: %s", e.what());
     return BT::NodeStatus::FAILURE;
   }

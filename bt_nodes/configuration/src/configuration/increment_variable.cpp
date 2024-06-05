@@ -25,9 +25,9 @@ IncrementVariable::IncrementVariable(
 
 BT::NodeStatus IncrementVariable::tick()
 {
-  std::string id_{"0"};
+  std::string id_{"-1"};
   getInput("variable", id_);
-  if (id_ == "0") {
+  if (id_ == "-1") {
     return BT::NodeStatus::FAILURE;
   }
   setOutput("variable", std::to_string(std::stoi(id_) + 1));

@@ -53,7 +53,7 @@ BT::NodeStatus InitRestaurant::tick()
     setOutput("order_1", "");
     setOutput("order_2", "");
     setOutput("order_3", "");
-    setOutput("order_count", "1");
+    setOutput("order_count", "0");
     setOutput("tf_buffer", tf_buffer_);
     setOutput("tf_broadcaster", tf_broadcaster_);
     setOutput("tf_static_broadcaster", tf_static_broadcaster_);

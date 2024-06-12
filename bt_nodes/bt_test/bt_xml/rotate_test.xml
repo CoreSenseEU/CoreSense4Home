@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Repeat num_cycles="4">
+            <Delay delay_msec="1000">
+                <Action ID="Rotate" angle="1.57" speed='0.3' />
+            </Delay>
+        </Repeat>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="Rotate">
+            <input_port default="0.0" name="angle"/>
+            <input_port default="0.0" name="speed"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

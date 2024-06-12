@@ -23,3 +23,4 @@ behaviors_main:
     - follow_entity_bt_node
     - goal_publisher_bt_node
     - configure_navigate_back_bt_node
+    - set_start_position_bt_node

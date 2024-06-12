@@ -48,7 +48,6 @@ MoveTo::MoveTo(
 
 void MoveTo::on_tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick()");
   geometry_msgs::msg::PoseStamped goal;
   geometry_msgs::msg::TransformStamped map_to_goal;
 
@@ -56,6 +55,8 @@ void MoveTo::on_tick()
   getInput("distance_tolerance", distance_tolerance_);
   getInput("will_finish", will_finish_);
   getInput("is_truncated", is_truncated_);
+
+  RCLCPP_INFO(node_->get_logger(), "MoveTo: on_tick() tf_frame: %s", tf_frame_.c_str());
 
   try {
     map_to_goal = tf_buffer_.lookupTransform("map", tf_frame_, tf2::TimePointZero);

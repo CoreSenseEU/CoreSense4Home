@@ -40,6 +40,9 @@ FollowPerson::FollowPerson(const std::string & xml_tag_name, const BT::NodeConfi
 
   tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 
+  node_->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  node_->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+
   getInput("person_id", person_id_);
   getInput("camera_link", camera_link_);
 }

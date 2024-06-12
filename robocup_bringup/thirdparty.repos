@@ -59,6 +59,10 @@ repositories:
     type: git
     url: https://github.com/Juancams/navigation_system.git
     version: main
+  ThirdParty/gpsr_planning:
+    type: git
+    url: https://github.com/igonzf/GPSR_planning
+    version: main
 
     
 

@@ -28,6 +28,7 @@
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 #include "yolov8_msgs/msg/detection_array.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
 {
@@ -47,7 +48,7 @@ public:
       {BT::InputPort<std::string>("interest_class"),
         BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
           "detected_objects"),
-        BT::OutputPort<size_t>("objects_count")});
+       BT::OutputPort<std::string>("objects_count")});
   }
 
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);

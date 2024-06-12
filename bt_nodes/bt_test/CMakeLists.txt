@@ -16,6 +16,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
 find_package(llama_msgs REQUIRED)
+find_package(gpsr_msgs REQUIRED)
 find_package(configuration REQUIRED)
 find_package(motion REQUIRED)
 find_package(perception REQUIRED)
@@ -35,6 +36,7 @@ set(dependencies
   audio_common_msgs
   whisper_msgs
   llama_msgs
+  gpsr_msgs
   configuration
   motion
   perception
@@ -136,6 +138,88 @@ target_link_libraries(configuration::init_carry_bt_node)
 add_executable(follow_person_test src/follow_person_test.cpp)
 ament_target_dependencies(follow_person_test ${dependencies})
 target_link_libraries(follow_person_test perception::follow_person_bt_node)
+
+# find_person test
+add_executable(find_person_test src/find_person_test.cpp)
+ament_target_dependencies(find_person_test ${dependencies})
+target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node perception::is_gesturing_bt_node)
+
+# count person test
+add_executable(count_people_test src/count_people_test.cpp)
+ament_target_dependencies(count_people_test ${dependencies})
+target_link_libraries(count_people_test perception::count_people_bt_node motion::rotate_bt_node)
+
+# rotate test
+add_executable(rotate_test src/rotate_test.cpp)
+ament_target_dependencies(rotate_test ${dependencies})
+target_link_libraries(rotate_test motion::rotate_bt_node)
+
+# gpsr test
+add_executable(gpsr_test src/gpsr_test.cpp)
+ament_target_dependencies(gpsr_test ${dependencies})
+target_link_libraries(gpsr_test
+perception::is_detected_bt_node
+perception::extract_object_from_scene_bt_node
+perception::convert_color_bt_node
+perception::is_gesturing_bt_node
+perception::filter_entity_bt_node
+perception::is_entity_moving_bt_node
+perception::extract_entity_color_bt_node
+perception::extract_collision_scene_bt_node
+hri::generate_text_from_objects_bt_node
+hri::speak_bt_node
+hri::dialogConfirmation_bt_node
+hri::listen_bt_node
+hri::query_bt_node
+hri::command_planning_bt_node
+arm::move_to_predefined_bt_node
+arm::pick_bt_node
+motion::move_to_bt_node
+motion::look_at_bt_node
+motion::configure_navigate_back_bt_node
+motion::pan_bt_node 
+motion::follow_entity_bt_node
+motion::goal_publisher_bt_node
+configuration::deferred_bt_node
+configuration::setup_gpsr_bt_node
+)
+
+list(APPEND GPSR_TESTS
+  gpsr_answerquiz_test gpsr_countobject_test gpsr_findperson_test gpsr_followperson_test
+  gpsr_guideperson_test gpsr_moveto_test gpsr_offerobject_test gpsr_speak_test
+)
+
+# gpsr tests
+foreach(test ${GPSR_TESTS})
+  add_executable(${test} src/${test}.cpp)
+  ament_target_dependencies(${test} ${dependencies})
+  target_link_libraries(${test}
+    perception::is_detected_bt_node
+    perception::extract_object_from_scene_bt_node
+    perception::convert_color_bt_node
+    perception::is_gesturing_bt_node
+    perception::filter_entity_bt_node
+    perception::is_entity_moving_bt_node
+    perception::extract_entity_color_bt_node
+    perception::extract_collision_scene_bt_node
+    hri::generate_text_from_objects_bt_node
+    hri::speak_bt_node
+    hri::dialogConfirmation_bt_node
+    hri::listen_bt_node
+    hri::query_bt_node
+    hri::command_planning_bt_node
+    arm::move_to_predefined_bt_node
+    arm::pick_bt_node
+    motion::move_to_bt_node
+    motion::look_at_bt_node
+    motion::configure_navigate_back_bt_node
+    motion::pan_bt_node 
+    motion::follow_entity_bt_node
+    motion::goal_publisher_bt_node
+    configuration::deferred_bt_node
+    configuration::setup_gpsr_bt_node
+  )
+endforeach()
 
 # carry my luggage test
 add_executable(carry_my_luggage_test src/carry_my_luggage_test.cpp)
@@ -248,6 +332,20 @@ install(TARGETS
   receptionist_test
   inspection_test
   storing_groceries_test
+  find_person_test
+  count_people_test
+  rotate_test
+  
+  gpsr_test
+  gpsr_answerquiz_test
+  gpsr_countobject_test
+  gpsr_findperson_test
+  gpsr_followperson_test
+  gpsr_guideperson_test
+  gpsr_moveto_test
+  gpsr_offerobject_test
+  gpsr_speak_test
+
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

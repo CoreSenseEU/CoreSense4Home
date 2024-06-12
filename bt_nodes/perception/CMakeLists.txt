@@ -22,6 +22,7 @@ find_package(perception_system REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 # find_package(backward_ros REQUIRED)
 
 
@@ -45,6 +46,7 @@ set(dependencies
   OpenCV
   perception_system_interfaces
   sensor_msgs
+  std_srvs
   # backward_ros
 )
 
@@ -94,6 +96,8 @@ list(APPEND plugin_libs is_gesturing_bt_node)
 
 add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
 list(APPEND plugin_libs count_people_bt_node)
+add_library(clear_octomap_bt_node SHARED src/perception/clear_octomap.cpp)
+list(APPEND plugin_libs clear_octomap_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

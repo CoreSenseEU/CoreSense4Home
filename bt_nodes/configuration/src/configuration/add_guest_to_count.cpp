@@ -17,29 +17,28 @@
 namespace configuration
 {
 
-AddGuestToCount::AddGuestToCount(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+AddGuestToCount::AddGuestToCount(
+  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
-  
 }
 
 BT::NodeStatus AddGuestToCount::tick()
 {
   std::string id_{"0"};
   getInput("guest_id", id_);
-  if (id_ == "0")
-  {
-    return BT::NodeStatus::FAILURE;  
+  if (id_ == "0") {
+    return BT::NodeStatus::FAILURE;
   }
   setOutput("guest_id", std::to_string(std::stoi(id_) + 1));
-  return BT::NodeStatus::SUCCESS;  
- 
+  return BT::NodeStatus::SUCCESS;
 }
 
 void AddGuestToCount::halt() {}
 
 }  // namespace configuration
 
-BT_REGISTER_NODES(factory) {
+BT_REGISTER_NODES(factory)
+{
   factory.registerNodeType<configuration::AddGuestToCount>("AddGuestToCount");
 }

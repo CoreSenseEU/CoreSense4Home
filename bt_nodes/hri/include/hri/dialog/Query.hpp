@@ -22,11 +22,9 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
 #include "llama_msgs/action/generate_response.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
 #include "std_msgs/msg/int8.hpp"
 
 namespace dialog

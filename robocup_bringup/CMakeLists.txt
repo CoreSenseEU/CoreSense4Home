@@ -41,7 +41,7 @@ ament_target_dependencies(behaviors_main ${dependencies})
 add_executable(real_time_main src/real_time_main.cpp)
 ament_target_dependencies(real_time_main ${dependencies})
 
-install(DIRECTORY bt_xml launch config maps 
+install(DIRECTORY bt_xml launch config maps
   DESTINATION share/${PROJECT_NAME}
 )
 

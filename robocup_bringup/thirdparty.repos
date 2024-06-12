@@ -39,6 +39,10 @@ repositories:
     type: git
     url: https://github.com/mgonzs13/tts_ros
     version: main
+  ThirdParty/slam_toolbox:
+    type: git
+    url: https://github.com/SteveMacenski/slam_toolbox.git
+    version: ros2
   systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git
@@ -54,6 +58,10 @@ repositories:
   systems/navigation_system:
     type: git
     url: https://github.com/Juancams/navigation_system.git
+    version: main
+  ThirdParty/gpsr_planning:
+    type: git
+    url: https://github.com/igonzf/GPSR_planning
     version: main
 
     

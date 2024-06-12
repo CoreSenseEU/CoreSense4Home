@@ -15,29 +15,29 @@
 #ifndef PERCEPTION__EXTRACT_CABINET_PLACE_POSE_HPP_
 #define PERCEPTION__EXTRACT_CABINET_PLACE_POSE_HPP_
 
+#include <pcl/filters/crop_box.h>
+#include <tf2_ros/buffer.h>
+
 #include <algorithm>
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "perception/bt_service_node.hpp"
-#include "perception_system_interfaces/srv/isolate_pc_background.hpp"
 #include "perception_system/PerceptionUtils.hpp"
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include <pcl/filters/crop_box.h>
-#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "perception_system_interfaces/srv/isolate_pc_background.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include <tf2_ros/buffer.h>
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
+#include "sensor_msgs/msg/point_cloud2.hpp"
 
 namespace perception
 {
 
-class ExtractCabinetPlacePose
-  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class ExtractCabinetPlacePose : public perception::BtServiceNode<
+    perception_system_interfaces::srv::IsolatePCBackground,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit ExtractCabinetPlacePose(
@@ -51,7 +51,7 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object"),
-       BT::OutputPort<geometry_msgs::msg::PoseStamped>("place_pose")});
+        BT::OutputPort<geometry_msgs::msg::PoseStamped>("place_pose")});
   }
 
 private:

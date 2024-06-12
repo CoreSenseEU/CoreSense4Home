@@ -12,47 +12,43 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_
-#define ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_
+#ifndef PERCEPTION__CLEAR_OCTOMAP_HPP_
+#define PERCEPTION__CLEAR_OCTOMAP_HPP_
+
+#include <pcl/filters/crop_box.h>
+#include <tf2_ros/buffer.h>
 
 #include <algorithm>
 #include <string>
 
-#include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "manipulation_interfaces/action/move_to_predefined.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
+#include "perception/bt_service_node.hpp"
+#include "perception_system/PerceptionUtils.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "std_srvs/srv/empty.hpp"
 
-namespace manipulation
+namespace perception
 {
 
-class MoveToPredefined : public manipulation::BtActionNode<
-    manipulation_interfaces::action::MoveToPredefined,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class ClearOctomap : public perception::BtServiceNode<
+    std_srvs::srv::Empty, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
-  explicit MoveToPredefined(
+  explicit ClearOctomap(
     const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
-  BT::NodeStatus on_success() override;
+  void on_result() override;
 
-  static BT::PortsList providedPorts()
-  {
-    return BT::PortsList(
-      {BT::InputPort<std::string>("pose"), BT::InputPort<std::string>("group_name")});
-  }
-
-private:
-  std::string group_name_{"arm_torso"};
-
-  std::string pose_;
+  static BT::PortsList providedPorts() {return BT::PortsList({});}
 };
 
-}  // namespace manipulation
+}  // namespace perception
 
-#endif  // ARM_MANIPULATION__MOVE_TO_PREDEFINED_HPP_
+#endif  // PERCEPTION__CLEAR_OCTOMAP_HPP_

@@ -1,11 +1,11 @@
 #ifndef MOTION_NAVIGATION_NAV2_PLUGINS_CLEAR_PEOPLE_LAYER_HPP_
 #define MOTION_NAVIGATION_NAV2_PLUGINS_CLEAR_PEOPLE_LAYER_HPP_
 
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "nav2_costmap_2d/layer.hpp"
 #include "nav2_costmap_2d/layered_costmap.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/buffer.h"
-#include "geometry_msgs/msg/transform_stamped.hpp"
 
 namespace nav2_costmap_2d
 {
@@ -16,15 +16,13 @@ public:
   ClearPeopleLayer() = default;
   ~ClearPeopleLayer() = default;
 
-
   void reset() override;
 
   void updateBounds(
     double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
     double * max_x, double * max_y) override;
   void updateCosts(
-    nav2_costmap_2d::Costmap2D & master_grid,
-    int min_x, int min_y, int max_x, int max_y) override;
+    nav2_costmap_2d::Costmap2D & master_grid, int min_x, int min_y, int max_x, int max_y) override;
 
   bool isClearable() {return false;}
 

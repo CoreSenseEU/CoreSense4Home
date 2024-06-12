@@ -17,11 +17,8 @@
 #include <string>
 #include <utility>
 
-#include "perception_system/PerceptionUtils.hpp"
-#include "perception_system/PerceptionListener.hpp"
-
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "perception_system/PerceptionListener.hpp"
 #include "perception_system/PerceptionUtils.hpp"
 
 namespace perception

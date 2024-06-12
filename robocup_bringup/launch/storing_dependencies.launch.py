@@ -19,6 +19,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from llama_bringup.utils import create_llama_launch
 # from launch.actions import LogInfo, RegisterEventHandler
 # from launch.event_handlers import OnExecutionComplete
 # import lifecycle_msgs
@@ -84,6 +85,21 @@ def generate_launch_description():
             {'device': 'cuda'}]
     )
 
+    llama_cmd = create_llama_launch(
+            n_ctx=2048,
+            n_batch=256,
+            n_gpu_layers=25,
+            n_threads=4,
+            n_predict=-1,
+
+            model_repo='TheBloke/Marcoroni-7B-v3-GGUF',
+            model_filename='marcoroni-7b-v3.Q3_K_L.gguf',
+
+            prefix='\n\n### Instruction:\n',
+            suffix='\n\n### Response:\n',
+            stop='\n\n\n\n',
+    )
+
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
@@ -98,7 +114,7 @@ def generate_launch_description():
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
-            'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
+            'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real
             'target_frame': 'head_front_camera_link_color_optical_frame',
             'threshold': '0.5'
             }.items()
@@ -112,7 +128,8 @@ def generate_launch_description():
             'rviz': 'True',
             'mode': 'amcl',
             'params_file': package_dir + '/config/storing_groceries/tiago_nav_params.yaml',
-            'slam_params_file': package_dir + '/config/storing_groceries/tiago_nav_follow_params.yaml',
+            'slam_params_file': package_dir +
+                    '/config/storing_groceries/tiago_nav_follow_params.yaml',
             'map': os.path.join(
                                 package_dir,
                                 'maps',
@@ -127,6 +144,7 @@ def generate_launch_description():
     ld.add_action(yolo3d)
     ld.add_action(real_time)
     ld.add_action(collition_perception)
+    ld.add_action(llama_cmd)
     ld.add_action(move_group)
     ld.add_action(manipulation_server)
 

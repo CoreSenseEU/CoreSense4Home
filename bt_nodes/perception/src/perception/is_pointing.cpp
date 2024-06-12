@@ -88,12 +88,12 @@ int IsPointing::publicTF_map2object(
   } else if (detected_object.pointing_direction == 3) {
     modified_detection.center3d.position.y -= 0.4;  // + or - ?
     bag_frame_ = "left_bag";
-  } 
+  }
   // else if (detected_object.pointing_direction == 2) {
   //   bag_frame_ = "center_bag";
   //   modified_detection.center3d.position.z -= 0.4;  // + or - ?
   // }
-   else {
+  else {
     return -1;
   }
 
@@ -145,7 +145,6 @@ int IsPointing::publicTF_map2object(
 
 BT::NodeStatus IsPointing::tick()
 {
-
   if (status() == BT::NodeStatus::IDLE) {
     getInput("person_id", person_id_);
     RCLCPP_DEBUG(node_->get_logger(), "IsPointing ticked");

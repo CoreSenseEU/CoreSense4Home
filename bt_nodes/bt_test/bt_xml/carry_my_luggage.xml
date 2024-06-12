@@ -30,7 +30,7 @@
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
             <Action ID="LookAt" tf_frame="person_0_filtered" />
         </ReactiveSequence>
-        <Repeat num_cycles="5">
+        <!-- <Repeat num_cycles="5">
             <Action ID="LookAt" tf_frame="gripper_link" />
         </Repeat> -->
         <Delay delay_msec="140">
@@ -93,10 +93,10 @@
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>
             </Delay>
-            <RetryUntilSuccessful num_attempts="-1">
+            <!-- <RetryUntilSuccessful num_attempts="-1">
                 <Action ID="ConfigureNavigateBack"/>
-            </RetryUntilSuccessful>
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/> -->
+            </RetryUntilSuccessful> -->
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/>
         </Sequence> 
     </BehaviorTree>
     <!-- ////////// -->

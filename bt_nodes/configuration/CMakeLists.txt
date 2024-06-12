@@ -50,6 +50,8 @@ list(APPEND plugin_libs deferred_bt_node)
 
 add_library(setup_gpsr_bt_node SHARED src/configuration/Setup_gpsr.cpp)
 list(APPEND plugin_libs setup_gpsr_bt_node)
+add_library(init_groceries_bt_node SHARED src/configuration/init_groceries.cpp)
+list(APPEND plugin_libs init_groceries_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

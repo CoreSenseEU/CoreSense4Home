@@ -15,27 +15,26 @@
 #ifndef ARM_MANIPULATION__POINT_AT_HPP_
 #define ARM_MANIPULATION__POINT_AT_HPP_
 
+#include <tf2_ros/buffer.h>
+
 #include <algorithm>
 #include <string>
 
 #include "arm/manipulation/BTActionNode.hpp"
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
-#include "manipulation_interfaces/action/move_end_effector.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "manipulation_interfaces/action/move_end_effector.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include <tf2_ros/buffer.h>
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace manipulation
 {
 
 class PointAt : public manipulation::BtActionNode<
-    manipulation_interfaces::action::MoveEndEffector, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    manipulation_interfaces::action::MoveEndEffector,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit PointAt(
@@ -49,14 +48,11 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<geometry_msgs::msg::PoseStamped::SharedPtr>("pose_to_point"),
-       BT::InputPort<std::string>("tf_frame"),
-       BT::InputPort<std::string>("base_frame"),
-       BT::InputPort<double>("low_z"),
-       BT::InputPort<double>("high_z")});
+        BT::InputPort<std::string>("tf_frame"), BT::InputPort<std::string>("base_frame"),
+        BT::InputPort<double>("low_z"), BT::InputPort<double>("high_z")});
   }
 
 private:
-
   geometry_msgs::msg::PoseStamped::SharedPtr pose_to_point_;
   std::string tf_frame_, base_frame_;
   tf2_ros::Buffer::SharedPtr tf_buffer_;

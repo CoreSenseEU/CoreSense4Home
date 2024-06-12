@@ -1,16 +1,16 @@
 /**:
   ros__parameters:
     use_sim_time: False
-    cam_frame: "base_footprint"
-    home_position: [2.335, 6.648, -0.103]
+    cam_frame: "head_front_camera_link_color_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
     person_id: 001122334455
     waypoints_names: ["entrance", "party"]
     # allow_duplicate_names: false
     waypoints:
-      entrance: [1.234, 6.636, 1.515]
-      party: [1.455, 4.915, -0.433]
+      entrance: [2.985, -1.320, -2.986]
+      party: [5.683, -1.309, 0.158]
 
 behaviors_main:
   ros__parameters:

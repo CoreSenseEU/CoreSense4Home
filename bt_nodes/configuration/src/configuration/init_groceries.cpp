@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "configuration/init_receptionist.hpp"
+#include "configuration/init_groceries.hpp"
 
 namespace configuration
 {
 
-InitReceptionist::InitReceptionist(
-  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+InitGroceries::InitGroceries(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -37,9 +36,9 @@ InitReceptionist::InitReceptionist(
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 }
 
-BT::NodeStatus InitReceptionist::tick()
+BT::NodeStatus InitGroceries::tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "[InitReceptionist] ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "[InitGroceries] ticked");
 
   if (
     node_->has_parameter("cam_frame") && node_->has_parameter("manipulation_frame") &&
@@ -111,11 +110,11 @@ BT::NodeStatus InitReceptionist::tick()
   return BT::NodeStatus::FAILURE;
 }
 
-void InitReceptionist::halt() {RCLCPP_INFO(node_->get_logger(), "InitReceptionist halted");}
+void InitGroceries::halt() {RCLCPP_INFO(node_->get_logger(), "InitGroceries halted");}
 
 }  // namespace configuration
 
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<configuration::InitReceptionist>("InitReceptionist");
+  factory.registerNodeType<configuration::InitGroceries>("InitGroceries");
 }

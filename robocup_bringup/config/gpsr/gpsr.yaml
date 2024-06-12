@@ -7,13 +7,41 @@ behaviors_main:
     offer_pose: "offer"
     person_id: 001122334455
     bt_xml_file: gpsr.xml
-    waypoints_names: ["kitchen", "bathroom", "entrance", "living_room", "bedroom"]
+    waypoints_names:
+      [
+        "bedroom",
+        "bed",
+        "bedside_table",
+        "dresser",
+        "kitchen",
+        "sink",
+        "fridge",
+        "dishwasher",
+        "kitchen_table",
+        "trash_bin",
+        "office",
+        "armchair",
+        "cabinet",
+        "desk",
+        "desk_chair",
+        "living_room",
+        "entrance",
+        "wardrobe",
+        "sofa",
+        "tv_sideboard",
+        "coffee_table",
+        "bar",
+        "bookshelf",
+        "instruction_point",
+        "corridor",
+        "exit",
+      ]
     waypoints:
-      kitchen: [3.79, 6.77, 0.12]
-      bathroom: [4.89, 1.64, 1.0]
-      entrance: [1.25, 6.30, 0.67]
-      living_room: [1.55, 0.03, 0.72]
-      bedroom: [7.50, 4.89, 0.65]
+      # kitchen: [3.79, 6.77, 0.12]
+      # bathroom: [4.89, 1.64, 1.0]
+      # entrance: [1.25, 6.30, 0.67]
+      # living_room: [1.55, 0.03, 0.72]
+      # bedroom: [7.50, 4.89, 0.65]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node

@@ -1,21 +1,7 @@
 /**:
   ros__parameters:
     use_sim_time: False
-<<<<<<< HEAD
     cam_frame: "head_front_camera_rgb_frame"
-    home_position: [0.0, 0.0, 0.0]
-    home_pose: "home"
-    offer_pose: "offer"
-    host_drink: "Iced tea"
-    host_name: "Noah" 
-    person_id: 001122334455
-    waypoints_names: ["entrance", "table", "cabinet"]
-    waypoints:
-      entrance: [-0.711, -0.612, -3.078]
-      table: [4.728, 0.146, 3.101]
-      cabinet: [4.728, 0.146, 1.57]
-=======
-    cam_frame: "head_front_camera_link_color_optical_frame"
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
@@ -45,4 +31,3 @@ behaviors_main:
     - extract_collision_scene_bt_node
     - pick_bt_node
 
->>>>>>> coresense/adaptation_cascade

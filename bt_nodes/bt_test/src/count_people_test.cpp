@@ -20,43 +20,40 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include "behaviortree_cpp_v3/utils/shared_library.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-int main(int argc, char *argv[]) {
+
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
 
-  rclcpp::NodeOptions options;
-  // options.automatically_declare_parameters_from_overrides(true);
-
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      "gpsr_findperson_test", options);
+    "count_people_test");
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("deferred_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("setup_gpsr_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("count_people_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("rotate_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/gpsr_findperson_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/countpeople_test.xml";
 
   auto blackboard = BT::Blackboard::create();
+  blackboard->set("result", 0);
   blackboard->set("node", node);
-  blackboard->set("color", "blue");
-  // blackboard->set("human_sign", "pointing to the right");
-  blackboard->set("gesture", "none");
+
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
-  // auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
-  // blackboard->set("publisher_zmq", publisher_zmq);
+  auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
 
-  node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
-  node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
-  rclcpp::Rate rate(30);
+  rclcpp::Rate rate(10);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {
@@ -66,6 +63,12 @@ int main(int argc, char *argv[]) {
 
     rate.sleep();
   }
+
+  int num_detections;
+
+  blackboard->get("result", num_detections);
+
+  RCLCPP_INFO(node->get_logger(), "Detectionts %d", num_detections);
 
   rclcpp::shutdown();
   return 0;

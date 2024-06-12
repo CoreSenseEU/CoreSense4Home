@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PERCEPTION__ISDETECTED_HPP_
-#define PERCEPTION__ISDETECTED_HPP_
+#ifndef PERCEPTION__COUNT_PEOPLE_HPP_
+#define PERCEPTION__COUNT_PEOPLE_HPP_
 
 #include <tf2/transform_datatypes.h>
 #include <tf2_ros/buffer.h>
@@ -40,45 +40,47 @@ namespace perception
 
 using pl = perception_system::PerceptionListener;
 
-class IsDetected : public BT::ConditionNode
+class CountPeople : public BT::ActionNodeBase
 {
 public:
-  explicit IsDetected(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit CountPeople(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
+  void halt();
   BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<int>("max_entities"), BT::InputPort<std::int64_t>("person_id"),
-        BT::InputPort<std::string>("cam_frame"), BT::InputPort<std::string>("interest"),
+      {
+        BT::InputPort<int>("max_entities"),
+        BT::InputPort<std::string>("cam_frame"),
         BT::InputPort<float>("confidence"),
-        BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"), 
         BT::InputPort<std::string>("color"),
+        BT::InputPort<std::string>("pose"),
+        BT::InputPort<int>("input_num_person"),
+
         BT::OutputPort<std::vector<std::string>>("frames"),
-        BT::OutputPort<std::string>("best_detection")});
+        BT::OutputPort<int>("num_person")});
   }
 
 private:
 
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
-  std::string interest_, order_, cam_frame_;
-  double threshold_, max_depth_;
+  std::string pose_, cam_frame_;
+  double threshold_;
   int max_entities_;
-  std::int64_t person_id_;
   std::vector<std::string> frames_;
   std::string color_;
 
-  double hue_threshold_{20.0};
-  double saturation_threshold_{50.0};
-  double value_threshold_{50.0};
-
   std::map<std::string, cv::Scalar> colors_;
+  std::map<std::string, std::vector<int>> gestures_;
+
+  std::string none_value_ = "none";
 };
 
 }  // namespace perception
 
-#endif  // PERCEPTION__ISDETECTED_HPP_
+#endif  // PERCEPTION__COUNT_PEOPLE_HPP_

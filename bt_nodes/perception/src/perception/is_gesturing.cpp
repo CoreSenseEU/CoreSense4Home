@@ -41,7 +41,12 @@ IsGesturing::IsGesturing(const std::string &xml_tag_name,
 }
 
 BT::NodeStatus IsGesturing::tick() {
+  if (type_.empty() || type_ == "none") {
+    RCLCPP_INFO(node_->get_logger(), "No gesture specified");
+    return BT::NodeStatus::SUCCESS;
+  }
   RCLCPP_INFO(node_->get_logger(), "IsGesturing ticked");
+
   if (gestures_.find(type_) != gestures_.end()) {
     RCLCPP_INFO(node_->get_logger(), "Unknown gesture");
     return BT::NodeStatus::FAILURE;

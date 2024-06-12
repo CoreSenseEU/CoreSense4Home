@@ -144,6 +144,16 @@ add_executable(find_person_test src/find_person_test.cpp)
 ament_target_dependencies(find_person_test ${dependencies})
 target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node perception::is_gesturing_bt_node)
 
+# count person test
+add_executable(count_people_test src/count_people_test.cpp)
+ament_target_dependencies(count_people_test ${dependencies})
+target_link_libraries(count_people_test perception::count_people_bt_node motion::rotate_bt_node)
+
+# rotate test
+add_executable(rotate_test src/rotate_test.cpp)
+ament_target_dependencies(rotate_test ${dependencies})
+target_link_libraries(rotate_test motion::rotate_bt_node)
+
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
 ament_target_dependencies(gpsr_test ${dependencies})
@@ -323,6 +333,8 @@ install(TARGETS
   inspection_test
   storing_groceries_test
   find_person_test
+  count_people_test
+  rotate_test
   
   gpsr_test
   gpsr_answerquiz_test

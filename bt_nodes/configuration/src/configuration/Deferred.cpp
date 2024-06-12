@@ -63,21 +63,21 @@ BT::NodeStatus Deferred::tick() {
           rel_path_.value();
       subtree_ = factory.createTreeFromFile(xml_path, config().blackboard);
     }
-    try {
-      auto pub_blackboard = config().blackboard->get<std::shared_ptr<BT::PublisherZMQ>>("publisher_zmq");
-      pub_blackboard.reset();
-    } catch (const std::exception &e) {
-      std::cerr << "[DeferredBT] WARNING: No publisher_zmq found" << std::endl;
-    }
+    // try {
+    //   auto pub_blackboard = config().blackboard->get<std::shared_ptr<BT::PublisherZMQ>>("publisher_zmq");
+    //   pub_blackboard.reset();
+    // } catch (const std::exception &e) {
+    //   std::cerr << "[DeferredBT] WARNING: No publisher_zmq found" << std::endl;
+    // }
 
-    publisher_zmq_ = std::make_unique<BT::PublisherZMQ>(subtree_, 10, 2666, 2667);
+    // publisher_zmq_ = std::make_unique<BT::PublisherZMQ>(subtree_, 10, 2666, 2667);
   }
 
   auto state = subtree_.rootNode()->executeTick();
 
- if (state == BT::NodeStatus::FAILURE || state == BT::NodeStatus::SUCCESS) {
-    publisher_zmq_.reset();
-  } 
+//  if (state == BT::NodeStatus::FAILURE || state == BT::NodeStatus::SUCCESS) {
+//     publisher_zmq_.reset();
+//   } 
   return state;
 }
 

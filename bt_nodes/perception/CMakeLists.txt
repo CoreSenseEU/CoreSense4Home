@@ -92,6 +92,9 @@ list(APPEND plugin_libs extract_cabinet_place_pose_bt_node)
 add_library(is_gesturing_bt_node SHARED src/perception/is_gesturing.cpp)
 list(APPEND plugin_libs is_gesturing_bt_node)
 
+add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
+list(APPEND plugin_libs count_people_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

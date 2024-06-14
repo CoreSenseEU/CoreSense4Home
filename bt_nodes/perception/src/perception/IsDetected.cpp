@@ -54,7 +54,6 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
 
 BT::NodeStatus IsDetected::tick()
 {
-  rclcpp::spin_some(node_->get_node_base_interface());
   getInput("person_id", person_id_);
   getInput("color", color_);
 
@@ -64,29 +63,30 @@ BT::NodeStatus IsDetected::tick()
     // config().blackboard->get("tf_broadcaster", tf_broadcaster_);
   }
 
-  RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
+  RCLCPP_INFO(node_->get_logger(), "IsDetected ticked");
   pl::getInstance(node_)->set_interest(interest_, true);
   pl::getInstance(node_)->update(35);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
   auto detections = pl::getInstance(node_)->get_by_type(interest_);
 
   if (detections.empty()) {
-    // RCLCPP_WARNING(node_->get_logger(), "[IsDetected] No detections");
+    RCLCPP_ERROR(node_->get_logger(), "[IsDetected] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing %d detections...", detections.size());
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Processing %d detections...", detections.size());
 
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
-    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by color");
+    RCLCPP_INFO(node_->get_logger(), "[IsDetected] Sorting detections by color");
     std::sort(
       detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
         return perception_system::diffIDs(this->person_id_, a.color_person) <
         perception_system::diffIDs(this->person_id_, b.color_person);
       });
   } else if (order_ == "depth") {
-    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by depth");
+    RCLCPP_INFO(node_->get_logger(), "[IsDetected] Sorting detections by depth");
     std::sort(
       detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
         return a.center3d.position.z < b.center3d.position.z;
@@ -101,8 +101,8 @@ BT::NodeStatus IsDetected::tick()
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Max Depth: %f", max_depth_);
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Threshold: %f", threshold_);
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Max Depth: %f", max_depth_);
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Threshold: %f", threshold_);
   auto entity_counter = 0;
   for (auto it = detections.begin(); it != detections.end() && entity_counter < max_entities_; ) {
     auto const & detection = *it;
@@ -116,10 +116,10 @@ BT::NodeStatus IsDetected::tick()
       std::abs(detection_id_colors[0][1] - colors_[color_][1]) > saturation_threshold_ &&
       std::abs(detection_id_colors[0][2] - colors_[color_][2]) > value_threshold_))
     {
-      RCLCPP_DEBUG(
+      RCLCPP_INFO(
         node_->get_logger(), "[IsDetected] Removing detection %s", detection.class_name.c_str());
-      RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Score: %f", detection.score);
-      RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Depth: %f", detection.center3d.position.z);
+      RCLCPP_INFO(node_->get_logger(), "[IsDetected] Score: %f", detection.score);
+      RCLCPP_INFO(node_->get_logger(), "[IsDetected] Depth: %f", detection.center3d.position.z);
       it = detections.erase(it);
 
     } else {
@@ -132,7 +132,7 @@ BT::NodeStatus IsDetected::tick()
     }
   }
 
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted and filtered");
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted and filtered");
   if (frames_.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[IsDetected] No detections after filter");
     return BT::NodeStatus::FAILURE;
@@ -143,7 +143,7 @@ BT::NodeStatus IsDetected::tick()
   // print pointing_direction
   RCLCPP_INFO(node_->get_logger(), "Pointing direction: %d", detections[0].pointing_direction);
 
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections published");
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections published");
   return BT::NodeStatus::SUCCESS;
 }
 

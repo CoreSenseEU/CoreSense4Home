@@ -17,6 +17,7 @@ find_package(llama_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
@@ -30,6 +31,7 @@ set(dependencies
   moveit_msgs
   shape_msgs
   std_msgs
+  sensor_msgs
 )
 
 include_directories(include)
@@ -54,6 +56,9 @@ list(APPEND plugin_libs store_detection_bt_node)
 
 add_library(choose_from_classes_bt_node SHARED src/hri/dialog/choose_from_classes.cpp)
 list(APPEND plugin_libs choose_from_classes_bt_node)
+
+add_library(check_policy_bt_node SHARED src/hri/check_policy.cpp)
+list(APPEND plugin_libs check_policy_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

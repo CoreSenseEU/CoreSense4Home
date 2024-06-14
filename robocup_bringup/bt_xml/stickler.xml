@@ -1,0 +1,353 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="SetWp"/>
+            <Action ID="InitStickler"/>
+            <Action ID="Speak" say_text="Hi, this is Gentlebot. Time to check that we're following all the rules"/>
+            <KeepRunningUntilFailure>
+                <Repeat num_cycles="-1">
+                    <Sequence>   
+                        <Action ID="LookAt" tf_frame="attention_home"/>
+                        <Action ID="MoveTo" distance_tolerance="" tf_frame="forbidden_zone"/>
+                        <Fallback>
+                            <Sequence>
+                                <Timeout msec="26000">
+                                    <ReactiveFallback>
+                                        <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="4" max_entities="1" order="depth_nearest"/>
+                                        <ForceFailure>
+                                            <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
+                                        </ForceFailure>
+                                        <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
+                                    </ReactiveFallback>
+                                </Timeout>
+                                <Action ID="LookAt" tf_frame="person_0"/>
+                                <Action ID="Speak" say_text="Hi, it seems like you are in a forbidden zone, I will have to ask you to leave. Please follow me and dont try to trick  me "/>
+                                <Action ID="LookAt" tf_frame="attention_home"/>
+                                <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_forbidden"/>
+                                <Fallback>
+                                    <Timeout msec="1000">
+                                        <ForceSuccess>
+                                            <Sequence>
+                                                <ReactiveFallback>
+                                                    <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="1" max_entities="1" order="depth_nearest"/>
+                                                    <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
+                                                </ReactiveFallback>
+                                                <Action ID="Speak" say_text="Thank you for following me, please enjoy the party"/>
+                                            </Sequence>
+                                        </ForceSuccess>
+                                    </Timeout>
+                                    <Action ID="Speak" say_text="It seems you are really bad guest. Please guet out of the room. If i comeback and you are not here I will kick you"/>
+                                </Fallback>
+                            </Sequence>
+                            <Action ID="Speak" say_text="Forbiden zone is clear"/>
+                        </Fallback>
+                        <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_1"/>
+
+                        <Fallback>
+                            <Sequence>
+                                <Timeout msec="10000">
+                                    <ReactiveFallback>
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                                        <ForceFailure>
+                                            <Action ID="FilterEntity" frame="person_0" lambda=""/>
+                                        </ForceFailure>
+                                        <Action ID="Pan" period="25" pitch_angle="-25" range="45"/>
+                                    </ReactiveFallback>
+                                </Timeout>
+                                <Action ID="MoveTo" distance_tolerance="1.9" tf_frame="person_0" is_truncated="true"/>
+                                <SubTree ID="check_and_cofirm_policies" __shared_blackboard="true"/>                       
+                            </Sequence>
+                            <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_2"/>
+                        </Fallback>
+                        <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_2"/>
+
+                         <Fallback>
+                            <Sequence>
+                                <Timeout msec="10000">
+                                    <ReactiveFallback>
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                                        <ForceFailure>
+                                            <Action ID="FilterEntity" frame="person_0" lambda=""/>
+                                        </ForceFailure>
+                                        <Action ID="Pan" period="25" pitch_angle="-25" range="45"/>
+                                    </ReactiveFallback>
+                                </Timeout>
+                                <Action ID="MoveTo" distance_tolerance="1.9" tf_frame="person_0" is_truncated="true"/>
+                                <SubTree ID="check_and_cofirm_policies" __shared_blackboard="true"/>                       
+                            </Sequence>
+                            <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_3"/>
+                        </Fallback>
+                        <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_3"/>
+
+                        <Fallback>
+                            <Sequence>
+                                <Timeout msec="10000">
+                                    <ReactiveFallback>
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                                        <ForceFailure>
+                                            <Action ID="FilterEntity" frame="person_0" lambda=""/>
+                                        </ForceFailure>
+                                        <Action ID="Pan" period="25" pitch_angle="-25" range="45"/>
+                                    </ReactiveFallback>
+                                </Timeout>
+                                <Action ID="MoveTo" distance_tolerance="1.9" tf_frame="person_0" is_truncated="true"/>
+                                <SubTree ID="check_and_cofirm_policies" __shared_blackboard="true"/>                       
+                            </Sequence>
+                            <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_4"/>
+                        </Fallback>
+                        <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_4"/>
+                    </Sequence>
+                </Repeat>
+            </KeepRunningUntilFailure>
+        </Sequence>
+    </BehaviorTree>
+
+
+    <!-- //////////-->
+    <BehaviorTree ID="check_and_cofirm_policies">
+        <SequenceStar>
+            <Sequence>
+                <Action ID="SwitchYoloModel" model="/home/juan/workspaces/robocup/src/CoreSense4Home/robocup_bringup/config/stickler/shoes.pt"/>
+                <Action ID="LookAt" tf_frame="inspect_person_pose"/>
+                <Action ID="Speak" say_text="Ok, now I am going to check that you left the shoes at the entrance"/>
+                <Fallback>
+                    <Inverter>
+                        <Timeout msec="500">
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Condition ID="IsDetected" 
+                                        confidence="0.58"
+                                        interest="shoe"
+                                        max_depth="8"
+                                        max_entities="2"
+                                        order="depth_nearest"
+                                        best_detection="{best_detection}"/>
+                            </RetryUntilSuccessful>
+                        </Timeout>
+                    </Inverter>
+                    <Sequence>
+                        <Action ID="Speak" say_text="It seems like you are wearing shoes, pleas follow me"/>
+                        <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="entrance"/>
+                        <Action ID="Speak" say_text="Plase take them off when you are finish please put in a place where i can see you"/>
+                        <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="confirmation_entrance"/>
+                        <Action ID="SwitchYoloModel" model="yolov8n-pose.pt"/>
+                        <ReactiveFallback>
+                            <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="4" max_entities="4" order="depth_nearest"/>
+                            <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
+                        </ReactiveFallback>
+                        <Action ID="SwitchYoloModel" model="/home/juan/workspaces/robocup/src/CoreSense4Home/robocup_bringup/config/stickler/shoes.pt"/>
+                        <Fallback>
+                            <Inverter>
+                                <RetryUntilSuccessful num_attempts="6">
+                                    <Condition ID="IsDetected" 
+                                            confidence="0.75"
+                                            interest="shoe"
+                                            max_depth="4"
+                                            max_entities="2"
+                                            order="depth_nearest"
+                                            best_detection="{best_detection}"/>
+                                </RetryUntilSuccessful>
+                            </Inverter>
+                            <Action ID="Speak" say_text="It seems like you are still wearing shoes, please take them off"/>
+                        </Fallback>
+                        <Action ID="Speak" say_text="Thank you for taking off your shoes, please enjoy the party"/>
+                    </Sequence>
+                </Fallback>
+                <Action ID="Speak" say_text="So glad you left your shoes at the entrance "/>
+            </Sequence>
+
+            <Sequence>
+                <Action ID="CheckPolicy" question="Does this person has something to drink on his hands?"
+                                            output="{output_3}"
+                                            image_topic="/head_front_camera/rgb/image_raw"/>
+                <BlackboardCheckBool return_on_mismatch="SUCCESS" value_A="{output_3}" value_B="false">
+                    <Sequence>
+                        <Action ID="Speak" say_text="It seems like you dont have nothing to drink, please follow me "/>
+                        <Action ID="SwitchYoloModel" model="yolov8n.pt"/>
+                        <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="kitchen"/>
+                        <ReactiveFallback>
+                            <Condition ID="IsDetected" confidence="0.6" frames="" interest="" max_depth="4" max_entities="4" order="depth_nearest"/>
+                            <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
+                            </ReactiveFallback>
+                            <Action ID="Speak" say_text="Please take one of the drinks in front of me"/>
+                            <Action ID="Speak" say_text="When you finish please locate yourself in a place where i can see you"/>
+                            <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="confirmation_kitchen"/>
+                            <ReactiveFallback>
+                                <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="4" max_entities="4" order="depth_nearest"/>
+                            <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>                                         
+                        </ReactiveFallback>
+                            <Action ID="CheckPolicy" question="Does this person has something to drink on his hands?"
+                                                        output="{output_3}"
+                                                        image_topic="/head_front_camera/rgb/image_raw"/>
+                            <Fallback>
+                                <BlackboardCheckBool return_on_mismatch="FAILURE" value_A="{output_3}" value_B="true">
+                                    <Sequence>
+                                        <Action ID="Speak" say_text="Thank you for taking the drink, please enjoy the party"/>
+                                        </Sequence>
+                                </BlackboardCheckBool>
+                                <Action ID="Speak" say_text="It seems you did not got the drink, please take it otherwise I will kick you from the party "/>
+                            </Fallback>
+                    </Sequence>         
+                </BlackboardCheckBool>
+            </Sequence>
+
+            <Sequence>
+                <Action ID="CheckPolicy" question="Is there garbage on the floor?"
+                                            output="{output_1}"
+                                            image_topic="/head_front_camera/rgb/image_raw"/>
+                <BlackboardCheckBool return_on_mismatch="SUCCESS" value_A="{output_1}" value_B="true">
+                    <Sequence>
+                        <Action ID="Speak" say_text="It seems like you throw some rubbish on the floor. Please pick it"/>
+                        <Delay delay_msec="2000">
+                            <AlwaysSuccess/>
+                        </Delay>
+                        <Action ID="CheckPolicy" question="Is there garbage on the floor?"
+                                            output="{output_1}"
+                                            image_topic="/head_front_camera/rgb/image_raw"/>
+                        <Fallback>
+                            <BlackboardCheckBool return_on_mismatch="FAILURE" value_A="{output_1}" value_B="false">
+                                <Sequence>
+                                    <Action ID="Speak" say_text="Thank you for picking the rubbish, please enjoy the party"/>
+                                </Sequence>
+                            </BlackboardCheckBool>
+                            <Action ID="Speak" say_text="It seems you did not pick the rubbish, please do it otherwise I will kick you from the party "/>
+                        </Fallback>
+                    </Sequence>                
+                </BlackboardCheckBool>
+            </Sequence>
+
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AddGuestToCount">
+            <inout_port name="n">Number of guests introduced</inout_port>
+        </Action>
+        <Action ID="CalculateGoal">
+            <inout_port name="goal"/>
+        </Action>
+        <Action ID="CheckPolicy">
+            <input_port name="policy"/>
+        </Action>
+        <Condition ID="CheckStop"/>
+        <Action ID="DetectEntity">
+            <input_port default="person" name="interest"/>
+        </Action>
+        <Action ID="DialogConfirmation">
+            <input_port name="prompt"/>
+        </Action>
+        <Action ID="Dialogue">
+            <input_port default="Hi welcome to the party" name="say_text"/>
+        </Action>
+        <Action ID="ExtractBagPosition">
+            <output_port name="position"/>
+        </Action>
+        <Action ID="FilterEntity">
+            <inout_port name="frame"/>
+            <inout_port name="lambda"/>
+        </Action>
+        <Action ID="FollowEntity">
+            <input_port default="person" name="interest_frame"/>
+        </Action>
+        <Action ID="GoBack">
+            <input_port default="0.2" name="velocity"/>
+        </Action>
+        <Condition ID="HasEntityStopped">
+            <input_port name="interest_frame"/>
+            <input_port name="tolerance"/>
+        </Condition>
+        <Action ID="IncrementVariable">
+            <inout_port name="variable"/>
+        </Action>
+        <Action ID="InitReceptionist">
+            <output_port default="0" name="n">Number of guests introduced</output_port>
+        </Action>
+        <Action ID="InitStickler"/>
+        <Condition ID="IsDetected">
+            <input_port default="0.6" name="confidence"/>
+            <output_port name="frames">array of frames</output_port>
+            <input_port default="person" name="interest"/>
+            <input_port default="2" name="max_depth">value in meters</input_port>
+            <input_port default="1" name="max_entities"/>
+            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]^</input_port>
+        </Condition>
+        <Condition ID="IsEntityMoving">
+            <input_port default="0.5" name="distance_tolerance"/>
+        </Condition>
+        <Condition ID="IsPointing">
+            <output_port default="front" name="tf_target">the tf frame of the object to navigate</output_port>
+        </Condition>
+        <Condition ID="IsSittable">
+            <output_port name="tf_frame"/>
+        </Condition>
+        <Action ID="Listen">
+            <output_port name="listen_text">What the robot understood</output_port>
+        </Action>
+        <Action ID="LookAround">
+            <input_port name="direction"/>
+        </Action>
+        <Action ID="LookAt">
+            <input_port name="tf_frame"/>
+        </Action>
+        <Action ID="LookAtPerson"/>
+        <Action ID="MoveArmTo">
+            <input_port name="tf_frame"/>
+            <input_port name="tolerance"/>
+        </Action>
+        <Action ID="MoveArmToPredefined">
+            <input_port default="offer" name="position"/>
+        </Action>
+        <Action ID="MoveGripperTo">
+            <input_port default="open" name="Pos"/>
+        </Action>
+        <Action ID="MoveHeadTo">
+            <input_port name="angle"/>
+        </Action>
+        <Action ID="MoveTo">
+            <input_port default="0" name="distance_tolerance"/>
+            <input_port default="object1" name="tf_frame"/>
+        </Action>
+        <Action ID="MoveToPredefined">
+            <inout_port name="pose"/>
+        </Action>
+        <Action ID="Pan">
+            <inout_port name="period"/>
+            <inout_port name="pitch_angle"/>
+            <inout_port name="range"/>
+        </Action>
+        <Action ID="PointAt">
+            <input_port name="frame_to_point"/>
+        </Action>
+        <Action ID="PrintTarget">
+            <inout_port name="target"/>
+        </Action>
+        <Action ID="Query">
+            <input_port default="name" name="Intention"/>
+            <output_port name="intention_value"/>
+            <input_port name="text">what human said</input_port>
+        </Action>
+        <Action ID="SetWaypoints"/>
+        <Action ID="SetWp"/>
+        <Action ID="Speak">
+            <input_port name="say_text"/>
+        </Action>
+        <Action ID="StoreDetection">
+            <input_port name="id"/>
+            <input_port name="interest"/>
+        </Action>
+        <Condition ID="isListened">
+            <output_port name="gotten_parameters"/>
+            <input_port name="needed_parameters"/>
+            <output_port name="say_text"/>
+        </Condition>
+        <Condition ID="isPersonDetected">
+            <output_port name="say_text"/>
+        </Condition>
+        <Condition ID="isReceived">
+            <output_port name="needed_parameters"/>
+            <input_port name="received_parameters"/>
+        </Condition>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

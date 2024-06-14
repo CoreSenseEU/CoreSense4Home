@@ -23,6 +23,7 @@ find_package(OpenCV REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(vqa_interfaces REQUIRED)
 # find_package(backward_ros REQUIRED)
 
 
@@ -47,6 +48,7 @@ set(dependencies
   perception_system_interfaces
   sensor_msgs
   std_srvs
+  vqa_interfaces
   # backward_ros
 )
 
@@ -93,6 +95,9 @@ list(APPEND plugin_libs clear_octomap_bt_node)
 
 add_library(switch_yolo_model_bt_node SHARED src/perception/switch_yolo_model.cpp)
 list(APPEND plugin_libs switch_yolo_model_bt_node)
+
+# add_library(check_policy_bt_node SHARED src/perception/check_policy.cpp)
+# list(APPEND plugin_libs check_policy_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

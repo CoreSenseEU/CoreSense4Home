@@ -26,6 +26,7 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(attention_system_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(action_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -50,6 +51,7 @@ set(dependencies
   attention_system_msgs
   trajectory_msgs
   sensor_msgs
+  action_msgs
 )
 
 include_directories(include)
@@ -78,6 +80,9 @@ list(APPEND plugin_libs pan_bt_node)
 
 add_library(goal_publisher_bt_node SHARED src/motion/navigation/goal_publisher.cpp)
 list(APPEND plugin_libs goal_publisher_bt_node)
+
+add_library(spin_bt_node SHARED src/motion/navigation/spin.cpp)
+list(APPEND plugin_libs spin_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

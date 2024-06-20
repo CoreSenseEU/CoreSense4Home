@@ -54,7 +54,7 @@ def generate_launch_description():
 
             prefix='\n\n### Instruction:\n',
             suffix='\n\n### Response:\n',
-            stop='\n\n\n\n',
+            stopping_words=["\n\n\n\n"],
     )
 
     whisper_cmd = IncludeLaunchDescription(

@@ -112,11 +112,11 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
     geometry_msgs::msg::TransformStamped base_link_2_camera_msg;
     try {
       base_link_2_camera_msg = tf_buffer_->lookupTransform(
-        "base_link", "head_front_camera_link_color_optical_frame", tf2::TimePointZero);
+        "base_link", "head_front_camera_rgb_frame", tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
         node_->get_logger(), "Could not transform %s to %s: %s", "base_link",
-        "head_front_camera_link_color_optical_frame", ex.what());
+        "head_front_camera_rgb_frame", ex.what());
       return BT::NodeStatus::FAILURE;
     }
     tf2::fromMsg(base_link_2_camera_msg.transform, base_2_camera);
@@ -133,7 +133,7 @@ BT::NodeStatus ExtractObjectsFromScene::tick()
     RCLCPP_INFO(node_->get_logger(), "Object Found Id: %s", (obj_ptr->id).c_str());
   }
   ExtractObjectsFromScene::setOutput("detected_objects", detected_objects);
-  ExtractObjectsFromScene::setOutput("objects_count", detected_objects.size());
+  ExtractObjectsFromScene::setOutput("objects_count", std::to_string(detected_objects.size()));
   RCLCPP_INFO(node_->get_logger(), "---------------------------------------");
   if (detected_objects.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[ExtractObject] No objects detected");

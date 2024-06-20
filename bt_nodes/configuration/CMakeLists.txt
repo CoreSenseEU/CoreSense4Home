@@ -42,6 +42,11 @@ list(APPEND plugin_libs init_receptionist_bt_node)
 add_library(increment_variable_bt_node SHARED src/configuration/increment_variable.cpp)
 list(APPEND plugin_libs increment_variable_bt_node)
 
+add_library(deferred_bt_node SHARED src/configuration/Deferred.cpp)
+list(APPEND plugin_libs deferred_bt_node)
+
+add_library(setup_gpsr_bt_node SHARED src/configuration/Setup_gpsr.cpp)
+list(APPEND plugin_libs setup_gpsr_bt_node)
 add_library(init_groceries_bt_node SHARED src/configuration/init_groceries.cpp)
 list(APPEND plugin_libs init_groceries_bt_node)
 

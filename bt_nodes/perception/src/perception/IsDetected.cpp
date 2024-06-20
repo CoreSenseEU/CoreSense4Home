@@ -33,10 +33,8 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
   max_depth_(std::numeric_limits<double>::max()),
   max_entities_(1),
   colors_({
-    {"blue", cv::Scalar(120, 255, 255)}, {"yellow", cv::Scalar(30, 255, 255)},
-    {"black", cv::Scalar(0, 0, 0)},
-    {"white", cv::Scalar(0, 0, 255)}, {"red", cv::Scalar(0, 255, 255)},
-    {"orange", cv::Scalar(30, 255, 255)},
+    {"blue", cv::Scalar(110,190,190)}, {"yellow", cv::Scalar(30, 190, 190)}, {"black", cv::Scalar(0,0,0)},
+    {"white", cv::Scalar(0, 0, 255)}, {"red", cv::Scalar(0,255,255)}, {"orange", cv::Scalar(30, 255, 255)},
     {"gray", cv::Scalar(0, 128, 128)}})
 {
   config().blackboard->get("node", node_);
@@ -58,7 +56,7 @@ BT::NodeStatus IsDetected::tick()
   getInput("color", color_);
 
   if (status() == BT::NodeStatus::IDLE) {
-    RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
+    RCLCPP_DEBUG(node_->get_logger(), "IsDetected idle");
     config().blackboard->get("tf_buffer", tf_buffer_);
     // config().blackboard->get("tf_broadcaster", tf_broadcaster_);
   }
@@ -85,12 +83,12 @@ BT::NodeStatus IsDetected::tick()
 
     auto const detection_id_colors = perception_system::getHSVFromUniqueID(detection.color_person);
 
-    if (detection.score <= threshold_ ||
-      detection.center3d.position.z > max_depth_ ||
-      (color_ != "" &&
-      std::abs(detection_id_colors[0][0] - colors_[color_][0]) > hue_threshold_ &&
-      std::abs(detection_id_colors[0][1] - colors_[color_][1]) > saturation_threshold_ &&
-      std::abs(detection_id_colors[0][2] - colors_[color_][2]) > value_threshold_))
+    if (detection.score <= threshold_ || 
+        detection.center3d.position.z > max_depth_ ||
+        ((color_ != "" && color_ != "none")  &&
+         std::abs(detection_id_colors[0][0] - colors_[color_][0]) > hue_threshold_ &&
+         std::abs(detection_id_colors[0][1] - colors_[color_][1]) > saturation_threshold_ &&
+         std::abs(detection_id_colors[0][2] - colors_[color_][2]) > value_threshold_))
     {
       RCLCPP_DEBUG(
         node_->get_logger(), "[IsDetected] Removing detection %s", detection.class_name.c_str());

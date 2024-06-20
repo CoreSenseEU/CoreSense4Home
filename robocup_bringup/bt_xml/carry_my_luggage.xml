@@ -102,12 +102,13 @@
             <!-- <RetryUntilSuccessful num_attempts="-1">
                 <Action ID="ConfigureNavigateBack"/>
             </RetryUntilSuccessful> -->
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/>
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="start"/>
         </Sequence> 
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
         <Action ID="DialogConfirmation"/>
+        <Action ID="SetStartPosition" />
         <Action ID="FilterEntity">
             <output_port name="filtered_frame"/>
             <input_port name="frame"/>

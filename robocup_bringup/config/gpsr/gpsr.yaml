@@ -1,0 +1,33 @@
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_color_optical_frame"
+    home_position: [54.701, 1.360, 0.001]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    bt_xml_file: gpsr.xml
+    waypoints_names:
+      [
+        "kitchen",
+        "bathroom",
+        "entrance",
+        "living_room",
+        "bedroom"
+      ]
+    waypoints:
+      kitchen: [3.79, 6.77, 0.12]
+      bathroom: [4.89, 1.64, 1.0]
+      entrance: [1.25, 6.30, 0.67]
+      living_room: [1.55, 0.03, 0.72]
+      bedroom: [7.50, 4.89, 0.65]
+    plugins:
+      - dialogConfirmation_bt_node
+      - listen_bt_node
+      - follow_entity_bt_node
+      - speak_bt_node
+      - deferred_bt_node
+      - set_wp_bt_node
+      - command_planning_bt_node
+      - setup_gpsr_bt_node
+      - set_start_position_bt_node

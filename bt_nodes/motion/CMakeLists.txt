@@ -83,6 +83,8 @@ list(APPEND plugin_libs goal_publisher_bt_node)
 
 add_library(spin_bt_node SHARED src/motion/navigation/spin.cpp)
 list(APPEND plugin_libs spin_bt_node)
+add_library(rotate_bt_node SHARED src/motion/base/Rotate.cpp)
+list(APPEND plugin_libs rotate_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

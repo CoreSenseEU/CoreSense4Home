@@ -23,6 +23,7 @@
 #include "hri/dialog/BTActionNode.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "std_msgs/msg/int8.hpp"
 
@@ -30,16 +31,15 @@ namespace dialog
 {
 
 class Query
-  : public dialog::BtActionNode<
-    llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+  : public BT::ActionNodeBase
 {
 public:
   explicit Query(
-    const std::string & xml_tag_name, const std::string & action_name,
+    const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
+  void halt();
+  BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
@@ -50,7 +50,13 @@ public:
 
 private:
   std::string intention_;
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  BT::NodeStatus on_idle();
+  bool isInvalid(std::string text);
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  std::shared_ptr<rclcpp_action::Client<llama_msgs::action::GenerateResponse>> client_;
+  bool is_goal_sent_ = false;
+  std::string text_ = "";
 };
 
 }  // namespace dialog

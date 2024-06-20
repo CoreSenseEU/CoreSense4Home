@@ -47,7 +47,8 @@ public:
       {
         BT::OutputPort<std::string>("initial_pose"),
         BT::InputPort<float>("x_offset"),
-        BT::InputPort<float>("y_offset")
+        BT::InputPort<float>("y_offset"),
+        BT::InputPort<std::string>("frame_name")
       });
   }
 

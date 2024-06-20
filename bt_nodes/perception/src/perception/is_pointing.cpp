@@ -70,8 +70,10 @@ int IsPointing::publicTF_map2object(
   perception_system_interfaces::msg::Detection modified_detection;
   modified_detection = detected_object;
 
+  RCLCPP_INFO(node_->get_logger(), "[IsPointing] Detected object frame_id %s", detected_object.header.frame_id.c_str());
+
   try {
-    map2camera_msg = tf_buffer_->lookupTransform("map", camera_frame_, tf2::TimePointZero);
+    map2camera_msg = tf_buffer_->lookupTransform("map", "base_footprint", tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "[IsPointing] Could not transform %s to %s: %s", "map",

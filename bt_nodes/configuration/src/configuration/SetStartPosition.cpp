@@ -49,8 +49,10 @@ BT::NodeStatus SetStartPosition::tick()
     return BT::NodeStatus::FAILURE;
   }
 
+  std::string frame_name;
+  getInput<std::string>("frame_name", frame_name);
   transformStamped.header.frame_id = "map";
-  transformStamped.child_frame_id = "start";
+  transformStamped.child_frame_id = frame_name;
   transformStamped.transform.translation.x = transformStamped.transform.translation.x + x_offset_;
   transformStamped.transform.translation.y = transformStamped.transform.translation.y + y_offset_;
   transformStamped.transform.rotation = transformStamped.transform.rotation;

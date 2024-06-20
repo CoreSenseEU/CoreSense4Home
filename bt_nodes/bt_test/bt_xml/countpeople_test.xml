@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Repeat num_cycles="4">
+            <Sequence>
+            <Delay delay_msec="1000">
+                <Action ID="Rotate" angle="1.57" speed='0.3' />
+            </Delay>
+            <Condition ID="CountPeople" confidence="0.6" cam_frame="base_link" max_entities="15" color="blue" pose="none" input_num_person="{result}" num_person="{result}" />
+            </Sequence>
+        </Repeat>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Condition ID="CountPeople">
+            <input_port default="0.6" name="confidence"/>
+            <input_port default="head_front_camera_link" name="cam_frame"/>
+            <input_port default="10" name="max_entities"/>
+            <input_port default="blue" name="color"/>
+            <input_port default="none" name="pose"/>
+
+            <output_port default="0" name="num_person" />
+            <output_port name="frames">array of frames</output_port>
+        </Condition>
+        <Action ID="Rotate">
+            <input_port default="0.0" name="angle"/>
+            <input_port default="0.0" name="speed"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

@@ -71,9 +71,9 @@ private:
   std::vector<std::string> frames_;
   std::string color_;
 
-  double hue_threshold_{10.0};
-  double saturation_threshold_{0.2};
-  double value_threshold_{0.2};
+  double hue_threshold_{20.0};
+  double saturation_threshold_{50.0};
+  double value_threshold_{50.0};
 
   std::map<std::string, cv::Scalar> colors_;
 };

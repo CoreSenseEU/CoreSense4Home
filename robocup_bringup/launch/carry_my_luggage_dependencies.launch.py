@@ -102,7 +102,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
-            'mode': 'amcl',
+            'mode': 'slam',
             'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
                     '/config/carry_my_luggage/tiago_nav_follow_params.yaml',

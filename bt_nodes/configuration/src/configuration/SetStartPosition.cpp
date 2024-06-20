@@ -27,30 +27,35 @@ SetStartPosition::SetStartPosition(
 
 BT::NodeStatus SetStartPosition::tick()
 {
-  RCLCPP_INFO(node_->get_logger(), "SetStartPosition ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "SetStartPosition ticked");
 
-  auto buffer = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
-  auto static_broadcaster =
-    config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>(
-    "tf_static_broadcaster");
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "SetStartPosition idle");
+    buffer_ = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
+    static_broadcaster_ =
+      config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>(
+      "tf_static_broadcaster");
+    getInput("x_offset", x_offset_);
+    getInput("y_offset", y_offset_);
+  }
 
-  geometry_msgs::msg::TransformStamped t;
+
+  geometry_msgs::msg::TransformStamped transformStamped;
 
   try {
-    t = buffer->lookupTransform("map", "base_footprint", tf2::TimePointZero);
+    transformStamped = buffer_->lookupTransform("map", "base_footprint", tf2::TimePointZero);
   } catch (const tf2::TransformException & e) {
     RCLCPP_ERROR(node_->get_logger(), "Transform error: %s", e.what());
     return BT::NodeStatus::FAILURE;
   }
 
-  geometry_msgs::msg::TransformStamped transformStamped;
   transformStamped.header.frame_id = "map";
   transformStamped.child_frame_id = "start";
-  transformStamped.transform.translation.x = t.transform.translation.x;
-  transformStamped.transform.translation.y = t.transform.translation.y;
-  transformStamped.transform.rotation = t.transform.rotation;
+  transformStamped.transform.translation.x = transformStamped.transform.translation.x + x_offset_;
+  transformStamped.transform.translation.y = transformStamped.transform.translation.y + y_offset_;
+  transformStamped.transform.rotation = transformStamped.transform.rotation;
 
-  static_broadcaster->sendTransform(transformStamped);
+  static_broadcaster_->sendTransform(transformStamped);
 
   setOutput("initial_pose", "start");
   rclcpp::spin_some(node_->get_node_base_interface());

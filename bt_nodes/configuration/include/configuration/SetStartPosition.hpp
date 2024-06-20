@@ -45,12 +45,17 @@ public:
   {
     return BT::PortsList(
       {
-        BT::OutputPort<std::string>("initial_pose")
+        BT::OutputPort<std::string>("initial_pose"),
+        BT::InputPort<float>("x_offset"),
+        BT::InputPort<float>("y_offset")
       });
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<tf2_ros::Buffer> buffer_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_broadcaster_;
+  float x_offset_{0.0}, y_offset_{0.0};
 };
 
 }  // namespace configuration

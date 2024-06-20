@@ -6,11 +6,12 @@
     home_pose: "home"
     offer_pose: "offer"
     person_id: 001122334455
-    waypoints_names: ["entrance", "party"]
+    waypoints_names: ["entrance", "party", "guest_confirmation"]
     # allow_duplicate_names: false
-    waypoints:
-      entrance: [2.985, -1.320, -2.986]
-      party: [5.683, -1.309, 0.158]
+    waypoints: # [x, y, yaw] only 3 numbers!!
+      entrance: [-2.065, -2.304, 1.174]
+      party: [-2.725, -3.593, -2.210]
+      guest_confirmation: [-2.725, -3.593, 0.482]
 
 behaviors_main:
   ros__parameters:
@@ -33,3 +34,5 @@ behaviors_main:
     - move_to_predefined_bt_node
     - increment_variable_bt_node
     - filter_entity_bt_node
+    - extract_entity_color_bt_node
+    - spin_bt_node

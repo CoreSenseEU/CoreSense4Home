@@ -57,6 +57,7 @@ SetupGPSR::tick()
   plugins.push_back("pan_bt_node");
   plugins.push_back("follow_entity_bt_node");
   plugins.push_back("goal_publisher_bt_node");
+  plugins.push_back("set_perception_model_bt_node");
 
   setOutput("plugins", plugins);
 

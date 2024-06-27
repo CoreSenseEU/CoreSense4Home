@@ -154,6 +154,19 @@ add_executable(rotate_test src/rotate_test.cpp)
 ament_target_dependencies(rotate_test ${dependencies})
 target_link_libraries(rotate_test motion::rotate_bt_node)
 
+# Change perception model test
+add_executable(get_perception_model_test src/get_perception_model_test.cpp)
+ament_target_dependencies(get_perception_model_test ${dependencies})
+target_link_libraries(get_perception_model_test
+  configuration::get_perception_model_bt_node
+)
+
+add_executable(set_perception_model_test src/set_perception_model_test.cpp)
+ament_target_dependencies(set_perception_model_test ${dependencies})
+target_link_libraries(set_perception_model_test
+  configuration::set_perception_model_bt_node
+)
+
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
 ament_target_dependencies(gpsr_test ${dependencies})
@@ -218,6 +231,7 @@ foreach(test ${GPSR_TESTS})
     motion::goal_publisher_bt_node
     configuration::deferred_bt_node
     configuration::setup_gpsr_bt_node
+    configuration::set_perception_model_bt_node
   )
 endforeach()
 
@@ -335,6 +349,8 @@ install(TARGETS
   find_person_test
   count_people_test
   rotate_test
+  get_perception_model_test
+  set_perception_model_test
   
   gpsr_test
   gpsr_answerquiz_test

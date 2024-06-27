@@ -32,7 +32,6 @@ IsSittable::IsSittable(const std::string & xml_tag_name, const BT::NodeConfigura
 : BT::ConditionNode(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-
 }
 
 

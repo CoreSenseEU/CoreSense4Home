@@ -100,7 +100,7 @@ BT::NodeStatus FilterObject::tick() {
   if (size_ != "unknown") {
     RCLCPP_INFO(node_->get_logger(),
                 "[FilterObject] Filtering object by size: %s", size_.c_str());
-    if (size_ == "big") {
+    if (size_ == "big" || size_ == "large") {
       filtered_object_ =
           getObject(frames_, std::greater<float>(), &ObjectInfo::size);
     } else {

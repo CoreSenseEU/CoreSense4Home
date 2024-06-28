@@ -167,6 +167,19 @@ target_link_libraries(set_perception_model_test
   configuration::set_perception_model_bt_node
 )
 
+# motion action tests
+add_executable(torsoheight_test src/torsoheight_test.cpp)
+ament_target_dependencies(torsoheight_test ${dependencies})
+target_link_libraries(torsoheight_test
+  motion::set_torso_height_bt_node
+)
+
+add_executable(headposition_test src/headposition_test.cpp)
+ament_target_dependencies(headposition_test ${dependencies})
+target_link_libraries(headposition_test
+  motion::set_head_joint_position_bt_node
+)
+
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
 ament_target_dependencies(gpsr_test ${dependencies})
@@ -351,6 +364,8 @@ install(TARGETS
   rotate_test
   get_perception_model_test
   set_perception_model_test
+  torsoheight_test
+  headposition_test
   
   gpsr_test
   gpsr_answerquiz_test

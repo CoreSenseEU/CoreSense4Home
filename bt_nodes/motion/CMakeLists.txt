@@ -26,6 +26,7 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(attention_system_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(manipulation_interfaces REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -50,6 +51,7 @@ set(dependencies
   attention_system_msgs
   trajectory_msgs
   sensor_msgs
+  manipulation_interfaces
 )
 
 include_directories(include)
@@ -81,6 +83,12 @@ list(APPEND plugin_libs goal_publisher_bt_node)
 
 add_library(rotate_bt_node SHARED src/motion/base/Rotate.cpp)
 list(APPEND plugin_libs rotate_bt_node)
+
+add_library(set_torso_height_bt_node SHARED src/motion/torso/set_torso_height.cpp)
+list(APPEND plugin_libs set_torso_height_bt_node)
+
+add_library(set_head_joint_position_bt_node SHARED src/motion/head/set_joint_position.cpp)
+list(APPEND plugin_libs set_head_joint_position_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

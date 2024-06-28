@@ -19,6 +19,7 @@
   <depend>nav2_behavior_tree</depend>
   <depend>nav2_costmap_2d</depend>
   <depend>navigation_system_interfaces</depend>
+  <depend>manipultaion_interfaces</depend>
   
   <depend>attention_system</depend>
   <depend>attention_system_msgs</depend>

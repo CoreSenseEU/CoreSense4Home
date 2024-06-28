@@ -180,6 +180,10 @@ target_link_libraries(headposition_test
   motion::set_head_joint_position_bt_node
 )
 
+add_executable(filter_object_test src/filter_object_test.cpp)
+ament_target_dependencies(filter_object_test ${dependecies})
+target_link_libraries(filter_object_test perception::filter_object_bt_node)
+
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
 ament_target_dependencies(gpsr_test ${dependencies})
@@ -366,6 +370,7 @@ install(TARGETS
   set_perception_model_test
   torsoheight_test
   headposition_test
+  filter_object_test
   
   gpsr_test
   gpsr_answerquiz_test

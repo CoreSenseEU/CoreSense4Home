@@ -14,25 +14,15 @@
 
 #include "configuration/Setup_gpsr.hpp"
 
+namespace configuration {
 
-namespace configuration
-{
+SetupGPSR::SetupGPSR(const std::string &xml_tag_name,
+                     const BT::NodeConfiguration &conf)
+    : BT::ActionNodeBase(xml_tag_name, conf) {}
 
-SetupGPSR::SetupGPSR(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(xml_tag_name, conf)
-{
-}
+void SetupGPSR::halt() {}
 
-void
-SetupGPSR::halt()
-{
-}
-
-BT::NodeStatus
-SetupGPSR::tick()
-{
+BT::NodeStatus SetupGPSR::tick() {
 
   std::vector<std::string> plugins;
   plugins.push_back("is_detected_bt_node");
@@ -61,15 +51,15 @@ SetupGPSR::tick()
   plugins.push_back("rotate_bt_node");
   plugins.push_back("set_head_joint_position_bt_node");
   plugins.push_back("set_torso_height_bt_node");
+  plugins.push_back("filter_object_bt_node");
 
   setOutput("plugins", plugins);
 
   return BT::NodeStatus::SUCCESS;
 }
 
-}  // namespace deferred_bt
+} // namespace configuration
 
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<configuration::SetupGPSR>("SetupGPSR");
 }

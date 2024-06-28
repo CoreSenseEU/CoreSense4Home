@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="FilterObject" frames="{frames}" size="{size}" weight="{weight}" class="{class}" filtered_object="{object}"/>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="FilterObject">
+            <input_port name ="frames"></input_port>
+            <input_port default="unknown" name="size">size</input_port>
+            <input_port default="unknown" name="weight">weight</input_port>
+            <input_port default="unknown" name="class">class</input_port>
+            <output_port name="filtered_object"></output_port>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

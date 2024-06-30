@@ -48,6 +48,9 @@ BT::NodeStatus SetupGPSR::tick() {
   plugins.push_back("follow_entity_bt_node");
   plugins.push_back("goal_publisher_bt_node");
   plugins.push_back("set_perception_model_bt_node");
+  plugins.push_back("rotate_bt_node");
+  plugins.push_back("set_head_joint_position_bt_node");
+  plugins.push_back("set_torso_height_bt_node");
   plugins.push_back("filter_object_bt_node");
 
   setOutput("plugins", plugins);

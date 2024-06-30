@@ -22,11 +22,14 @@
 #include <vector>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "perception_system/PerceptionUtils.hpp"
 
 namespace perception {
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
+
+using pl = perception_system::PerceptionListener;
 
 FilterObject::FilterObject(const std::string &xml_tag_name,
                            const BT::NodeConfiguration &conf)
@@ -78,6 +81,11 @@ FilterObject::FilterObject(const std::string &xml_tag_name,
                 {"Water", {"drink", 10.0f, 1.0f}}}) {
   config().blackboard->get("node", node_);
 
+  getInput("cam_frame", camera_frame_);
+  getInput("frames", frames_);
+  config().blackboard->get("tf_buffer", tf_buffer_);
+  config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
+
   RCLCPP_INFO(node_->get_logger(), "FilterObject initialized");
 }
 
@@ -88,8 +96,6 @@ void FilterObject::halt() {
 BT::NodeStatus FilterObject::tick() {
 
   RCLCPP_INFO(node_->get_logger(), "FilterObject ticked");
-
-  getInput("frames", frames_);
 
   frames_ = extractClassNames(frames_);
 
@@ -136,11 +142,67 @@ BT::NodeStatus FilterObject::tick() {
   if (!filtered_object_.empty()) {
     RCLCPP_INFO(node_->get_logger(), "[FilterObject] The object filtered is %s",
                 filtered_object_.c_str());
+
+    pl::getInstance(node_)->set_interest(filtered_object_.c_str(), true);
+    pl::getInstance(node_)->update(true);
+
+    std::vector<perception_system_interfaces::msg::Detection> detections;
+    detections = pl::getInstance(node_)->get_by_type(filtered_object_.c_str());
+
+    if (detections.empty()) {
+      RCLCPP_INFO(node_->get_logger(), "[FilterObject] No detect %s",
+                  filtered_object_.c_str());
+      return BT::NodeStatus::FAILURE;
+    }
+
+    int dev = publicTF_map2object(detections[0]);
+
     setOutput("filtered_object", filtered_object_);
     return BT::NodeStatus::SUCCESS;
   } else {
     return BT::NodeStatus::FAILURE;
   }
+}
+
+int FilterObject::publicTF_map2object(
+    const perception_system_interfaces::msg::Detection &detected_object) {
+  geometry_msgs::msg::TransformStamped map2camera_msg;
+  perception_system_interfaces::msg::Detection modified_detection;
+  modified_detection = detected_object;
+
+  RCLCPP_INFO(node_->get_logger(), "[FilterObject] Detected object frame_id %s",
+              detected_object.header.frame_id.c_str());
+
+  try {
+    map2camera_msg = tf_buffer_->lookupTransform("map", "base_footprint",
+                                                 tf2::TimePointZero);
+  } catch (const tf2::TransformException &ex) {
+    RCLCPP_INFO(node_->get_logger(),
+                "[FilterObject] Could not transform %s to %s: %s", "map",
+                camera_frame_.c_str(), ex.what());
+    return -1;
+  }
+
+  tf2::Transform camera2object;
+  camera2object.setOrigin(tf2::Vector3(modified_detection.center3d.position.x,
+                                       modified_detection.center3d.position.y,
+                                       modified_detection.center3d.position.z));
+  camera2object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
+
+  tf2::Transform map2camera;
+  tf2::fromMsg(map2camera_msg.transform, map2camera);
+
+  tf2::Transform map2object = map2camera * camera2object;
+  // create a transform message from tf2::Transform
+  geometry_msgs::msg::TransformStamped map2object_msg;
+  map2object_msg.header.frame_id = "map";
+  map2object_msg.child_frame_id = detected_object.class_id;
+
+  map2object_msg.transform = tf2::toMsg(map2object);
+  map2object_msg.transform.translation.z = 0.0;
+
+  tf_static_broadcaster_->sendTransform(map2object_msg);
+  return 0;
 }
 
 std::string FilterObject::getObject(const std::vector<std::string> &frames,

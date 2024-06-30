@@ -3,7 +3,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <Action ID="FilterObject" frames="{frames}" size="{size}" weight="{weight}" class="{class}" filtered_object="{object}"/>
+            <Action ID="FilterObject" frames="{frames}" size="{size}" weight="{weight}" class="{class}" cam_frame="head_front_camera_link_color_optical_frame" filtered_object="{object}"/>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -13,6 +13,7 @@
             <input_port default="unknown" name="size">size</input_port>
             <input_port default="unknown" name="weight">weight</input_port>
             <input_port default="unknown" name="class">class</input_port>
+            <input_port name="cam_frame"/>
             <output_port name="filtered_object"></output_port>
         </Action>
     </TreeNodesModel>

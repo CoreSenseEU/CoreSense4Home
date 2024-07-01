@@ -86,11 +86,17 @@ void FilterObject::halt() {
 }
 
 BT::NodeStatus FilterObject::tick() {
+  getInput("frames", frames_);
 
   RCLCPP_INFO(node_->get_logger(), "FilterObject ticked");
   getInput("frames", frames_);
 
   frames_ = extractClassNames(frames_);
+
+  for (const auto &frame : frames_) {
+    RCLCPP_INFO(node_->get_logger(), "[FilterObject] Detected object: %s",
+                frame.c_str());
+  }
 
   getInput("size", size_);
   getInput("weight", weight_);

@@ -22,6 +22,9 @@
 #include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/transform_broadcaster.h"
 
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
@@ -30,20 +33,28 @@ int main(int argc, char *argv[]) {
   // options.automatically_declare_parameters_from_overrides(true);
 
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      "gpsr_countobject_test", options);
+      "gpsr_findpersonname_test", options);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
   factory.registerFromPlugin(loader.getOSName("deferred_bt_node"));
   factory.registerFromPlugin(loader.getOSName("setup_gpsr_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("set_perception_model_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
-  std::string xml_file = pkgpath + "/bt_xml/gpsr_countobject_test.xml";
+  std::string xml_file = pkgpath + "/bt_xml/gpsr_findpersonname_test.xml";
+
+  auto tf_buffer = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+  auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
+  auto tf_broadcast = std::make_shared<tf2_ros::TransformBroadcaster>(node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-  blackboard->set("object_type", "cup");
+  blackboard->set("tf_buffer", tf_buffer);
+  blackboard->set("tf_listener", tf_listener);
+  blackboard->set("tf_broadcaster", tf_broadcast);
+  blackboard->set("person_name", "Irene");
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   // auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);

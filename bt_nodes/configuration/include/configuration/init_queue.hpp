@@ -12,28 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__DEFERRED_HPP_
-#define CONFIGURATION__DEFERRED_HPP_
-
+#ifndef CONFIGURATION__INIT_QUEUE_HPP_
+#define CONFIGURATION__INIT_QUEUE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "ament_index_cpp/get_package_share_directory.hpp"
-#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include "behaviortree_cpp_v3/actions/pop_from_queue.hpp"
-#include "configuration/ConsumeQueueWithFailure.h"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
 
 namespace configuration
 {
 
-class Deferred : public BT::ActionNodeBase
+class InitProtectedQueue : public BT::ActionNodeBase
 {
 public:
-  explicit Deferred(
+  explicit InitProtectedQueue(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -44,20 +40,15 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::string>("bt_pkg"), // package where the XML is located
-        BT::InputPort<std::string>("rel_path"), // relative path to the XML
-        BT::InputPort<std::string>("xml"), // XML corresponding to the BT to be executed
-        BT::InputPort<std::vector<std::string>>("plugins"), // plugins to load
+        BT::InputPort<std::string>("port"),
       });
   }
 
 private:
-  BT::Optional<std::string> bt_xml_, bt_pkg_, rel_path_;
-  BT::Optional<std::vector<std::string>> plugins_;
-  BT::Tree subtree_;
-  std::unique_ptr<BT::PublisherZMQ> publisher_zmq_;
+    std::string port_;
+    std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 };
 
 }   // namespace configuration
 
-#endif  // DEFERRED__HPP_
+#endif  // CONFIGURATION__INIT_QUEUE_HPP_

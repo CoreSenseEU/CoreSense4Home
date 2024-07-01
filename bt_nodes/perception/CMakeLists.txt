@@ -98,6 +98,9 @@ list(APPEND plugin_libs count_people_bt_node)
 add_library(filter_object_bt_node SHARED src/perception/filter_object.cpp)
 list(APPEND plugin_libs filter_object_bt_node)
 
+add_library(filter_prev_detections_bt_node SHARED src/perception/filter_prev_detections.cpp)
+list(APPEND plugin_libs filter_prev_detections_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

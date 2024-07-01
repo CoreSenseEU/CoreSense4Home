@@ -57,3 +57,4 @@ behaviors_main:
       - command_planning_bt_node
       - setup_gpsr_bt_node
       - set_start_position_bt_node
+      - move_to_bt_node

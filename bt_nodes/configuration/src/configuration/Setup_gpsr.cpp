@@ -18,11 +18,23 @@ namespace configuration {
 
 SetupGPSR::SetupGPSR(const std::string &xml_tag_name,
                      const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {}
+    : BT::ActionNodeBase(xml_tag_name, conf) {
+
+  config().blackboard->get("node", node_);
+    }
 
 void SetupGPSR::halt() {}
 
 BT::NodeStatus SetupGPSR::tick() {
+
+  auto tf_buffer = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
+  auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
+  auto tf_broadcast = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+
+  config().blackboard->set("tf_buffer", tf_buffer);
+  config().blackboard->set("tf_listener", tf_listener);
+  config().blackboard->set("tf_broadcaster", tf_broadcast);
+
 
   std::vector<std::string> plugins;
   plugins.push_back("is_detected_bt_node");
@@ -52,6 +64,10 @@ BT::NodeStatus SetupGPSR::tick() {
   plugins.push_back("set_head_joint_position_bt_node");
   plugins.push_back("set_torso_height_bt_node");
   plugins.push_back("filter_object_bt_node");
+  plugins.push_back("ConsumeQueue");
+  plugins.push_back("publish_tf_bt_node");
+  plugins.push_back("init_protected_queue_bt_node");
+  plugins.push_back("filter_prev_detections_bt_node");
 
   setOutput("plugins", plugins);
 

@@ -43,12 +43,12 @@ int main(int argc, char *argv[]) {
   auto blackboard = BT::Blackboard::create();
 
   blackboard->set("node", node);
-  std::vector<std::string> example_frames = {"Apple_0", "Cola_1", "Plate_3",
-                                             "Knife_1", "Milk_3", "Pringles_1"};
+  std::vector<std::string> example_frames = {
+      "apple_0", "Cola_1", "Plate_3", "Knife_1", "banana_3", "Pringles_1"};
   blackboard->set("frames", example_frames);
-  blackboard->set("size", "unknown");
+  blackboard->set("size", "big");
   blackboard->set("weight", "unknown");
-  blackboard->set("class", "snack");
+  blackboard->set("class", "fruit");
   // blackboard->set("gesture", "unknown");
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 

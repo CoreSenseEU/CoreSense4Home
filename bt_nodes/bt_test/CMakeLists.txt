@@ -215,8 +215,8 @@ configuration::setup_gpsr_bt_node
 )
 
 list(APPEND GPSR_TESTS
-  gpsr_answerquiz_test gpsr_countobject_test gpsr_findperson_test gpsr_followperson_test
-  gpsr_guideperson_test gpsr_moveto_test gpsr_offerobject_test gpsr_speak_test
+  gpsr_answerquiz_test gpsr_countobject_test gpsr_findperson_test gpsr_findpersonname_test gpsr_followperson_test
+  gpsr_guideperson_test gpsr_moveto_test gpsr_offerobject_test gpsr_speak_test gpsr_findobject_test
 )
 
 # gpsr tests
@@ -376,11 +376,13 @@ install(TARGETS
   gpsr_answerquiz_test
   gpsr_countobject_test
   gpsr_findperson_test
+  gpsr_findpersonname_test
   gpsr_followperson_test
   gpsr_guideperson_test
   gpsr_moveto_test
   gpsr_offerobject_test
   gpsr_speak_test
+  gpsr_findobject_test
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

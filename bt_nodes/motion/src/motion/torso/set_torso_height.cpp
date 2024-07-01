@@ -33,7 +33,7 @@ SetTorsoHeight::SetTorsoHeight(
 
 void SetTorsoHeight::on_tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "SetTorsoHeight ticked");
+  RCLCPP_INFO(node_->get_logger(), "SetTorsoHeight ticked");
 
     getInput("height", height_);
 
@@ -42,7 +42,11 @@ void SetTorsoHeight::on_tick()
   goal_.joint_value = height_;
 }
 
-BT::NodeStatus SetTorsoHeight::on_success() {return BT::NodeStatus::SUCCESS;}
+BT::NodeStatus SetTorsoHeight::on_success() {
+  RCLCPP_INFO(node_->get_logger(), "SetTorsoHeight success");
+
+  return BT::NodeStatus::SUCCESS;
+}
 
 }  // namespace manipulation
 #include "behaviortree_cpp_v3/bt_factory.h"

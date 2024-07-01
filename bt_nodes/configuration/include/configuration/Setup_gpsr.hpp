@@ -16,11 +16,15 @@
 #define SETUP__GPSR_HPP_
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "ament_index_cpp/get_package_share_directory.hpp"
 #include <iostream>
 #include <fstream>
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 
 
 namespace configuration
@@ -46,7 +50,7 @@ public:
 
 private:
   std::string transfer_type_, pkg_;
-
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 };
 
 }  // namespace configuration

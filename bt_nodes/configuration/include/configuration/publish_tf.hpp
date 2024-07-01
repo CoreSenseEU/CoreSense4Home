@@ -12,28 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CONFIGURATION__DEFERRED_HPP_
-#define CONFIGURATION__DEFERRED_HPP_
-
+#ifndef SETUP__PUBLISH_TF_HPP_
+#define SETUP__PUBLISH_TF_HPP_
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "ament_index_cpp/get_package_share_directory.hpp"
-#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
-#include "behaviortree_cpp_v3/actions/pop_from_queue.hpp"
-#include "configuration/ConsumeQueueWithFailure.h"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <tf2_ros/transform_broadcaster.h>
+
 
 namespace configuration
 {
 
-class Deferred : public BT::ActionNodeBase
+class PublishTF : public BT::ActionNodeBase
 {
 public:
-  explicit Deferred(
+  explicit PublishTF(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -44,20 +41,18 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::string>("bt_pkg"), // package where the XML is located
-        BT::InputPort<std::string>("rel_path"), // relative path to the XML
-        BT::InputPort<std::string>("xml"), // XML corresponding to the BT to be executed
-        BT::InputPort<std::vector<std::string>>("plugins"), // plugins to load
+        BT::InputPort<geometry_msgs::msg::TransformStamped>("transform"),
+        BT::OutputPort<std::string>("frame_id"),
       });
   }
 
 private:
-  BT::Optional<std::string> bt_xml_, bt_pkg_, rel_path_;
-  BT::Optional<std::vector<std::string>> plugins_;
-  BT::Tree subtree_;
-  std::unique_ptr<BT::PublisherZMQ> publisher_zmq_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+
+  geometry_msgs::msg::TransformStamped transform_;
 };
 
-}   // namespace configuration
+}  // namespace configuration
 
-#endif  // DEFERRED__HPP_
+#endif // SETUP__PUBLISH_TF_HPP_

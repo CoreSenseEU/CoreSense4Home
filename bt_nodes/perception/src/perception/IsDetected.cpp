@@ -70,6 +70,8 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
 
 BT::NodeStatus IsDetected::tick()
 {
+  frames_.clear();
+
   rclcpp::spin_some(node_->get_node_base_interface());
   getInput("person_id", person_id_);
   getInput("color", color_);
@@ -201,10 +203,12 @@ BT::NodeStatus IsDetected::tick()
   if (frames_.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[IsDetected] No detections after filter");
     return BT::NodeStatus::FAILURE;
+  } else {
+    RCLCPP_INFO(node_->get_logger(), "[IsDetected] %d detections after filter", frames_.size());
   }
 
   setOutput("frames", frames_);
-  frames_.clear();
+  // frames_.clear();
   // print pointing_direction 
   // RCLCPP_INFO(node_->get_logger(), "Pointing direction: %d", detections[0].pointing_direction);
   

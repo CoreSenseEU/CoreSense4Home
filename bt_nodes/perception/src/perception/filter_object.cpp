@@ -35,7 +35,7 @@ FilterObject::FilterObject(const std::string &xml_tag_name,
                            const BT::NodeConfiguration &conf)
     : BT::ActionNodeBase(xml_tag_name, conf),
       objects_({{"7up", {"drink", 10.0f, 0.5f}},
-                {"Apple", {"fruit", 9.0f, 0.2f}},
+                {"apple", {"fruit", 9.0f, 0.2f}},
                 {"Bag", {"accessory", 20.0f, 0.3f}},
                 {"Ball", {"toy", 8.0f, 0.4f}},
                 {"Banana", {"fruit", 15.0f, 0.25f}},
@@ -82,7 +82,6 @@ FilterObject::FilterObject(const std::string &xml_tag_name,
   config().blackboard->get("node", node_);
 
   getInput("cam_frame", camera_frame_);
-  getInput("frames", frames_);
   config().blackboard->get("tf_buffer", tf_buffer_);
   config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
 
@@ -94,10 +93,16 @@ void FilterObject::halt() {
 }
 
 BT::NodeStatus FilterObject::tick() {
+  getInput("frames", frames_);
 
   RCLCPP_INFO(node_->get_logger(), "FilterObject ticked");
 
   frames_ = extractClassNames(frames_);
+
+  for (const auto &frame : frames_) {
+    RCLCPP_INFO(node_->get_logger(), "[FilterObject] Detected object: %s",
+                frame.c_str());
+  }
 
   getInput("size", size_);
   getInput("weight", weight_);
@@ -143,19 +148,19 @@ BT::NodeStatus FilterObject::tick() {
     RCLCPP_INFO(node_->get_logger(), "[FilterObject] The object filtered is %s",
                 filtered_object_.c_str());
 
-    pl::getInstance(node_)->set_interest(filtered_object_.c_str(), true);
-    pl::getInstance(node_)->update(true);
+    // pl::getInstance(node_)->set_interest(filtered_object_.c_str(), true);
+    // pl::getInstance(node_)->update(true);
 
-    std::vector<perception_system_interfaces::msg::Detection> detections;
-    detections = pl::getInstance(node_)->get_by_type(filtered_object_.c_str());
+    // std::vector<perception_system_interfaces::msg::Detection> detections;
+    // detections = pl::getInstance(node_)->get_by_type(filtered_object_.c_str());
 
-    if (detections.empty()) {
-      RCLCPP_INFO(node_->get_logger(), "[FilterObject] No detect %s",
-                  filtered_object_.c_str());
-      return BT::NodeStatus::FAILURE;
-    }
+    // if (detections.empty()) {
+    //   RCLCPP_INFO(node_->get_logger(), "[FilterObject] No detect %s",
+    //               filtered_object_.c_str());
+    //   return BT::NodeStatus::FAILURE;
+    // }
 
-    int dev = publicTF_map2object(detections[0]);
+    // int dev = publicTF_map2object(detections[0]);
 
     setOutput("filtered_object", filtered_object_);
     return BT::NodeStatus::SUCCESS;

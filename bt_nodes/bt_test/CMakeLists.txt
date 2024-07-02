@@ -180,9 +180,15 @@ target_link_libraries(headposition_test
   motion::set_head_joint_position_bt_node
 )
 
+# filter object by type, size and weight test
 add_executable(filter_object_test src/filter_object_test.cpp)
 ament_target_dependencies(filter_object_test ${dependecies})
 target_link_libraries(filter_object_test perception::filter_object_bt_node)
+
+# extract the description of the person test
+add_executable(extract_person_description_test src/extract_person_description_test.cpp)
+ament_target_dependencies(extract_person_description_test ${dependecies})
+target_link_libraries(extract_person_description_test perception::extract_person_description_bt_node perception::is_detected_bt_node hri::speak_bt_node)
 
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
@@ -371,6 +377,7 @@ install(TARGETS
   torsoheight_test
   headposition_test
   filter_object_test
+  extract_person_description_test
   
   gpsr_test
   gpsr_answerquiz_test

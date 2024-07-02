@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Sequence>
+                    <Condition ID="IsDetected" confidence="0.4"
+                                               interest="person"
+                                               max_depth="6"
+                                               max_entities="1"
+                                               order="depth"
+                                               best_detection="{best_detection}"
+                                               cam_frame="base_footprint"/>
+                    <Action ID="ExtractPersonDescription" person_id="{best_detection}" interest="{interest}" description="{result}"/>
+                    <Action ID="Speak" say_text="The person is " param="{result}"/>
+                </Sequence>
+            </RetryUntilSuccessful>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Condition ID="IsDetected">
+            <input_port default="0.6" name="confidence"/>
+            <input_port default="person" name="interest"/>
+            <output_port name="frames">array of frames</output_port>
+            <input_port default="2" name="max_depth">value in meters</input_port>
+            <input_port default="1" name="max_entities"/>
+            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]</input_port>
+        </Condition>
+        <Action ID="ExtractPersonDescription">
+            <input_port default="person_0" name="person_id"/>
+            <input_port name="interest"/>
+            <output_port name="description"/>
+        </Action>
+        <Action ID="Speak">
+            <input_port name="say_text"/>
+            <input_port name="param"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

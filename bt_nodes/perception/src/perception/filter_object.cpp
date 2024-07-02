@@ -86,9 +86,9 @@ void FilterObject::halt() {
 }
 
 BT::NodeStatus FilterObject::tick() {
-  getInput("frames", frames_);
 
   RCLCPP_INFO(node_->get_logger(), "FilterObject ticked");
+
   getInput("frames", frames_);
 
   frames_ = extractClassNames(frames_);

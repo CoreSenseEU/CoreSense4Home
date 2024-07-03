@@ -29,12 +29,11 @@ using namespace std::placeholders;
 ExtractPersonDescription::ExtractPersonDescription(
     const std::string &xml_tag_name, const BT::NodeConfiguration &conf)
     : BT::ActionNodeBase(xml_tag_name, conf), gestures_({
-                                                  {"pointing_right", {0, 1}},
-                                                  {"pointing_left", {3, 4}},
+                                                  {"pointing_right", {3, 4}},
+                                                  {"pointing_left", {0, 1}},
 
                                                   {"waving", {5, 6, 7}},
-                                                  {"rising_left", {6}},
-                                                  {"rising_left", {6}},
+                                                  {"raising", {6}}
                                               }),
       pose_names_({
           {0, "lying"},
@@ -52,13 +51,18 @@ BT::NodeStatus ExtractPersonDescription::tick() {
 
   getInput("person_id", person_id_);
 
+  RCLCPP_INFO(node_->get_logger(), "[ExtractPersonDescription] person_id is %s", person_id_.c_str());
+
   pl::getInstance(node_)->set_interest(person_id_, true);
-  pl::getInstance(node_)->update(30);
+  pl::getInstance(node_)->update(true);
 
   RCLCPP_INFO(node_->get_logger(), "[ExtractPersonDescription] Describe %s",
               person_id_.c_str());
 
-  auto detections = pl::getInstance(node_)->get_by_id(person_id_);
+  auto detections = pl::getInstance(node_)->get_by_type(person_id_);
+
+  RCLCPP_INFO(node_->get_logger(), "[ExtractPersonDescription] detections size: %d",
+              detections.size());
 
   if (detections.empty()) {
     RCLCPP_ERROR(node_->get_logger(),
@@ -73,10 +77,19 @@ BT::NodeStatus ExtractPersonDescription::tick() {
 
   if (interest_ == "pose") {
 
+    RCLCPP_INFO(node_->get_logger(),
+               "[ExtractPersonDescription] Pose is number %d", detections[0].body_pose);
+    if(detections[0].body_pose == -1){
+      RCLCPP_INFO(node_->get_logger(),
+               "[ExtractPersonDescription] Pose is unknown");
+      return BT::NodeStatus::FAILURE;
+    }
+
     description_ = pose_names_[detections[0].body_pose];
     RCLCPP_INFO(node_->get_logger(),
                 "[ExtractPersonDescription] The pose of the person is: %s",
                 description_.c_str());
+
     setOutput("description", description_);
 
     return BT::NodeStatus::SUCCESS;
@@ -84,6 +97,9 @@ BT::NodeStatus ExtractPersonDescription::tick() {
 
   if (interest_ == "gesture") {
     int pointing_direction = detections[0].pointing_direction;
+    RCLCPP_INFO(
+            node_->get_logger(),
+            "[ExtractPersonDescription] The pointing_direction is: %d", pointing_direction);
 
     for (const auto &gesture : gestures_) {
       const auto &key = gesture.first;
@@ -99,7 +115,10 @@ BT::NodeStatus ExtractPersonDescription::tick() {
             description_.c_str());
         return BT::NodeStatus::SUCCESS;
       }
+
     }
+
+    return BT::NodeStatus::FAILURE;
   }
 
   return BT::NodeStatus::SUCCESS;

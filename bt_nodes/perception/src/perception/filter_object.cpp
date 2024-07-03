@@ -75,6 +75,7 @@ FilterObject::FilterObject(const std::string &xml_tag_name,
                 {"tomato_soup", {"food", 10.0f, 0.5f}},
                 {"tropical_juice", {"drink", 12.0f, 0.5f}},
                 {"tuna", {"food", 7.0f, 0.3f}},
+                {"bottle", {"drink", 10.0f, 1.0f}},
                 {"water", {"drink", 10.0f, 1.0f}}}) {
   config().blackboard->get("node", node_);
 
@@ -102,9 +103,16 @@ BT::NodeStatus FilterObject::tick() {
   getInput("weight", weight_);
   getInput("class", class_);
 
-  if (class_ != "unknown") {
+  if ((size_ == "unknown" || size_.empty()) && (weight_ == "unknown" || weight_.empty()) && (class_ == "unknown" || class_.empty()) ) {
+    RCLCPP_INFO(node_->get_logger(), "[FilterObject] No filter specified");
+    return BT::NodeStatus::SUCCESS;
+  }
+
+  if (class_ != "unknown" && !class_.empty()) {
     RCLCPP_INFO(node_->get_logger(),
                 "[FilterObject] Filtering object by class: %s", class_.c_str());
+
+    config().blackboard->set("out_msg", class_);
 
     for (auto &object : frames_) {
       RCLCPP_INFO(node_->get_logger(), "[FilterObject] %s",
@@ -126,7 +134,7 @@ BT::NodeStatus FilterObject::tick() {
 
   filtered_objects_.clear();
 
-  if (size_ != "unknown") {
+  if (size_ != "unknown" && !size_.empty()) {
     RCLCPP_INFO(node_->get_logger(),
                 "[FilterObject] Filtering object by size: %s", size_.c_str());
     if (size_ == "big" || size_ == "large") {
@@ -138,7 +146,7 @@ BT::NodeStatus FilterObject::tick() {
     }
   }
 
-  if (weight_ != "unknown") {
+  if (weight_ != "unknown" && !weight_.empty()) {
     RCLCPP_INFO(node_->get_logger(),
                 "[FilterObject] Filtering object by weight: %s",
                 weight_.c_str());
@@ -160,6 +168,8 @@ BT::NodeStatus FilterObject::tick() {
   } else {
     return BT::NodeStatus::FAILURE;
   }
+
+  return BT::NodeStatus::SUCCESS;
 }
 
 std::string FilterObject::getObject(const std::vector<std::string> &frames,

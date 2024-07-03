@@ -2,21 +2,23 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Sequence>
-            <RetryUntilSuccessful num_attempts="-1">
-                <Sequence>
-                    <Condition ID="IsDetected" confidence="0.4"
-                                               interest="person"
-                                               max_depth="6"
-                                               max_entities="1"
-                                               order="depth"
-                                               best_detection="{best_detection}"
-                                               cam_frame="base_footprint"/>
-                    <Action ID="ExtractPersonDescription" person_id="{best_detection}" interest="{interest}" description="{result}"/>
-                    <Action ID="Speak" say_text="The person is " param="{result}"/>
-                </Sequence>
-            </RetryUntilSuccessful>
-        </Sequence>
+        <Repeat num_cycles="100">
+            <Sequence>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Sequence>
+                        <Condition ID="IsDetected" confidence="0.4"
+                                                interest="person"
+                                                max_depth="6"
+                                                max_entities="1"
+                                                order="depth"
+                                                best_detection="{best_detection}"
+                                                cam_frame="base_footprint"/>
+                        <Action ID="ExtractPersonDescription" person_id="{best_detection}" interest="{interest}" description="{result}"/>
+                        <Action ID="Speak" say_text="The person is " param="{result}"/>
+                    </Sequence>
+                </RetryUntilSuccessful>
+            </Sequence>
+        </Repeat>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>

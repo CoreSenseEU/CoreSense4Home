@@ -83,7 +83,7 @@ void FollowEntity::pose_callback(const geometry_msgs::msg::PoseWithCovarianceSta
 void FollowEntity::halt()
 {
   RCLCPP_INFO(node_->get_logger(), "FollowEntity halted");
-  client_->async_cancel_all_goals();
+  // client_->async_cancel_all_goals();
 }
 
 void FollowEntity::check_robot_inside_map()

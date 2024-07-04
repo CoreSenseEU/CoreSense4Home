@@ -73,7 +73,7 @@ GoalPublisher::GoalPublisher(const std::string & xml_tag_name, const BT::NodeCon
 void GoalPublisher::halt() 
 {
   RCLCPP_INFO(node_->get_logger(), "GoalPublisher halted");
-  client_->async_cancel_all_goals();
+  // client_->async_cancel_all_goals();
 }
 
 BT::NodeStatus GoalPublisher::tick()

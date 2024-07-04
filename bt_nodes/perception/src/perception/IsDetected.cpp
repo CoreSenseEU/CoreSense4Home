@@ -75,6 +75,22 @@ BT::NodeStatus IsDetected::tick()
 
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing %d detections...", detections.size());
 
+  if (order_ == "color") {
+    // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
+    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by color");
+    std::sort(
+      detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
+        return perception_system::diffIDs(this->person_id_, a.color_person) <
+        perception_system::diffIDs(this->person_id_, b.color_person);
+      });
+  } else if (order_ == "depth") {
+    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by depth");
+    std::sort(
+      detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
+        return a.center3d.position.z < b.center3d.position.z;
+      });
+  }
+  
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Max Depth: %f", max_depth_);
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Threshold: %f", threshold_);
   auto entity_counter = 0;
@@ -99,6 +115,8 @@ BT::NodeStatus IsDetected::tick()
     } else {
       frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
       if (pl::getInstance(node_)->publicTF(detection, std::to_string(entity_counter)) == -1) {
+        // if (pl::getInstance(node_)->publicTF(detection) == -1) {
+
         return BT::NodeStatus::FAILURE;
       }
       ++it;
@@ -112,21 +130,6 @@ BT::NodeStatus IsDetected::tick()
     return BT::NodeStatus::FAILURE;
   }
 
-  if (order_ == "color") {
-    // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
-    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by color");
-    std::sort(
-      detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
-        return perception_system::diffIDs(this->person_id_, a.color_person) <
-        perception_system::diffIDs(this->person_id_, b.color_person);
-      });
-  } else if (order_ == "depth") {
-    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by depth");
-    std::sort(
-      detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
-        return a.center3d.position.z < b.center3d.position.z;
-      });
-  }
   // auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
   //   "/object_detected", 10);
 

@@ -68,7 +68,6 @@ Pan::Pan(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 
 void Pan::halt()
 {
-  joint_cmd_pub_->on_deactivate();
   node_->add_activation("attention_server");
 }
 

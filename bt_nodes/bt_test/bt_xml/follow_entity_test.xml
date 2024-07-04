@@ -11,11 +11,11 @@
                                                max_depth="6"
                                                max_entities="1"
                                                order="depth"
-                                               cam_frame="head_front_camera_link_color_optical_frame"/>
+                                               cam_frame="head_front_camera_rgb_frame"/>
                     <Action ID ="LookAt" tf_frame="person_0"/>
                     <Action ID="FollowEntity" frame_to_follow="person_0"
                                               distance_tolerance="1.5"
-                                              camera_frame="head_front_camera_link_color_optical_frame"/>
+                                              camera_frame="head_front_camera_rgb_frame"/>
                 </ReactiveSequence>
             </RetryUntilSuccessful>
         </Sequence>
@@ -35,7 +35,7 @@
         </Action>
         <Action ID="FollowEntity">
             <input_port default="person_0" name="frame_to_follow"/>
-            <input_port default="head_front_camera_link_color_optical_frame" name="camera_frame"/>
+            <input_port default="head_front_camera_rgb_frame" name="camera_frame"/>
             <input_port default="0.2" name="distance_tolerance"/>
         </Action>
         <Action ID="InitCarry"/>

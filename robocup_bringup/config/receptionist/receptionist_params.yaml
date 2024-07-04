@@ -33,3 +33,4 @@ behaviors_main:
     - move_to_predefined_bt_node
     - add_guest_to_count_bt_node
     - filter_entity_bt_node
+    - set_start_position_bt_node

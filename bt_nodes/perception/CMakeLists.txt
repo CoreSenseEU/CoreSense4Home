@@ -55,6 +55,9 @@ include_directories(include)
 add_library(extract_object_from_scene_bt_node SHARED src/perception/ExtractObjectsFromScene.cpp)
 list(APPEND plugin_libs extract_object_from_scene_bt_node)
 
+add_library(convert_color_bt_node SHARED src/perception/convert_color.cpp)
+list(APPEND plugin_libs convert_color_bt_node)
+
 add_library(is_detected_bt_node SHARED src/perception/IsDetected.cpp)
 list(APPEND plugin_libs is_detected_bt_node)
 
@@ -88,6 +91,11 @@ list(APPEND plugin_libs is_door_open_bt_node)
 add_library(extract_cabinet_place_pose_bt_node SHARED src/perception/extract_cabinet_place_pose.cpp)
 list(APPEND plugin_libs extract_cabinet_place_pose_bt_node)
 
+add_library(is_gesturing_bt_node SHARED src/perception/is_gesturing.cpp)
+list(APPEND plugin_libs is_gesturing_bt_node)
+
+add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
+list(APPEND plugin_libs count_people_bt_node)
 add_library(clear_octomap_bt_node SHARED src/perception/clear_octomap.cpp)
 list(APPEND plugin_libs clear_octomap_bt_node)
 

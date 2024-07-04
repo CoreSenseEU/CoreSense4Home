@@ -6,14 +6,16 @@
             <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage, please point to the correct bag"/>
 
             <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
+            <Action ID="SetStartPosition" frame_name="start" />
+
             <RetryUntilSuccessful num_attempts="-1">
                 <Sequence>
-                    <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="5" max_entities="1" order="depth"/>
+                    <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="5" max_entities="1" order="depth"/>
                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                     <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{person_id}"/>
-                    <Condition ID="IsPointing" bag_frame="{bag_tf}" person_id="{person_id}" cam_frame="head_front_camera_link_color_optical_frame"/>
+                    <Condition ID="IsPointing" bag_frame="{bag_tf}" person_id="{person_id}" cam_frame="head_front_camera_rgb_frame"/>
                 </Sequence>
-        </RetryUntilSuccessful>
+            </RetryUntilSuccessful>
         <RetryUntilSuccessful num_attempts="-1">
             <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.2" tf_frame="{bag_tf}"/>
         </RetryUntilSuccessful>
@@ -95,12 +97,13 @@
             <!-- <RetryUntilSuccessful num_attempts="-1">
                 <Action ID="ConfigureNavigateBack"/>
             </RetryUntilSuccessful> -->
-            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="map"/>
+            <Action ID="MoveTo" distance_tolerance="0.0" tf_frame="start"/>
         </Sequence> 
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
         <Action ID="DialogConfirmation"/>
+        <Action ID="SetStartPosition" />
         <Action ID="FilterEntity">
             <output_port name="filtered_frame"/>
             <input_port name="frame"/>

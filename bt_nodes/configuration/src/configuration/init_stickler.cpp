@@ -23,7 +23,7 @@ InitStickler::InitStickler(
 {
   config().blackboard->get("node", node_);
 
-  node_->declare_parameter("cam_frame", "head_front_camera_link_color_optical_frame");
+  node_->declare_parameter("cam_frame", "head_front_camera_rgb_optical_frame");
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -58,6 +58,7 @@ BT::NodeStatus InitStickler::tick()
     setOutput("tf_static_broadcaster", tf_static_broadcaster_);
     setOutput("attention_home", "attention_home");
     setOutput("inspect_person_pose", "inspect_person_pose");
+    setOutput("is_person_clear", false); 
 
     config().blackboard->set("tf_buffer", tf_buffer_);
     config().blackboard->set("tf_listener", tf_listener_);

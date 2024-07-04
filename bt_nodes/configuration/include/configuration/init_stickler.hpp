@@ -46,6 +46,7 @@ public:
       {
         BT::OutputPort<std::string>("attention_home", "fixed frame to look at"),
         BT::OutputPort<std::string>("inspect_person_pose", "fixed frame to inspect person"),
+        BT::OutputPort<bool>("is_person_clear", "if the person is not breaking any rule"),
         BT::OutputPort<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer"),
         BT::OutputPort<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>(
           "tf_static_broadcaster"),

@@ -23,7 +23,7 @@ InitRestaurant::InitRestaurant(
 {
   config().blackboard->get("node", node_);
 
-  node_->declare_parameter("cam_frame", "head_front_camera_link_color_optical_frame");
+  node_->declare_parameter("cam_frame", "head_front_camera_rgb_optical_frame");
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);

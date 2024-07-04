@@ -4,7 +4,7 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action ID="SetWp"/>
-            <Action ID="InitStickler"/>
+            <Action ID="InitStickler" is_person_clear="{is_clear}"/>
             <Action ID="Speak" say_text="Hi, this is Gentlebot. Time to check that we're following all the rules"/>
             <KeepRunningUntilFailure>
                 <Repeat num_cycles="-1">
@@ -49,7 +49,7 @@
                             <Sequence>
                                 <Timeout msec="10000">
                                     <ReactiveFallback>
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="4" max_entities="1" order="depth_nearest"/>
                                         <ForceFailure>
                                             <Action ID="FilterEntity" frame="person_0" lambda=""/>
                                         </ForceFailure>
@@ -67,7 +67,7 @@
                             <Sequence>
                                 <Timeout msec="10000">
                                     <ReactiveFallback>
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="4" max_entities="1" order="depth_nearest"/>
                                         <ForceFailure>
                                             <Action ID="FilterEntity" frame="person_0" lambda=""/>
                                         </ForceFailure>
@@ -75,7 +75,7 @@
                                     </ReactiveFallback>
                                 </Timeout>
                                 <Action ID="MoveTo" distance_tolerance="1.9" tf_frame="person_0" is_truncated="true"/>
-                                <SubTree ID="check_and_cofirm_policies" __shared_blackboard="true"/>                       
+                                <SubTree ID="check_and_cofirm_policies" __shared_blackboard="true"/>                                                       
                             </Sequence>
                             <Action ID="MoveTo" distance_tolerance="0" tf_frame="check_3"/>
                         </Fallback>
@@ -85,7 +85,7 @@
                             <Sequence>
                                 <Timeout msec="10000">
                                     <ReactiveFallback>
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="2" max_entities="1" order="depth_nearest"/>
+                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="4" max_entities="1" order="depth_nearest"/>
                                         <ForceFailure>
                                             <Action ID="FilterEntity" frame="person_0" lambda=""/>
                                         </ForceFailure>
@@ -108,28 +108,32 @@
     <!-- //////////-->
     <BehaviorTree ID="check_and_cofirm_policies">
         <SequenceStar>
+            <Action ID="Speak" say_text="Ok, now I am going to check that you are not breaking any rules"/>
+
             <Sequence>
                 <Action ID="SwitchYoloModel" model="/home/juan/workspaces/robocup/src/CoreSense4Home/robocup_bringup/config/stickler/shoes.pt"/>
                 <Action ID="LookAt" tf_frame="inspect_person_pose"/>
-                <Action ID="Speak" say_text="Ok, now I am going to check that you left the shoes at the entrance"/>
                 <Fallback>
-                    <Inverter>
-                        <Timeout msec="500">
-                            <RetryUntilSuccessful num_attempts="-1">
-                                <Condition ID="IsDetected" 
-                                        confidence="0.58"
-                                        interest="shoe"
-                                        max_depth="8"
-                                        max_entities="2"
-                                        order="depth_nearest"
-                                        best_detection="{best_detection}"/>
-                            </RetryUntilSuccessful>
-                        </Timeout>
-                    </Inverter>
+                    <Sequence>
+                        <Inverter>
+                            <Timeout msec="1000">
+                                <RetryUntilSuccessful num_attempts="-1">
+                                    <Condition ID="IsDetected" 
+                                            confidence="0.58"
+                                            interest="shoe"
+                                            max_depth="8"
+                                            max_entities="2"
+                                            order="depth_nearest"
+                                            best_detection="{best_detection}"/>
+                                </RetryUntilSuccessful>
+                            </Timeout>
+                        </Inverter>
+                        <SetBlackboard output_key="{is_clear}" value="true"/>
+                    </Sequence>
                     <Sequence>
                         <Action ID="Speak" say_text="It seems like you are wearing shoes, pleas follow me"/>
                         <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="entrance"/>
-                        <Action ID="Speak" say_text="Plase take them off when you are finish please put in a place where i can see you"/>
+                        <Action ID="Speak" say_text="Plase take your shoes off when you are finish. Please locate youself in front of me"/>
                         <Action ID="MoveTo" distance_tolerance="1.0" tf_frame="confirmation_entrance"/>
                         <Action ID="SwitchYoloModel" model="yolov8n-pose.pt"/>
                         <ReactiveFallback>
@@ -137,24 +141,27 @@
                             <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
                         </ReactiveFallback>
                         <Action ID="SwitchYoloModel" model="/home/juan/workspaces/robocup/src/CoreSense4Home/robocup_bringup/config/stickler/shoes.pt"/>
+                        <Action ID="Speak" say_text="I am ready, please locate yourself in a place where I can see you"/>
                         <Fallback>
                             <Inverter>
-                                <RetryUntilSuccessful num_attempts="6">
-                                    <Condition ID="IsDetected" 
+                                <Timeout msec="20000">
+                                    <RetryUntilSuccessful num_attempts="-1">
+                                        <Condition ID="IsDetected" 
                                             confidence="0.75"
                                             interest="shoe"
                                             max_depth="4"
                                             max_entities="2"
                                             order="depth_nearest"
                                             best_detection="{best_detection}"/>
-                                </RetryUntilSuccessful>
+                                    </RetryUntilSuccessful>
+                                </Timeout>
                             </Inverter>
                             <Action ID="Speak" say_text="It seems like you are still wearing shoes, please take them off"/>
                         </Fallback>
                         <Action ID="Speak" say_text="Thank you for taking off your shoes, please enjoy the party"/>
+                        <SetBlackboard output_key="{is_clear}" value="true"/>
                     </Sequence>
                 </Fallback>
-                <Action ID="Speak" say_text="So glad you left your shoes at the entrance "/>
             </Sequence>
 
             <Sequence>
@@ -184,12 +191,14 @@
                                 <BlackboardCheckBool return_on_mismatch="FAILURE" value_A="{output_3}" value_B="true">
                                     <Sequence>
                                         <Action ID="Speak" say_text="Thank you for taking the drink, please enjoy the party"/>
-                                        </Sequence>
+                                        <SetBlackboard output_key="{is_clear}" value="true"/>
+                                    </Sequence>
                                 </BlackboardCheckBool>
                                 <Action ID="Speak" say_text="It seems you did not got the drink, please take it otherwise I will kick you from the party "/>
                             </Fallback>
                     </Sequence>         
                 </BlackboardCheckBool>
+                <SetBlackboard output_key="{is_clear}" value="true"/>
             </Sequence>
 
             <Sequence>
@@ -209,13 +218,20 @@
                             <BlackboardCheckBool return_on_mismatch="FAILURE" value_A="{output_1}" value_B="false">
                                 <Sequence>
                                     <Action ID="Speak" say_text="Thank you for picking the rubbish, please enjoy the party"/>
+                                    <SetBlackboard output_key="{is_clear}" value="true"/>
                                 </Sequence>
                             </BlackboardCheckBool>
                             <Action ID="Speak" say_text="It seems you did not pick the rubbish, please do it otherwise I will kick you from the party "/>
                         </Fallback>
                     </Sequence>                
                 </BlackboardCheckBool>
+                <SetBlackboard output_key="{is_clear}" value="true"/>
             </Sequence>
+
+            <Action ID="SwitchYoloModel" model="yolov8n-pose.pt"/>
+            <BlackboardCheckBool return_on_mismatch="SUCCESS" value_A="{is_clear}" value_B="true">
+                <Action ID="Speak" say_text="Thank you for following the rules, please enjoy the party"/>
+            </BlackboardCheckBool>             
 
         </SequenceStar>
     </BehaviorTree>

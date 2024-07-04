@@ -5,17 +5,17 @@
         <Sequence>
             <KeepRunningUntilFailure>
                 <Sequence>
+                    <Action ID="Speak" say_text=" Hi this is gentlebots, im ready to take your order"/>
                     <Action ID="InitRestaurant" attention_home="{attention_home}"
                                                 order_1="{order_1}"
                                                 order_2="{order_2}"
                                                 order_3="{order_3}"
                                                 order_count="{n}"/>
 
-                    <Action ID="Speak" param="{n}" say_text=" DEBUG current order count"/>
                     <SubTree ID="find_waving_person" __shared_blackboard="true" output_frame="{tf_customer}"/>
-                    <Action ID="SetStartPosition" initial_pose="{observation_point}" />
+                    <Action ID="SetStartPosition" frame_name="initial" initial_pose="{observation_point}" />
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
-                    <Action ID="MoveTo" distance_tolerance="0.7" is_truncated="true" tf_frame="customer"/>
+                    <Action ID="MoveTo" distance_tolerance="1.0" is_truncated="true" tf_frame="customer"/>
                     <SubTree ID="find_person" __shared_blackboard="true"/>
                     <Action ID="Speak" param="" say_text="Hi, I will be serving you today. Now I will be taking your order item by item"/>
                     <SubTree ID="get_full_order" __shared_blackboard="true"/>
@@ -56,7 +56,6 @@
     <!-- ////////// -->
     <BehaviorTree ID="collect_full_order">
         <Fallback>
-
             <Sequence>
                 <Action ID="Speak" param="{order_1}" say_text="The customer would like"/>
                 <Action ID="Speak" param="" say_text="please put it in front of me  in a place where I can see it"/>
@@ -66,14 +65,16 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <Sequence>
-                            <Repeat num_cycles="6">
+                            <Timeout msec="26000">
                                 <Condition ID="IsDetected" confidence="0.6"
-                                interest="{order_1}"
-                                max_depth="2"
-                                max_entities="2"
-                                order="depth_nearest"
-                                best_detection="{best_detection}"/>
-                            </Repeat>
+                                                            frames=""
+                                                            interest="{order_1}"
+                                                            max_depth="2" 
+                                                            max_entities="2"
+                                                            order="depth_nearest"
+                                                            best_detection="{best_detection}"/>
+                            </Timeout>
+
                             <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
                                                             suffix="_"
                                                             result="{possible_order}"/> 
@@ -113,14 +114,15 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <Sequence>
-                            <Repeat num_cycles="6">
+                            <Timeout msec="26000">
                                 <Condition ID="IsDetected" confidence="0.6"
-                                interest="{order_2}"
-                                max_depth="2"
-                                max_entities="1"
-                                order="depth_nearest"
-                                best_detection="{best_detection}"/>
-                            </Repeat>
+                                                            frames=""
+                                                            interest="{order_2}"
+                                                            max_depth="2" 
+                                                            max_entities="2"
+                                                            order="depth_nearest"
+                                                            best_detection="{best_detection}"/>
+                            </Timeout>
                             <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
                                                             suffix="_"
                                                             result="{possible_order}"/> 
@@ -160,14 +162,16 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <Sequence>
-                            <Repeat num_cycles="6">
+                            <Timeout msec="26000">
                                 <Condition ID="IsDetected" confidence="0.6"
-                                interest="{order_3}"
-                                max_depth="2"
-                                max_entities="1"
-                                order="depth_nearest"
-                                best_detection="{best_detection}"/>
-                            </Repeat>
+                                                            frames=""
+                                                            interest="{order_3}"
+                                                            max_depth="2" 
+                                                            max_entities="2"
+                                                            order="depth_nearest"
+                                                            best_detection="{best_detection}"/>
+                            </Timeout>
+                            
                             <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
                                                             suffix="_"
                                                             result="{possible_order}"/> 
@@ -248,16 +252,36 @@
     <!-- ////////// -->
     <BehaviorTree ID="find_person">
         <Sequence>
-            <ReactiveFallback>
-                <Condition ID="IsDetected" confidence="0.6"
-                                           frames=""
-                                           interest="person"
-                                           max_depth="2"
-                                           max_entities="1"
-                                           person_id="{person_id}"
-                                           order="color"/>
-                <Action ID="Pan" period="25" pitch_angle="-15" range="45"/>
-            </ReactiveFallback>
+            <Fallback>
+                <Timeout msec="60000">
+                    <ReactiveFallback>
+                        <Condition ID="IsDetected" confidence="0.6"
+                                                frames=""
+                                                interest="person"
+                                                max_depth="2"
+                                                max_entities="1"
+                                                person_id="{person_id}"
+                                                order="color"/>
+                        <Action ID="Pan" period="35" pitch_angle="-18" range="45"/>
+                    </ReactiveFallback>
+                </Timeout>
+
+                <ReactiveFallback>
+                    <Sequence>
+                        <Condition ID="IsDetected" confidence="0.6"
+                        interest="person"
+                        max_depth="2.0" 
+                        max_entities="1"
+                        person_id="{person_id}"
+                        order="color"
+                        best_detection="{best_detection}"
+                        />
+                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
+                    </Sequence>
+                    <Action ID="Spin" angular_speed="0.5" distance="6.28"/>
+                </ReactiveFallback>
+
+            </Fallback>
             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
             <Action ID="LookAt" tf_frame="person_0_filtered"/>
         </Sequence>
@@ -272,8 +296,9 @@
                                     output_frame="{tf_customer}"
                                     low_pointing_limit="5"
                                     high_pointing_limit="7"
-                                    cam_frame="head_front_camera_link_color_optical_frame"/>
-                        <Action ID="Pan" period="10" pitch_angle="0" range="45"/>
+                                    cam_frame="head_front_camera_rgb_optical_frame"/>
+                                    
+                        <Action ID="Pan" period="45" pitch_angle="2" range="45"/>
                     </ReactiveFallback>
                 </Timeout>
                 <!-- <ReactiveFallback>
@@ -281,7 +306,7 @@
                                 output_frame="{tf_customer}"
                                 low_pointing_limit="5"
                                 high_pointing_limit="7"
-                                cam_frame="head_front_camera_link_color_optical_frame"/>
+                                cam_frame="head_front_camera_rgb_optical_frame"/>
                     <Spin spin_dist="6.28" server_name="spin" server_timeout="20" is_recovery="false"/>
                 </ReactiveFallback> -->
             </Fallback>
@@ -291,7 +316,7 @@
                                             frames=""
                                             interest="person"
                                             max_depth="15"
-                                            max_entities="1" 
+                                            max_entities="3" 
                                             order="depth_nearest"/>
                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                 </Sequence>
@@ -320,9 +345,20 @@
                 <Action ID="Speak" param="" say_text="What would you like to order first?"/>
                 <SubTree ID="listen" __shared_blackboard="true"/>
                 <ReactiveSequence>
-                    <RetryUntilSuccessful num_attempts="-1">
+                    <!-- <RetryUntilSuccessful num_attempts="-1">
                         <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
-                    </RetryUntilSuccessful>
+                    </RetryUntilSuccessful> -->
+                    <ReactiveFallback>
+                        <Condition ID="IsDetected" 
+                                   confidence="0.6"
+                                   frames=""
+                                   interest="person"
+                                   max_depth="1.5"
+                                   max_entities="1"
+                                   order="depth_nearest"/>
+                                    
+                        <Action ID="Pan" period="50" pitch_angle="-16" range="15"/>
+                    </ReactiveFallback>
                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                     <Action ID="Query" intention="order" intention_value="{order_1}" text="{understood}"/>
                     <Action ID="CleanString" string_to_clean="{order_1}" result="{order_1}"/>
@@ -344,9 +380,17 @@
                 <Action ID="Speak" param="" say_text="What would you like to order next?"/>
                 <SubTree ID="listen" __shared_blackboard="true"/>
                 <ReactiveSequence>
-                    <RetryUntilSuccessful num_attempts="-1">
-                        <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
-                    </RetryUntilSuccessful>
+                    <ReactiveFallback>
+                        <Condition ID="IsDetected" 
+                                   confidence="0.6"
+                                   frames=""
+                                   interest="person"
+                                   max_depth="1.5"
+                                   max_entities="1"
+                                   order="depth_nearest"/>
+                                    
+                        <Action ID="Pan" period="50" pitch_angle="-16" range="15"/>
+                    </ReactiveFallback>
                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                     <Action ID="Query" intention="order" intention_value="{order_2}" text="{understood}"/>
                     <Action ID="CleanString" string_to_clean="{order_2}" result="{order_2}"/>
@@ -368,9 +412,17 @@
                 <Action ID="Speak" param="" say_text="What would you like to order last?"/>
                 <SubTree ID="listen" __shared_blackboard="true"/>
                 <ReactiveSequence>
-                    <RetryUntilSuccessful num_attempts="-1">
-                        <Condition ID="IsDetected" confidence="0.6" frames="" interest="person" max_depth="2" max_entities="1" order="depth_nearest"/>
-                    </RetryUntilSuccessful>
+                    <ReactiveFallback>
+                        <Condition ID="IsDetected" 
+                                   confidence="0.6"
+                                   frames=""
+                                   interest="person"
+                                   max_depth="1.5"
+                                   max_entities="1"
+                                   order="depth_nearest"/>
+                                    
+                        <Action ID="Pan" period="50" pitch_angle="-16" range="15"/>
+                    </ReactiveFallback>
                     <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                     <Action ID="Query" intention="order" intention_value="{order_3}" text="{understood}"/>
                     <Action ID="CleanString" string_to_clean="{order_3}" result="{order_3}"/>

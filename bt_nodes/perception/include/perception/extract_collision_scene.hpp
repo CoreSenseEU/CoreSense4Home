@@ -44,7 +44,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object")});
+      {BT::InputPort<std::string>("selected_object")});
   }
 };
 

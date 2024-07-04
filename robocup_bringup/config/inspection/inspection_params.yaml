@@ -1,0 +1,25 @@
+/**:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_rgb_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    waypoints_names: ["inspection_zone", "exit"]
+    # allow_duplicate_names: false
+    waypoints:
+      inspection_zone: [-1.382, -5.781, -0.253]
+      exit: [2.441, -2.499, 1.206]
+
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    bt_xml_file: robot_inspection.xml
+    plugins:
+    - set_wp_bt_node
+    - move_to_bt_node
+    - speak_bt_node
+    - listen_bt_node
+    - clean_string_bt_node
+    - is_door_open_bt_node

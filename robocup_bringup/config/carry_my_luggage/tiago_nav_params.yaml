@@ -125,7 +125,7 @@ bt_navigator:
     - nav2_spin_cancel_bt_node
     - nav2_back_up_cancel_bt_node
     - nav2_drive_on_heading_cancel_bt_node
-    # - clear_map_at_goal_bt_node
+    - clear_map_at_goal_bt_node
 
 bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:
@@ -219,11 +219,11 @@ local_costmap:
       height: 3
       resolution: 0.05
       robot_radius: 0.29
-      plugins: ["obstacle_layer" ,"inflation_layer", "clear_people_layer"]
+      plugins: ["obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.25
+        cost_scaling_factor: 30.0
+        inflation_radius: 0.30
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -250,18 +250,17 @@ local_costmap:
         map_subscribe_transient_local: True
       clear_people_layer:
         plugin: "nav2_costmap_2d::ClearPeopleLayer"
-        person_radius: 0.5
+        person_radious: 1.0
         person_frame: person_0_filtered
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        combination_method: 2
         observation_sources: scan
         scan:
           topic: /scan_raw
           max_obstacle_height: 2.0
           clearing: True
-          marking: False
+          marking: True
           data_type: "LaserScan"
           raytrace_max_range: 3.0
           raytrace_min_range: 0.0
@@ -279,7 +278,7 @@ global_costmap:
       use_sim_time: False
       robot_radius: 0.29
       resolution: 0.05
-      track_unknown_space: false
+      track_unknown_space: true
       plugins: ["static_layer", "inflation_layer", "clear_people_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -301,13 +300,14 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.25
+        cost_scaling_factor: 30.0
+        inflation_radius: 0.30
+
       clear_people_layer:
         plugin: "nav2_costmap_2d::ClearPeopleLayer"
-        person_radius: 0.5
+        person_radious: 0.5
         person_frame: person_0_filtered
-        
+        enabled: True         
       always_send_full_costmap: True
 
 map_server:
@@ -329,10 +329,34 @@ planner_server:
     use_sim_time: False
     planner_plugins: ["GridBased"]
     GridBased:
-      plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.5
-      use_astar: false
-      allow_unknown: true
+
+      # plugin: "nav2_navfn_planner/NavfnPlanner"
+      # tolerance: 0.65
+      # use_astar: false
+      # allow_unknown: true
+
+
+      # plugin: "nav2_theta_star_planner/ThetaStarPlanner" # In Iron and older versions, "/" was used instead of "::"
+      # how_many_corners: 8
+      # w_euc_cost: 0.3
+      # w_traversal_cost: 2.0
+      # w_heuristic_cost: 1.0
+      plugin: "nav2_smac_planner/SmacPlanner2D" # In Iron and older versions, "/" was used instead of "::"
+      tolerance: 0.125                      # tolerance for planning if unable to reach exact pose, in meters
+      downsample_costmap: false             # whether or not to downsample the map
+      downsampling_factor: 1                # multiplier for the resolution of the costmap layer (e.g. 2 on a 5cm costmap would be 10cm)
+      allow_unknown: true                   # allow traveling in unknown space
+      max_iterations: 1000000               # maximum total iterations to search for before failing (in case unreachable), set to -1 to disable
+      max_on_approach_iterations: 1000      # maximum number of iterations to attempt to reach goal once in tolerance
+      max_planning_time: 2.0                # max time in s for planner to plan, smooth
+      cost_travel_multiplier: 2.0           # Cost multiplier to apply to search to steer away from high cost areas. Larger values will place in the center of aisles more exactly (if non-`FREE` cost potential field exists) but take slightly longer to compute. To optimize for speed, a value of 1.0 is reasonable. A reasonable tradeoff value is 2.0. A value of 0.0 effective disables steering away from obstacles and acts like a naive binary search A*.
+      use_final_approach_orientation: false # Whether to set the final path pose at the goal's orientation to the requested orientation (false) or in line with the approach angle so the robot doesn't rotate to heading (true)
+      smoother:
+        max_iterations: 1000
+        w_smooth: 0.3
+        w_data: 0.2
+        tolerance: 1.0e-10
+
 
 smoother_server:
   ros__parameters:

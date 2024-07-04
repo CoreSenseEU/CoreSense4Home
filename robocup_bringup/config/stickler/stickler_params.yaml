@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     use_sim_time: False
-    cam_frame: "head_front_camera_link_color_optical_frame"
+    cam_frame: "head_front_camera_rgb_optical_frame"
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
@@ -18,16 +18,16 @@
                       "check_4"]
     # allow_duplicate_names: false
     waypoints:
-      forbidden_zone: [0.703, 2.620, 2.120]
-      check_forbidden: [-2.847, 2.837, 0.818]
-      entrance: [-2.225, -0.423, 0.421]
-      confirmation_entrance: [-2.225, -0.423, 0.421]
-      kitchen: [-3.839, 2.290, 2.260]
-      confirmation_kitchen: [-2.750, 3.742, -2.300]
-      check_1: [-2.460, -0.689, 1.522]
-      check_2: [-3.134, 4.342, -1.573]
-      check_3: [-0.956, -0.015, 2.611]
-      check_4: [-2.460, -0.689, 1.522]
+      forbidden_zone: [-1.583, -2.621, -2.612]
+      check_forbidden: [-1.227, -5.819, 2.755]
+      entrance: [1.691, -4.170, 1.074]
+      confirmation_entrance: [1.271, -3.793, -0.124]
+      kitchen: [0.222, -6.635, -1.909]
+      confirmation_kitchen: [-1.174, -5.901, -0.419]
+      check_1: [2.516, -4.603, -2.770]
+      check_2: [-1.726, -6.335, 0.232]
+      check_3: [1.584, -6.727, 2.53]
+      check_4: [1.643, -3.867, -1.913]
 
 
 behaviors_main:

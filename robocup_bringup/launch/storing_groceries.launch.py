@@ -31,7 +31,7 @@ def generate_launch_description():
         'storing_params.yaml'
         )
 
-    receptionist = Node(
+    storing_groceries = Node(
         package='robocup_bringup',
         executable='behaviors_main',
         parameters=[config],
@@ -40,6 +40,6 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    ld.add_action(receptionist)
+    ld.add_action(storing_groceries)
 
     return ld

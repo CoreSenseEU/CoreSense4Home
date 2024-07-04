@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     use_sim_time: False
-    cam_frame: "head_front_camera_link_color_optical_frame"
+    cam_frame: "head_front_camera_rgb_optical_frame"
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
@@ -20,7 +20,6 @@ behaviors_main:
     - init_restaurant_bt_node
     - set_wp_bt_node
     - is_pointing_bt_node
-    - nav2_spin_action_bt_node
     - extract_entity_color_bt_node
     - move_to_bt_node
     - speak_bt_node
@@ -37,3 +36,4 @@ behaviors_main:
     - remove_string_suffix_bt_node
     - switch_yolo_model_bt_node
     - clean_string_bt_node
+    - spin_bt_node

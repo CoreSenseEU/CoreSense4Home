@@ -1,16 +1,16 @@
 /**:
   ros__parameters:
     use_sim_time: False
-    cam_frame: "head_front_camera_link_color_optical_frame"
+    cam_frame: "head_front_camera_rgb_optical_frame"
     home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
     waypoints_names: ["entrance", "table", "secure_pick", "cabinet", "secure_place"]
     waypoints:
       entrance: [-0.711, -0.612, -3.078]
-      table: [5.567, 2.208, 0.351]
+      table: [-0.001, -7.046, -1.921]
       secure_pick: [5.567, 2.208, 1.9218]
-      cabinet: [4.98, 2.87762,  1.716]
+      cabinet: [0.567, -7.345, -0.614]
       secure_place: [4.968, 2.2, 1.824]
 
 behaviors_main:
@@ -37,4 +37,9 @@ behaviors_main:
     - init_groceries_bt_node
     - point_at_bt_node
     - clear_octomap_bt_node
-
+    - remove_string_suffix_bt_node
+    - extract_pc_from_class_bt_node
+    - pick_object_from_pc_bt_node
+    - move_end_effector_bt_node
+    - generate_grasp_poses_bt_node
+    - move_along_axis_bt_node

@@ -14,6 +14,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(manipulation_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -28,6 +29,7 @@ set(dependencies
   manipulation_interfaces
   tf2_ros
   geometry_msgs
+  sensor_msgs
 )
 
 include_directories(include)
@@ -46,6 +48,16 @@ list(APPEND plugin_libs place_bt_node)
 
 add_library(move_joint_bt_node SHARED src/manipulation/move_joint.cpp)
 list(APPEND plugin_libs move_joint_bt_node)
+
+add_library(pick_object_from_pc_bt_node SHARED src/manipulation/pick_object_from_pc.cpp)
+list(APPEND plugin_libs pick_object_from_pc_bt_node)
+
+add_library(move_end_effector_bt_node SHARED src/manipulation/move_end_effector.cpp)
+list(APPEND plugin_libs move_end_effector_bt_node)
+
+add_library(generate_grasp_poses_bt_node SHARED src/manipulation/generate_grasp_poses.cpp)
+list(APPEND plugin_libs generate_grasp_poses_bt_node)
+
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

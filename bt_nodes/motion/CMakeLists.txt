@@ -81,8 +81,9 @@ list(APPEND plugin_libs pan_bt_node)
 add_library(goal_publisher_bt_node SHARED src/motion/navigation/goal_publisher.cpp)
 list(APPEND plugin_libs goal_publisher_bt_node)
 
-add_library(spin_bt_node SHARED src/motion/navigation/spin.cpp)
-list(APPEND plugin_libs spin_bt_node)
+add_library(move_along_axis_bt_node SHARED src/motion/navigation/move_along_axis.cpp)
+list(APPEND plugin_libs move_along_axis_bt_node)
+
 add_library(rotate_bt_node SHARED src/motion/base/Rotate.cpp)
 list(APPEND plugin_libs rotate_bt_node)
 

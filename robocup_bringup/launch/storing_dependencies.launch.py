@@ -97,7 +97,7 @@ def generate_launch_description():
 
             prefix='\n\n### Instruction:\n',
             suffix='\n\n### Response:\n',
-            stop='\n\n\n\n',
+            stopping_words=["\n\n\n\n"],
     )
 
     yolo3d = IncludeLaunchDescription(
@@ -106,16 +106,12 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'model': os.path.join(package_dir,
-                                  'config',
-                                  'storing_groceries',
-                                  'yolo_groceries.pt'),
-            # 'model': 'yolov8x.pt',
+            'model': 'yolov8m-seg.pt',  # change to pretrained
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real
-            'target_frame': 'head_front_camera_link_color_optical_frame',
+            'target_frame': 'head_front_camera_rgb_optical_frame',
             'threshold': '0.5'
             }.items()
     )

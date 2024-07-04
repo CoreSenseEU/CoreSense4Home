@@ -23,7 +23,7 @@ InitReceptionist::InitReceptionist(
 {
   config().blackboard->get("node", node_);
 
-  node_->declare_parameter("cam_frame", "head_front_camera_link_color_optical_frame");
+  node_->declare_parameter("cam_frame", "head_front_camera_rgb_optical_frame");
   node_->declare_parameter("manipulation_frame", "base_link");
   // node_->declare_parameter("party_wp",  std::vector<double>{0.0, 0.0, 0.0});
   // node_->declare_parameter("entrance_wp",  std::vector<double>{0.0, 0.0, 0.0});

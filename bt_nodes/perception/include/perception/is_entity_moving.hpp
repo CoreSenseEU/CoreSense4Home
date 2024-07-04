@@ -51,14 +51,17 @@ public:
       {BT::InputPort<std::string>("frame"),
         BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
         BT::InputPort<float>(
-          "distance_tolerance", "distance tolerance to consider the entity is moving")});
+          "distance_tolerance", "distance tolerance to consider the entity is moving"),
+        BT::InputPort<float>(
+          "robot_distance_to_person",
+          "distance between the robot and the person")});
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string frame_, cam_frame_;
-  float distance_tolerance_, check_time_;
+  float distance_tolerance_, check_time_, robot_distance_to_person_;
 
   std::vector<geometry_msgs::msg::TransformStamped> entity_transforms_;
   std::vector<float> velocities_;

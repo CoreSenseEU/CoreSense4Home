@@ -32,6 +32,7 @@
 #include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
+#include "action_msgs/msg/goal_status_array.hpp"
 #include "navigation_system_interfaces/srv/set_mode.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -68,6 +69,7 @@ public:
 
 private:
   void pose_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
+  void goal_status_callback(const action_msgs::msg::GoalStatusArray::SharedPtr msg);
   geometry_msgs::msg::PoseStamped get_goal_pose(
     const double & distance_to_substract,
     const geometry_msgs::msg::TransformStamped & goal_transform);
@@ -79,6 +81,9 @@ private:
   rclcpp::Client<navigation_system_interfaces::srv::SetMode>::SharedPtr set_mode_client_;
   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
     set_truncate_distance_client_;
+  // goal handle of navigate to pose
+  std::shared_future<rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr>
+  goal_handle_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
@@ -96,6 +101,7 @@ private:
 
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr sub_map_;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr sub_pose_;
+  rclcpp::Subscription<action_msgs::msg::GoalStatusArray>::SharedPtr sub_goal_status_;
 };
 
 }  // namespace navigation

@@ -48,7 +48,7 @@ public:
       {
         BT::InputPort<double>("angle"),
         BT::InputPort<double>("speed")
-    });
+      });
   }
 
 private:
@@ -57,10 +57,10 @@ private:
 
   rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
 
-    double angle_;
-    double speed_;
-    double current_angle_;
-    std::chrono::time_point<std::chrono::high_resolution_clock> last_time_;
+  double angle_;
+  double speed_;
+  double current_angle_;
+  std::chrono::time_point<std::chrono::high_resolution_clock> last_time_;
 };
 
 }  // namespace navigation

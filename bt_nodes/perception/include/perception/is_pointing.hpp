@@ -45,8 +45,12 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::int64_t>("person_id"), BT::InputPort<std::string>("cam_frame"),
-        BT::OutputPort<std::string>("bag_frame")});
+      {BT::InputPort<std::int64_t>("person_id"),
+        BT::InputPort<std::string>("cam_frame"),
+        BT::InputPort<int>("low_pointing_limit"),
+        BT::InputPort<int>("high_pointing_limit"),
+        BT::OutputPort<std::string>("output_frame")
+      });
   }
 
 private:
@@ -54,8 +58,9 @@ private:
 
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
-  std::string camera_frame_, bag_frame_;
+  std::string camera_frame_, output_frame_, suffix_{"bag"};
   std::int64_t person_id_;
+  int low_pointing_limit_, high_pointing_limit_;
   geometry_msgs::msg::TransformStamped person_pose_;
   rclcpp::Time last_pose_;
 

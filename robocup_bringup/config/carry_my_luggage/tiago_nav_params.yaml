@@ -125,7 +125,7 @@ bt_navigator:
     - nav2_spin_cancel_bt_node
     - nav2_back_up_cancel_bt_node
     - nav2_drive_on_heading_cancel_bt_node
-    # - clear_map_at_goal_bt_node
+    - clear_map_at_goal_bt_node
 
 bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:
@@ -219,11 +219,11 @@ local_costmap:
       height: 3
       resolution: 0.05
       robot_radius: 0.29
-      plugins: ["obstacle_layer" ,"inflation_layer", "clear_people_layer"]
+      plugins: ["obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.45
+        cost_scaling_factor: 30.0
+        inflation_radius: 0.30
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -245,6 +245,7 @@ local_costmap:
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
       static_layer:
+        footprint_clearing_enabled: True
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       clear_people_layer:
@@ -294,18 +295,19 @@ global_costmap:
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
       static_layer:
+        footprint_clearing_enabled: True
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.40
+        cost_scaling_factor: 30.0
+        inflation_radius: 0.30
+
       clear_people_layer:
         plugin: "nav2_costmap_2d::ClearPeopleLayer"
-        person_radious: 1.0
+        person_radious: 0.5
         person_frame: person_0_filtered
-        enabled: True
-        
+        enabled: True         
       always_send_full_costmap: True
 
 map_server:
@@ -327,10 +329,34 @@ planner_server:
     use_sim_time: False
     planner_plugins: ["GridBased"]
     GridBased:
-      plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.5
-      use_astar: false
-      allow_unknown: true
+
+      # plugin: "nav2_navfn_planner/NavfnPlanner"
+      # tolerance: 0.65
+      # use_astar: false
+      # allow_unknown: true
+
+
+      # plugin: "nav2_theta_star_planner/ThetaStarPlanner" # In Iron and older versions, "/" was used instead of "::"
+      # how_many_corners: 8
+      # w_euc_cost: 0.3
+      # w_traversal_cost: 2.0
+      # w_heuristic_cost: 1.0
+      plugin: "nav2_smac_planner/SmacPlanner2D" # In Iron and older versions, "/" was used instead of "::"
+      tolerance: 0.125                      # tolerance for planning if unable to reach exact pose, in meters
+      downsample_costmap: false             # whether or not to downsample the map
+      downsampling_factor: 1                # multiplier for the resolution of the costmap layer (e.g. 2 on a 5cm costmap would be 10cm)
+      allow_unknown: true                   # allow traveling in unknown space
+      max_iterations: 1000000               # maximum total iterations to search for before failing (in case unreachable), set to -1 to disable
+      max_on_approach_iterations: 1000      # maximum number of iterations to attempt to reach goal once in tolerance
+      max_planning_time: 2.0                # max time in s for planner to plan, smooth
+      cost_travel_multiplier: 2.0           # Cost multiplier to apply to search to steer away from high cost areas. Larger values will place in the center of aisles more exactly (if non-`FREE` cost potential field exists) but take slightly longer to compute. To optimize for speed, a value of 1.0 is reasonable. A reasonable tradeoff value is 2.0. A value of 0.0 effective disables steering away from obstacles and acts like a naive binary search A*.
+      use_final_approach_orientation: false # Whether to set the final path pose at the goal's orientation to the requested orientation (false) or in line with the approach angle so the robot doesn't rotate to heading (true)
+      smoother:
+        max_iterations: 1000
+        w_smooth: 0.3
+        w_data: 0.2
+        tolerance: 1.0e-10
+
 
 smoother_server:
   ros__parameters:
@@ -394,63 +420,3 @@ velocity_smoother:
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
-
-slam_toolbox:
-  ros__parameters:
-    angle_variance_penalty: 1.0
-    base_frame: base_footprint
-    ceres_dogleg_type: TRADITIONAL_DOGLEG
-    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
-    ceres_loss_function: None
-    ceres_preconditioner: SCHUR_JACOBI
-    ceres_trust_strategy: LEVENBERG_MARQUARDT
-    coarse_angle_resolution: 0.0349
-    coarse_search_angle_offset: 0.349
-    correlation_search_space_dimension: 0.5
-    correlation_search_space_resolution: 0.01
-    correlation_search_space_smear_deviation: 0.1
-    debug_logging: false
-    distance_variance_penalty: 0.5
-    do_loop_closing: true
-    enable_interactive_mode: true
-    fine_search_angle_offset: 0.00349
-    link_match_minimum_response_fine: 0.1
-    link_scan_maximum_distance: 1.5
-    loop_match_maximum_variance_coarse: 3.0
-    loop_match_minimum_chain_size: 10
-    loop_match_minimum_response_coarse: 0.35
-    loop_match_minimum_response_fine: 0.45
-    loop_search_maximum_distance: 3.0
-    loop_search_space_dimension: 8.0
-    loop_search_space_resolution: 0.05
-    loop_search_space_smear_deviation: 0.03
-    # map_file_name: /home/juan/workspaces/robocup/install/robocup_bringup/share/robocup_bringup/maps/lab_robocup
-    # map_frame: map
-    map_start_pose:  #     # - 2.0
-#     # - 3.6
-#     # - 3.1416
-    - -2.0
-    - 3.6
-    - 3.1416
-    map_update_interval: 0.1
-    max_laser_range: 20.0
-    minimum_angle_penalty: 0.9
-    minimum_distance_penalty: 0.5
-    minimum_time_interval: 0.1
-    minimum_travel_distance: 0.01
-    minimum_travel_heading: 0.01
-    mode: localization
-    odom_frame: odom
-    resolution: 0.05
-    scan_buffer_maximum_scan_distance: 10.0
-    scan_buffer_size: 10
-    scan_topic: /scan_raw
-    solver_plugin: solver_plugins::CeresSolver
-    stack_size_to_use: 40000000
-    tf_buffer_duration: 30.0
-    throttle_scans: 1
-    transform_publish_period: 0.02
-    transform_timeout: 0.2
-    use_response_expansion: true
-    use_scan_barycenter: true
-    use_scan_matching: true

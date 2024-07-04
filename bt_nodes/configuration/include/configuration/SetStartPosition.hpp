@@ -41,10 +41,24 @@ public:
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {return BT::PortsList({BT::InputPort<std::string>("frame_name")});}
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {
+        BT::OutputPort<std::string>("initial_pose"),
+        BT::InputPort<double>("x_offset"),
+        BT::InputPort<double>("y_offset"),
+        BT::InputPort<std::string>("frame_name"),
+        BT::InputPort<std::string>("reference_frame")
+      });
+  }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<tf2_ros::Buffer> buffer_;
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_broadcaster_;
+  double x_offset_{0.0}, y_offset_{0.0};
+  std::string reference_frame_{"map"};
 };
 
 }  // namespace configuration

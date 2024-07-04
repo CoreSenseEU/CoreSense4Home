@@ -23,14 +23,15 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
 
   rclcpp::NodeOptions options;
   // options.automatically_declare_parameters_from_overrides(true);
 
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      "gpsr", options);
+    "gpsr", options);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
@@ -52,9 +53,9 @@ int main(int argc, char *argv[]) {
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
 
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+    lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+    lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   rclcpp::Rate rate(30);
 

@@ -58,7 +58,7 @@ int main(int argc, char * argv[])
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(30);
 
   bool finish = false;
   while (!finish && rclcpp::ok()) {

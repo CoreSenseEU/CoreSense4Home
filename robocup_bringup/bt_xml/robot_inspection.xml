@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="SetWp"/>
+            <Action ID="Speak" param="" say_text="Hi, this is Gentlebots, im ready to be inspected"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
+            </RetryUntilSuccessful>
+            <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="inspection_zone"/>
+            <Action ID="Speak" param="" say_text="Please say ready when you finish the inspection"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Sequence>
+                    <Action ID="Listen" listen_text="{text_value}"/>
+                    <Action ID="CleanString" string_to_clean="{text_value}" result="{possible_command}"/>
+
+                    <!-- <Action ID="RemoveStringSuffix" string_to_remove="{text_value}"
+                                suffix="_"
+                                result="{possible_command}"/>                         -->
+                    <BlackboardCheckString return_on_mismatch="FAILURE" value_A="ready" value_B="{possible_command}">
+                        <Action ID="Speak" param="" say_text="Perfect, now I will leave the arena"/>                                      
+                    </BlackboardCheckString>
+                </Sequence>
+            </RetryUntilSuccessful>
+            <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="exit"/>
+        </Sequence>
+    </BehaviorTree>
+</root>

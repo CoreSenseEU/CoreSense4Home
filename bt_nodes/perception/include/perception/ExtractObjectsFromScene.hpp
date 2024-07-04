@@ -48,7 +48,7 @@ public:
       {BT::InputPort<std::string>("interest_class"),
         BT::OutputPort<std::vector<moveit_msgs::msg::CollisionObject::SharedPtr>>(
           "detected_objects"),
-       BT::OutputPort<std::string>("objects_count")});
+        BT::OutputPort<std::string>("objects_count")});
   }
 
   void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);

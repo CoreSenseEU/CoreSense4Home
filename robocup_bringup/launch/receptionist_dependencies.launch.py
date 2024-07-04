@@ -31,7 +31,6 @@ def generate_launch_description():
     package_dir = get_package_share_directory('robocup_bringup')
     yolo3d_dir = get_package_share_directory('yolov8_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
-    map_dir = get_package_share_directory("rb1_navigation")
 
     # manipulation launchers
     move_group = IncludeLaunchDescription(

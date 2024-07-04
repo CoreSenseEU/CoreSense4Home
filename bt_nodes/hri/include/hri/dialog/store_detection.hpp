@@ -39,11 +39,17 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("current_name"), BT::InputPort<std::string>("drink"),
+      {BT::InputPort<std::string>("current_name"),
+        BT::InputPort<std::string>("drink"),
         BT::InputPort<std::string>("guest_id"),
+        BT::InputPort<std::int64_t>("guest_color_id"),
 
-        BT::OutputPort<std::string>("name_1"), BT::OutputPort<std::string>("name_2"),
-        BT::OutputPort<std::string>("drink_1"), BT::OutputPort<std::string>("drink_2")});
+        BT::OutputPort<std::string>("name_1"),
+        BT::OutputPort<std::string>("name_2"),
+        BT::OutputPort<std::string>("drink_1"),
+        BT::OutputPort<std::string>("drink_2"),
+        BT::OutputPort<std::int64_t>("guest_color_id_1"),
+        BT::OutputPort<std::int64_t>("guest_color_id_2")});
   }
 
 private:
@@ -51,6 +57,7 @@ private:
 
   std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_;
   std::string current_id_ = "0";
+  std::int64_t current_color_id_ = 0;
 };
 
 }  // namespace hri

@@ -50,14 +50,16 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object"),
+      {BT::InputPort<std::string>("selected_object"),
+        BT::InputPort<sensor_msgs::msg::PointCloud2>("nearest_pc"),
         BT::OutputPort<geometry_msgs::msg::PoseStamped>("place_pose")});
   }
 
 private:
-  moveit_msgs::msg::CollisionObject::SharedPtr selected_object_;
+  std::string selected_object_;
   geometry_msgs::msg::PoseStamped place_pose_;
   pcl::CropBox<pcl::PointXYZRGB> crop_;
+  sensor_msgs::msg::PointCloud2 nearest_pc_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 };
 

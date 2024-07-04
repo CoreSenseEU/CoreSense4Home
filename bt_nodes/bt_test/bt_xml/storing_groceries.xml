@@ -13,12 +13,12 @@
                 <Sequence>                    
                     <RetryUntilSuccessful num_attempts="-1">
                     <ReactiveFallback>
-                            <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame" confidence="0.6" frames="{frames}" interest="" max_depth="5" max_entities="1" order="depth"/>
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame" confidence="0.6" frames="{frames}" interest="" max_depth="5" max_entities="1" order="depth"/>
                             <Action ID="Pan" period="20.0" range="10" pitch_angle="-15.5"/>
                         </ReactiveFallback>
                     </RetryUntilSuccessful>
                     <RetryUntilSuccessful num_attempts="-1">
-                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame"
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
                                                    confidence="0.6"
                                                    frames="{frames}"
                                                    interest=""
@@ -38,7 +38,7 @@
                     <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
                     <!-- MoveToPredefined (inspect) which is lift the torso and move the head a little bit down -->
                     <RetryUntilSuccessful num_attempts="-1">
-                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame"
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
                                                    confidence="0.6"
                                                    frames="{frames}"
                                                    interest=""
@@ -49,7 +49,7 @@
                     </RetryUntilSuccessful>
                     <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{out_msg}" selected_class_text="{selected_class}"/>
                     <RetryUntilSuccessful num_attempts="-1">
-                        <Condition ID="IsDetected" cam_frame="head_front_camera_link_color_optical_frame"
+                        <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
                                                    confidence="0.6"
                                                    frames="{frames}"
                                                    interest="{selected_class}"

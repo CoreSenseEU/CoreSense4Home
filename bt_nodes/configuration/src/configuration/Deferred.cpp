@@ -14,16 +14,18 @@
 
 #include "configuration/Deferred.hpp"
 
-namespace configuration 
+namespace configuration
 {
 
-Deferred::Deferred(const std::string &xml_tag_name,
-                       const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {    }
+Deferred::Deferred(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf) {}
 
 void Deferred::halt() {}
 
-BT::NodeStatus Deferred::tick() {
+BT::NodeStatus Deferred::tick()
+{
   if (status() == BT::NodeStatus::IDLE) {
     bool by_content = true;
     bt_xml_ = getInput<std::string>("xml");
@@ -44,7 +46,7 @@ BT::NodeStatus Deferred::tick() {
     BT::SharedLibrary loader;
 
     if (plugins_) {
-      for (const auto &plugin : plugins_.value()) {
+      for (const auto & plugin : plugins_.value()) {
         factory.registerFromPlugin(loader.getOSName(plugin));
       }
     } else {
@@ -52,15 +54,17 @@ BT::NodeStatus Deferred::tick() {
     }
 
     if (by_content) {
-      auto node = config().blackboard->get<std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode>>("node");
-      RCLCPP_INFO(node->get_logger(), bt_xml_.value().c_str());;
+      auto node =
+        config().blackboard->get<std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode>>(
+        "node");
+      RCLCPP_INFO(node->get_logger(), bt_xml_.value().c_str());
 
       subtree_ =
-          factory.createTreeFromText(bt_xml_.value(), config().blackboard);
+        factory.createTreeFromText(bt_xml_.value(), config().blackboard);
     } else {
       std::string xml_path =
-          ament_index_cpp::get_package_share_directory(bt_pkg_.value()) + "/" +
-          rel_path_.value();
+        ament_index_cpp::get_package_share_directory(bt_pkg_.value()) + "/" +
+        rel_path_.value();
       subtree_ = factory.createTreeFromFile(xml_path, config().blackboard);
     }
     // try {
@@ -77,7 +81,7 @@ BT::NodeStatus Deferred::tick() {
 
 //  if (state == BT::NodeStatus::FAILURE || state == BT::NodeStatus::SUCCESS) {
 //     publisher_zmq_.reset();
-//   } 
+//   }
   return state;
 }
 

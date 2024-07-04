@@ -6,10 +6,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      "find_person_test_node");
+    "find_person_test_node");
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
@@ -29,9 +30,9 @@ int main(int argc, char *argv[]) {
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);
 
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+    lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+    lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   rclcpp::Rate rate(10);
 
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
 
     status = tree.rootNode()->executeTick();
     finish = (status == BT::NodeStatus::SUCCESS) ||
-             (status == BT::NodeStatus::FAILURE);
+      (status == BT::NodeStatus::FAILURE);
 
     rate.sleep();
   }

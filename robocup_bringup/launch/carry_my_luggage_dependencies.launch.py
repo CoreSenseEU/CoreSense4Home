@@ -91,7 +91,7 @@ def generate_launch_description():
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_link_color_optical_frame',
+            'target_frame': 'head_front_camera_rgb_optical_frame',
             'threshold': '0.5'
             }.items()
     )
@@ -102,7 +102,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
-            'mode': 'amcl',
+            'mode': 'slam',
             'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
                     '/config/carry_my_luggage/tiago_nav_follow_params.yaml',

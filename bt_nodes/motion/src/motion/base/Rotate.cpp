@@ -21,17 +21,17 @@ Rotate::Rotate(const std::string & xml_tag_name, const BT::NodeConfiguration & c
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  
+
   cmd_vel_pub_ = node_->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 1);
-    cmd_vel_pub_->on_activate();
+  cmd_vel_pub_->on_activate();
 }
 
 BT::NodeStatus Rotate::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "Rotate ticked");
 
-    getInput("angle", angle_);
-    getInput("speed", speed_);
+  getInput("angle", angle_);
+  getInput("speed", speed_);
 
   if (status() == BT::NodeStatus::IDLE) {
     current_angle_ = 0;
@@ -39,17 +39,17 @@ BT::NodeStatus Rotate::tick()
     return BT::NodeStatus::RUNNING;
   }
 
-    geometry_msgs::msg::Twist cmd_vel;
-    cmd_vel.angular.z = speed_;
+  geometry_msgs::msg::Twist cmd_vel;
+  cmd_vel.angular.z = speed_;
 
-    if (current_angle_ < angle_) {
-      cmd_vel_pub_->publish(cmd_vel);
-      auto curr_time = std::chrono::high_resolution_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(curr_time - last_time_);
-      current_angle_ += speed_ * elapsed.count() / 1000.0;
-        last_time_ = curr_time;
-      return BT::NodeStatus::RUNNING;
-    }
+  if (current_angle_ < angle_) {
+    cmd_vel_pub_->publish(cmd_vel);
+    auto curr_time = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(curr_time - last_time_);
+    current_angle_ += speed_ * elapsed.count() / 1000.0;
+    last_time_ = curr_time;
+    return BT::NodeStatus::RUNNING;
+  }
 
   return BT::NodeStatus::SUCCESS;
 }

@@ -40,16 +40,16 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::string>("current_name"),
-       BT::InputPort<std::string>("drink"),
-       BT::InputPort<std::string>("guest_id"),
-       BT::InputPort<std::int64_t>("guest_color_id"),
+        BT::InputPort<std::string>("drink"),
+        BT::InputPort<std::string>("guest_id"),
+        BT::InputPort<std::int64_t>("guest_color_id"),
 
-       BT::OutputPort<std::string>("name_1"),
-       BT::OutputPort<std::string>("name_2"),
-       BT::OutputPort<std::string>("drink_1"),
-       BT::OutputPort<std::string>("drink_2"),
-       BT::OutputPort<std::int64_t>("guest_color_id_1"),
-       BT::OutputPort<std::int64_t>("guest_color_id_2")});
+        BT::OutputPort<std::string>("name_1"),
+        BT::OutputPort<std::string>("name_2"),
+        BT::OutputPort<std::string>("drink_1"),
+        BT::OutputPort<std::string>("drink_2"),
+        BT::OutputPort<std::int64_t>("guest_color_id_1"),
+        BT::OutputPort<std::int64_t>("guest_color_id_2")});
   }
 
 private:

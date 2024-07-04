@@ -82,9 +82,10 @@ void ExtractCabinetPlacePose::on_result()
     place_pose.pose.position.y = centroid_nearest[1];
     place_pose.pose.position.z = centroid_nearest[2];
     place_pose.pose.orientation.w = 1.0;
-    RCLCPP_INFO(node_->get_logger(), "Place pose: %f %f %f",  place_pose.pose.position.x,
-                                                              place_pose.pose.position.y,
-                                                              place_pose.pose.position.z );
+    RCLCPP_INFO(
+      node_->get_logger(), "Place pose: %f %f %f", place_pose.pose.position.x,
+      place_pose.pose.position.y,
+      place_pose.pose.position.z);
     setOutput("place_pose", place_pose);
     setStatus(BT::NodeStatus::SUCCESS);
 

@@ -44,7 +44,9 @@ BT::NodeStatus SetStartPosition::tick()
   geometry_msgs::msg::TransformStamped transformStamped;
 
   try {
-    transformStamped = buffer_->lookupTransform(reference_frame_, "base_footprint", tf2::TimePointZero);
+    transformStamped = buffer_->lookupTransform(
+      reference_frame_, "base_footprint",
+      tf2::TimePointZero);
   } catch (const tf2::TransformException & e) {
     RCLCPP_ERROR(node_->get_logger(), "Transform error: %s", e.what());
     return BT::NodeStatus::FAILURE;

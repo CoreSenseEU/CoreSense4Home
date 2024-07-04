@@ -39,7 +39,8 @@ GoalPublisher::GoalPublisher(const std::string & xml_tag_name, const BT::NodeCon
     rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(node_, "navigate_to_pose");
 
   sub_goal_status_ = node_->create_subscription<action_msgs::msg::GoalStatusArray>(
-    "/navigate_to_pose/_action/status", qos, std::bind(&GoalPublisher::goal_status_callback, this, _1));
+    "/navigate_to_pose/_action/status", qos,
+    std::bind(&GoalPublisher::goal_status_callback, this, _1));
 
   set_truncate_distance_client_ =
     node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>(
@@ -70,7 +71,7 @@ GoalPublisher::GoalPublisher(const std::string & xml_tag_name, const BT::NodeCon
 
 }
 
-void GoalPublisher::halt() 
+void GoalPublisher::halt()
 {
   RCLCPP_INFO(node_->get_logger(), "GoalPublisher halted");
   // client_->async_cancel_all_goals();
@@ -226,7 +227,8 @@ void GoalPublisher::goal_status_callback(const action_msgs::msg::GoalStatusArray
   if (msg->status_list.size() > 0) {
     auto status = msg->status_list.back().status;
     if (status == action_msgs::msg::GoalStatus::STATUS_ABORTED ||
-        status == action_msgs::msg::GoalStatus::STATUS_CANCELED) {
+      status == action_msgs::msg::GoalStatus::STATUS_CANCELED)
+    {
       is_goal_sent_ = false;
     }
   }

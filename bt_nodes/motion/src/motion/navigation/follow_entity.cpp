@@ -40,9 +40,11 @@ FollowEntity::FollowEntity(const std::string & xml_tag_name, const BT::NodeConfi
 
   // sub_pose_ = node_->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
   //   "amcl_pose", qos, std::bind(&FollowEntity::pose_callback, this, _1));
-  
+
   sub_goal_status_ = node_->create_subscription<action_msgs::msg::GoalStatusArray>(
-    "/navigate_to_pose/_action/status", qos, std::bind(&FollowEntity::goal_status_callback, this, _1));
+    "/navigate_to_pose/_action/status", qos, std::bind(
+      &FollowEntity::goal_status_callback, this,
+      _1));
 
   set_mode_client_ = node_->create_client<navigation_system_interfaces::srv::SetMode>(
     "navigation_system_node/set_mode");
@@ -263,10 +265,11 @@ void FollowEntity::goal_status_callback(const action_msgs::msg::GoalStatusArray:
   if (msg->status_list.size() > 0) {
     auto status = msg->status_list.back().status;
     if (status == action_msgs::msg::GoalStatus::STATUS_ABORTED ||
-        status == action_msgs::msg::GoalStatus::STATUS_CANCELED) {
+      status == action_msgs::msg::GoalStatus::STATUS_CANCELED)
+    {
       is_goal_sent_ = false;
-    } 
-  } 
+    }
+  }
 }
 
 }  // namespace navigation

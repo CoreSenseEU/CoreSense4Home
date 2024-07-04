@@ -32,7 +32,6 @@ def generate_launch_description():
     yolo3d_dir = get_package_share_directory('yolov8_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
     package_dir = get_package_share_directory('robocup_bringup')
-    vqa_dir = get_package_share_directory('vqa_ros')
     llama_dir = get_package_share_directory('llama_bringup')
 
     # audio related launchers:
@@ -56,12 +55,6 @@ def generate_launch_description():
             {'device': 'cuda'}]
     )
 
-    # vqa launchers
-    vqa_node = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(vqa_dir, 'launch', 'vqa_ros.launch.py')
-        ),
-    )
     llava_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(llama_dir, 'launch', 'llava.launch.py')
@@ -125,7 +118,6 @@ def generate_launch_description():
     ld.add_action(navigation)
     ld.add_action(audio_common_player_node)
     ld.add_action(audio_common_tts_node)
-    # ld.add_action(vqa_node)
     ld.add_action(yolo3d)
     ld.add_action(real_time)
     ld.add_action(move_group)

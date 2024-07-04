@@ -62,7 +62,9 @@ BT::NodeStatus IsEntityMoving::tick()
 
   try {
     entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
-    robot_distance_to_person_msg = tf_buffer_->lookupTransform("base_footprint", frame_, tf2::TimePointZero);
+    robot_distance_to_person_msg = tf_buffer_->lookupTransform(
+      "base_footprint", frame_,
+      tf2::TimePointZero);
     entity_transform_then_msg = tf_buffer_->lookupTransform("map", frame_, when, 500ms);
 
   } catch (const tf2::TransformException & ex) {

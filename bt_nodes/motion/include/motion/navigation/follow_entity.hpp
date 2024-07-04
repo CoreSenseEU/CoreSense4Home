@@ -83,7 +83,7 @@ private:
     set_truncate_distance_client_;
   // goal handle of navigate to pose
   std::shared_future<rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr>
-   goal_handle_;
+  goal_handle_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;

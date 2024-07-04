@@ -26,21 +26,22 @@ using namespace std::placeholders;
 CheckPolicy::CheckPolicy(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: perception::BtServiceNode<vqa_interfaces::srv::AnswerBooleanQuestion, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+: perception::BtServiceNode<vqa_interfaces::srv::AnswerBooleanQuestion,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
 }
 
-void CheckPolicy::on_tick() 
+void CheckPolicy::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "CheckPolicy ticked");
   getInput("question", question_);
-  request_->question = question_;  
+  request_->question = question_;
 }
 
-void CheckPolicy::on_result() 
+void CheckPolicy::on_result()
 {
-  if (result_.success ) {    
+  if (result_.success) {
     setStatus(BT::NodeStatus::SUCCESS);
     setOutput("output", result_.answer);
 

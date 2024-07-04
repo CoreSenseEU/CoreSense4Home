@@ -31,23 +31,28 @@
 
 #include "std_msgs/msg/int8.hpp"
 
-namespace hri {
+namespace hri
+{
 
 class CommandPlanning
   : public hri::BtServiceNode<gpsr_msgs::srv::GeneratePlan,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode> {
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+{
 public:
-  explicit CommandPlanning(const std::string &xml_tag_name,
-                            const std::string & action_name,
-                           const BT::NodeConfiguration &conf);
+  explicit CommandPlanning(
+    const std::string & xml_tag_name,
+    const std::string & action_name,
+    const BT::NodeConfiguration & conf);
 
   void on_tick() override;
   void on_result() override;
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<std::string>("command"),
-                          BT::OutputPort<std::string>("actions"),
-                          BT::OutputPort<std::string>("bt_value")});
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {BT::InputPort<std::string>("command"),
+        BT::OutputPort<std::string>("actions"),
+        BT::OutputPort<std::string>("bt_value")});
   }
 
 private:

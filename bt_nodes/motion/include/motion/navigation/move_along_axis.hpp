@@ -41,12 +41,13 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<std::string>("cmd_vel_topic"),
-      BT::InputPort<double>("speed"),
-      BT::InputPort<double>("distance"),
-      BT::InputPort<std::string>("axis")
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<std::string>("cmd_vel_topic"),
+        BT::InputPort<double>("speed"),
+        BT::InputPort<double>("distance"),
+        BT::InputPort<std::string>("axis")
+      });
   }
 
 private:

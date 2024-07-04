@@ -49,10 +49,12 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::string>("frame"),
-       BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
-       BT::InputPort<float>(
-         "distance_tolerance", "distance tolerance to consider the entity is moving"),
-       BT::InputPort<float>("robot_distance_to_person", "distance between the robot and the person")});
+        BT::InputPort<float>("check_time", "time in seconds to check if the entity is moving"),
+        BT::InputPort<float>(
+          "distance_tolerance", "distance tolerance to consider the entity is moving"),
+        BT::InputPort<float>(
+          "robot_distance_to_person",
+          "distance between the robot and the person")});
   }
 
 private:

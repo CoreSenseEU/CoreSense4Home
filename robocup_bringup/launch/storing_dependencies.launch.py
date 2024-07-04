@@ -106,11 +106,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'model': os.path.join(package_dir,
-                                  'config',
-                                  'storing_groceries',
-                                  'yolo_groceries.pt'),
-            'model': 'yolov8m-seg.pt',
+            'model': 'yolov8m-seg.pt',  # change to pretrained
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',

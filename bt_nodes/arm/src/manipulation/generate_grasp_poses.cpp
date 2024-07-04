@@ -30,7 +30,8 @@ GenerateGraspPoses::GenerateGraspPoses(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : manipulation::BtActionNode<
-    manipulation_interfaces::action::GenerateGraspPoses, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    manipulation_interfaces::action::GenerateGraspPoses,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
 }
@@ -49,9 +50,12 @@ BT::NodeStatus GenerateGraspPoses::on_success()
     setOutput("grasp_poses", result_.result->poses);
     RCLCPP_INFO(node_->get_logger(), "GenerateGraspPoses succeeded");
     // print the best pose header and position
-    RCLCPP_INFO(node_->get_logger(), "Best pose header: %s", result_.result->poses[0].header.frame_id.c_str());
-    RCLCPP_INFO(node_->get_logger(), "Best pose position: %f %f %f", result_.result->poses[0].pose.position.x,
-                result_.result->poses[0].pose.position.y, result_.result->poses[0].pose.position.z);
+    RCLCPP_INFO(
+      node_->get_logger(), "Best pose header: %s",
+      result_.result->poses[0].header.frame_id.c_str());
+    RCLCPP_INFO(
+      node_->get_logger(), "Best pose position: %f %f %f", result_.result->poses[0].pose.position.x,
+      result_.result->poses[0].pose.position.y, result_.result->poses[0].pose.position.z);
     setOutput("best_pose", result_.result->poses[0]);
     return BT::NodeStatus::SUCCESS;
   } else {
@@ -65,7 +69,9 @@ BT::NodeStatus GenerateGraspPoses::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<manipulation::GenerateGraspPoses>(name, "/generate_grasp_poses", config);
+      return std::make_unique<manipulation::GenerateGraspPoses>(
+        name, "/generate_grasp_poses",
+        config);
     };
 
   factory.registerBuilder<manipulation::GenerateGraspPoses>("GenerateGraspPoses", builder);

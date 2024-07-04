@@ -58,7 +58,7 @@ BT::NodeStatus InitStickler::tick()
     setOutput("tf_static_broadcaster", tf_static_broadcaster_);
     setOutput("attention_home", "attention_home");
     setOutput("inspect_person_pose", "inspect_person_pose");
-    setOutput("is_person_clear", false); 
+    setOutput("is_person_clear", false);
 
     config().blackboard->set("tf_buffer", tf_buffer_);
     config().blackboard->set("tf_listener", tf_listener_);

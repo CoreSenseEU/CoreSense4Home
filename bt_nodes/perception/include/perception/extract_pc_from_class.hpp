@@ -45,7 +45,7 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::string>("selected_object"),
-       BT::OutputPort<sensor_msgs::msg::PointCloud2>("class_pc")});
+        BT::OutputPort<sensor_msgs::msg::PointCloud2>("class_pc")});
   }
 };
 

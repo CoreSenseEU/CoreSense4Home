@@ -48,9 +48,9 @@ public:
 
   static BT::PortsList providedPorts()
   {
-     return BT::PortsList(
+    return BT::PortsList(
       {BT::InputPort<std::string>("question"),
-       BT::OutputPort<bool>("output")});
+        BT::OutputPort<bool>("output")});
   }
 
 private:

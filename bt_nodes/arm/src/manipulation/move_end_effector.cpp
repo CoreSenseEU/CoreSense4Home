@@ -37,13 +37,13 @@ void MoveEndEffector::on_tick()
   getInput("pose", pose_to_move_);
 
   goal_.pose = pose_to_move_;
-    
+
   RCLCPP_INFO(
     node_->get_logger(), "Moving to %f %f %f", goal_.pose.pose.position.x,
     goal_.pose.pose.position.y, goal_.pose.pose.position.z);
-  
+
   return;
-  
+
 }
 
 BT::NodeStatus MoveEndEffector::on_success()

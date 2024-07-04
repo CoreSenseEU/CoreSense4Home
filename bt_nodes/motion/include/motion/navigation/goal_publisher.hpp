@@ -63,7 +63,6 @@ public:
   }
 
 private:
-
   void goal_status_callback(const action_msgs::msg::GoalStatusArray::SharedPtr msg);
   geometry_msgs::msg::PoseStamped get_goal_pose(
     const double & distance_to_substract,
@@ -75,7 +74,7 @@ private:
   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
     set_truncate_distance_client_;
   std::shared_future<rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr>
-   goal_handle_;
+  goal_handle_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;

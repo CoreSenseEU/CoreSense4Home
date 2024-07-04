@@ -51,8 +51,8 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::string>("selected_object"),
-       BT::InputPort<sensor_msgs::msg::PointCloud2>("nearest_pc"),
-       BT::OutputPort<geometry_msgs::msg::PoseStamped>("place_pose")});
+        BT::InputPort<sensor_msgs::msg::PointCloud2>("nearest_pc"),
+        BT::OutputPort<geometry_msgs::msg::PoseStamped>("place_pose")});
   }
 
 private:

@@ -31,7 +31,8 @@ namespace manipulation
 
 class GenerateGraspPoses
   : public manipulation::BtActionNode<
-    manipulation_interfaces::action::GenerateGraspPoses, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    manipulation_interfaces::action::GenerateGraspPoses,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit GenerateGraspPoses(
@@ -45,8 +46,8 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<sensor_msgs::msg::PointCloud2>("object_to_pick"),
-       BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped>>("grasp_poses"),
-       BT::OutputPort<geometry_msgs::msg::PoseStamped>("best_pose")});
+        BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped>>("grasp_poses"),
+        BT::OutputPort<geometry_msgs::msg::PoseStamped>("best_pose")});
   }
 };
 

@@ -97,6 +97,7 @@ list(APPEND plugin_libs is_gesturing_bt_node)
 
 add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
 list(APPEND plugin_libs count_people_bt_node)
+
 add_library(clear_octomap_bt_node SHARED src/perception/clear_octomap.cpp)
 list(APPEND plugin_libs clear_octomap_bt_node)
 

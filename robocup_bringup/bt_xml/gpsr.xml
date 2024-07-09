@@ -4,6 +4,10 @@
             <Action ID="SetupGPSR" plugins="{plugins}"/>
             <!-- <Action ID="SetStartPosition" frame_name="instruction point" /> -->
             <Action ID="SetWp"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
+            </RetryUntilSuccessful>
+            <Action ID="MoveTo" tf_frame="instruction_point"/>
             <Action ID="Speak" say_text="Hi, This is gentlebots." param=""/>
             <Repeat num_cycles="3">
                 <Sequence>

@@ -23,7 +23,6 @@ find_package(OpenCV REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
-find_package(vqa_interfaces REQUIRED)
 # find_package(backward_ros REQUIRED)
 
 
@@ -48,7 +47,7 @@ set(dependencies
   perception_system_interfaces
   sensor_msgs
   std_srvs
-  vqa_interfaces
+  # vqa_interfaces
   # backward_ros
 )
 

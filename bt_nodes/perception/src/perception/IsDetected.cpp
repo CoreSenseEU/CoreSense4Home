@@ -75,7 +75,7 @@ BT::NodeStatus IsDetected::tick()
     return BT::NodeStatus::FAILURE;
   }
 
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing %d detections...", detections.size());
+  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Processing %ld detections...", detections.size());
 
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left

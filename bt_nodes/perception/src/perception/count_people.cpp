@@ -79,7 +79,7 @@ BT::NodeStatus CountPeople::tick()
     return BT::NodeStatus::SUCCESS;
   }
 
-  RCLCPP_INFO(node_->get_logger(), "[CountPeople] Processing %d detections...", detections.size());
+  RCLCPP_INFO(node_->get_logger(), "[CountPeople] Processing %ld detections...", detections.size());
   auto entity_counter = 0;
   for (auto it = detections.begin(); it != detections.end() && entity_counter < max_entities_; ) {
     auto const & detection = *it;

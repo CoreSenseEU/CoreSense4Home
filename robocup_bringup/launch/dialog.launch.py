@@ -86,6 +86,11 @@ def generate_launch_description():
             {'device': -1}]
     )
 
+    music_player_node = Node(
+        package='audio_common',
+        executable='music_node',
+    )
+
     ld = LaunchDescription()
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
@@ -93,5 +98,6 @@ def generate_launch_description():
     ld.add_action(llama_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
+    ld.add_action(music_player_node)
 
     return ld

@@ -117,6 +117,7 @@ BT::NodeStatus IsDetected::tick()
 
   // pub->publish(detections[0].image);
 
+  RCLCPP_INFO(node_->get_logger(), "[IsDetected] best detection: %s", detections[0].class_name.c_str());
   setOutput("best_detection", detections[0].class_name);
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods

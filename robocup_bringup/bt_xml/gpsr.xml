@@ -18,7 +18,9 @@
                     <RetryUntilSuccessful num_attempts="-1">
                         <Sequence>
                             <Action ID="Speak" say_text="Thinking about the process." param=""/>
+                            <Action ID="StartMusic" audio="elevator" loop="true" />
                             <Action ID="CommandPlanning" command="{command}" actions="{action_list}" bt_value="{bt_xml}"/>
+                            <Action ID="StopMusic" />
                             <Action ID="Speak" say_text="Then I have to do the following actions " param="{action_list}"/>
                             <Action ID="Speak" say_text="This is correct?" param=""/>
                             <Action ID="DialogConfirmation"/>

@@ -29,7 +29,7 @@ namespace hri
 {
 
 class StartMusic
-  : public hri::BtServiceNode<yolov8_msgs::srv::ChangeModel,
+  : public hri::BtServiceNode<audio_common_msgs::srv::MusicPlay,
   rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
@@ -44,11 +44,13 @@ public:
   {
     return BT::PortsList({
       BT::InputPort<std::string>("audio", "elevator", "audio to play"),
+      BT::InputPort<bool>("loop", false, "loop the audio"),
     });
   }
 
 private:
   std::string audio_;
+  bool loop_;
 };
 
 }  // namespace hri

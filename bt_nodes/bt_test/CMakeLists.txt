@@ -167,6 +167,15 @@ target_link_libraries(set_perception_model_test
   configuration::set_perception_model_bt_node
 )
 
+# music tests
+add_executable(music_test src/music_test.cpp)
+ament_target_dependencies(music_test ${dependencies})
+target_link_libraries(music_test 
+  hri::start_music_bt_node
+  hri::stop_music_bt_node
+  configuration::sleep_bt_node
+)
+
 # motion action tests
 add_executable(torsoheight_test src/torsoheight_test.cpp)
 ament_target_dependencies(torsoheight_test ${dependencies})
@@ -378,6 +387,7 @@ install(TARGETS
   headposition_test
   filter_object_test
   extract_person_description_test
+  music_test
   
   gpsr_test
   gpsr_answerquiz_test

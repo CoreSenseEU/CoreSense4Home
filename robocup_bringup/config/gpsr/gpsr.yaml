@@ -10,31 +10,31 @@ behaviors_main:
     waypoints_names:
       [
         # "bedroom",
-        # "bed",
-        # "bedside_table",
+        "bed",
+        "bedside_table",
         # "dresser",
         # "kitchen",
         # "sink",
-        # "fridge",
-        # "dishwasher",
-        # "kitchen_table",
-        # "trash_bin",
+        "fridge",
+        "dishwasher",
+        "kitchen_table",
+        "trash_bin",
         # "office",
         # "armchair",
-        # "cabinet",
+        "cabinet",
         # "desk",
         # "desk_chair",
         # "living_room",
-        # "entrance",
+        "entrance",
         # "wardrobe",
-        # "sofa",
+        "sofa",
         # "tv_sideboard",
-        # "coffee_table",
+        "coffee_table",
         # "bar",
         # "bookshelf",
         # "instruction_point",
         # "corridor",
-        # "exit",
+        "exit",
         "kitchen",
         "bathroom",
         "entrance",
@@ -47,6 +47,17 @@ behaviors_main:
       entrance: [1.25, 6.30, 0.67]
       living_room: [1.55, 0.03, 0.72]
       bedroom: [7.50, 4.89, 0.65]
+      bed: [6.744, 2.499, 1.0]
+      bedside_table: [6.744, 2.499, 1.0]
+      cabinet: [4.396, 6.926, 1.0]
+      fridge: [3.022, 6.964, 1.0]
+      diswasher: [6.106, 6.801, 1.0]
+      kitchen_table: [3.377, 6.472, 0.67]
+      trash_bin: [2.286, 6.895, 0.72]
+      coffee_table: [1.633, 3.497, 0.12]
+      sofa: [2.413, 2.182, 0.12]
+      entrance: [0.999, 6.764, 1.6]
+      exit: [0.999, 6.764, 1.6]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node

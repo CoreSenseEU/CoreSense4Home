@@ -214,10 +214,8 @@ protected:
         }
       };
 
-    send_goal_options.feedback_callback =
-      std::bind(
-      &BtActionNode::feedback_callback, this,
-      std::placeholders::_1, std::placeholders::_2);
+    send_goal_options.feedback_callback = std::bind(
+      &BtActionNode::feedback_callback, this, std::placeholders::_1, std::placeholders::_2);
 
     auto future_goal_handle = action_client_->async_send_goal(goal_, send_goal_options);
 
@@ -244,10 +242,7 @@ protected:
     on_feedback();
   }
 
-  virtual void on_feedback()
-  {
-
-  }
+  virtual void on_feedback() {}
 
   void increment_recovery_count()
   {
@@ -275,6 +270,6 @@ protected:
   std::chrono::milliseconds server_timeout_;
 };
 
-}  // namespace navigation
+}  // namespace motion
 
 #endif  // NAVIGATION__CTRL_SUPPORT__BTACTIONNODE_HPP_

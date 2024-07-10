@@ -25,11 +25,9 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
-
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "std_msgs/msg/string.hpp"
 
 namespace head
@@ -63,6 +61,6 @@ private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 };
 
-}  // namespace navigation
+}  // namespace head
 
 #endif  // NAVIGATION__LOOK_AT_HPP_

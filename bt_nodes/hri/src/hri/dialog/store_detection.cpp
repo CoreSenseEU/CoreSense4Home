@@ -20,26 +20,23 @@ using namespace std::chrono_literals;
 namespace hri
 {
 
-StoreDetection::StoreDetection(
-  const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+StoreDetection::StoreDetection(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
 }
 
-void StoreDetection::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "[StoreDetection] halted");
-}
+void StoreDetection::halt() {RCLCPP_INFO(node_->get_logger(), "[StoreDetection] halted");}
 
 BT::NodeStatus StoreDetection::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[StoreDetection} ticked");
   rclcpp::spin_some(node_->get_node_base_interface());
-  
+
   getInput("current_name", current_name_);
   getInput("drink", current_drink_);
   getInput("guest_id", current_id_);
+  getInput("guest_color_id", current_color_id_);
 
   if (current_name_.empty() || current_drink_.empty()) {
     return BT::NodeStatus::FAILURE;
@@ -50,12 +47,14 @@ BT::NodeStatus StoreDetection::tick()
     drink_1_ = current_drink_;
     setOutput("name_1", name_1_);
     setOutput("drink_1", drink_1_);
+    setOutput("guest_color_id_1", current_color_id_);
     return BT::NodeStatus::SUCCESS;
   } else if (current_id_ == "2") {
     name_2_ = current_name_;
     drink_2_ = current_drink_;
     setOutput("name_2", name_2_);
     setOutput("drink_2", drink_2_);
+    setOutput("guest_color_id_2", current_color_id_);
     return BT::NodeStatus::SUCCESS;
   }
   return BT::NodeStatus::SUCCESS;
@@ -63,7 +62,6 @@ BT::NodeStatus StoreDetection::tick()
 
 }  // namespace hri
 
-BT_REGISTER_NODES(factory)
-{
+BT_REGISTER_NODES(factory) {
   factory.registerNodeType<hri::StoreDetection>("StoreDetection");
 }

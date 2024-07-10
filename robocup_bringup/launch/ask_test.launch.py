@@ -136,7 +136,7 @@ def generate_launch_description():
     #         'input_depth_topic': '/head_front_camera/depth/image_raw',
     #         'input_depth_info_topic': '/head_front_camera/depth/camera_info',
     #         'depth_image_units_divisor': '1000',
-    #         'target_frame': 'head_front_camera_link_color_optical_frame',
+    #         'target_frame': 'head_front_camera_rgb_optical_frame',
     #         'namespace': 'perception_system'
     #     }.items()
     # )

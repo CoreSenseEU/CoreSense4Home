@@ -79,7 +79,7 @@ BT::NodeStatus IsDetected::tick()
   getInput("pose", pose_);
 
   if (status() == BT::NodeStatus::IDLE) {
-    RCLCPP_INFO(node_->get_logger(), "IsDetected idle");
+    RCLCPP_DEBUG(node_->get_logger(), "IsDetected idle");
     config().blackboard->get("tf_buffer", tf_buffer_);
     // config().blackboard->get("tf_broadcaster", tf_broadcaster_);
   }
@@ -87,11 +87,12 @@ BT::NodeStatus IsDetected::tick()
   RCLCPP_DEBUG(node_->get_logger(), "IsDetected ticked");
   pl::getInstance(node_)->set_interest(interest_, true);
   pl::getInstance(node_)->update(35);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
   auto detections = pl::getInstance(node_)->get_by_type(interest_);
 
   if (detections.empty()) {
-    RCLCPP_INFO(node_->get_logger(), "[IsDetected] No detections");
+    RCLCPP_ERROR(node_->get_logger(), "[IsDetected] No detections");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -99,27 +100,19 @@ BT::NodeStatus IsDetected::tick()
 
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by color");
+    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by color");
     std::sort(
       detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
         return perception_system::diffIDs(this->person_id_, a.color_person) <
         perception_system::diffIDs(this->person_id_, b.color_person);
       });
   } else if (order_ == "depth") {
-  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by depth");
+    RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Sorting detections by depth");
     std::sort(
       detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
         return a.center3d.position.z < b.center3d.position.z;
       });
   }
-  // auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
-  //   "/object_detected", 10);
-
-  // pub->publish(detections[0].image);
-
-  setOutput("best_detection", detections[0].class_name);
-  RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections sorted");
-  // implement more sorting methods
 
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Max Depth: %f", max_depth_);
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Threshold: %f", threshold_);
@@ -206,6 +199,15 @@ BT::NodeStatus IsDetected::tick()
   } else {
     RCLCPP_INFO(node_->get_logger(), "[IsDetected] %d detections after filter", frames_.size());
   }
+
+  // auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
+  //   "/object_detected", 10);
+
+  // pub->publish(detections[0].image);
+
+  setOutput("best_detection", detections[0].class_name);
+  RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
+  // implement more sorting methods
 
   setOutput("frames", frames_);
   // frames_.clear();

@@ -21,7 +21,7 @@ repositories:
     version: main
   ThirdParty/moveit_task_constructor:
     type: git
-    url: https://github.com/ros-planning/moveit_task_constructor.git
+    url: https://github.com/juandpenan/moveit_task_constructor.git
     version: humble
   ThirdParty/tiago_mtc_examples:
     type: git
@@ -39,6 +39,18 @@ repositories:
     type: git
     url: https://github.com/mgonzs13/tts_ros
     version: main
+  ThirdParty/slam_toolbox:
+    type: git
+    url: https://github.com/SteveMacenski/slam_toolbox.git
+    version: ros2
+  ThirdParty/tiago_robot:
+    type: git
+    url: https://github.com/juandpenan/tiago_robot.git 
+    version: steamdeck
+  ThirdParty/gpd:
+    type: git
+    url: https://github.com/atenpas/gpd.git
+    version: master
   systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git
@@ -54,6 +66,10 @@ repositories:
   systems/navigation_system:
     type: git
     url: https://github.com/Juancams/navigation_system.git
+    version: main
+  ThirdParty/gpsr_planning:
+    type: git
+    url: https://github.com/igonzf/GPSR_planning
     version: main
 
     

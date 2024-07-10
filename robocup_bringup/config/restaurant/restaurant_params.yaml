@@ -1,0 +1,39 @@
+/**:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_rgb_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    waypoints_names: ["entrance", "party"]
+    # allow_duplicate_names: false
+    waypoints:
+      entrance: [2.985, -1.320, -2.986]
+      party: [5.683, -1.309, 0.158]
+
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    bt_xml_file: restaurant.xml
+    plugins:
+    - init_restaurant_bt_node
+    - set_wp_bt_node
+    - is_pointing_bt_node
+    - extract_entity_color_bt_node
+    - move_to_bt_node
+    - speak_bt_node
+    - is_detected_bt_node
+    - set_start_position_bt_node
+    - look_at_bt_node
+    - listen_bt_node
+    - query_bt_node
+    - dialogConfirmation_bt_node
+    - pan_bt_node
+    - move_to_predefined_bt_node
+    - increment_variable_bt_node
+    - filter_entity_bt_node
+    - remove_string_suffix_bt_node
+    - switch_yolo_model_bt_node
+    - clean_string_bt_node
+    - spin_bt_node

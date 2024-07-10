@@ -29,7 +29,7 @@ namespace hri
 {
 
 class StopMusic
-  : public hri::BtServiceNode<yolov8_msgs::srv::ChangeModel,
+  : public hri::BtServiceNode<std_srvs::srv::Trigger,
   rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:

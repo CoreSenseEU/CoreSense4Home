@@ -21,39 +21,32 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
-
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace dialog
 {
 
 class DialogConfirmation
-  : public BT::ActionNodeBase
+  : public dialog::BtActionNode<
+    whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit DialogConfirmation(
-    const std::string & xml_tag_name,
+    const std::string & xml_tag_name, const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
-  void halt();
-  BT::NodeStatus tick();
+  void on_tick() override;
+  BT::NodeStatus on_success() override;
 
   static BT::PortsList providedPorts() {return BT::PortsList({});}
 
 private:
-  BT::NodeStatus on_idle();
-  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
-  std::shared_ptr<rclcpp_action::Client<whisper_msgs::action::STT>> client_;
-  std::string text_ = "";
-  bool is_goal_sent_ = false;
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
 };
 
-} // namespace dialog
+}  // namespace dialog
 
-#endif // HRI__DIALOGCONFIRMATION_HPP_
+#endif  // HRI__DIALOGCONFIRMATION_HPP_

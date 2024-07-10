@@ -32,6 +32,7 @@
 #include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
+#include "action_msgs/msg/goal_status_array.hpp"
 #include "navigation_system_interfaces/srv/set_mode.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -62,7 +63,7 @@ public:
   }
 
 private:
-
+  void goal_status_callback(const action_msgs::msg::GoalStatusArray::SharedPtr msg);
   geometry_msgs::msg::PoseStamped get_goal_pose(
     const double & distance_to_substract,
     const geometry_msgs::msg::TransformStamped & goal_transform);
@@ -72,13 +73,15 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr entity_pose_pub_;
   rclcpp::Client<navigation_system_interfaces::srv::SetTruncateDistance>::SharedPtr
     set_truncate_distance_client_;
+  std::shared_future<rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr>
+  goal_handle_;
 
   std::string camera_frame_, frame_to_follow_, xml_path_;
   double distance_tolerance_, substracted_distance_ = 0.6, distance_to_entity_ = 0.0;
   double x_axis_max_, x_axis_min_, y_axis_max_, y_axis_min_;
   bool is_goal_sent_ = false;
-//   double magnitude;
-// double scale;
+  //   double magnitude;
+  // double scale;
   geometry_msgs::msg::TransformStamped entity_transform_;
   geometry_msgs::msg::TransformStamped robot_direction_;
   geometry_msgs::msg::PoseStamped goal_pose_;
@@ -86,6 +89,8 @@ private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   geometry_msgs::msg::PoseWithCovarianceStamped current_pos_;
+  rclcpp::Subscription<action_msgs::msg::GoalStatusArray>::SharedPtr sub_goal_status_;
+
 };
 
 }  // namespace navigation

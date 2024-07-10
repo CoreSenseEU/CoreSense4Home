@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "hri/stop_music.hpp"
+#include "hri/start_music.hpp"
 
 #include <string>
 
@@ -22,28 +22,34 @@ namespace hri
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-StopMusic::StopMusic(
+StartMusic::StartMusic(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: configuration::BtServiceNode<std_srvs::srv::Trigger,
+: hri::BtServiceNode<audio_common_msgs::srv::MusicPlay,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
 }
 
-void StopMusic::on_tick()
+void StartMusic::on_tick()
 {
-    RCLCPP_DEBUG(node_->get_logger(), "StopMusic ticked");
+    RCLCPP_DEBUG(node_->get_logger(), "StartMusic ticked");
+
+    getInput("audio", audio_);
+    getInput("loop", loop_);
+
+    request_->audio = audio_;
+    request_->loop = loop_;
 }
 
-void StopMusic::on_result()
+void StartMusic::on_result()
 {
   if (result_.success) {
-    std::cout << "Success StopMusic" << std::endl;
+    std::cout << "Success StartMusic" << std::endl;
     setStatus(BT::NodeStatus::SUCCESS);
     
   } else {
-    std::cout << "Failure StopMusic" << std::endl;
+    std::cout << "Failure StartMusic" << std::endl;
     // setOutput("listen_text", result_.result->text);
     setStatus(BT::NodeStatus::FAILURE);
   }
@@ -55,9 +61,9 @@ void StopMusic::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<hri::StopMusic>(
-        name, "/stop_music", config);
+      return std::make_unique<hri::StartMusic>(
+        name, "/music_play", config);
     };
 
-  factory.registerBuilder<hri::StopMusic>("StopMusic", builder);
+  factory.registerBuilder<hri::StartMusic>("StartMusic", builder);
 }

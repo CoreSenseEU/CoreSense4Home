@@ -34,20 +34,25 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
-namespace perception {
+namespace perception
+{
 
 using namespace std::chrono_literals;
 
-class IsGesturing : public BT::ConditionNode {
+class IsGesturing : public BT::ConditionNode
+{
 public:
-  explicit IsGesturing(const std::string &xml_tag_name,
-                       const BT::NodeConfiguration &conf);
+  explicit IsGesturing(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<std::string>("type"),
-                          BT::OutputPort<std::int64_t>("person_id")});
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {BT::InputPort<std::string>("type"),
+        BT::OutputPort<std::int64_t>("person_id")});
   }
 
 private:

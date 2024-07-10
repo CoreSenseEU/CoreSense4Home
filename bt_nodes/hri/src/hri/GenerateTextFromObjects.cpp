@@ -48,10 +48,12 @@ BT::NodeStatus GenerateTextFromObjects::tick()
     return BT::NodeStatus::FAILURE;
   }
 
-  std::string question; 
+  std::string question;
   // id is a string like apple_0 or banana_0 so we need to remove everthing after the _
-  question += detected_objects.at(selected_object_)->id.substr(0, detected_objects.at(selected_object_)->id.find("_"));
+  question += detected_objects.at(selected_object_)
+    ->id.substr(0, detected_objects.at(selected_object_)->id.find("_"));
   setOutput("output_text", question);
+  setOutput("selected_frame", detected_objects.at(selected_object_)->header.frame_id);
 
   RCLCPP_INFO(
     node_->get_logger(), "Selected object: %s", detected_objects[selected_object_]->id.c_str());

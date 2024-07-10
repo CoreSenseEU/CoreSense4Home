@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "hri/dialog/Listen.hpp"
+
 #include <cstdint>
 #include <string>
 #include <utility>
 
-#include "hri/dialog/Listen.hpp"
-#include "std_msgs/msg/int8.hpp"
-#include "whisper_msgs/action/stt.hpp"
-
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "std_msgs/msg/int8.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
@@ -30,103 +29,45 @@ using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 Listen::Listen(
-  const std::string & xml_tag_name,
+  const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(
-    xml_tag_name, conf)
+: dialog::BtActionNode<whisper_msgs::action::STT, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
-  config().blackboard->get("node", node_);
   publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
-  publisher_start_->on_activate();
-
-  client_ = rclcpp_action::create_client<whisper_msgs::action::STT>(
-    node_, "whisper/listen");
-
 }
 
-void Listen::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "Listen halted");
-}
-
-BT::NodeStatus Listen::tick()
+void Listen::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "Listen ticked");
-
+  std::string text_;
+  goal_ = whisper_msgs::action::STT::Goal();
   auto msg_dialog_action = std_msgs::msg::Int8();
 
   msg_dialog_action.data = 0;
 
   publisher_start_->publish(msg_dialog_action);
+}
 
-  if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
-    return on_idle();
-  }
+BT::NodeStatus Listen::on_success()
+{
+  fprintf(stderr, "%s\n", result_.result->text.c_str());
 
-  if (text_.size() == 0) {
-    RCLCPP_ERROR(node_->get_logger(), "whisper not listen anything");
+  if (result_.result->text.size() == 0) {
     return BT::NodeStatus::FAILURE;
   }
 
-  fprintf(stderr, "%s\n", text_.c_str());
-
-  setOutput("listen_text", text_);
+  setOutput("listen_text", result_.result->text);
   return BT::NodeStatus::SUCCESS;
-}
-
-BT::NodeStatus Listen::on_idle()
-{
-
-  auto goal = whisper_msgs::action::STT::Goal();
-
-  RCLCPP_INFO(node_->get_logger(), "Sending goal");
-
-  auto future_goal_handle = client_->async_send_goal(goal);
-  if (rclcpp::spin_until_future_complete(
-      node_->get_node_base_interface(),
-      future_goal_handle) !=
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
-
-    RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
-    is_goal_sent_ = false;
-    return BT::NodeStatus::RUNNING;
-  }
-
-  auto goal_handle = future_goal_handle.get();
-  if (!goal_handle) {
-    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected by server");
-    return BT::NodeStatus::RUNNING;
-  }
-
-  // Wait for the server to be done with the goal
-  auto result_future = client_->async_get_result(goal_handle);
-
-  RCLCPP_INFO(node_->get_logger(), "Waiting for result");
-  if (rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result_future) !=
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
-    RCLCPP_ERROR(node_->get_logger(), "get result call failed :(");
-    return BT::NodeStatus::RUNNING;
-  }
-
-  auto wrapped_result = result_future.get();
-
-  if(wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED)
-  {
-    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected");
-    return BT::NodeStatus::RUNNING;
-  }
-
-  is_goal_sent_ = true;
-  text_ = wrapped_result.result->text; 
-
-  return BT::NodeStatus::RUNNING;
 }
 
 }  // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
+    };
 
-  factory.registerNodeType<dialog::Listen>("Listen");
+  factory.registerBuilder<dialog::Listen>("Listen", builder);
 }

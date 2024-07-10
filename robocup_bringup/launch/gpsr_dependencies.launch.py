@@ -32,7 +32,6 @@ def generate_launch_description():
     yolo3d_dir = get_package_share_directory('yolov8_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
     package_dir = get_package_share_directory('robocup_bringup')
-    bringup_dir = get_package_share_directory("rb1_navigation")
 
     # audio related launchers:
     dialog = IncludeLaunchDescription(
@@ -72,7 +71,7 @@ def generate_launch_description():
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_rgb_frame',
+            'target_frame': 'head_front_camera_rgb_optical_frame',
             'threshold': '0.5'
             }.items()
     )
@@ -87,9 +86,9 @@ def generate_launch_description():
             'params_file': package_dir + '/config/gpsr/tiago_nav_params.yaml',
             'slam_params_file': package_dir + '/config/gpsr/tiago_nav_follow_params.yaml',
             'map': os.path.join(
-                    bringup_dir,
-                    "maps/apartamento_leon",
-                    "apartamento_leon_gimp_con_mesa_tv.yaml"),
+                                package_dir,
+                                'maps',
+                                'ir_lab.yaml'),
         }.items()
     )
 
@@ -109,4 +108,3 @@ def generate_launch_description():
     ld.add_action(gpsr)
 
     return ld
-

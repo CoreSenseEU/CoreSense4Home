@@ -43,8 +43,7 @@ inline double distance(const geometry_msgs::msg::TransformStamped & t1, const ge
 {
   return std::sqrt(
     std::pow(t1.transform.translation.x - t2.transform.translation.x, 2) +
-    std::pow(t1.transform.translation.y - t2.transform.translation.y, 2) +
-    std::pow(t1.transform.translation.z - t2.transform.translation.z, 2));
+    std::pow(t1.transform.translation.y - t2.transform.translation.y, 2));
 }
 
 BT::NodeStatus FilterPrevDetections::tick()
@@ -53,9 +52,6 @@ BT::NodeStatus FilterPrevDetections::tick()
     getInput("new_detections", new_detections_);
     getInput("margin", margin_);
     getInput("frame_id", frame_id_);
-
-    RCLCPP_INFO(node_->get_logger(), "[FilterPrevDetections] %lu detections", prev_detections_->items.size());
-    RCLCPP_INFO(node_->get_logger(), "[FilterPrevDetections] %lu new detections", new_detections_.size());
 
     std::list<geometry_msgs::msg::TransformStamped> new_transforms;
 
@@ -71,8 +67,6 @@ BT::NodeStatus FilterPrevDetections::tick()
         }
     }
 
-    RCLCPP_INFO(node_->get_logger(), "[FilterPrevDetections] %lu new transforms", new_transforms.size());
-
     for (auto & new_transform : new_transforms) {
         bool close = false;
 
@@ -83,12 +77,18 @@ BT::NodeStatus FilterPrevDetections::tick()
                     prev_transform.child_frame_id.c_str());
                 close = true;
                 break;
+            // } else if (new_transform.transform.translation.x < 0.50 && new_transform.transform.translation.y < 0.50
+            //          && new_transform.transform.translation.x > 8.0 && new_transform.transform.translation.y > 7.23
+            // ) {
+            //     RCLCPP_INFO(
+            //         node_->get_logger(), "Detection %s is out of the apartment, removing it", new_transform.child_frame_id.c_str());
+            //     close = true;
+            //     break;
             }
         }
 
         if (!close) {
             RCLCPP_INFO(node_->get_logger(), "Detection %s is not close to any previous detection", new_transform.child_frame_id.c_str());
-            RCLCPP_INFO(node_->get_logger(), "%f %f %f", new_transform.transform.translation.x, new_transform.transform.translation.y, new_transform.transform.translation.z);
 
             auto size = prev_detections_->items.size();
             std::string detection_type = new_transform.child_frame_id.substr(0, new_transform.child_frame_id.find("_"));

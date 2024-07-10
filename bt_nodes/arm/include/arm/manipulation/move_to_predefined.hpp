@@ -18,12 +18,11 @@
 #include <algorithm>
 #include <string>
 
+#include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "manipulation_interfaces/action/move_to_predefined.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
-#include "arm/manipulation/BTActionNode.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
@@ -44,8 +43,8 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({BT::InputPort<std::string>("pose"),
-                          BT::InputPort<std::string>("group_name")});
+    return BT::PortsList(
+      {BT::InputPort<std::string>("pose"), BT::InputPort<std::string>("group_name")});
   }
 
 private:

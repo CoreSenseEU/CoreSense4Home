@@ -36,22 +36,27 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
-namespace perception {
+namespace perception
+{
 
 using pl = perception_system::PerceptionListener;
 
-class ConvertColor : public BT::ActionNodeBase {
+class ConvertColor : public BT::ActionNodeBase
+{
 public:
-  explicit ConvertColor(const std::string &xml_tag_name,
-                        const BT::NodeConfiguration &conf);
+  explicit ConvertColor(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<std::string>("color"),
-                          BT::InputPort<std::string>("interest"),
-                          BT::OutputPort<std::int64_t>("person_id")});
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {BT::InputPort<std::string>("color"),
+        BT::InputPort<std::string>("interest"),
+        BT::OutputPort<std::int64_t>("person_id")});
   }
 
 private:
@@ -62,8 +67,9 @@ private:
   int person_id_;
 
   cv::Scalar getColorRGB(const std::string & colorName);
-  int64_t calculatePersonID(const cv::Scalar & hsv_up,
-                            const cv::Scalar & hsv_down);
+  int64_t calculatePersonID(
+    const cv::Scalar & hsv_up,
+    const cv::Scalar & hsv_down);
 };
 
 } // namespace perception

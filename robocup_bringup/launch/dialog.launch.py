@@ -43,18 +43,18 @@ def generate_launch_description():
 
     # Actions
     llama_cmd = create_llama_launch(
-            n_ctx=3050,
+            n_ctx=2048,
             n_batch=256,
-            n_gpu_layers=23,
-            n_threads=1,
+            n_gpu_layers=25,
+            n_threads=4,
             n_predict=-1,
 
             model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
             model_filename="Spaetzle-v60-7b_Q4_0.gguf",
 
+            prefix='\n\n### Instruction:\n',
+            suffix='\n\n### Response:\n',
             stopping_words=["\n\n\n\n"],
-
-            debug=True
     )
 
     whisper_cmd = IncludeLaunchDescription(
@@ -86,6 +86,11 @@ def generate_launch_description():
             {'device': -1}]
     )
 
+    music_player_node = Node(
+        package='audio_common',
+        executable='music_node',
+    )
+
     ld = LaunchDescription()
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
@@ -93,5 +98,6 @@ def generate_launch_description():
     ld.add_action(llama_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
+    ld.add_action(music_player_node)
 
     return ld

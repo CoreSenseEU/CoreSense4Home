@@ -41,17 +41,31 @@ list(APPEND plugin_libs init_carry_bt_node)
 add_library(init_receptionist_bt_node SHARED src/configuration/init_receptionist.cpp)
 list(APPEND plugin_libs init_receptionist_bt_node)
 
-add_library(add_guest_to_count_bt_node SHARED src/configuration/add_guest_to_count.cpp)
-list(APPEND plugin_libs add_guest_to_count_bt_node)
-
-add_library(set_start_position_bt_node SHARED src/configuration/SetStartPosition.cpp)
-list(APPEND plugin_libs set_start_position_bt_node)
+add_library(increment_variable_bt_node SHARED src/configuration/increment_variable.cpp)
+list(APPEND plugin_libs increment_variable_bt_node)
 
 add_library(deferred_bt_node SHARED src/configuration/Deferred.cpp)
 list(APPEND plugin_libs deferred_bt_node)
 
 add_library(setup_gpsr_bt_node SHARED src/configuration/Setup_gpsr.cpp)
 list(APPEND plugin_libs setup_gpsr_bt_node)
+add_library(init_groceries_bt_node SHARED src/configuration/init_groceries.cpp)
+list(APPEND plugin_libs init_groceries_bt_node)
+
+add_library(set_start_position_bt_node SHARED src/configuration/SetStartPosition.cpp)
+list(APPEND plugin_libs set_start_position_bt_node)
+
+add_library(init_restaurant_bt_node SHARED src/configuration/init_restaurant.cpp)
+list(APPEND plugin_libs init_restaurant_bt_node)
+
+add_library(remove_string_suffix_bt_node SHARED src/configuration/remove_string_suffix.cpp)
+list(APPEND plugin_libs remove_string_suffix_bt_node)
+
+add_library(clean_string_bt_node SHARED src/configuration/clean_string.cpp)
+list(APPEND plugin_libs clean_string_bt_node)
+
+add_library(init_stickler_bt_node SHARED src/configuration/init_stickler.cpp)
+list(APPEND plugin_libs init_stickler_bt_node)
 
 add_library(bt_service_node SHARED src/configuration/bt_service_node.cpp)
 list(APPEND plugin_libs bt_service_node)

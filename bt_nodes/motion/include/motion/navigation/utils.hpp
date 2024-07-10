@@ -66,8 +66,6 @@ std::string dynamic_following_xml =
     <PipelineSequence name="NavigateWithReplanning">
       <RateController hz="1.0">
         <Sequence>
-          <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
-          <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
           <GoalUpdater input_goal="{goal}" output_goal="{updated_goal}">
               <Sequence>
                 <ComputePathToPose goal="{updated_goal}" path="{path}" planner_id="GridBased"/>

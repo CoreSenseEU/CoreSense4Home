@@ -23,17 +23,19 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-namespace hri {
+namespace hri
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 using json = nlohmann::json;
 
-std::string joinActions(std::vector<std::string> actions) {
+std::string joinActions(std::vector<std::string> actions)
+{
   if (actions.empty()) {
     return "";
   }
-  
+
   if (actions.size() == 1) {
     return actions[0];
   }
@@ -59,7 +61,7 @@ CommandPlanning::CommandPlanning(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : hri::BtServiceNode<gpsr_msgs::srv::GeneratePlan,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -67,7 +69,8 @@ CommandPlanning::CommandPlanning(
 }
 
 
-void CommandPlanning::on_tick() {
+void CommandPlanning::on_tick()
+{
   RCLCPP_INFO(node_->get_logger(), "CommandPlanning ticked");
 
   std::string bt_ = "";
@@ -82,7 +85,8 @@ void CommandPlanning::on_tick() {
   request_->command = command_;
 }
 
-void CommandPlanning::on_result() {
+void CommandPlanning::on_result()
+{
   RCLCPP_INFO(node_->get_logger(), "CommandPlanning onResult");
 
   auto bt_ = result_.bt_xml;

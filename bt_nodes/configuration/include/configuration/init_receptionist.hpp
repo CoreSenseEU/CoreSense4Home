@@ -44,8 +44,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {
-        BT::OutputPort<std::string>("cam_frame", "frame to transform to all detections"),
+      {BT::OutputPort<std::string>("cam_frame", "frame to transform to all detections"),
         BT::OutputPort<std::string>("manipulation_frame", "base_frame for manipulation"),
         BT::OutputPort<std::string>("party_wp", "frame to the party wp"),
         BT::OutputPort<std::string>("entrance_wp", "frame to the the entrance wp"),
@@ -54,13 +53,12 @@ public:
         BT::OutputPort<std::string>("current_guest", "current guest_number STARTING FROM 1"),
         BT::OutputPort<std::string>("attention_home", "fixed frame to look at"),
         BT::OutputPort<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer"),
-        BT::OutputPort<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>("tf_static_broadcaster"),
-        BT::OutputPort<std::shared_ptr<tf2_ros::TransformBroadcaster>>("tf_broadcaster")
-      });
+        BT::OutputPort<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>(
+          "tf_static_broadcaster"),
+        BT::OutputPort<std::shared_ptr<tf2_ros::TransformBroadcaster>>("tf_broadcaster")});
   }
 
 private:
- 
   std::string cam_frame_, manipulation_frame_, host_name_, host_drink_;
   std::vector<double> party_wp_, entrance_wp_;
   std::vector<std::string> wp_names_;

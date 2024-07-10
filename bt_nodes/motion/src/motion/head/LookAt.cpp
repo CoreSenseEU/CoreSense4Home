@@ -66,7 +66,7 @@ void LookAt::halt()
   node_->remove_activation("attention_server");
 }
 
-}  // namespace navigation
+}  // namespace head
 
 BT_REGISTER_NODES(factory) {
   factory.registerNodeType<head::LookAt>("LookAt");

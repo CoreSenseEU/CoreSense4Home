@@ -18,6 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
 # from launch.actions import LogInfo, RegisterEventHandler
 # from launch.event_handlers import OnExecutionComplete
 # import lifecycle_msgs
@@ -27,7 +28,41 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
 
     navigation_dir = get_package_share_directory('navigation_system')
+    whisper_dir = get_package_share_directory('whisper_bringup')
     package_dir = get_package_share_directory('robocup_bringup')
+
+    # audio related launchers:
+
+    whisper_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(whisper_dir, 'launch', 'whisper.launch.py')
+        )
+    )
+    audio_common_player_node = Node(
+        package='audio_common',
+        executable='audio_player_node',
+        parameters=[
+            {'channels': 2},
+            {'device': -1}]
+    )
+
+    audio_common_tts_node = Node(
+        package='tts_ros',
+        executable='tts_node',
+        parameters=[
+            {'chunk': 4096},
+            {'frame_id': ''},
+            {'model': 'tts_models/en/ljspeech/vits'},
+            {'speaker_wav': ''},
+            {'device': 'cuda'}]
+    )
+
+    # real time launcher
+    real_time = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_dir, 'launch', 'real_time.launch.py')
+        )
+    )
 
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -36,11 +71,21 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             'mode': 'amcl',
-            'map': package_dir + '/maps/arena_portugal.yaml'
+            'params_file': package_dir + '/config/inspection/tiago_nav_params.yaml',
+            'slam_params_file': package_dir +
+                    '/config/inspection/tiago_nav_follow_params.yaml',
+            'map': os.path.join(
+                                package_dir,
+                                'maps',
+                                'ir_lab.yaml'),
         }.items()
     )
 
     ld = LaunchDescription()
     ld.add_action(navigation)
+    ld.add_action(whisper_cmd)
+    ld.add_action(audio_common_player_node)
+    ld.add_action(audio_common_tts_node)
+    ld.add_action(real_time)
 
     return ld

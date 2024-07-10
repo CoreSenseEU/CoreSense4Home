@@ -20,6 +20,7 @@
 #include <string>
 #include <utility>
 
+#include "behaviortree_cpp_v3/behavior_tree.h"
 #include "hri/dialog/Query.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 #include "std_msgs/msg/int8.hpp"
@@ -175,12 +176,25 @@ BT::NodeStatus Query::on_idle() {
   return BT::NodeStatus::RUNNING;
 }
 
-bool Query::isInvalid(std::string str) {
-  bool invalid = false;
-  if (str.find("sentence") != std::string::npos) {
-    invalid = true;
+BT::NodeStatus Query::on_success() {
+  fprintf(stderr, "%s\n", result_.result->response.text.c_str());
+
+  if (result_.result->response.text.empty() ||
+      result_.result->response.text == "{}") {
+    return BT::NodeStatus::FAILURE;
   }
-  return invalid;
+
+  json response = json::parse(result_.result->response.text);
+  std::string value_ = response["intention"];
+  fprintf(stderr, "%s\n", value_.c_str());
+
+  if (value_.empty()) {
+    return BT::NodeStatus::FAILURE;
+  }
+
+  setOutput("intention_value", value_);
+
+  return BT::NodeStatus::SUCCESS;
 }
 
 } // namespace dialog

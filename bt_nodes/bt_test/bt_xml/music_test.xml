@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="StartMusic" audio="elevator"/>
+            <Action ID="Sleep" time="5.0" />
+            <Action ID="StopMusic"/>
+        </Sequence>
+    </BehaviorTree>
+</root>

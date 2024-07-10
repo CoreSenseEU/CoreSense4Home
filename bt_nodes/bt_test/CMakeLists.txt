@@ -142,7 +142,12 @@ target_link_libraries(follow_person_test perception::follow_person_bt_node)
 # find_person test
 add_executable(find_person_test src/find_person_test.cpp)
 ament_target_dependencies(find_person_test ${dependencies})
-target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node perception::is_gesturing_bt_node)
+target_link_libraries(find_person_test
+                      perception::convert_color_bt_node
+                      perception::is_detected_bt_node
+                      motion::pan_bt_node
+                      motion::move_to_bt_node
+                      perception::is_gesturing_bt_node)
 
 # count person test
 add_executable(count_people_test src/count_people_test.cpp)
@@ -165,6 +170,15 @@ add_executable(set_perception_model_test src/set_perception_model_test.cpp)
 ament_target_dependencies(set_perception_model_test ${dependencies})
 target_link_libraries(set_perception_model_test
   configuration::set_perception_model_bt_node
+)
+
+# music tests
+add_executable(music_test src/music_test.cpp)
+ament_target_dependencies(music_test ${dependencies})
+target_link_libraries(music_test 
+  hri::start_music_bt_node
+  hri::stop_music_bt_node
+  configuration::sleep_bt_node
 )
 
 # motion action tests
@@ -213,7 +227,7 @@ arm::pick_bt_node
 motion::move_to_bt_node
 motion::look_at_bt_node
 motion::configure_navigate_back_bt_node
-motion::pan_bt_node 
+motion::pan_bt_node
 motion::follow_entity_bt_node
 motion::goal_publisher_bt_node
 configuration::deferred_bt_node
@@ -249,7 +263,7 @@ foreach(test ${GPSR_TESTS})
     motion::move_to_bt_node
     motion::look_at_bt_node
     motion::configure_navigate_back_bt_node
-    motion::pan_bt_node 
+    motion::pan_bt_node
     motion::follow_entity_bt_node
     motion::goal_publisher_bt_node
     configuration::deferred_bt_node
@@ -378,6 +392,7 @@ install(TARGETS
   headposition_test
   filter_object_test
   extract_person_description_test
+  music_test
   
   gpsr_test
   gpsr_answerquiz_test

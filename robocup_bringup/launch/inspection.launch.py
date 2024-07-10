@@ -16,14 +16,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.actions import LogInfo, RegisterEventHandler
-from launch.event_handlers import OnExecutionComplete
-import lifecycle_msgs
-# from launch_ros.events.lifecycle
 
 
 def generate_launch_description():
@@ -32,19 +25,20 @@ def generate_launch_description():
 
     config = os.path.join(
         package_dir,
-        'params',
+        'config',
+        'inspection',
         'inspection_params.yaml'
         )
 
-    receptionist = Node(
-        package='bt_test',
-        executable='inspection_test',
+    inspection = Node(
+        package='robocup_bringup',
+        executable='behaviors_main',
         parameters=[config],
         output='screen',
     )
 
     ld = LaunchDescription()
 
-    ld.add_action(receptionist)
+    ld.add_action(inspection)
 
     return ld

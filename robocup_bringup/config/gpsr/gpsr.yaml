@@ -38,8 +38,11 @@ behaviors_main:
         "kitchen",
         "bathroom",
         "entrance",
+        "exit",
+        "kitchen",
+        "office",
         "living_room",
-        "bedroom"
+        "instruction_point"
       ]
     waypoints:
       kitchen: [3.79, 6.77, 0.12]
@@ -69,3 +72,6 @@ behaviors_main:
       - setup_gpsr_bt_node
       - set_start_position_bt_node
       - move_to_bt_node
+      - start_music_bt_node
+      - stop_music_bt_node
+      - is_door_open_bt_node

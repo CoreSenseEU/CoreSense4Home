@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-  blackboard->set("size", "unknown");
+  blackboard->set("size", "big");
   blackboard->set("weight", "unknown");
-  blackboard->set("class", "fruit");
+  blackboard->set("class", "unknown");
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   // auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666,

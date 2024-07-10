@@ -49,7 +49,6 @@ void ClearPeopleLayer::onInitialize()
   person_radius_ = getDouble("person_radius");
 
   RCLCPP_INFO(logger_, "Initialized plugin clear_people_layer");
-
 }
 
 // The method is called to ask the plugin: which area of costmap it needs to update.
@@ -59,10 +58,10 @@ void ClearPeopleLayer::updateBounds(
   double /*robot_x*/, double /*robot_y*/, double /*robot_yaw*/, double * min_x, double * min_y,
   double * max_x, double * max_y)
 {
-  (void) min_x;
-  (void) min_y;
-  (void) max_x;
-  (void) max_y;
+  (void)min_x;
+  (void)min_y;
+  (void)max_x;
+  (void)max_y;
 }
 
 // The method is called when costmap recalculation is required.
@@ -77,9 +76,7 @@ void ClearPeopleLayer::updateCosts(
   // }
 
   try {
-    person_transform_ = tf_->lookupTransform(
-      "map", person_frame_,
-      tf2::TimePointZero);
+    person_transform_ = tf_->lookupTransform("map", person_frame_, tf2::TimePointZero);
   } catch (std::exception & ex) {
     RCLCPP_ERROR(
       logger_, "ClearPeopleLayer::updateCosts error transforming map to %s : %s ",
@@ -102,12 +99,11 @@ void ClearPeopleLayer::removePerson(
   // Getting the person position in the costmap grid
   unsigned int person_x, person_y;
   if (!master_grid.worldToMap(
-      person_transform.transform.translation.x,
-      person_transform.transform.translation.y, person_x, person_y))
+      person_transform.transform.translation.x, person_transform.transform.translation.y,
+      person_x, person_y))
   {
     RCLCPP_ERROR(
-      logger_,
-      "ClearPeopleLayer::removePerson error transforming person to costmap grid");
+      logger_, "ClearPeopleLayer::removePerson error transforming person to costmap grid");
     return;
   }
 
@@ -126,10 +122,7 @@ void ClearPeopleLayer::removePerson(
   }
 }
 
-void ClearPeopleLayer::reset()
-{
-  current_ = false;
-}
+void ClearPeopleLayer::reset() {current_ = false;}
 
 // bool ClearPeopleLayer::isBackground(uint8_t pixel) const
 // {

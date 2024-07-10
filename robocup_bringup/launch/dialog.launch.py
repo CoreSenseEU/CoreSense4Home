@@ -43,18 +43,18 @@ def generate_launch_description():
 
     # Actions
     llama_cmd = create_llama_launch(
-            n_ctx=3050,
+            n_ctx=2048,
             n_batch=256,
-            n_gpu_layers=23,
-            n_threads=1,
+            n_gpu_layers=25,
+            n_threads=4,
             n_predict=-1,
 
             model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
             model_filename="Spaetzle-v60-7b_Q4_0.gguf",
 
+            prefix='\n\n### Instruction:\n',
+            suffix='\n\n### Response:\n',
             stopping_words=["\n\n\n\n"],
-
-            debug=True
     )
 
     whisper_cmd = IncludeLaunchDescription(

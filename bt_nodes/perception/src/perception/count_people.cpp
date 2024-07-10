@@ -73,7 +73,7 @@ BT::NodeStatus CountPeople::tick()
   getInput("confidence", threshold_);
   getInput("cam_frame", cam_frame_);
   getInput("input_num_person", prev_num_person);
-  
+
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_INFO(node_->get_logger(), "CountPeople idle");
   }
@@ -98,7 +98,8 @@ BT::NodeStatus CountPeople::tick()
     if (detection.score > threshold_) {
       // Color filtering
       if (color_ != "none") {
-        auto const detection_id_colors = perception_system::getHSVFromUniqueID(detection.color_person);
+        auto const detection_id_colors = perception_system::getHSVFromUniqueID(
+          detection.color_person);
         std::string lower_color = "lower_" + color_;
         std::string upper_color = "upper_" + color_;
 
@@ -113,12 +114,18 @@ BT::NodeStatus CountPeople::tick()
           hue += 180;
         }
 
-        RCLCPP_INFO(node_->get_logger(), "[CountPeople] Detection %s is %f %f %f", detection.unique_id.c_str(), detection_color[0], detection_color[1], detection_color[2]);
+        RCLCPP_INFO(
+          node_->get_logger(), "[CountPeople] Detection %s is %f %f %f",
+          detection.unique_id.c_str(), detection_color[0], detection_color[1],
+          detection_color[2]);
 
         if (hue >= lower_bound[0] && hue <= upper_bound[0] &&
-            detection_color[1] >= lower_bound[1] && detection_color[1] <= upper_bound[1] &&
-            detection_color[2] >= lower_bound[2] && detection_color[2] <= upper_bound[2]) {
-          RCLCPP_INFO(node_->get_logger(), "[CountPeople] Detection %s is %s", detection.unique_id.c_str(), color_.c_str());
+          detection_color[1] >= lower_bound[1] && detection_color[1] <= upper_bound[1] &&
+          detection_color[2] >= lower_bound[2] && detection_color[2] <= upper_bound[2])
+        {
+          RCLCPP_INFO(
+            node_->get_logger(), "[CountPeople] Detection %s is %s",
+            detection.unique_id.c_str(), color_.c_str());
         } else {
           // RCLCPP_INFO(node_->get_logger(), "[CountPeople] Detection %s is not %s", detection.unique_id.c_str(), color_.c_str());
           it = detections.erase(it);
@@ -152,7 +159,7 @@ BT::NodeStatus CountPeople::tick()
         num_entities++;
         ++it;
       }
-      
+
     } else {
       ++it;
     }
@@ -165,7 +172,7 @@ BT::NodeStatus CountPeople::tick()
   }
 
   setOutput("num_person", prev_num_person + num_entities);
-  
+
   RCLCPP_INFO(node_->get_logger(), "[CountPeople] %d people detected", num_entities);
 
   return BT::NodeStatus::SUCCESS;

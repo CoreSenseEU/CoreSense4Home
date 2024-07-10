@@ -37,13 +37,13 @@ MoveTo::MoveTo(
 {
   config().blackboard->get("node", node_);
 
-  callback_group_ =
-      node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  callback_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   callback_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
 
   set_truncate_distance_client_ =
     node_->create_client<navigation_system_interfaces::srv::SetTruncateDistance>(
-    "navigation_system_node/set_truncate_distance", rmw_qos_profile_services_default, callback_group_);
+    "navigation_system_node/set_truncate_distance", rmw_qos_profile_services_default,
+    callback_group_);
 }
 
 void MoveTo::on_tick()
@@ -80,40 +80,36 @@ void MoveTo::on_tick()
   }
 
   RCLCPP_INFO(
-    //print also the quaternion : 
-    node_->get_logger(), "Sending goal: x: %f, y: %f, qx: %f, qy: %f, qz: %f qw: %f  in frame: %s", goal.pose.position.x,
-    goal.pose.position.y,
-    goal.pose.orientation.x,
-    goal.pose.orientation.y,
-    goal.pose.orientation.z,
-    goal.pose.orientation.w,
-     goal.header.frame_id.c_str());
+    //print also the quaternion :
+    node_->get_logger(), "Sending goal: x: %f, y: %f, qx: %f, qy: %f, qz: %f qw: %f  in frame: %s",
+    goal.pose.position.x, goal.pose.position.y, goal.pose.orientation.x, goal.pose.orientation.y,
+    goal.pose.orientation.z, goal.pose.orientation.w, goal.header.frame_id.c_str());
 
   if (is_truncated_) {
     xml_path_ = generate_xml_file(nav_to_pose_truncated_xml, distance_tolerance_);
 
-  // auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
+    // auto request = std::make_shared<navigation_system_interfaces::srv::SetTruncateDistance::Request>();
 
-  // request->distance = distance_tolerance_;
-  // request->xml_content = nav_to_pose_truncated_xml;
-  // auto future_request = set_truncate_distance_client_->async_send_request(request).share();
-  // if (rclcpp::spin_until_future_complete(node_, future_request) ==
-  // rclcpp::FutureReturnCode::SUCCESS)
-  // {
-  //   RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
-  //   auto result = *future_request.get();
-  //   if (!result.success) {
-  //     RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED calling service");
-  //     setStatus(BT::NodeStatus::FAILURE);
-  //   }
-  //   xml_path_ = result.xml_path;
-  // } else {
-  //   RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED");
-  //   setStatus(BT::NodeStatus::FAILURE);
-  // }
-  goal_.behavior_tree = xml_path_;
+    // request->distance = distance_tolerance_;
+    // request->xml_content = nav_to_pose_truncated_xml;
+    // auto future_request = set_truncate_distance_client_->async_send_request(request).share();
+    // if (rclcpp::spin_until_future_complete(node_, future_request) ==
+    // rclcpp::FutureReturnCode::SUCCESS)
+    // {
+    //   RCLCPP_INFO(node_->get_logger(), "Truncate distance setted");
+    //   auto result = *future_request.get();
+    //   if (!result.success) {
+    //     RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED calling service");
+    //     setStatus(BT::NodeStatus::FAILURE);
+    //   }
+    //   xml_path_ = result.xml_path;
+    // } else {
+    //   RCLCPP_ERROR(node_->get_logger(), "Truncate distance FAILED");
+    //   setStatus(BT::NodeStatus::FAILURE);
+    // }
+    goal_.behavior_tree = xml_path_;
   }
-  
+
   goal_.pose = goal;
 }
 

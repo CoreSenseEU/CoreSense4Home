@@ -27,6 +27,7 @@ find_package(attention_system_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(manipulation_interfaces REQUIRED)
+find_package(action_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -52,6 +53,7 @@ set(dependencies
   trajectory_msgs
   sensor_msgs
   manipulation_interfaces
+  action_msgs
 )
 
 include_directories(include)
@@ -80,6 +82,9 @@ list(APPEND plugin_libs pan_bt_node)
 
 add_library(goal_publisher_bt_node SHARED src/motion/navigation/goal_publisher.cpp)
 list(APPEND plugin_libs goal_publisher_bt_node)
+
+add_library(move_along_axis_bt_node SHARED src/motion/navigation/move_along_axis.cpp)
+list(APPEND plugin_libs move_along_axis_bt_node)
 
 add_library(rotate_bt_node SHARED src/motion/base/Rotate.cpp)
 list(APPEND plugin_libs rotate_bt_node)

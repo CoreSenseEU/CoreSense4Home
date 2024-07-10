@@ -23,14 +23,14 @@
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "perception/bt_service_node.hpp"
 #include "perception_system_interfaces/srv/isolate_pc_background.hpp"
-#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
 {
 
-class ExtractCollisionScene
-  : public perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
+class ExtractCollisionScene : public perception::BtServiceNode<
+    perception_system_interfaces::srv::IsolatePCBackground,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
@@ -44,7 +44,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<moveit_msgs::msg::CollisionObject::SharedPtr>("selected_object")});
+      {BT::InputPort<std::string>("selected_object")});
   }
 };
 

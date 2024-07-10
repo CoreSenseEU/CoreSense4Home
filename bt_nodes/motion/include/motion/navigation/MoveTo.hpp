@@ -15,15 +15,6 @@
 #ifndef NAVIGATION__MOVE_TO_HPP_
 #define NAVIGATION__MOVE_TO_HPP_
 
-#include <string>
-
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "nav2_msgs/action/navigate_to_pose.hpp"
-
-#include "ctrl_support/BTActionNode.hpp"
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -31,10 +22,11 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
+#include "ctrl_support/BTActionNode.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "motion/navigation/utils.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "navigation_system_interfaces/srv/set_truncate_distance.hpp"
-#include "motion/navigation/utils.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
@@ -47,9 +39,8 @@
 namespace navigation
 {
 
-class MoveTo
-  : public motion::BtActionNode<nav2_msgs::action::NavigateToPose,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class MoveTo : public motion::BtActionNode<
+    nav2_msgs::action::NavigateToPose, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit MoveTo(
@@ -65,8 +56,7 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<double>("distance_tolerance"), BT::InputPort<std::string>("tf_frame"),
-        BT::InputPort<bool>("will_finish"),
-        BT::InputPort<bool>("is_truncated")});
+        BT::InputPort<bool>("will_finish"), BT::InputPort<bool>("is_truncated")});
   }
 
 private:

@@ -28,9 +28,9 @@ using namespace std::placeholders;
 ExtractCollisionScene::ExtractCollisionScene(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: perception::BtServiceNode<perception_system_interfaces::srv::IsolatePCBackground,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf)
+: perception::BtServiceNode<
+    perception_system_interfaces::srv::IsolatePCBackground,
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, action_name, conf)
 {
 }
 
@@ -38,10 +38,11 @@ void ExtractCollisionScene::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "ExtractCollisionScene ticked");
 
-  moveit_msgs::msg::CollisionObject::SharedPtr selected_object;
+  // moveit_msgs::msg::CollisionObject::SharedPtr selected_object;
+  std::string selected_object;
   getInput("selected_object", selected_object);
 
-  request_->classes = {selected_object->id.substr(0, selected_object->id.find('_'))};
+  request_->classes = {selected_object};
 }
 
 void ExtractCollisionScene::on_result()

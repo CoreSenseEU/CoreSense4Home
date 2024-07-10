@@ -46,6 +46,7 @@ BT::NodeStatus IsEntityMoving::tick()
   getInput("frame", frame_);
   getInput("check_time", check_time_);
   getInput("distance_tolerance", distance_tolerance_);
+  getInput("robot_distance_to_person", robot_distance_to_person_);
   // RCLCPP_INFO(node_->get_logger(), "IsEntityMoving ticked");
   RCLCPP_DEBUG(node_->get_logger(), "IsEntityMoving ticked");
 
@@ -53,7 +54,7 @@ BT::NodeStatus IsEntityMoving::tick()
     RCLCPP_INFO(node_->get_logger(), "IsEntityMoving waiting!!");
     return BT::NodeStatus::SUCCESS;
   }
-
+  geometry_msgs::msg::TransformStamped robot_distance_to_person_msg;
   geometry_msgs::msg::TransformStamped entity_transform_now_msg;
   geometry_msgs::msg::TransformStamped entity_transform_then_msg;
 
@@ -61,7 +62,11 @@ BT::NodeStatus IsEntityMoving::tick()
 
   try {
     entity_transform_now_msg = tf_buffer_->lookupTransform("map", frame_, tf2::TimePointZero);
+    robot_distance_to_person_msg = tf_buffer_->lookupTransform(
+      "base_footprint", frame_,
+      tf2::TimePointZero);
     entity_transform_then_msg = tf_buffer_->lookupTransform("map", frame_, when, 500ms);
+
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       node_->get_logger(), "Could not transform %s to %s: %s", frame_.c_str(), "map", ex.what());
@@ -74,6 +79,10 @@ BT::NodeStatus IsEntityMoving::tick()
     entity_transform_then_msg.transform.translation.x),
     (entity_transform_now_msg.transform.translation.y -
     entity_transform_then_msg.transform.translation.y));
+  auto robot_distance_to_person = std::hypot(
+    robot_distance_to_person_msg.transform.translation.x,
+    robot_distance_to_person_msg.transform.translation.y);
+
   RCLCPP_INFO(node_->get_logger(), "Distance: %f", distance);
   RCLCPP_INFO(
     node_->get_logger(), "Distance in X %f",
@@ -84,13 +93,13 @@ BT::NodeStatus IsEntityMoving::tick()
     entity_transform_now_msg.transform.translation.y -
     entity_transform_then_msg.transform.translation.y);
 
-  if (distance >= distance_tolerance_) {
-    has_stoped_ = false;
-    return BT::NodeStatus::SUCCESS;
+  if (distance <= distance_tolerance_ && robot_distance_to_person <= robot_distance_to_person_) {
+    has_stoped_ = true;
+    first_time_ = node_->now();
+    return BT::NodeStatus::FAILURE;
   }
-  has_stoped_ = true;
-  first_time_ = node_->now();
-  return BT::NodeStatus::FAILURE;
+  has_stoped_ = false;
+  return BT::NodeStatus::SUCCESS;
 }
 
 }  // namespace perception

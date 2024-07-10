@@ -23,14 +23,10 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "hri/dialog/BTActionNode.hpp"
-
-#include "std_msgs/msg/int8.hpp"
-#include "std_msgs/msg/string.hpp"
-#include "audio_common_msgs/action/tts.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
+#include "std_msgs/msg/int8.hpp"
+#include "std_msgs/msg/string.hpp"
 
 namespace dialog
 {
@@ -38,9 +34,7 @@ namespace dialog
 class Speak : public BT::ActionNodeBase
 {
 public:
-  explicit Speak(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit Speak(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -56,12 +50,12 @@ private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
-
-  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
-  //  tts_action_;
   std::shared_ptr<rclcpp_action::Client<audio_common_msgs::action::TTS>> client_;
   bool is_goal_sent_ = false;
+  // rclcpp::Node::SharedPtr node_;
+  //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
+  //  tts_action_;
+
   // std::string text_;
 };
 

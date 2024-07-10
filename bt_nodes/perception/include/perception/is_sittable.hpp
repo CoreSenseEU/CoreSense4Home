@@ -21,20 +21,19 @@
 #include <tf2_ros/transform_listener.h>
 
 #include <algorithm>
+#include <opencv2/highgui/highgui.hpp>
 #include <string>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/point.hpp"
-#include "geometry_msgs/msg/vector3.hpp"
+#include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
 #include "perception_system/PerceptionListener.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
 
 namespace perception
 {
@@ -49,24 +48,22 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("cam_frame"),
-       BT::OutputPort<std::string>("chair_frame"),
-       });
+      {
+        BT::InputPort<std::string>("cam_frame"),
+        BT::OutputPort<std::string>("chair_frame"),
+      });
   }
 
 private:
-
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::string camera_frame_, chair_frame_;
   std::int64_t person_id_;
   perception_system_interfaces::msg::Detection person_detection_;
   perception_system_interfaces::msg::Detection chair_detection_;
-  
 
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
-
 
   std::vector<std::string> sit_objects_ = {"chair", "couch", "bench", "sofa"};
 
@@ -76,21 +73,21 @@ private:
   float threshold_{0.3};
   float max_distance_{15.5};
 
-  bool 
-  check_object_class(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
+  bool check_object_class(
+    const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 
-  std::tuple<bool, tf2::Transform>
-  check_free_space(const perception_system_interfaces::msg::Detection & person_detection, const perception_system_interfaces::msg::Detection & chair_detection );
+  std::tuple<bool, tf2::Transform> check_free_space(
+    const perception_system_interfaces::msg::Detection & person_detection,
+    const perception_system_interfaces::msg::Detection & chair_detection);
 
-  geometry_msgs::msg::Pose 
-  retrieve_3d_pose(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
-  
-  geometry_msgs::msg::Vector3
-  retrieve_bb(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
+  geometry_msgs::msg::Pose retrieve_3d_pose(
+    const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 
-  perception_system_interfaces::msg::Detection
-  retrieve_detection(const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
+  geometry_msgs::msg::Vector3 retrieve_bb(
+    const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 
+  perception_system_interfaces::msg::Detection retrieve_detection(
+    const std::string & obj, const std::vector<perception_system_interfaces::msg::Detection> & msg);
 };
 
 }  // namespace perception

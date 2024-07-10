@@ -18,21 +18,20 @@
 #include <algorithm>
 #include <string>
 
+#include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "manipulation_interfaces/action/move_joint.hpp"
 #include "moveit_msgs/msg/collision_object.hpp"
-#include "arm/manipulation/BTActionNode.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace manipulation
 {
 
-class MoveJoint : public manipulation::BtActionNode<
-    manipulation_interfaces::action::MoveJoint,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class MoveJoint
+  : public manipulation::BtActionNode<
+    manipulation_interfaces::action::MoveJoint, rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit MoveJoint(
@@ -44,13 +43,12 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({BT::InputPort<std::string>("joint_name"),
-                          BT::InputPort<std::string>("group_name"),
-                          BT::InputPort<float>("joint_value")});
+    return BT::PortsList(
+      {BT::InputPort<std::string>("joint_name"), BT::InputPort<std::string>("group_name"),
+        BT::InputPort<float>("joint_value")});
   }
 
 private:
-
   std::string group_name_{"arm_torso"};
   std::string joint_name_;
   float joint_value_;

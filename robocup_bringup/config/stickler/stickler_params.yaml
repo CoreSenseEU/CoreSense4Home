@@ -1,0 +1,52 @@
+/**:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_rgb_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    waypoints_names: ["forbidden_zone",
+                      "check_forbidden",
+                      "entrance",
+                      "confirmation_entrance",
+                      "kitchen",
+                      "confirmation_kitchen",
+                      "check_1",
+                      "check_2",
+                      "check_3",
+                      "check_4"]
+    # allow_duplicate_names: false
+    waypoints:
+      forbidden_zone: [-1.583, -2.621, -2.612]
+      check_forbidden: [-1.227, -5.819, 2.755]
+      entrance: [1.691, -4.170, 1.074]
+      confirmation_entrance: [1.271, -3.793, -0.124]
+      kitchen: [0.222, -6.635, -1.909]
+      confirmation_kitchen: [-1.174, -5.901, -0.419]
+      check_1: [2.516, -4.603, -2.770]
+      check_2: [-1.726, -6.335, 0.232]
+      check_3: [1.584, -6.727, 2.53]
+      check_4: [1.643, -3.867, -1.913]
+
+
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    bt_xml_file: stickler.xml
+    plugins:
+    - set_wp_bt_node
+    - init_stickler_bt_node
+    - move_to_bt_node
+    - speak_bt_node
+    - is_detected_bt_node
+    - store_detection_bt_node
+    - look_at_bt_node
+    - pan_bt_node
+    - is_sittable_bt_node
+    - point_at_bt_node
+    - move_to_predefined_bt_node
+    - filter_entity_bt_node
+    - check_policy_bt_node
+    - remove_string_suffix_bt_node
+    - switch_yolo_model_bt_node

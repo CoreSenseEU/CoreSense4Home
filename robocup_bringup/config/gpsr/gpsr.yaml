@@ -9,46 +9,34 @@ behaviors_main:
     bt_xml_file: gpsr.xml
     waypoints_names:
       [
-        # "bedroom",
-        # "bed",
-        # "bedside_table",
-        # "dresser",
-        # "kitchen",
-        # "sink",
-        # "fridge",
-        # "dishwasher",
-        # "kitchen_table",
-        # "trash_bin",
-        # "office",
-        # "armchair",
-        # "cabinet",
-        # "desk",
-        # "desk_chair",
-        # "living_room",
-        # "entrance",
-        # "wardrobe",
-        # "sofa",
-        # "tv_sideboard",
-        # "coffee_table",
-        # "bar",
-        # "bookshelf",
-        # "instruction_point",
-        # "corridor",
-        # "exit",
-        "kitchen",
-        "bathroom",
+        "shelf",
+        "kitchen_table",
+        "cabinet",
+        "desk",
+        "armchair",
+        "sofa",
+        "bookshelf",
         "entrance",
+        "exit",
+        "kitchen",
+        "office",
         "living_room",
-        "bedroom",
         "instruction_point"
       ]
     waypoints:
-      kitchen: [3.79, 6.77, 0.12]
-      bathroom: [4.89, 1.64, 1.0]
-      entrance: [1.25, 6.30, 0.67]
-      living_room: [1.55, 0.03, 0.72]
-      bedroom: [7.50, 4.89, 0.65]
-      instruction_point: [1.527, 1.360, 0.06, 0.096]
+      shelf: [1.101, -7.614, -0.404]
+      kitchen_table: [-0.241, -7.820, -2.086]
+      cabinet: [-1.101, -7.614, -0.404]
+      desk: [0.208, -4.235, 0.00]
+      armchair: [-1.100, -2.385, -2.00]
+      sofa: [-4.028, -5.738, 1.067]
+      bookshelf: [1.101, -7.614, -0.404]
+      entrance: [-1.775, -1.398, -1.8]
+      exit: [1.247, -3.918, 1.039]
+      kitchen: [0.227, -6.983, -1.978]
+      office: [1.398, -4.949, 2.5]
+      living_room: [-2.725, -3.593, -2.210]
+      instruction_point: [-2.725, -3.593, -2.210]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node
@@ -62,3 +50,4 @@ behaviors_main:
       - move_to_bt_node
       - start_music_bt_node
       - stop_music_bt_node
+      - is_door_open_bt_node

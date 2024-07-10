@@ -18,23 +18,21 @@
 // #include <string>
 // #include <algorithm>
 
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-
 #include <tf2/transform_datatypes.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include "tf2_ros/transform_broadcaster.h"
-
-#include "sensor_msgs/msg/laser_scan.hpp"
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace perception
 {
@@ -42,23 +40,19 @@ namespace perception
 class IsDoorOpen : public BT::ConditionNode
 {
 public:
-  explicit IsDoorOpen(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  explicit IsDoorOpen(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
   BT::NodeStatus tick();
 
-   static BT::PortsList providedPorts()
+  static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<float>("door_thfloatreshold", "Threshold to consider the door open")
-    });
+    return BT::PortsList(
+      {BT::InputPort<float>("door_thfloatreshold", "Threshold to consider the door open")});
   }
 
   void laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg);
 
 private:
-
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   float door_threshold_;
   bool door_open_;

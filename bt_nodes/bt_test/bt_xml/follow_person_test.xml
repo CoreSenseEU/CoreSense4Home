@@ -3,7 +3,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <RetryUntilSuccessful num_attempts="-1">
-            <Action ID="FollowPerson" person_id="111042323131" camera_link="head_front_camera_link_color_optical_frame" />
+            <Action ID="FollowPerson" person_id="111042323131" camera_link="head_front_camera_rgb_optical_frame" />
         </RetryUntilSuccessful>
     </BehaviorTree>
     <!-- ////////// -->

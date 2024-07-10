@@ -12,20 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <string>
 
-#include "lifecycle_msgs/msg/transition.hpp"
-
 #include "attention_system/AttentionServerNode.hpp"
-#include "perception_system/PeopleDetectionNode.hpp"
+#include "lifecycle_msgs/msg/transition.hpp"
 #include "perception_system/ObjectsDetectionNode.hpp"
-
+#include "perception_system/PeopleDetectionNode.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-
-
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 int main(int argc, char ** argv)
 {
@@ -43,8 +38,7 @@ int main(int argc, char ** argv)
   std::list<std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode>> sched_nodes = {
     std::make_shared<attention_system::AttentionServerNode>(node_options),
     std::make_shared<perception_system::PeopleDetectionNode>(node_options),
-    std::make_shared<perception_system::ObjectsDetectionNode>(node_options)
-  };
+    std::make_shared<perception_system::ObjectsDetectionNode>(node_options)};
 
   // Adding systems nodes to the appropiate executor
   for (auto & sched_node : sched_nodes) {

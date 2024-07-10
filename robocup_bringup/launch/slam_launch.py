@@ -41,7 +41,9 @@ def generate_launch_description():
     # Getting directories and launch-files
     bringup_dir = get_package_share_directory('nav2_bringup')
     slam_toolbox_dir = get_package_share_directory('slam_toolbox')
-    slam_launch_file = os.path.join(slam_toolbox_dir, 'launch', 'localization_launch.py')
+    slam_launch_file = os.path.join(slam_toolbox_dir,
+                                    'launch',
+                                    'localization_launch.py')
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -64,7 +66,7 @@ def generate_launch_description():
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
-        description='Full path to the ROS2 parameters file to use for all launched nodes')
+        description='Full path to the ROS2 parameters file')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',

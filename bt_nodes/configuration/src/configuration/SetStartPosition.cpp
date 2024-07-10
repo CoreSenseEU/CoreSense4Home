@@ -17,7 +17,9 @@
 namespace configuration
 {
 
-SetStartPosition::SetStartPosition(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+SetStartPosition::SetStartPosition(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -25,26 +27,44 @@ SetStartPosition::SetStartPosition(const std::string & xml_tag_name, const BT::N
 
 BT::NodeStatus SetStartPosition::tick()
 {
-  auto buffer = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
-  auto static_broadcaster = config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>("tf_static_broadcaster");
+  RCLCPP_DEBUG(node_->get_logger(), "SetStartPosition ticked");
 
-  geometry_msgs::msg::TransformStamped t;
+  if (status() == BT::NodeStatus::IDLE) {
+    RCLCPP_DEBUG(node_->get_logger(), "SetStartPosition idle");
+    buffer_ = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
+    static_broadcaster_ =
+      config().blackboard->get<std::shared_ptr<tf2_ros::StaticTransformBroadcaster>>(
+      "tf_static_broadcaster");
+    getInput<std::string>("reference_frame", reference_frame_);
+    getInput("x_offset", x_offset_);
+    getInput("y_offset", y_offset_);
+  }
 
-  t = buffer->lookupTransform("map", "base_footprint", tf2::TimePointZero);
+
+  geometry_msgs::msg::TransformStamped transformStamped;
+
+  try {
+    transformStamped = buffer_->lookupTransform(
+      reference_frame_, "base_footprint",
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & e) {
+    RCLCPP_ERROR(node_->get_logger(), "Transform error: %s", e.what());
+    return BT::NodeStatus::FAILURE;
+  }
 
   std::string frame_name;
   getInput<std::string>("frame_name", frame_name);
+  transformStamped.header.frame_id = "map";
+  transformStamped.child_frame_id = frame_name;
+  transformStamped.transform.translation.x += x_offset_;
+  transformStamped.transform.translation.y += y_offset_;
+  transformStamped.transform.rotation = transformStamped.transform.rotation;
 
-    geometry_msgs::msg::TransformStamped transformStamped;
-    transformStamped.header.frame_id = "map";
-    transformStamped.child_frame_id = frame_name;
-    transformStamped.transform.translation.x = t.transform.translation.x;
-    transformStamped.transform.translation.y = t.transform.translation.y;
-    transformStamped.transform.rotation = t.transform.rotation;
+  static_broadcaster_->sendTransform(transformStamped);
 
-    static_broadcaster->sendTransform(transformStamped);
+  setOutput("initial_pose", frame_name);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
-  RCLCPP_INFO(node_->get_logger(), "SetStartPosition ticked");
 
   return BT::NodeStatus::SUCCESS;
 }

@@ -15,17 +15,14 @@
 #include "hri/dialog/Query.hpp"
 
 #include <iostream>
-#include <sstream>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
 
+#include "behaviortree_cpp_v3/behavior_tree.h"
 #include "hri/dialog/Query.hpp"
 #include "llama_msgs/action/generate_response.hpp"
 #include "std_msgs/msg/int8.hpp"
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "llama_msgs/action/generate_response.hpp"
 
 namespace dialog
 {
@@ -35,75 +32,29 @@ using namespace std::placeholders;
 using json = nlohmann::json;
 
 Query::Query(
-  const std::string & xml_tag_name,
+  const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: BT::ActionNodeBase(
-    xml_tag_name, conf)
+: dialog::BtActionNode<
+    llama_msgs::action::GenerateResponse, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
+    xml_tag_name, action_name, conf)
 {
-  config().blackboard->get("node", node_);
   publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
-  publisher_start_->on_activate();
-
-  client_ = rclcpp_action::create_client<llama_msgs::action::GenerateResponse>(
-    node_, "/llama/generate_response");
 }
 
-void Query::halt()
-{
-  RCLCPP_INFO(node_->get_logger(), "Query halted");
-}
-
-BT::NodeStatus Query::tick()
+void Query::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "Query ticked");
-  
-
-  auto msg_dialog_action = std_msgs::msg::Int8();
-
-  msg_dialog_action.data = 2;
-
-  publisher_start_->publish(msg_dialog_action);
-
-  if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
-    return on_idle();
-  }
-
-  if (text_.empty() || text_ == "{}" ) {
-    return BT::NodeStatus::FAILURE;
-  }
-
-  json response = json::parse(text_);
-  std::string value_ = response["intention"];
-  
-
-  if (value_.size() == 0 || isInvalid(value_)) {
-    RCLCPP_ERROR(node_->get_logger(), "Not recognized intention");
-    return BT::NodeStatus::FAILURE;
-  }
-  
-  setOutput("intention_value", value_);
-
-  return BT::NodeStatus::SUCCESS;
-
-}
-
-BT::NodeStatus Query::on_idle()
-{
-
-  auto goal = llama_msgs::action::GenerateResponse::Goal();
-
-  std::string text;
-  getInput("text", text);
+  std::string text_;
+  getInput("text", text_);
   getInput("intention", intention_);
-
-  std::string prompt_ = "Given the sentence \"" + text + "\", extract the " + intention_ +
+  std::string prompt_ = "Given the sentence \"" + text_ + "\", extract the " + intention_ +
     " from the sentence and return "
     "it with the following JSON format:\n" +
     "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
-  goal.prompt = prompt_;
-  goal.reset = true;
-  goal.sampling_config.temp = 0.0;
-  goal.sampling_config.grammar =
+  goal_.prompt = prompt_;
+  goal_.reset = true;
+  goal_.sampling_config.temp = 0.0;
+  goal_.sampling_config.grammar =
     R"(root   ::= object
 value  ::= object | array | string | number | ("true" | "false" | "null") ws
 
@@ -130,62 +81,41 @@ number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
 # Optional space: by convention, applied in this grammar after literal chars when allowed
 ws ::= ([ \t\n] ws)?)";
 
-  RCLCPP_INFO(node_->get_logger(), "Sending goal");
+  auto msg_dialog_action = std_msgs::msg::Int8();
 
-  auto future_goal_handle = client_->async_send_goal(goal);
-  if (rclcpp::spin_until_future_complete(
-      node_->get_node_base_interface(),
-      future_goal_handle) !=
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
+  msg_dialog_action.data = 2;
 
-    RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
-    is_goal_sent_ = false;
-    return BT::NodeStatus::RUNNING;
-  }
-
-  auto goal_handle = future_goal_handle.get();
-  if (!goal_handle) {
-    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected by server");
-    return BT::NodeStatus::RUNNING;
-  }
-
-  // Wait for the server to be done with the goal
-  auto result_future = client_->async_get_result(goal_handle);
-
-  RCLCPP_INFO(node_->get_logger(), "Waiting for result");
-  if (rclcpp::spin_until_future_complete(node_->get_node_base_interface(), result_future) !=
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
-    RCLCPP_ERROR(node_->get_logger(), "get result call failed :(");
-    return BT::NodeStatus::RUNNING;
-  }
-
-  auto wrapped_result = result_future.get();
-
-  if(wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED)
-  {
-    RCLCPP_ERROR(node_->get_logger(), "Goal was rejected");
-    return BT::NodeStatus::RUNNING;
-  }
-
-  is_goal_sent_ = true;
-  text_ = wrapped_result.result->response.text; 
-
-  return BT::NodeStatus::RUNNING;
+  publisher_start_->publish(msg_dialog_action);
 }
 
-bool Query::isInvalid(std::string str) {
-  bool invalid = false;
-  if (str.find("sentence") != std::string::npos) {
-    invalid = true;
+BT::NodeStatus Query::on_success()
+{
+  fprintf(stderr, "%s\n", result_.result->response.text.c_str());
+
+  if (result_.result->response.text.empty() || result_.result->response.text == "{}") {
+    return BT::NodeStatus::FAILURE;
   }
-  return invalid;
+
+  json response = json::parse(result_.result->response.text);
+  std::string value_ = response["intention"];
+  fprintf(stderr, "%s\n", value_.c_str());
+
+  if (value_.empty()) {
+    return BT::NodeStatus::FAILURE;
+  }
+
+  setOutput("intention_value", value_);
+
+  return BT::NodeStatus::SUCCESS;
 }
 
 }  // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) {
+BT_REGISTER_NODES(factory)
+{
+  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
+      return std::make_unique<dialog::Query>(name, "/llama/generate_response", config);
+    };
 
-  factory.registerNodeType<dialog::Query>("Query");
+  factory.registerBuilder<dialog::Query>("Query", builder);
 }

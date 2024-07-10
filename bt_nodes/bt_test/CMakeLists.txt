@@ -142,7 +142,12 @@ target_link_libraries(follow_person_test perception::follow_person_bt_node)
 # find_person test
 add_executable(find_person_test src/find_person_test.cpp)
 ament_target_dependencies(find_person_test ${dependencies})
-target_link_libraries(find_person_test perception::convert_color_bt_node perception::is_detected_bt_node motion::pan_bt_node motion::move_to_bt_node perception::is_gesturing_bt_node)
+target_link_libraries(find_person_test
+                      perception::convert_color_bt_node
+                      perception::is_detected_bt_node
+                      motion::pan_bt_node
+                      motion::move_to_bt_node
+                      perception::is_gesturing_bt_node)
 
 # count person test
 add_executable(count_people_test src/count_people_test.cpp)
@@ -222,7 +227,7 @@ arm::pick_bt_node
 motion::move_to_bt_node
 motion::look_at_bt_node
 motion::configure_navigate_back_bt_node
-motion::pan_bt_node 
+motion::pan_bt_node
 motion::follow_entity_bt_node
 motion::goal_publisher_bt_node
 configuration::deferred_bt_node
@@ -258,7 +263,7 @@ foreach(test ${GPSR_TESTS})
     motion::move_to_bt_node
     motion::look_at_bt_node
     motion::configure_navigate_back_bt_node
-    motion::pan_bt_node 
+    motion::pan_bt_node
     motion::follow_entity_bt_node
     motion::goal_publisher_bt_node
     configuration::deferred_bt_node

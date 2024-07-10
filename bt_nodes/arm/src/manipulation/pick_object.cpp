@@ -32,7 +32,9 @@ PickObject::PickObject(
   const BT::NodeConfiguration & conf)
 : manipulation::BtActionNode<
     manipulation_interfaces::action::Pick, rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf) {}
+    xml_tag_name, action_name, conf)
+{
+}
 
 void PickObject::on_tick()
 {
@@ -42,7 +44,15 @@ void PickObject::on_tick()
   goal_.object_goal = *object_;
 }
 
-BT::NodeStatus PickObject::on_success() {return BT::NodeStatus::SUCCESS;}
+BT::NodeStatus PickObject::on_success()
+{
+  if (result_.result->success) {
+    return BT::NodeStatus::SUCCESS;
+  } else {
+    RCLCPP_ERROR(node_->get_logger(), "PickObject failed");
+    return BT::NodeStatus::FAILURE;
+  }
+}
 
 }  // namespace manipulation
 #include "behaviortree_cpp_v3/bt_factory.h"

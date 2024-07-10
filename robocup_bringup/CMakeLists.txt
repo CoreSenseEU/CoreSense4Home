@@ -15,6 +15,7 @@ find_package(motion REQUIRED)
 find_package(perception REQUIRED)
 find_package(attention_system REQUIRED)
 find_package(perception_system REQUIRED)
+find_package(nav2_behavior_tree REQUIRED)
 find_package(backward_ros REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -30,6 +31,7 @@ set(dependencies
   perception
   attention_system
   perception_system
+  nav2_behavior_tree
   backward_ros
 )
 
@@ -41,7 +43,7 @@ ament_target_dependencies(behaviors_main ${dependencies})
 add_executable(real_time_main src/real_time_main.cpp)
 ament_target_dependencies(real_time_main ${dependencies})
 
-install(DIRECTORY bt_xml launch config maps 
+install(DIRECTORY bt_xml launch config maps
   DESTINATION share/${PROJECT_NAME}
 )
 

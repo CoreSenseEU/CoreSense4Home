@@ -57,6 +57,7 @@ public:
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("color"),
         BT::InputPort<std::string>("pose"),
+        BT::InputPort<std::string>("gesture"),
         BT::InputPort<int>("input_num_person"),
 
         BT::OutputPort<std::vector<std::string>>("frames"),
@@ -74,11 +75,13 @@ private:
   int max_entities_;
   std::vector<std::string> frames_;
   std::string color_;
+  std::string gesture_;
 
   std::map<std::string, cv::Scalar> colors_;
   std::map<std::string, std::vector<int>> gestures_;
+  std::map<int, std::string> pose_names_;
 
-  std::string none_value_ = "none";
+  std::string none_value_ = "unknown";
 };
 
 }  // namespace perception

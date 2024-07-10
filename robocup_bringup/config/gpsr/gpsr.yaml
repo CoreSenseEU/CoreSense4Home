@@ -39,7 +39,8 @@ behaviors_main:
         "bathroom",
         "entrance",
         "living_room",
-        "bedroom"
+        "bedroom",
+        "instruction_point"
       ]
     waypoints:
       kitchen: [3.79, 6.77, 0.12]
@@ -47,6 +48,7 @@ behaviors_main:
       entrance: [1.25, 6.30, 0.67]
       living_room: [1.55, 0.03, 0.72]
       bedroom: [7.50, 4.89, 0.65]
+      instruction_point: [1.527, 1.360, 0.06, 0.096]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node
@@ -58,3 +60,5 @@ behaviors_main:
       - setup_gpsr_bt_node
       - set_start_position_bt_node
       - move_to_bt_node
+      - start_music_bt_node
+      - stop_music_bt_node

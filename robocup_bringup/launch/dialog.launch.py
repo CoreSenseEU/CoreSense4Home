@@ -45,7 +45,7 @@ def generate_launch_description():
     llama_cmd = create_llama_launch(
             n_ctx=2048,
             n_batch=256,
-            n_gpu_layers=25,
+            n_gpu_layers=23,
             n_threads=4,
             n_predict=-1,
 

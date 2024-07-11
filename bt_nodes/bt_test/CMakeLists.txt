@@ -302,6 +302,12 @@ target_link_libraries(follow_entity_test
   # hri::speak_bt_node
   # hri::dialogConfirmation_bt_node
 )
+
+# SetBlackboardInt test
+add_executable(set_blackboard_test src/set_blackboard_test.cpp)
+ament_target_dependencies(set_blackboard_test ${dependencies})
+target_link_libraries(set_blackboard_test configuration::set_blackboard_int_bt_node)
+
 # FilterEntity test
 add_executable(filter_entity_test src/filter_entity_test.cpp)
 ament_target_dependencies(filter_entity_test ${dependencies})
@@ -393,6 +399,7 @@ install(TARGETS
   filter_object_test
   extract_person_description_test
   music_test
+  set_blackboard_test
   
   gpsr_test
   gpsr_answerquiz_test

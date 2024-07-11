@@ -70,6 +70,8 @@ BT::NodeStatus SetupGPSR::tick() {
   plugins.push_back("filter_prev_detections_bt_node");
   plugins.push_back("extract_person_description_bt_node");
   plugins.push_back("sleep_bt_node");
+  plugins.push_back("count_people_bt_node");
+  plugins.push_back("set_blackboard_int_bt_node");
 
   setOutput("plugins", plugins);
 

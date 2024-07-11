@@ -47,7 +47,7 @@ set(dependencies
   perception_system_interfaces
   sensor_msgs
   std_srvs
-  vqa_interfaces
+  # vqa_interfaces
   # backward_ros
 )
 

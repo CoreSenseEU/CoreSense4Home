@@ -33,7 +33,7 @@ StopMusic::StopMusic(
 
 void StopMusic::on_tick()
 {
-    RCLCPP_DEBUG(node_->get_logger(), "StopMusic ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "StopMusic ticked");
 }
 
 void StopMusic::on_result()
@@ -41,7 +41,7 @@ void StopMusic::on_result()
   if (result_.success) {
     std::cout << "Success StopMusic" << std::endl;
     setStatus(BT::NodeStatus::SUCCESS);
-    
+
   } else {
     std::cout << "Failure StopMusic" << std::endl;
     // setOutput("listen_text", result_.result->text);

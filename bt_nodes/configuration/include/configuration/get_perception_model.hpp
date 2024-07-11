@@ -31,7 +31,7 @@ namespace configuration
 
 class GetPerceptionModel
   : public configuration::BtServiceNode<rcl_interfaces::srv::GetParameters,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit GetPerceptionModel(

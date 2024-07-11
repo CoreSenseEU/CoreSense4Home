@@ -27,22 +27,24 @@ SetTorsoHeight::SetTorsoHeight(
 : motion::BtActionNode<
     manipulation_interfaces::action::MoveJoint,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf) {
-      config().blackboard->get("node", node_);
-    }
+    xml_tag_name, action_name, conf)
+{
+  config().blackboard->get("node", node_);
+}
 
 void SetTorsoHeight::on_tick()
 {
   RCLCPP_INFO(node_->get_logger(), "SetTorsoHeight ticked");
 
-    getInput("height", height_);
+  getInput("height", height_);
 
   goal_.group_name = "arm_torso";
   goal_.joint_name = "torso_lift_joint";
   goal_.joint_value = height_;
 }
 
-BT::NodeStatus SetTorsoHeight::on_success() {
+BT::NodeStatus SetTorsoHeight::on_success()
+{
   RCLCPP_INFO(node_->get_logger(), "SetTorsoHeight success");
 
   return BT::NodeStatus::SUCCESS;

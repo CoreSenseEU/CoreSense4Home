@@ -23,14 +23,15 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
 
   rclcpp::NodeOptions options;
   // options.automatically_declare_parameters_from_overrides(true);
 
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      "extract_person_description_test", options);
+    "extract_person_description_test", options);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
@@ -38,11 +39,11 @@ int main(int argc, char *argv[]) {
   factory.registerFromPlugin(loader.getOSName("is_detected_bt_node"));
   factory.registerFromPlugin(loader.getOSName("speak_bt_node"));
   factory.registerFromPlugin(
-      loader.getOSName("extract_person_description_bt_node"));
+    loader.getOSName("extract_person_description_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file =
-      pkgpath + "/bt_xml/extract_person_description_test.xml";
+    pkgpath + "/bt_xml/extract_person_description_test.xml";
 
   auto blackboard = BT::Blackboard::create();
 
@@ -56,9 +57,9 @@ int main(int argc, char *argv[]) {
   blackboard->set("publisher_zmq", publisher_zmq);
 
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+    lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+    lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   rclcpp::Rate rate(30);
 

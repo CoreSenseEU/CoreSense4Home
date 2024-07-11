@@ -33,22 +33,27 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
-namespace perception {
+namespace perception
+{
 
 using pl = perception_system::PerceptionListener;
 
-class ExtractPersonDescription : public BT::ActionNodeBase {
+class ExtractPersonDescription : public BT::ActionNodeBase
+{
 public:
-  explicit ExtractPersonDescription(const std::string &xml_tag_name,
-                                    const BT::NodeConfiguration &conf);
+  explicit ExtractPersonDescription(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({BT::InputPort<std::string>("person_id"),
-                          BT::InputPort<std::string>("interest"),
-                          BT::OutputPort<std::string>("description")});
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {BT::InputPort<std::string>("person_id"),
+        BT::InputPort<std::string>("interest"),
+        BT::OutputPort<std::string>("description")});
   }
 
 private:

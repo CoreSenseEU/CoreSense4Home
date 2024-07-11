@@ -27,7 +27,7 @@ BT::NodeStatus Sleep::tick()
 {
   RCLCPP_INFO(node_->get_logger(), "[Sleep] ticked");
 
-    getInput("time", time_);
+  getInput("time", time_);
 
   if (status() == BT::NodeStatus::IDLE) {
     start_time_ = std::chrono::high_resolution_clock::now();
@@ -35,7 +35,8 @@ BT::NodeStatus Sleep::tick()
   }
 
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time_).count();
+  auto elapsed_time =
+    std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time_).count();
   if (elapsed_time < time_) {
     return BT::NodeStatus::RUNNING;
   } else {

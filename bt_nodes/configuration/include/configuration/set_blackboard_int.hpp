@@ -21,8 +21,8 @@ namespace configuration
 class SetBlackboardInt : public BT::SyncActionNode
 {
 public:
-  SetBlackboardInt(const std::string& name, const BT::NodeConfiguration& config) :
-    SyncActionNode(name, config)
+  SetBlackboardInt(const std::string & name, const BT::NodeConfiguration & config)
+  : SyncActionNode(name, config)
   {
     setRegistrationID("SetBlackboard");
   }
@@ -30,7 +30,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return {BT::InputPort("value", "Value to be written int othe output_key"),
-            BT::InputPort("output_key", "Key where the value will be written")};
+      BT::InputPort("output_key", "Key where the value will be written")};
   }
 
 private:
@@ -41,7 +41,7 @@ private:
 
     int value;
     getInput("value", value);
-    
+
     config().blackboard->set(output_key, value);
 
     return BT::NodeStatus::SUCCESS;

@@ -45,8 +45,8 @@ public:
   }
 
 private:
-    std::string port_;
-    std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::string port_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 };
 
 }   // namespace configuration

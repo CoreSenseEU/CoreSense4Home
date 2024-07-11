@@ -30,7 +30,7 @@ namespace hri
 
 class StartMusic
   : public hri::BtServiceNode<audio_common_msgs::srv::MusicPlay,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit StartMusic(
@@ -42,10 +42,11 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<std::string>("audio", "elevator", "audio to play"),
-      BT::InputPort<bool>("loop", false, "loop the audio"),
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<std::string>("audio", "elevator", "audio to play"),
+        BT::InputPort<bool>("loop", false, "loop the audio"),
+      });
   }
 
 private:

@@ -33,21 +33,21 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
   max_depth_(std::numeric_limits<double>::max()),
   max_entities_(1),
   colors_({
-     {"lower_blue", cv::Scalar(90,50,50)}, {"upper_blue", cv::Scalar(125,255,255)},
-    {"lower_yellow", cv::Scalar(25,150,200)}, {"upper_yellow", cv::Scalar(30,255,255)},
-    {"lower_black", cv::Scalar(0,0,0)}, {"upper_black", cv::Scalar(255,255,50)},
-    {"lower_white", cv::Scalar(0,0,200)}, {"upper_white", cv::Scalar(255,30,255)},
-    {"lower_red", cv::Scalar(170,150,180)}, {"upper_red", cv::Scalar(205,255,255)},
-    {"lower_orange", cv::Scalar(10,120,120)}, {"upper_orange", cv::Scalar(20,255,255)},
-    {"lower_gray", cv::Scalar(0,0,100)}, {"upper_gray", cv::Scalar(180,30,200)}}),
+    {"lower_blue", cv::Scalar(90, 50, 50)}, {"upper_blue", cv::Scalar(125, 255, 255)},
+    {"lower_yellow", cv::Scalar(25, 150, 200)}, {"upper_yellow", cv::Scalar(30, 255, 255)},
+    {"lower_black", cv::Scalar(0, 0, 0)}, {"upper_black", cv::Scalar(255, 255, 50)},
+    {"lower_white", cv::Scalar(0, 0, 200)}, {"upper_white", cv::Scalar(255, 30, 255)},
+    {"lower_red", cv::Scalar(170, 150, 180)}, {"upper_red", cv::Scalar(205, 255, 255)},
+    {"lower_orange", cv::Scalar(10, 120, 120)}, {"upper_orange", cv::Scalar(20, 255, 255)},
+    {"lower_gray", cv::Scalar(0, 0, 100)}, {"upper_gray", cv::Scalar(180, 30, 200)}}),
   gestures_({
-      {"pointing_right", {0, 1}},
-      {"pointing_left", {3, 4}},
+    {"pointing_right", {0, 1}},
+    {"pointing_left", {3, 4}},
 
-      {"waving", {5, 6, 7}},
-      {"rising_left", {6}},
-      {"rising_left", {6}},
-    }),
+    {"waving", {5, 6, 7}},
+    {"rising_left", {6}},
+    {"rising_left", {6}},
+  }),
   pose_names_({
     {0, "lying"},
     {1, "sitting"},
@@ -124,7 +124,8 @@ BT::NodeStatus IsDetected::tick()
     if (detection.score > threshold_ && detection.center3d.position.z < max_depth_) {
       // Color filtering
       if (color_ != "unknown") {
-        auto const detection_id_colors = perception_system::getHSVFromUniqueID(detection.color_person);
+        auto const detection_id_colors = perception_system::getHSVFromUniqueID(
+          detection.color_person);
         std::string lower_color = "lower_" + color_;
         std::string upper_color = "upper_" + color_;
 
@@ -139,14 +140,22 @@ BT::NodeStatus IsDetected::tick()
           hue += 180;
         }
 
-        RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detection %s is %f %f %f", detection.unique_id.c_str(), detection_color[0], detection_color[1], detection_color[2]);
+        RCLCPP_INFO(
+          node_->get_logger(), "[IsDetected] Detection %s is %f %f %f",
+          detection.unique_id.c_str(), detection_color[0], detection_color[1],
+          detection_color[2]);
 
         if (hue >= lower_bound[0] && hue <= upper_bound[0] &&
-            detection_color[1] >= lower_bound[1] && detection_color[1] <= upper_bound[1] &&
-            detection_color[2] >= lower_bound[2] && detection_color[2] <= upper_bound[2]) {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is %s", detection.unique_id.c_str(), color_.c_str());
+          detection_color[1] >= lower_bound[1] && detection_color[1] <= upper_bound[1] &&
+          detection_color[2] >= lower_bound[2] && detection_color[2] <= upper_bound[2])
+        {
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
+            detection.unique_id.c_str(), color_.c_str());
         } else {
-          RCLCPP_DEBUG(node_->get_logger(), "[CountPeople] Detection %s is not %s", detection.unique_id.c_str(), color_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[CountPeople] Detection %s is not %s",
+            detection.unique_id.c_str(), color_.c_str());
           it = detections.erase(it);
           removed = true;
         }
@@ -154,10 +163,17 @@ BT::NodeStatus IsDetected::tick()
 
       // gesture filtering
       if (gesture_ != "unknown" && !removed) {
-        if (std::find(gestures_[gesture_].begin(), gestures_[gesture_].end(), detection.pointing_direction) != gestures_[gesture_].end()) {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is %s", detection.unique_id.c_str(), gesture_.c_str());
+        if (std::find(
+            gestures_[gesture_].begin(), gestures_[gesture_].end(),
+            detection.pointing_direction) != gestures_[gesture_].end())
+        {
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
+            detection.unique_id.c_str(), gesture_.c_str());
         } else {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is not %s", detection.unique_id.c_str(), gesture_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
+            detection.unique_id.c_str(), gesture_.c_str());
           it = detections.erase(it);
           removed = true;
         }
@@ -166,9 +182,13 @@ BT::NodeStatus IsDetected::tick()
       // pose filtering
       if (pose_ != "unknown" && !removed) {
         if (pose_names_[detection.body_pose] == pose_) {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is %s", detection.unique_id.c_str(), pose_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
+            detection.unique_id.c_str(), pose_.c_str());
         } else {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is not %s", detection.unique_id.c_str(), pose_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
+            detection.unique_id.c_str(), pose_.c_str());
           it = detections.erase(it);
           removed = true;
         }
@@ -186,7 +206,7 @@ BT::NodeStatus IsDetected::tick()
         entity_counter++;
         ++it;
       }
-      
+
     } else {
       ++it;
     }
@@ -211,9 +231,9 @@ BT::NodeStatus IsDetected::tick()
 
   setOutput("frames", frames_);
   // frames_.clear();
-  // print pointing_direction 
+  // print pointing_direction
   // RCLCPP_INFO(node_->get_logger(), "Pointing direction: %d", detections[0].pointing_direction);
-  
+
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections published");
   return BT::NodeStatus::SUCCESS;
 }

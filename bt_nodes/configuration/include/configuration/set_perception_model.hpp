@@ -31,7 +31,7 @@ namespace configuration
 
 class SetPerceptionModel
   : public configuration::BtServiceNode<yolov8_msgs::srv::ChangeModel,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit SetPerceptionModel(
@@ -43,11 +43,12 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<std::string>("model_name", "yolov8m.pt", "model name"),
-      BT::InputPort<std::string>("model_path", ".", "model path"),
-      BT::InputPort<std::string>("model_type", "", "model type")
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<std::string>("model_name", "yolov8m.pt", "model name"),
+        BT::InputPort<std::string>("model_path", ".", "model path"),
+        BT::InputPort<std::string>("model_type", "", "model type")
+      });
   }
 
 private:

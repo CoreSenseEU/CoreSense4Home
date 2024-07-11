@@ -23,8 +23,8 @@ PublishTF::PublishTF(
   const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
-    config().blackboard->get("node", node_);
-    config().blackboard->get("tf_broadcaster", tf_broadcaster_);
+  config().blackboard->get("node", node_);
+  config().blackboard->get("tf_broadcaster", tf_broadcaster_);
 }
 
 void
@@ -35,14 +35,14 @@ PublishTF::halt()
 BT::NodeStatus
 PublishTF::tick()
 {
-    RCLCPP_INFO(node_->get_logger(), "PublishTF ticked");
-    getInput<geometry_msgs::msg::TransformStamped>("transform", transform_);
+  RCLCPP_INFO(node_->get_logger(), "PublishTF ticked");
+  getInput<geometry_msgs::msg::TransformStamped>("transform", transform_);
 
-    transform_.header.stamp = node_->now();
-    tf_broadcaster_->sendTransform(transform_);
-  
-    setOutput("frame_id", transform_.child_frame_id);
-    return BT::NodeStatus::SUCCESS;
+  transform_.header.stamp = node_->now();
+  tf_broadcaster_->sendTransform(transform_);
+
+  setOutput("frame_id", transform_.child_frame_id);
+  return BT::NodeStatus::SUCCESS;
 }
 
 }  // namespace deferred_bt

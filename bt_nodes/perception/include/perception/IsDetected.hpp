@@ -54,7 +54,7 @@ public:
         BT::InputPort<std::string>("cam_frame"), BT::InputPort<std::string>("interest"),
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("order"), // todo: enum map or string?
-        BT::InputPort<double>("max_depth"), 
+        BT::InputPort<double>("max_depth"),
         BT::InputPort<std::string>("color", "unknown", "color"),
         BT::InputPort<std::string>("gesture", "unknown", "gesture"),
         BT::InputPort<std::string>("pose", "unknown", "pose"),

@@ -28,26 +28,29 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "llama_msgs/action/generate_response.hpp"
 
-namespace dialog {
+namespace dialog
+{
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 using json = nlohmann::json;
 
-Query::Query(const std::string &xml_tag_name, const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {
+Query::Query(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
+{
   config().blackboard->get("node", node_);
   publisher_start_ =
-      node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+    node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
   publisher_start_->on_activate();
 
   client_ = rclcpp_action::create_client<llama_msgs::action::GenerateResponse>(
-      node_, "/llama/generate_response");
+    node_, "/llama/generate_response");
 }
 
-void Query::halt() { RCLCPP_INFO(node_->get_logger(), "Query halted"); }
+void Query::halt() {RCLCPP_INFO(node_->get_logger(), "Query halted");}
 
-BT::NodeStatus Query::tick() {
+BT::NodeStatus Query::tick()
+{
   RCLCPP_DEBUG(node_->get_logger(), "Query ticked");
 
   auto msg_dialog_action = std_msgs::msg::Int8();
@@ -77,7 +80,8 @@ BT::NodeStatus Query::tick() {
   return BT::NodeStatus::SUCCESS;
 }
 
-BT::NodeStatus Query::on_idle() {
+BT::NodeStatus Query::on_idle()
+{
 
   auto goal = llama_msgs::action::GenerateResponse::Goal();
 
@@ -86,17 +90,17 @@ BT::NodeStatus Query::on_idle() {
   getInput("intention", intention_);
 
   std::string prompt_ =
-      "Given the sentence \"" + text + "\", extract the " + intention_ +
-      " from the sentence and return "
-      "it with the following JSON format:\n" +
-      "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
+    "Given the sentence \"" + text + "\", extract the " + intention_ +
+    " from the sentence and return "
+    "it with the following JSON format:\n" +
+    "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
 
   std::string prompt_robot_context =
-      "You are a robot named Tiago who is participating in the Robocup with "
-      "the Gentlebots team from Spain, made up of the Rey Juan Carlos "
-      "University of Madrid and the University of León. "
-      "You have to answer the following question: " +
-      text "\n\n";
+    "You are a robot named Tiago who is participating in the Robocup with "
+    "the Gentlebots team from Spain, made up of the Rey Juan Carlos "
+    "University of Madrid and the University of León. "
+    "You have to answer the following question: " +
+    text "\n\n";
 
   if (intention_.size() == 0) {
     goal.prompt = prompt_robot_context;
@@ -108,7 +112,7 @@ BT::NodeStatus Query::on_idle() {
     goal.reset = true;
     goal.sampling_config.temp = 0.0;
     goal.sampling_config.grammar =
-        R"(root   ::= object
+      R"(root   ::= object
     value  ::= object | array | string | number | ("true" | "false" | "null") ws
 
     object ::=
@@ -137,9 +141,11 @@ BT::NodeStatus Query::on_idle() {
   RCLCPP_INFO(node_->get_logger(), "Sending goal");
 
   auto future_goal_handle = client_->async_send_goal(goal);
-  if (rclcpp::spin_until_future_complete(node_->get_node_base_interface(),
-                                         future_goal_handle) !=
-      rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(
+      node_->get_node_base_interface(),
+      future_goal_handle) !=
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
 
     RCLCPP_ERROR(node_->get_logger(), "send_goal failed");
     is_goal_sent_ = false;
@@ -156,9 +162,11 @@ BT::NodeStatus Query::on_idle() {
   auto result_future = client_->async_get_result(goal_handle);
 
   RCLCPP_INFO(node_->get_logger(), "Waiting for result");
-  if (rclcpp::spin_until_future_complete(node_->get_node_base_interface(),
-                                         result_future) !=
-      rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(
+      node_->get_node_base_interface(),
+      result_future) !=
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
     RCLCPP_ERROR(node_->get_logger(), "get result call failed :(");
     return BT::NodeStatus::RUNNING;
   }
@@ -176,11 +184,13 @@ BT::NodeStatus Query::on_idle() {
   return BT::NodeStatus::RUNNING;
 }
 
-BT::NodeStatus Query::on_success() {
+BT::NodeStatus Query::on_success()
+{
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
 
   if (result_.result->response.text.empty() ||
-      result_.result->response.text == "{}") {
+    result_.result->response.text == "{}")
+  {
     return BT::NodeStatus::FAILURE;
   }
 
@@ -199,4 +209,6 @@ BT::NodeStatus Query::on_success() {
 
 } // namespace dialog
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory) { factory.registerNodeType<dialog::Query>("Query"); }
+BT_REGISTER_NODES(factory) {
+  factory.registerNodeType<dialog::Query>("Query");
+}

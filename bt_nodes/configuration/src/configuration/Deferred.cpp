@@ -46,9 +46,10 @@ BT::NodeStatus Deferred::tick()
     BT::SharedLibrary loader;
 
     if (plugins_) {
-      for (const auto &plugin : plugins_.value()) {
+      for (const auto & plugin : plugins_.value()) {
         if (plugin == "ConsumeQueue") {
-          factory.registerNodeType<BT::ConsumeQueue<geometry_msgs::msg::TransformStamped>>("ConsumeQueue");
+          factory.registerNodeType<BT::ConsumeQueue<geometry_msgs::msg::TransformStamped>>(
+            "ConsumeQueue");
         } else {
           factory.registerFromPlugin(loader.getOSName(plugin));
         }

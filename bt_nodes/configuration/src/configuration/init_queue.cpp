@@ -17,31 +17,34 @@
 
 #include <vector>
 
-namespace configuration 
+namespace configuration
 {
 
-InitProtectedQueue::InitProtectedQueue(const std::string &xml_tag_name,
-                       const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {
-      config().blackboard->get("node", node_);
-    }
+InitProtectedQueue::InitProtectedQueue(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
+{
+  config().blackboard->get("node", node_);
+}
 
 void InitProtectedQueue::halt() {}
 
 BT::NodeStatus InitProtectedQueue::tick()
 {
-    RCLCPP_INFO(node_->get_logger(), "InitProtectedQueue ticked");
+  RCLCPP_INFO(node_->get_logger(), "InitProtectedQueue ticked");
 
-    getInput<std::string>("port", port_);
+  getInput<std::string>("port", port_);
 
-    std::list<geometry_msgs::msg::TransformStamped> queue;
+  std::list<geometry_msgs::msg::TransformStamped> queue;
 
-    std::shared_ptr<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>> protected_queue = std::make_shared<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>>();
-    protected_queue->items = queue;
+  std::shared_ptr<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>> protected_queue =
+    std::make_shared<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>>();
+  protected_queue->items = queue;
 
-    config().blackboard->set(port_, protected_queue);
+  config().blackboard->set(port_, protected_queue);
 
-    return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::SUCCESS;
 }
 
 }  // namespace configuration

@@ -45,10 +45,11 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
+    return BT::PortsList(
+      {
         BT::InputPort<double>("vertical", 0.0, "vertical pos"),
         BT::InputPort<double>("horizontal", 0.0, "horizontal pos")
-    });
+      });
   }
 
 private:

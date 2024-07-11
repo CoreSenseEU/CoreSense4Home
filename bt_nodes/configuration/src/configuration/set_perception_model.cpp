@@ -32,17 +32,18 @@ SetPerceptionModel::SetPerceptionModel(
 {
 }
 
-constexpr unsigned int str2int(const char* str, int h = 0)
+constexpr unsigned int str2int(const char * str, int h = 0)
 {
-    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
+  return !str[h] ? 5381 : (str2int(str, h + 1) * 33) ^ str[h];
 }
 
-inline std::string joinPaths(const std::string& path1, const std::string& path2) {
-    if (path1.back() == '/') {
-        return path1 + path2;
-    } else {
-        return path1 + "/" + path2;  // Adjust the separator based on your OS.
-    }
+inline std::string joinPaths(const std::string & path1, const std::string & path2)
+{
+  if (path1.back() == '/') {
+    return path1 + path2;
+  } else {
+    return path1 + "/" + path2;      // Adjust the separator based on your OS.
+  }
 }
 
 void SetPerceptionModel::on_tick()
@@ -53,23 +54,22 @@ void SetPerceptionModel::on_tick()
   getInput("model_path", model_path_);
 
   if (!model_name_.empty()) {
-    switch (str2int(model_type_.c_str()))
-    {
-    case str2int("object"):
-    default:
-      model_name_ = "yolov8m.pt";
-      break;
-    case str2int("keypoint"):
-      model_name_ = "yolov8m-pose.pt";
-      break;
-    case str2int("segmentation"):
-      model_name_ = "yolov8m-seg.pt";
-      break;
+    switch (str2int(model_type_.c_str())) {
+      case str2int("object"):
+      default:
+        model_name_ = "yolov8m.pt";
+        break;
+      case str2int("keypoint"):
+        model_name_ = "yolov8m-pose.pt";
+        break;
+      case str2int("segmentation"):
+        model_name_ = "yolov8m-seg.pt";
+        break;
     }
   }
 
   auto model_path = joinPaths(model_path_, model_name_);
-  
+
   request_->model = model_path;
 }
 
@@ -78,7 +78,7 @@ void SetPerceptionModel::on_result()
   if (result_.success) {
     std::cout << "Success SetPerceptionNode" << std::endl;
     setStatus(BT::NodeStatus::SUCCESS);
-    
+
   } else {
     std::cout << "Failure SetPerceptionNode" << std::endl;
     // setOutput("listen_text", result_.result->text);

@@ -47,7 +47,7 @@ void GetPerceptionModel::on_result()
 
     std::cout << result_.values[0].string_value << std::endl;
     setStatus(BT::NodeStatus::SUCCESS);
-    
+
   } else {
     std::cout << "Failure SetPerceptionNode" << std::endl;
     // setOutput("listen_text", result_.result->text);

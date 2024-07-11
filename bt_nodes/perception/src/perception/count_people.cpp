@@ -32,21 +32,21 @@ CountPeople::CountPeople(const std::string & xml_tag_name, const BT::NodeConfigu
 : BT::ActionNodeBase(xml_tag_name, conf),
   max_entities_(10),
   colors_({
-     {"lower_blue", cv::Scalar(90,50,50)}, {"upper_blue", cv::Scalar(125,255,255)},
-    {"lower_yellow", cv::Scalar(25,150,200)}, {"upper_yellow", cv::Scalar(30,255,255)},
-    {"lower_black", cv::Scalar(0,0,0)}, {"upper_black", cv::Scalar(255,255,50)},
-    {"lower_white", cv::Scalar(0,0,200)}, {"upper_white", cv::Scalar(255,30,255)},
-    {"lower_red", cv::Scalar(170,150,180)}, {"upper_red", cv::Scalar(205,255,255)},
-    {"lower_orange", cv::Scalar(10,120,120)}, {"upper_orange", cv::Scalar(20,255,255)},
-    {"lower_gray", cv::Scalar(0,0,100)}, {"upper_gray", cv::Scalar(180,30,200)}}),
+    {"lower_blue", cv::Scalar(90, 50, 50)}, {"upper_blue", cv::Scalar(125, 255, 255)},
+    {"lower_yellow", cv::Scalar(25, 150, 200)}, {"upper_yellow", cv::Scalar(30, 255, 255)},
+    {"lower_black", cv::Scalar(0, 0, 0)}, {"upper_black", cv::Scalar(255, 255, 50)},
+    {"lower_white", cv::Scalar(0, 0, 200)}, {"upper_white", cv::Scalar(255, 30, 255)},
+    {"lower_red", cv::Scalar(170, 150, 180)}, {"upper_red", cv::Scalar(205, 255, 255)},
+    {"lower_orange", cv::Scalar(10, 120, 120)}, {"upper_orange", cv::Scalar(20, 255, 255)},
+    {"lower_gray", cv::Scalar(0, 0, 100)}, {"upper_gray", cv::Scalar(180, 30, 200)}}),
   gestures_({
-      {"pointing_right", {0, 1}},
-      {"pointing_left", {3, 4}},
+    {"pointing_right", {0, 1}},
+    {"pointing_left", {3, 4}},
 
-      {"waving", {5, 6, 7}},
-      {"rising_left", {6}},
-      {"rising_left", {6}},
-    }),
+    {"waving", {5, 6, 7}},
+    {"rising_left", {6}},
+    {"rising_left", {6}},
+  }),
   pose_names_({
     {0, "lying"},
     {1, "sitting"},
@@ -135,10 +135,17 @@ BT::NodeStatus CountPeople::tick()
 
       // gesture filtering
       if (gesture_ != "unknown" && !removed) {
-        if (std::find(gestures_[gesture_].begin(), gestures_[gesture_].end(), detection.pointing_direction) != gestures_[gesture_].end()) {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is %s", detection.unique_id.c_str(), gesture_.c_str());
+        if (std::find(
+            gestures_[gesture_].begin(), gestures_[gesture_].end(),
+            detection.pointing_direction) != gestures_[gesture_].end())
+        {
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
+            detection.unique_id.c_str(), gesture_.c_str());
         } else {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is not %s", detection.unique_id.c_str(), gesture_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
+            detection.unique_id.c_str(), gesture_.c_str());
           it = detections.erase(it);
           removed = true;
         }
@@ -147,9 +154,13 @@ BT::NodeStatus CountPeople::tick()
       // pose filtering
       if (pose_ != "unknown" && !removed) {
         if (pose_names_[detection.body_pose] == pose_) {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is %s", detection.unique_id.c_str(), pose_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
+            detection.unique_id.c_str(), pose_.c_str());
         } else {
-          RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detection %s is not %s", detection.unique_id.c_str(), pose_.c_str());
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
+            detection.unique_id.c_str(), pose_.c_str());
           it = detections.erase(it);
           removed = true;
         }

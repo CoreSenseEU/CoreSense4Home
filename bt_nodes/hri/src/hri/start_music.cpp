@@ -33,13 +33,13 @@ StartMusic::StartMusic(
 
 void StartMusic::on_tick()
 {
-    RCLCPP_DEBUG(node_->get_logger(), "StartMusic ticked");
+  RCLCPP_DEBUG(node_->get_logger(), "StartMusic ticked");
 
-    getInput("audio", audio_);
-    getInput("loop", loop_);
+  getInput("audio", audio_);
+  getInput("loop", loop_);
 
-    request_->audio = audio_;
-    request_->loop = loop_;
+  request_->audio = audio_;
+  request_->loop = loop_;
 }
 
 void StartMusic::on_result()
@@ -47,7 +47,7 @@ void StartMusic::on_result()
   if (result_.success) {
     std::cout << "Success StartMusic" << std::endl;
     setStatus(BT::NodeStatus::SUCCESS);
-    
+
   } else {
     std::cout << "Failure StartMusic" << std::endl;
     // setOutput("listen_text", result_.result->text);

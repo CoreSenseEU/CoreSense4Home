@@ -26,14 +26,15 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/transform_broadcaster.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
 
   rclcpp::NodeOptions options;
   // options.automatically_declare_parameters_from_overrides(true);
 
   auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      "setblackboard_test", options);
+    "setblackboard_test", options);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
@@ -51,9 +52,9 @@ int main(int argc, char *argv[]) {
   // blackboard->set("publisher_zmq", publisher_zmq);
 
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+    lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(
-      lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+    lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   rclcpp::Rate rate(30);
 

@@ -25,81 +25,72 @@ namespace BT
  *
  * An empty queue will return SUCCESS
  */
-template <typename T>
-class ConsumeQueue : public DecoratorNode
-{
-public:
-  ConsumeQueue(const std::string& name, const NodeConfiguration& config) :
-    DecoratorNode(name, config)
-  {}
-
-  NodeStatus tick() override
+  template < typename T >
+  class ConsumeQueue: public DecoratorNode
   {
-    if (running_child_)
+public:
+    ConsumeQueue(const std::string & name, const NodeConfiguration & config)
+      : DecoratorNode(name, config)
     {
-      NodeStatus child_state = child_node_->executeTick();
-      running_child_ = (child_state == NodeStatus::RUNNING);
-      if (running_child_)
-      {
-        return NodeStatus::RUNNING;
-      }
-      else
-      {
-        haltChild();
-        if (child_state == NodeStatus::FAILURE)
-        {
-          return NodeStatus::FAILURE;
-        }
-      }
     }
 
-    std::shared_ptr<ProtectedQueue<T>> queue;
-    if (getInput("queue", queue) && queue)
+    NodeStatus tick() override
     {
-      std::unique_lock<std::mutex> lk(queue->mtx);
-      auto& items = queue->items;
-
-      while (!items.empty())
-      {
-        setStatus(NodeStatus::RUNNING);
-
-        T val = items.front();
-        items.pop_front();
-        setOutput("popped_item", val);
-
-        lk.unlock();
+      if (running_child_) {
         NodeStatus child_state = child_node_->executeTick();
-        lk.lock();
-
         running_child_ = (child_state == NodeStatus::RUNNING);
-        if (running_child_)
-        {
+        if (running_child_) {
           return NodeStatus::RUNNING;
-        }
-        else
-        {
+        } else {
           haltChild();
-          if (child_state == NodeStatus::FAILURE)
-          {
+          if (child_state == NodeStatus::FAILURE) {
             return NodeStatus::FAILURE;
           }
         }
       }
+
+      std::shared_ptr < ProtectedQueue < T >> queue;
+      if (getInput("queue", queue) && queue) {
+        std::unique_lock < std::mutex > lk(queue->mtx);
+        auto & items = queue->items;
+
+        while (!items.empty()) {
+          setStatus(NodeStatus::RUNNING);
+
+          T val = items.front();
+          items.pop_front();
+          setOutput("popped_item", val);
+
+          lk.unlock();
+          NodeStatus child_state = child_node_->executeTick();
+          lk.lock();
+
+          running_child_ = (child_state == NodeStatus::RUNNING);
+          if (running_child_) {
+            return NodeStatus::RUNNING;
+          } else {
+            haltChild();
+            if (child_state == NodeStatus::FAILURE) {
+              return NodeStatus::FAILURE;
+            }
+          }
+        }
+      }
+
+      return NodeStatus::SUCCESS;
     }
 
-    return NodeStatus::SUCCESS;
-  }
-
-  static PortsList providedPorts()
-  {
-    return {InputPort<std::shared_ptr<ProtectedQueue<T>>>("queue"), OutputPort<T>("popped"
-                                                                                  "_"
-                                                                                  "ite"
-                                                                                  "m")};
-  }
+    static PortsList providedPorts()
+    {
+      return {InputPort < std::shared_ptr < ProtectedQueue < T >> > ("queue"),
+               OutputPort < T > ("popped"
+               "_"
+               "ite"
+               "m")};
+    }
 
 private:
-  bool running_child_ = false;
-};
+    bool running_child_ = false;
+  };
 
 }   // namespace BT

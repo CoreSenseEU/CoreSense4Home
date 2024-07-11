@@ -14,18 +14,22 @@
 
 #include "configuration/Setup_gpsr.hpp"
 
-namespace configuration {
+namespace configuration
+{
 
-SetupGPSR::SetupGPSR(const std::string &xml_tag_name,
-                     const BT::NodeConfiguration &conf)
-    : BT::ActionNodeBase(xml_tag_name, conf) {
+SetupGPSR::SetupGPSR(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
+{
 
   config().blackboard->get("node", node_);
-    }
+}
 
 void SetupGPSR::halt() {}
 
-BT::NodeStatus SetupGPSR::tick() {
+BT::NodeStatus SetupGPSR::tick()
+{
 
   auto tf_buffer = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);

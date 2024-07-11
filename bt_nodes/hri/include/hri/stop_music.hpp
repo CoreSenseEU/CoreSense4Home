@@ -30,7 +30,7 @@ namespace hri
 
 class StopMusic
   : public hri::BtServiceNode<std_srvs::srv::Trigger,
-  rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
   explicit StopMusic(
@@ -42,8 +42,9 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-    });
+    return BT::PortsList(
+      {
+      });
   }
 };
 

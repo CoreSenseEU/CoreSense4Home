@@ -43,16 +43,16 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-    {
+      {
         BT::InputPort<double>("time")
-    });
+      });
   }
 
 private:
-    std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
-    double time_;
-    std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+  double time_;
+  std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
 };
 
 }  // namespace configuration

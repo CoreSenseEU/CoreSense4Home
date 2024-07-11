@@ -39,7 +39,9 @@ using namespace std::chrono_literals;
 class FilterPrevDetections : public BT::ActionNodeBase
 {
 public:
-  explicit FilterPrevDetections(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit FilterPrevDetections(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
@@ -48,7 +50,8 @@ public:
   {
     return BT::PortsList(
       {
-        BT::InputPort<std::shared_ptr<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>>>("prev_detections"),
+        BT::InputPort<std::shared_ptr<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>>>(
+          "prev_detections"),
         BT::InputPort<std::vector<std::string>>("new_detections"),
         BT::InputPort<double>("margin"),
         BT::InputPort<std::string>("frame_id"),
@@ -58,10 +61,10 @@ public:
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
-    std::shared_ptr<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>> prev_detections_;
-    std::vector<std::string> new_detections_;
-    double margin_;
-    std::string frame_id_;
+  std::shared_ptr<BT::ProtectedQueue<geometry_msgs::msg::TransformStamped>> prev_detections_;
+  std::vector<std::string> new_detections_;
+  double margin_;
+  std::string frame_id_;
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

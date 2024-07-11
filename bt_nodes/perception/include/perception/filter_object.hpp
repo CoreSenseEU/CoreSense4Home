@@ -24,9 +24,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-namespace perception {
+namespace perception
+{
 
-struct ObjectInfo {
+struct ObjectInfo
+{
   std::string class_type;
   float size;
   float weight;
@@ -34,33 +36,38 @@ struct ObjectInfo {
 
 using namespace std::chrono_literals;
 
-class FilterObject : public BT::ActionNodeBase {
+class FilterObject : public BT::ActionNodeBase
+{
 public:
-  explicit FilterObject(const std::string &xml_tag_name,
-                        const BT::NodeConfiguration &conf);
+  explicit FilterObject(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {
-    return BT::PortsList({
+  static BT::PortsList providedPorts()
+  {
+    return BT::PortsList(
+      {
         BT::InputPort<std::vector<std::string>>("frames"),
         BT::InputPort<std::string>("size", "unknown", "size"),
         BT::InputPort<std::string>("weight", "unknown", "weight"),
         BT::InputPort<std::string>("class", "unknown", "class"),
         BT::OutputPort<std::string>("filtered_object"),
         BT::OutputPort<std::string>("objects_count"),
-    });
+      });
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
   std::vector<std::string>
-  extractClassNames(const std::vector<std::string> &frames);
-  std::string getObject(const std::vector<std::string> &frames,
-                        std::function<bool(float, float)> compare,
-                        float ObjectInfo::*info);
+  extractClassNames(const std::vector<std::string> & frames);
+  std::string getObject(
+    const std::vector<std::string> & frames,
+    std::function<bool(float, float)> compare,
+    float ObjectInfo::* info);
 
   std::vector<std::string> frames_;
   std::string size_;

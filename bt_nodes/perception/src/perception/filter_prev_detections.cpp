@@ -26,7 +26,9 @@ namespace perception
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-FilterPrevDetections::FilterPrevDetections(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+FilterPrevDetections::FilterPrevDetections(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -39,7 +41,9 @@ FilterPrevDetections::FilterPrevDetections(const std::string & xml_tag_name, con
 
 void FilterPrevDetections::halt() {RCLCPP_INFO(node_->get_logger(), "FilterPrevDetections halted");}
 
-inline double distance(const geometry_msgs::msg::TransformStamped & t1, const geometry_msgs::msg::TransformStamped & t2)
+inline double distance(
+  const geometry_msgs::msg::TransformStamped & t1,
+  const geometry_msgs::msg::TransformStamped & t2)
 {
   return std::sqrt(
     std::pow(t1.transform.translation.x - t2.transform.translation.x, 2) +
@@ -48,56 +52,66 @@ inline double distance(const geometry_msgs::msg::TransformStamped & t1, const ge
 
 BT::NodeStatus FilterPrevDetections::tick()
 {
-    getInput("prev_detections", prev_detections_);
-    getInput("new_detections", new_detections_);
-    getInput("margin", margin_);
-    getInput("frame_id", frame_id_);
+  getInput("prev_detections", prev_detections_);
+  getInput("new_detections", new_detections_);
+  getInput("margin", margin_);
+  getInput("frame_id", frame_id_);
 
-    std::list<geometry_msgs::msg::TransformStamped> new_transforms;
+  std::list<geometry_msgs::msg::TransformStamped> new_transforms;
 
-    for (auto & detection : new_detections_) {
-        geometry_msgs::msg::TransformStamped entity_transform_now_msg;
-        try {
-            entity_transform_now_msg = tf_buffer_->lookupTransform(frame_id_, detection, tf2::TimePointZero);
-            new_transforms.push_back(entity_transform_now_msg);
-        } catch (const tf2::TransformException & ex) {
-            RCLCPP_INFO(
-                node_->get_logger(), "Could not transform %s to %s: %s", detection.c_str(), frame_id_, ex.what());
-            RCLCPP_INFO(node_->get_logger(), "Cannot transform");
-        }
+  for (auto & detection : new_detections_) {
+    geometry_msgs::msg::TransformStamped entity_transform_now_msg;
+    try {
+      entity_transform_now_msg = tf_buffer_->lookupTransform(
+        frame_id_, detection,
+        tf2::TimePointZero);
+      new_transforms.push_back(entity_transform_now_msg);
+    } catch (const tf2::TransformException & ex) {
+      RCLCPP_INFO(
+        node_->get_logger(), "Could not transform %s to %s: %s",
+        detection.c_str(), frame_id_, ex.what());
+      RCLCPP_INFO(node_->get_logger(), "Cannot transform");
+    }
+  }
+
+  for (auto & new_transform : new_transforms) {
+    bool close = false;
+
+    for (auto & prev_transform : prev_detections_->items) {
+      if (distance(new_transform, prev_transform) < margin_) {
+        RCLCPP_INFO(
+          node_->get_logger(), "Detection %s is close to %s, removing it",
+          new_transform.child_frame_id.c_str(),
+          prev_transform.child_frame_id.c_str());
+        close = true;
+        break;
+        // } else if (new_transform.transform.translation.x < 0.50 && new_transform.transform.translation.y < 0.50
+        //          && new_transform.transform.translation.x > 8.0 && new_transform.transform.translation.y > 7.23
+        // ) {
+        //     RCLCPP_INFO(
+        //         node_->get_logger(), "Detection %s is out of the apartment, removing it", new_transform.child_frame_id.c_str());
+        //     close = true;
+        //     break;
+      }
     }
 
-    for (auto & new_transform : new_transforms) {
-        bool close = false;
+    if (!close) {
+      RCLCPP_INFO(
+        node_->get_logger(), "Detection %s is not close to any previous detection",
+        new_transform.child_frame_id.c_str());
 
-        for (auto & prev_transform : prev_detections_->items) {
-            if (distance(new_transform, prev_transform) < margin_) {
-                RCLCPP_INFO(
-                    node_->get_logger(), "Detection %s is close to %s, removing it", new_transform.child_frame_id.c_str(),
-                    prev_transform.child_frame_id.c_str());
-                close = true;
-                break;
-            // } else if (new_transform.transform.translation.x < 0.50 && new_transform.transform.translation.y < 0.50
-            //          && new_transform.transform.translation.x > 8.0 && new_transform.transform.translation.y > 7.23
-            // ) {
-            //     RCLCPP_INFO(
-            //         node_->get_logger(), "Detection %s is out of the apartment, removing it", new_transform.child_frame_id.c_str());
-            //     close = true;
-            //     break;
-            }
-        }
+      auto size = prev_detections_->items.size();
+      std::string detection_type = new_transform.child_frame_id.substr(
+        0, new_transform.child_frame_id.find(
+          "_"));
+      new_transform.child_frame_id = detection_type + "_f" + std::to_string(size);
 
-        if (!close) {
-            RCLCPP_INFO(node_->get_logger(), "Detection %s is not close to any previous detection", new_transform.child_frame_id.c_str());
-
-            auto size = prev_detections_->items.size();
-            std::string detection_type = new_transform.child_frame_id.substr(0, new_transform.child_frame_id.find("_"));
-            new_transform.child_frame_id = detection_type + "_f" + std::to_string(size);
-
-            prev_detections_->items.push_back(new_transform);
-        }
+      prev_detections_->items.push_back(new_transform);
     }
-    RCLCPP_INFO(node_->get_logger(), "[FilterPrevDetections] Total: %lu detections", prev_detections_->items.size());
+  }
+  RCLCPP_INFO(
+    node_->get_logger(), "[FilterPrevDetections] Total: %lu detections",
+    prev_detections_->items.size());
 
   return BT::NodeStatus::SUCCESS;
 }

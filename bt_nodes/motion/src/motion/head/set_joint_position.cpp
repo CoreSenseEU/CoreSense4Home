@@ -27,21 +27,22 @@ SetHeadJointPosition::SetHeadJointPosition(
 : motion::BtActionNode<
     control_msgs::action::FollowJointTrajectory,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-    xml_tag_name, action_name, conf) {
-      config().blackboard->get("node", node_);
-    }
+    xml_tag_name, action_name, conf)
+{
+  config().blackboard->get("node", node_);
+}
 
 void SetHeadJointPosition::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "SetTorsoHeight ticked");
 
   getInput("vertical", vertical_);
-    getInput("horizontal", horizontal_);
+  getInput("horizontal", horizontal_);
 
-    goal_.trajectory.joint_names = {"head_1_joint", "head_2_joint"};
-    goal_.trajectory.points.resize(1);
-    goal_.trajectory.points[0].positions = {horizontal_, vertical_};
-    goal_.trajectory.points[0].time_from_start = rclcpp::Duration(1, 0);
+  goal_.trajectory.joint_names = {"head_1_joint", "head_2_joint"};
+  goal_.trajectory.points.resize(1);
+  goal_.trajectory.points[0].positions = {horizontal_, vertical_};
+  goal_.trajectory.points[0].time_from_start = rclcpp::Duration(1, 0);
 }
 
 BT::NodeStatus SetHeadJointPosition::on_success() {return BT::NodeStatus::SUCCESS;}
@@ -51,7 +52,10 @@ BT::NodeStatus SetHeadJointPosition::on_success() {return BT::NodeStatus::SUCCES
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<head::SetHeadJointPosition>(name, "/head_controller/follow_joint_trajectory", config);
+      return std::make_unique<head::SetHeadJointPosition>(
+        name,
+        "/head_controller/follow_joint_trajectory",
+        config);
     };
 
   factory.registerBuilder<head::SetHeadJointPosition>("SetHeadJointPosition", builder);

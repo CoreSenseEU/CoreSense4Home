@@ -100,13 +100,14 @@ def generate_launch_description():
             stopping_words=["\n\n\n\n"],
     )
 
+    yolo_model = package_dir + "/config/storing_groceries/yolo_groceries.pt"
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'model': 'yolov8m-seg.pt',  # change to pretrained
+            'model': yolo_model,  # change to pretrained
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',

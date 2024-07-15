@@ -1,4 +1,4 @@
-image: robocup_arena_1.pgm
+image: robocup_arena_1_modified.pgm
 mode: trinary
 resolution: 0.05
 origin: [1.19, -13.4, 0]

@@ -83,9 +83,9 @@ def generate_launch_description():
 
     ld = LaunchDescription()
     ld.add_action(navigation)
-    # # ld.add_action(whisper_cmd)
-    # ld.add_action(audio_common_player_node)
-    # ld.add_action(audio_common_tts_node)
+    ld.add_action(whisper_cmd)
+    ld.add_action(audio_common_player_node)
+    ld.add_action(audio_common_tts_node)
     ld.add_action(real_time)
 
     return ld

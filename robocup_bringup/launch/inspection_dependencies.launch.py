@@ -77,15 +77,15 @@ def generate_launch_description():
             'map': os.path.join(
                                 package_dir,
                                 'maps',
-                                'ir_lab.yaml'),
+                                'robocup_arena_1.yaml'),
         }.items()
     )
 
     ld = LaunchDescription()
     ld.add_action(navigation)
-    ld.add_action(whisper_cmd)
-    ld.add_action(audio_common_player_node)
-    ld.add_action(audio_common_tts_node)
+    # # ld.add_action(whisper_cmd)
+    # ld.add_action(audio_common_player_node)
+    # ld.add_action(audio_common_tts_node)
     ld.add_action(real_time)
 
     return ld

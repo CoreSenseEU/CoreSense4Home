@@ -52,7 +52,8 @@ std::string nav_to_pose_truncated_xml =
             <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
           </Sequence>
           <Spin spin_dist="1.57"/>
-          <Wait wait_duration="5"/>
+          <Spin spin_dist="-1.57"/>
+          <Wait wait_duration="3"/>
           <BackUp backup_dist="0.30" backup_speed="0.05"/>
         </RoundRobin>
       </ReactiveFallback>

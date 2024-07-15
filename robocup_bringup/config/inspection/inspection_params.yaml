@@ -9,8 +9,9 @@
     waypoints_names: ["inspection_zone", "exit"]
     # allow_duplicate_names: false
     waypoints:
-      inspection_zone: [-1.382, -5.781, -0.253]
-      exit: [2.441, -2.499, 1.206]
+      inspection_zone: [14.001, -8.264, -0.044] # REAL ONE
+      # inspection_zone: [11.499, -7.174, -1.299]
+      exit: [11.541, -4.412, 1.775]
 
 behaviors_main:
   ros__parameters:
@@ -23,3 +24,4 @@ behaviors_main:
     - listen_bt_node
     - clean_string_bt_node
     - is_door_open_bt_node
+    - move_along_axis_bt_node

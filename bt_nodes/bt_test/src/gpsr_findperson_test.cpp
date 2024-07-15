@@ -38,15 +38,16 @@ int main(int argc, char * argv[])
 
   factory.registerFromPlugin(loader.getOSName("deferred_bt_node"));
   factory.registerFromPlugin(loader.getOSName("setup_gpsr_bt_node"));
+  factory.registerFromPlugin(loader.getOSName("set_perception_model_bt_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_test");
   std::string xml_file = pkgpath + "/bt_xml/gpsr_findperson_test.xml";
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-  blackboard->set("color", "blue");
+  blackboard->set("color", "unknown");
   // blackboard->set("human_sign", "pointing to the right");
-  blackboard->set("gesture", "none");
+  blackboard->set("gesture", "unknown");
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   // auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 2666, 2667);

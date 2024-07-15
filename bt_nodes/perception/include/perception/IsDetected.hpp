@@ -55,7 +55,10 @@ public:
         BT::InputPort<float>("confidence"),
         BT::InputPort<std::string>("order"), // todo: enum map or string?
         BT::InputPort<double>("max_depth"),
-        BT::InputPort<std::string>("color"),
+        BT::InputPort<std::string>("color", "unknown", "color"),
+        BT::InputPort<std::string>("gesture", "unknown", "gesture"),
+        BT::InputPort<std::string>("pose", "unknown", "pose"),
+
         BT::OutputPort<std::vector<std::string>>("frames"),
         BT::OutputPort<std::string>("best_detection")});
   }
@@ -70,12 +73,16 @@ private:
   std::int64_t person_id_;
   std::vector<std::string> frames_;
   std::string color_;
+  std::string gesture_;
+  std::string pose_;
 
   double hue_threshold_{20.0};
   double saturation_threshold_{50.0};
   double value_threshold_{50.0};
 
   std::map<std::string, cv::Scalar> colors_;
+  std::map<std::string, std::vector<int>> gestures_;
+  std::map<int, std::string> pose_names_;
 };
 
 }  // namespace perception

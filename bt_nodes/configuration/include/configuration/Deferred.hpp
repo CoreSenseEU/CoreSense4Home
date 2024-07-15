@@ -22,7 +22,10 @@
 #include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "ament_index_cpp/get_package_share_directory.hpp"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#include "behaviortree_cpp_v3/actions/pop_from_queue.hpp"
+#include "configuration/ConsumeQueueWithFailure.h"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 
 namespace configuration
 {

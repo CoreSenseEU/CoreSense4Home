@@ -14,6 +14,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(yolov8_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -26,6 +27,7 @@ set(dependencies
   tf2_geometry_msgs
   tf2
   tf2_ros
+  yolov8_msgs
 )
 
 include_directories(include)
@@ -64,6 +66,27 @@ list(APPEND plugin_libs clean_string_bt_node)
 
 add_library(init_stickler_bt_node SHARED src/configuration/init_stickler.cpp)
 list(APPEND plugin_libs init_stickler_bt_node)
+
+add_library(bt_service_node SHARED src/configuration/bt_service_node.cpp)
+list(APPEND plugin_libs bt_service_node)
+
+add_library(get_perception_model_bt_node SHARED src/configuration/get_perception_model.cpp)
+list(APPEND plugin_libs get_perception_model_bt_node)
+
+add_library(set_perception_model_bt_node SHARED src/configuration/set_perception_model.cpp)
+list(APPEND plugin_libs set_perception_model_bt_node)
+
+add_library(init_protected_queue_bt_node SHARED src/configuration/init_queue.cpp)
+list(APPEND plugin_libs init_protected_queue_bt_node)
+
+add_library(publish_tf_bt_node SHARED src/configuration/publish_tf.cpp)
+list(APPEND plugin_libs publish_tf_bt_node)
+
+add_library(sleep_bt_node SHARED src/configuration/sleep.cpp)
+list(APPEND plugin_libs sleep_bt_node)
+
+add_library(set_blackboard_int_bt_node SHARED src/configuration/set_blackboard_int.cpp)
+list(APPEND plugin_libs set_blackboard_int_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

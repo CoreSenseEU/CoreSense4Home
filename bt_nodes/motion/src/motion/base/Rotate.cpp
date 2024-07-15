@@ -51,7 +51,7 @@ BT::NodeStatus Rotate::tick()
     return BT::NodeStatus::RUNNING;
   }
 
-  return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::FAILURE;
 }
 
 void Rotate::halt()

@@ -159,6 +159,51 @@ add_executable(rotate_test src/rotate_test.cpp)
 ament_target_dependencies(rotate_test ${dependencies})
 target_link_libraries(rotate_test motion::rotate_bt_node)
 
+# Change perception model test
+add_executable(get_perception_model_test src/get_perception_model_test.cpp)
+ament_target_dependencies(get_perception_model_test ${dependencies})
+target_link_libraries(get_perception_model_test
+  configuration::get_perception_model_bt_node
+)
+
+add_executable(set_perception_model_test src/set_perception_model_test.cpp)
+ament_target_dependencies(set_perception_model_test ${dependencies})
+target_link_libraries(set_perception_model_test
+  configuration::set_perception_model_bt_node
+)
+
+# music tests
+add_executable(music_test src/music_test.cpp)
+ament_target_dependencies(music_test ${dependencies})
+target_link_libraries(music_test 
+  hri::start_music_bt_node
+  hri::stop_music_bt_node
+  configuration::sleep_bt_node
+)
+
+# motion action tests
+add_executable(torsoheight_test src/torsoheight_test.cpp)
+ament_target_dependencies(torsoheight_test ${dependencies})
+target_link_libraries(torsoheight_test
+  motion::set_torso_height_bt_node
+)
+
+add_executable(headposition_test src/headposition_test.cpp)
+ament_target_dependencies(headposition_test ${dependencies})
+target_link_libraries(headposition_test
+  motion::set_head_joint_position_bt_node
+)
+
+# filter object by type, size and weight test
+add_executable(filter_object_test src/filter_object_test.cpp)
+ament_target_dependencies(filter_object_test ${dependecies})
+target_link_libraries(filter_object_test perception::filter_object_bt_node)
+
+# extract the description of the person test
+add_executable(extract_person_description_test src/extract_person_description_test.cpp)
+ament_target_dependencies(extract_person_description_test ${dependecies})
+target_link_libraries(extract_person_description_test perception::extract_person_description_bt_node perception::is_detected_bt_node hri::speak_bt_node)
+
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
 ament_target_dependencies(gpsr_test ${dependencies})
@@ -190,8 +235,8 @@ configuration::setup_gpsr_bt_node
 )
 
 list(APPEND GPSR_TESTS
-  gpsr_answerquiz_test gpsr_countobject_test gpsr_findperson_test gpsr_followperson_test
-  gpsr_guideperson_test gpsr_moveto_test gpsr_offerobject_test gpsr_speak_test
+  gpsr_answerquiz_test gpsr_countobject_test gpsr_findperson_test gpsr_findpersonname_test gpsr_followperson_test
+  gpsr_guideperson_test gpsr_moveto_test gpsr_offerobject_test gpsr_speak_test gpsr_findobject_test
 )
 
 # gpsr tests
@@ -223,6 +268,7 @@ foreach(test ${GPSR_TESTS})
     motion::goal_publisher_bt_node
     configuration::deferred_bt_node
     configuration::setup_gpsr_bt_node
+    configuration::set_perception_model_bt_node
   )
 endforeach()
 
@@ -256,6 +302,12 @@ target_link_libraries(follow_entity_test
   # hri::speak_bt_node
   # hri::dialogConfirmation_bt_node
 )
+
+# SetBlackboardInt test
+add_executable(set_blackboard_test src/set_blackboard_test.cpp)
+ament_target_dependencies(set_blackboard_test ${dependencies})
+target_link_libraries(set_blackboard_test configuration::set_blackboard_int_bt_node)
+
 # FilterEntity test
 add_executable(filter_entity_test src/filter_entity_test.cpp)
 ament_target_dependencies(filter_entity_test ${dependencies})
@@ -340,15 +392,26 @@ install(TARGETS
   find_person_test
   count_people_test
   rotate_test
+  get_perception_model_test
+  set_perception_model_test
+  torsoheight_test
+  headposition_test
+  filter_object_test
+  extract_person_description_test
+  music_test
+  set_blackboard_test
+  
   gpsr_test
   gpsr_answerquiz_test
   gpsr_countobject_test
   gpsr_findperson_test
+  gpsr_findpersonname_test
   gpsr_followperson_test
   gpsr_guideperson_test
   gpsr_moveto_test
   gpsr_offerobject_test
   gpsr_speak_test
+  gpsr_findobject_test
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

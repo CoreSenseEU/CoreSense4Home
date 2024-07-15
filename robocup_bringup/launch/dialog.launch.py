@@ -45,12 +45,12 @@ def generate_launch_description():
     llama_cmd = create_llama_launch(
             n_ctx=2048,
             n_batch=256,
-            n_gpu_layers=25,
+            n_gpu_layers=23,
             n_threads=4,
             n_predict=-1,
 
-            model_repo='TheBloke/Marcoroni-7B-v3-GGUF',
-            model_filename='marcoroni-7b-v3.Q3_K_L.gguf',
+            model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
+            model_filename="Spaetzle-v60-7b_Q4_0.gguf",
 
             prefix='\n\n### Instruction:\n',
             suffix='\n\n### Response:\n',
@@ -86,6 +86,11 @@ def generate_launch_description():
             {'device': -1}]
     )
 
+    music_player_node = Node(
+        package='audio_common',
+        executable='music_node',
+    )
+
     ld = LaunchDescription()
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
@@ -93,5 +98,6 @@ def generate_launch_description():
     ld.add_action(llama_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
+    ld.add_action(music_player_node)
 
     return ld

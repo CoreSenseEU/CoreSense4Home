@@ -64,7 +64,7 @@ void PointAt::on_tick()
     // goal_.pose.pose.orientation = transform_.transform.rotation;
     auto angle = std::atan2(transform_.transform.translation.y, transform_.transform.translation.x);
     auto pitch = std::atan2(transform_.transform.translation.z, transform_.transform.translation.x);
-    double desired_radius = 0.5;
+    double desired_radius = 0.9;  //0.5
     auto x_point = desired_radius * std::cos(angle);
     auto y_point = desired_radius * std::sin(angle);
     goal_.pose.pose.position.x = (std::isnan(x_point) || std::isinf(x_point)) ? 0.0 : (x_point);

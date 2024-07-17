@@ -69,13 +69,13 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
   getInput("pub_bb_img", pub_bb_img_);
 
   if (pub_bb_img_) {
-    pub_bb_img_ = node_->create_publisher<sensor_msgs::msg::Image>(
+    bb_img_pub_ = node_->create_publisher<sensor_msgs::msg::Image>(
       "/bb_img_best_detection", 10);
     img_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
       "/camera/color/image_raw", 10,
       std::bind(&IsDetected::image_callback, this, _1));
   } else {
-    pub_bb_img_ = nullptr;
+    bb_img_pub_ = nullptr;
     img_sub_ = nullptr;
   }
 
@@ -233,9 +233,6 @@ BT::NodeStatus IsDetected::tick()
     RCLCPP_INFO(node_->get_logger(), "[IsDetected] %d detections after filter", frames_.size());
   }
 
- 
-
-  // pub->publish(detections[0].image);
 
   setOutput("best_detection", detections[0].class_name);
 
@@ -250,7 +247,7 @@ BT::NodeStatus IsDetected::tick()
       cv::Scalar(0, 0, 255), 2);
 
     auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", last_image_).toImageMsg();
-    pub_bb_img_->publish(*msg);
+    bb_img_pub_->publish(*msg);
   }
 
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
@@ -269,13 +266,14 @@ void IsDetected::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
   cv_bridge::CvImagePtr image_rgb_ptr;
   try {
-    image_rgb_ptr = cv_bridge::toCvCopy(msg->source_img, sensor_msgs::image_encodings::BGR8);
+    image_rgb_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
   } catch (cv_bridge::Exception & e) {
-    RCLCPP_ERROR(get_logger(), "cv_bridge exception: %s", e.what());
+    RCLCPP_ERROR(node_->get_logger(), "cv_bridge exception: %s", e.what());
     return;
   }
   last_image_ = image_rgb_ptr->image;
 
+}
 }  // namespace perception
 
 BT_REGISTER_NODES(factory) {

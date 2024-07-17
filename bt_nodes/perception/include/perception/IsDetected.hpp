@@ -67,7 +67,7 @@ public:
   }
 
 private:
-  void image_callback(const sensor_msg::msg::Image::SharedPtr msg);
+  void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 
@@ -89,8 +89,8 @@ private:
   std::map<int, std::string> pose_names_;
 
   bool pub_bb_img_{false};
-  rclcpp::Publisher<sensor_msg::msg::Image>::SharedPtr bb_img_pub_;
-  rclcpp::Subscription<sensor_msg::msg::Image>::SharedPtr img_sub_;
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr bb_img_pub_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr img_sub_;
 
   cv::Mat last_image_;
 };

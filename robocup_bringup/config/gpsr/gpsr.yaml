@@ -9,35 +9,22 @@ behaviors_main:
     bt_xml_file: gpsr.xml
     waypoints_names:
       [
-        # "bedroom",
-        "bed",
-        "bedside_table",
-        # "dresser",
-        # "kitchen",
-        # "sink",
-        "fridge",
+        "tv_table",
+        "hallway",
+        "hallway_cabinet",
+        "desk",
+        "shelf",
+        "coathanger",
+        "lounge_chair",
+        "lamp",
+        "couch",
+        "trashcan",
+        "kitchen_cabinet",
+        "dinner_table",
+        "kitchen_counter",
         "dishwasher",
-        "kitchen_table",
-        "trash_bin",
-        # "office",
-        # "armchair",
-        "cabinet",
-        # "desk",
-        # "desk_chair",
-        # "living_room",
         "entrance",
-        # "wardrobe",
-        "sofa",
-        # "tv_sideboard",
         "coffee_table",
-        # "bar",
-        # "bookshelf",
-        # "instruction_point",
-        # "corridor",
-        "exit",
-        "kitchen",
-        "bathroom",
-        "entrance",
         "exit",
         "kitchen",
         "office",
@@ -45,22 +32,28 @@ behaviors_main:
         "instruction_point"
       ]
     waypoints:
-      kitchen: [3.79, 6.77, 0.12]
-      bathroom: [4.89, 1.64, 1.0]
-      entrance: [1.25, 6.30, 0.67]
-      living_room: [1.55, 0.03, 0.72]
-      bedroom: [7.50, 4.89, 0.65]
-      bed: [6.744, 2.499, 1.0]
-      bedside_table: [6.744, 2.499, 1.0]
-      cabinet: [4.396, 6.926, 1.0]
-      fridge: [3.022, 6.964, 1.0]
-      diswasher: [6.106, 6.801, 1.0]
-      kitchen_table: [3.377, 6.472, 0.67]
-      trash_bin: [2.286, 6.895, 0.72]
-      coffee_table: [1.633, 3.497, 0.12]
-      sofa: [2.413, 2.182, 0.12]
-      entrance: [0.999, 6.764, 1.6]
-      exit: [0.999, 6.764, 1.6]
+      #ARENA B
+      tv_table: [-14.936, -0.490, 1.543]
+      hallway: [-12.272, 0.691, 2.076]
+      hallway_cabinet: [-14.214, 2.942, 1.258]
+      desk: [-9.134, 2.014, 2.901]
+      shelf: [-8.354, 0.573, 1.306]
+      coathanger: [-12.637, 2.190, -0.207] 
+      lounge_chair: [-14.914, -2.117, -2.731]
+      lamp: [-14.902, -1.983, -2.276]
+      couch: [-13.489, -1.594, -2.120]
+      trashcan: [3.79, 6.77, 0.12] #TODO
+      kitchen_cabinet: [-8.263, -1.846, 1.239]
+      dinner_table: [-9.216, -1.555, -1.775]
+      kitchen_counter: [-9.312, -4.550, -1.747]
+      dishwasher: [-10.371, -4.185, -1.762]
+      entrance: [-11.886, 2.915, 1.952]
+      coffee_table: [-14.142, -2.027, -2.056]
+      exit: [-8.242, -0.344, -0.441]
+      kitchen: [-11.626, -0.85, -0.689]
+      office: [-8.551, 0.033, 2.090]
+      living_room: [-13.452, -1.870, -2.397]
+      instruction_point: [-12.933, -0.495, -2.132]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node
@@ -75,3 +68,42 @@ behaviors_main:
       - start_music_bt_node
       - stop_music_bt_node
       - is_door_open_bt_node
+
+
+# ARENA B:
+
+# GPSR: 
+# -14.936, -0.490 1.543 TV_TABLE
+# -14.142, -2.027, -2.056 COFFEE TABLE
+#-14.914, -2.117, -2.731 LOUNGE_CHAIR
+# -12.637, 2.190, -0.207 COAT HANGER
+# -14.214, 2.942, 1.258 HALLWAY CABINET
+# -9.134, 2.014, 2.901 DESK
+# -8.354, 0.573, 1.306 SHELF
+# -13.489, -1.594, -2.120 COUCH
+# -14.902, -1.983, -2.276 LAMP
+# -10.371, -4.185, -1.762 DISHWASHER
+# -9.312, -4.550, -1.747 KITCHEN COUNTER
+# -9.216, -1.555, -1.775 DINNER TABLE
+# -11.626, -0.85, -0.689 KITCHEN
+# -13.452, -1.870, -2.397 LIVING ROOM
+# -8.551, 0.033 2.090 OFFICE
+# -12.272, 0.691 2.076 HALLWAY
+
+
+
+
+# STORING:
+#-8.263, -1.846, 1.239  (head pitch -0.6428323236843441  torso lift 0.3748533896317148)place position
+# -13.471, -1.875, 2.500
+
+# RECEPTIONIST:
+# -11.886, 2.915 1.952 get guess 
+# -13.452, -1.870, -2.397  party 
+# -13.452, -1.870, 2.500
+
+# ARENA C:
+
+# STORING 
+# 14.965, -5.944, 1.752 TABLE POSITION 
+# 12.921, -3.735 -2.987  (pitch -0.19435251909188134 rads y el torso 0.3703573383376339 m )place position

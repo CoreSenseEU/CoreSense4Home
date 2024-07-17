@@ -274,7 +274,7 @@
                                     order="color"
                                     best_detection="{best_detection}"
                                     />
-                                <Action ID="MoveAlongAxis" speed="0.5" distance="6.28" axis="z"/>
+                                <Action ID="MoveAlongAxis" speed="-0.5" distance="6.28" axis="z"/>
                             </ReactiveFallback>
                             <Action ID="LookAt" tf_frame="{best_detection}"/>
 

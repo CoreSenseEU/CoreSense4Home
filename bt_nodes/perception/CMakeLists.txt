@@ -98,6 +98,14 @@ list(APPEND plugin_libs is_gesturing_bt_node)
 add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
 list(APPEND plugin_libs count_people_bt_node)
 
+add_library(filter_object_bt_node SHARED src/perception/filter_object.cpp)
+list(APPEND plugin_libs filter_object_bt_node)
+
+add_library(filter_prev_detections_bt_node SHARED src/perception/filter_prev_detections.cpp)
+list(APPEND plugin_libs filter_prev_detections_bt_node)
+
+add_library(extract_person_description_bt_node SHARED src/perception/extract_person_description.cpp)
+list(APPEND plugin_libs extract_person_description_bt_node)
 add_library(clear_octomap_bt_node SHARED src/perception/clear_octomap.cpp)
 list(APPEND plugin_libs clear_octomap_bt_node)
 

@@ -38,16 +38,25 @@ CountPeople::CountPeople(const std::string & xml_tag_name, const BT::NodeConfigu
     {"lower_white", cv::Scalar(0, 0, 200)}, {"upper_white", cv::Scalar(255, 30, 255)},
     {"lower_red", cv::Scalar(170, 150, 180)}, {"upper_red", cv::Scalar(205, 255, 255)},
     {"lower_orange", cv::Scalar(10, 120, 120)}, {"upper_orange", cv::Scalar(20, 255, 255)},
-    {"lower_gray", cv::Scalar(0, 0, 100)}, {"upper_gray", cv::Scalar(180, 30, 200)}
+    {"lower_gray", cv::Scalar(0, 0, 100)}, {"upper_gray", cv::Scalar(180, 30, 200)}}),
+  gestures_({
+    {"pointing_right", {0, 1}},
+    {"pointing_left", {3, 4}},
+
+    {"waving", {5, 6, 7}},
+    {"rising_left", {6}},
+    {"rising_left", {6}},
+  }),
+  pose_names_({
+    {0, "lying"},
+    {1, "sitting"},
+    {2, "standing"},
+    {-1, "unknown"},
   })
 {
   config().blackboard->get("node", node_);
   config().blackboard->get("tf_buffer", tf_buffer_);
   config().blackboard->get("tf_listener", tf_listener_);
-
-  gestures_["waving"] = {5, 6, 7};
-  gestures_["raising"] = {6};
-  gestures_["pointing"] = {0, 1, 3, 4};
 }
 
 BT::NodeStatus CountPeople::tick()
@@ -59,6 +68,7 @@ BT::NodeStatus CountPeople::tick()
 
   getInput("color", color_);
   getInput("pose", pose_);
+  getInput("gesture", gesture_);
   getInput("max_entities", max_entities_);
   getInput("confidence", threshold_);
   getInput("cam_frame", cam_frame_);
@@ -123,18 +133,33 @@ BT::NodeStatus CountPeople::tick()
         }
       }
 
-      // Pose filtering
-      if (pose_ != "none" && !removed) {
+      // gesture filtering
+      if (gesture_ != "unknown" && !removed) {
         if (std::find(
-            gestures_[pose_].begin(), gestures_[pose_].end(),
-            detection.pointing_direction) != gestures_[pose_].end())
+            gestures_[gesture_].begin(), gestures_[gesture_].end(),
+            detection.pointing_direction) != gestures_[gesture_].end())
         {
-          RCLCPP_INFO(
-            node_->get_logger(), "[CountPeople] Detection %s is %s",
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
+            detection.unique_id.c_str(), gesture_.c_str());
+        } else {
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
+            detection.unique_id.c_str(), gesture_.c_str());
+          it = detections.erase(it);
+          removed = true;
+        }
+      }
+
+      // pose filtering
+      if (pose_ != "unknown" && !removed) {
+        if (pose_names_[detection.body_pose] == pose_) {
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is %s",
             detection.unique_id.c_str(), pose_.c_str());
         } else {
-          RCLCPP_INFO(
-            node_->get_logger(), "[CountPeople] Detection %s is not %s",
+          RCLCPP_DEBUG(
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
             detection.unique_id.c_str(), pose_.c_str());
           it = detections.erase(it);
           removed = true;

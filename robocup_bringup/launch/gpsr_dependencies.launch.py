@@ -88,7 +88,7 @@ def generate_launch_description():
             'map': os.path.join(
                                 package_dir,
                                 'maps',
-                                'ir_lab.yaml'),
+                                'robocup_arena_1.yaml'),
         }.items()
     )
 

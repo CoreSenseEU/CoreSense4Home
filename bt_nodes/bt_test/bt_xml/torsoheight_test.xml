@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Action ID="SetTorsoHeight" height="0.2"/>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="SetTorsoHeight"/>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

@@ -5,9 +5,12 @@
         <Sequence>
             <Action ID="SetWp"/>
             <Action ID="Speak" param="" say_text="Hi, this is Gentlebots, im ready to be inspected"/>
+            <Action ID="Speak" param="" say_text="Can you please open the door?"/>
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
             </RetryUntilSuccessful>
+            <Action ID="MoveAlongAxis" speed="0.25" distance="1.8" axis="x"/>
+
             <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="inspection_zone"/>
             <Action ID="Speak" param="" say_text="Please say ready when you finish the inspection"/>
             <RetryUntilSuccessful num_attempts="-1">

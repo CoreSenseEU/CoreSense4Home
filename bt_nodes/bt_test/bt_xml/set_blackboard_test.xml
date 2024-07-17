@@ -1,0 +1,8 @@
+<root>
+    <BehaviorTree ID="GPSR">
+        <Sequence>
+            <Action ID="SetBlackboardInt" output_key="result_int" value="42"/>
+            <Action ID="SetBlackboard" output_key="result" value="{result_int}"/>
+        </Sequence>
+    </BehaviorTree> 
+</root>

@@ -9,7 +9,7 @@
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
             </RetryUntilSuccessful>
-            <Action ID="MoveAlongAxis" speed="0.25" distance="1.8" axis="x"/>
+            <Action ID="MoveAlongAxis" speed="0.25" distance="1.0" axis="x"/>
 
             <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="inspection_zone"/>
             <Action ID="Speak" param="" say_text="Please say ready when you finish the inspection"/>

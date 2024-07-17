@@ -34,6 +34,8 @@
 #include "perception_system_interfaces/msg/detection_array.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include "sensor_msgs/msg/image.hpp"
+#include "cv_bridge/cv_bridge.h"
 
 namespace perception
 {
@@ -58,12 +60,14 @@ public:
         BT::InputPort<std::string>("color", "unknown", "color"),
         BT::InputPort<std::string>("gesture", "unknown", "gesture"),
         BT::InputPort<std::string>("pose", "unknown", "pose"),
+        BT::InputPort<bool>("pub_bb_img"),
 
         BT::OutputPort<std::vector<std::string>>("frames"),
         BT::OutputPort<std::string>("best_detection")});
   }
 
 private:
+  void image_callback(const sensor_msg::msg::Image::SharedPtr msg);
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 
@@ -83,6 +87,12 @@ private:
   std::map<std::string, cv::Scalar> colors_;
   std::map<std::string, std::vector<int>> gestures_;
   std::map<int, std::string> pose_names_;
+
+  bool pub_bb_img_{false};
+  rclcpp::Publisher<sensor_msg::msg::Image>::SharedPtr bb_img_pub_;
+  rclcpp::Subscription<sensor_msg::msg::Image>::SharedPtr img_sub_;
+
+  cv::Mat last_image_;
 };
 
 }  // namespace perception

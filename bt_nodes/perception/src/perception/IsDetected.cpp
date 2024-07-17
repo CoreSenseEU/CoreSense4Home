@@ -66,6 +66,19 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
   getInput("order", order_);
   getInput("max_depth", max_depth_);
   getInput("person_id", person_id_);
+  getInput("pub_bb_img", pub_bb_img_);
+
+  if (pub_bb_img_) {
+    pub_bb_img_ = node_->create_publisher<sensor_msgs::msg::Image>(
+      "/bb_img_best_detection", 10);
+    img_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+      "/camera/color/image_raw", 10,
+      std::bind(&IsDetected::image_callback, this, _1));
+  } else {
+    pub_bb_img_ = nullptr;
+    img_sub_ = nullptr;
+  }
+
 }
 
 BT::NodeStatus IsDetected::tick()
@@ -220,12 +233,26 @@ BT::NodeStatus IsDetected::tick()
     RCLCPP_INFO(node_->get_logger(), "[IsDetected] %d detections after filter", frames_.size());
   }
 
-  // auto pub = node_->create_publisher<sensor_msgs::msg::Image>(
-  //   "/object_detected", 10);
+ 
 
   // pub->publish(detections[0].image);
 
   setOutput("best_detection", detections[0].class_name);
+
+  if (pub_bb_img_) {
+    cv::Point center2d(
+      detections[0].center2d.x, detections[0].center2d.y);
+
+    // cv::circle(last_image_, center2d, 5, cv::Scalar(0, 0, 255), -1);
+
+    cv::putText(
+      last_image_, "X", center2d, cv::FONT_HERSHEY_SIMPLEX, 1,
+      cv::Scalar(0, 0, 255), 2);
+
+    auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", last_image_).toImageMsg();
+    pub_bb_img_->publish(*msg);
+  }
+
   RCLCPP_DEBUG(node_->get_logger(), "[IsDetected] Detections sorted");
   // implement more sorting methods
 
@@ -237,6 +264,17 @@ BT::NodeStatus IsDetected::tick()
   RCLCPP_INFO(node_->get_logger(), "[IsDetected] Detections published");
   return BT::NodeStatus::SUCCESS;
 }
+
+void IsDetected::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
+{
+  cv_bridge::CvImagePtr image_rgb_ptr;
+  try {
+    image_rgb_ptr = cv_bridge::toCvCopy(msg->source_img, sensor_msgs::image_encodings::BGR8);
+  } catch (cv_bridge::Exception & e) {
+    RCLCPP_ERROR(get_logger(), "cv_bridge exception: %s", e.what());
+    return;
+  }
+  last_image_ = image_rgb_ptr->image;
 
 }  // namespace perception
 

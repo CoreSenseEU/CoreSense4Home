@@ -14,7 +14,7 @@
                                           />
 
 
-        <RetryUntilSuccessful num_attempts="-1">
+        <!-- <RetryUntilSuccessful num_attempts="-1">
             <Sequence>
                 <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame" confidence="0.6" frames="{frames}" interest="person" max_depth="5" max_entities="1" order="depth"/>
                 <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
@@ -50,7 +50,7 @@
         <Delay delay_msec="500">
             <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
         </Delay>
-        <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
+        <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/> -->
         <ReactiveSequence>
             <Action ID="LookAt" tf_frame="person_0_filtered" />
         </ReactiveSequence>
@@ -65,13 +65,13 @@
                                                            interest="person"
                                                            max_depth="3.0" 
                                                            max_entities="2"
-                                                           order="color"/>
+                                                           order="depth"/>
                             </RetryUntilSuccessful>
                             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                             <Action ID="LookAt" tf_frame="person_0_filtered"/>
 
                             <Condition ID="IsEntityMoving" distance_tolerance="0.6"
-                                                           robot_distance_to_person="1.0"
+                                                           robot_distance_to_person="1.5"
                                                            frame="person_0_filtered"
                                                            check_time="9.0"/>
                             <Action ID="FollowEntity" camera_frame="head_front_camera_rgb_optical_frame"

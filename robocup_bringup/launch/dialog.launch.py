@@ -49,8 +49,13 @@ def generate_launch_description():
             n_threads=4,
             n_predict=-1,
 
-            model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
-            model_filename="Spaetzle-v60-7b_Q4_0.gguf",
+            # uncomment this for GPSR:
+            # model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
+            # model_filename="Spaetzle-v60-7b_Q4_0.gguf",
+
+            # comment this for GPSR:
+            model_repo='TheBloke/Marcoroni-7B-v3-GGUF',
+            model_filename='marcoroni-7b-v3.Q3_K_L.gguf',
 
             prefix='\n\n### Instruction:\n',
             suffix='\n\n### Response:\n',

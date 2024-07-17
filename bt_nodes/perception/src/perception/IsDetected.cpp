@@ -72,7 +72,7 @@ IsDetected::IsDetected(const std::string & xml_tag_name, const BT::NodeConfigura
     bb_img_pub_ = node_->create_publisher<sensor_msgs::msg::Image>(
       "/bb_img_best_detection", 10);
     img_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
-      "/camera/color/image_raw", 10,
+      "/head_front_camera/rgb/image_raw", 10,
       std::bind(&IsDetected::image_callback, this, _1));
   } else {
     bb_img_pub_ = nullptr;
@@ -243,8 +243,8 @@ BT::NodeStatus IsDetected::tick()
     // cv::circle(last_image_, center2d, 5, cv::Scalar(0, 0, 255), -1);
 
     cv::putText(
-      last_image_, "X", center2d, cv::FONT_HERSHEY_SIMPLEX, 1,
-      cv::Scalar(0, 0, 255), 2);
+      last_image_, "[X]", center2d, cv::FONT_HERSHEY_SIMPLEX, 1.0,
+      cv::Scalar(0, 0, 0), 2);
 
     auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", last_image_).toImageMsg();
     bb_img_pub_->publish(*msg);

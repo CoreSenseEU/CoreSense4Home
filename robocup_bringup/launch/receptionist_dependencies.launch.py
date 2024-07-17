@@ -80,7 +80,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
-            'map': package_dir + '/maps/ir_lab.yaml',
+            'map': package_dir + '/maps/robocup_arena_1.yaml',
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +

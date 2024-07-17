@@ -8,14 +8,17 @@
             <Action ID="InitGroceries"/>
             <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>
 
-            <!-- <RetryUntilSuccessful num_attempts="-1">
+            <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
-            </RetryUntilSuccessful> -->
+            </RetryUntilSuccessful>
+
+            <Action ID="MoveAlongAxis" speed="0.25" distance="1.0" axis="x"/>
+            
             <Repeat num_cycles="5"> 
                 <Sequence>                    
                     <Action ID="MoveTo" distance_tolerance="1" tf_frame="table"/>
                     <Action ID="MoveJoint" joint_name="torso_lift_joint"
-                                           joint_value="0.23"
+                                           joint_value="0.3"
                                            group_name="arm_torso"/>
                     <RetryUntilSuccessful num_attempts="-1">
                     
@@ -33,15 +36,18 @@
                                                     max_depth="5"
                                                     max_entities="1"
                                                     order="depth"
-                                                    best_detection="{best_detection}"/>
+                                                    best_detection="{best_detection}"
+                                                    pub_bb_img="true"/>
                         
                             <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
                                                             suffix="_"
                                                             result="{possible_pick}"/>
                         </Sequence>
                     </RetryUntilSuccessful>
+                    
                     <Action ID="ClearOctomap" />
                     <Action ID="Speak" say_text="I am detecting " param="{possible_pick}"/>
+                    <Action ID="Speak" say_text="as you can see it on my chest"/>                    
                     <Action ID="Speak" say_text="Trying to pick it from the table "/>
                      <RetryUntilSuccessful num_attempts="-1">
                         <Sequence>

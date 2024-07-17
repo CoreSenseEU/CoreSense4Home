@@ -7,11 +7,11 @@
     offer_pose: "offer"
     person_id: 001122334455
     waypoints_names: ["entrance", "party", "guest_confirmation"]
-    # allow_duplicate_names: false
+    # ARENA C:
     waypoints: # [x, y, yaw] only 3 numbers!!
-      entrance: [-2.065, -2.304, 1.174]
-      party: [-2.725, -3.593, -2.210]
-      guest_confirmation: [-2.725, -3.593, 0.482]
+      entrance: [10.552, -8.863, -2.737]
+      party: [15.103, -8.220, -0.446]
+      guest_confirmation: [15.103, -8.220, -1.949]
 
 behaviors_main:
   ros__parameters:

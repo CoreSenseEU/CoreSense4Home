@@ -2,7 +2,7 @@
     <BehaviorTree ID="GPSR">
         <Sequence>
             <Action ID="SetupGPSR" plugins="{plugins}"/>
-            <SetBlackboard output_key="cam_frame" value="head_front_camera_color_optical_frame"/>
+            <SetBlackboard output_key="cam_frame" value="head_front_camera_link_color_optical_frame"/>
             <!-- <Action ID="SetStartPosition" frame_name="instruction point" /> -->
             <Action ID="SetWp"/>
 

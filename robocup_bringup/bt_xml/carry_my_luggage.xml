@@ -10,7 +10,7 @@
                                           frame_name="initial"
                                           initial_pose="{going_back}"
                                           x_offset="0.0"
-                                          y_offset="2.0"
+                                          y_offset="0.0"
                                           />
 
 

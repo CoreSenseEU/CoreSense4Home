@@ -107,7 +107,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'model': "yolov8x-seg.pt",  # change to pretrained
+            'model': yolo_model,  # change to pretrained
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
@@ -130,7 +130,7 @@ def generate_launch_description():
             # 'map': os.path.join(
             #                     package_dir,
             #                     'maps',
-            #                     'robocup_arena_2.yaml'), # ARENA C
+            #                     'robocup_arena_1.yaml'), # ARENA C
             'map': os.path.join(
                                 package_dir,
                                 'maps',

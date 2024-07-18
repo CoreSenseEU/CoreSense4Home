@@ -94,16 +94,10 @@ behaviors_main:
 
 
 # STORING:
-#-8.263, -1.846, 1.239  (head pitch -0.6428323236843441  torso lift 0.3748533896317148)place position
-# -13.471, -1.875, 2.500
 
-# RECEPTIONIST:
-# -11.886, 2.915 1.952 get guess 
-# -13.452, -1.870, -2.397  party 
-# -13.452, -1.870, 2.500
+
 
 # ARENA C:
 
 # STORING 
-# 14.965, -5.944, 1.752 TABLE POSITION 
-# 12.921, -3.735 -2.987  (pitch -0.19435251909188134 rads y el torso 0.3703573383376339 m )place position
+#   (pitch -0.19435251909188134 rads y el torso 0.3703573383376339 m )place position

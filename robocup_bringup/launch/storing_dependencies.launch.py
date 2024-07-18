@@ -127,10 +127,14 @@ def generate_launch_description():
             'params_file': package_dir + '/config/storing_groceries/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
                     '/config/storing_groceries/tiago_nav_follow_params.yaml',
+            # 'map': os.path.join(
+            #                     package_dir,
+            #                     'maps',
+            #                     'robocup_arena_2.yaml'), # ARENA C
             'map': os.path.join(
                                 package_dir,
                                 'maps',
-                                'ir_lab.yaml'),
+                                'robocup_arena_2.yaml'), # ARENA B
         }.items()
     )
 

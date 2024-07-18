@@ -64,7 +64,7 @@
                             </Delay>
                             <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
                             <Action ID="MoveJoint" joint_name="torso_lift_joint"
-                                           joint_value="0.27"
+                                           joint_value="0.37"
                                            group_name="arm_torso"/>
                             <RetryUntilSuccessful num_attempts="-1">
                                 <ReactiveFallback>
@@ -76,7 +76,7 @@
                                                                max_entities="5"
                                                                order="depth"
                                                                best_detection="{best_detection}"/>
-                                    <Action ID="Pan" period="20.0" range="35" pitch_angle="-40"/>
+                                    <Action ID="Pan" period="20.0" range="35" pitch_angle="-11"/>
                                 </ReactiveFallback>
                             </RetryUntilSuccessful>
                             <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{possible_pick}" selected_class_text="{selected_class}"/>
@@ -145,7 +145,7 @@
                             </Delay>
                             <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
                             <Action ID="MoveJoint" joint_name="torso_lift_joint"
-                                           joint_value="0.27"
+                                           joint_value="0.37"
                                            group_name="arm_torso"/>
                             <RetryUntilSuccessful num_attempts="-1">
                                 <ReactiveFallback>
@@ -157,7 +157,7 @@
                                                                max_entities="5"
                                                                order="depth"
                                                                best_detection="{best_detection}"/>
-                                    <Action ID="Pan" period="30.0" range="35" pitch_angle="-38"/>
+                                    <Action ID="Pan" period="30.0" range="35" pitch_angle="-11"/>
                                 </ReactiveFallback>
                             </RetryUntilSuccessful>
                             <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{possible_pick}" selected_class_text="{selected_class}"/>
@@ -241,7 +241,7 @@
                             </Fallback>
                             <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
                             <Action ID="MoveJoint" joint_name="torso_lift_joint"
-                                                   joint_value="0.27"
+                                                   joint_value="0.37"
                                                    group_name="arm_torso"/>
                             <RetryUntilSuccessful num_attempts="-1">
                                 <ReactiveFallback>
@@ -256,7 +256,7 @@
                                                                     best_detection="{best_detection}"/>
                                         
                                     </Sequence>
-                                    <Action ID="Pan" period="25.0" range="10" pitch_angle="-30"/>
+                                    <Action ID="Pan" period="25.0" range="10" pitch_angle="-11"/>
                                 </ReactiveFallback>
                             </RetryUntilSuccessful>
                             <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{possible_pick}" selected_class_text="{selected_class}"/>

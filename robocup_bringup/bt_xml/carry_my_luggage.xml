@@ -4,7 +4,7 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
-            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage, please point to the correct bag"/>
+            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage,please point to the correct bag and dont be too close"/>
             <Action ID="SetStartPosition" 
                                           reference_frame="map"
                                           frame_name="initial"

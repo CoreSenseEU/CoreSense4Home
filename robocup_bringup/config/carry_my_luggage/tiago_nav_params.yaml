@@ -40,9 +40,9 @@ amcl:
     scan_topic: /scan_raw
     set_initial_pose: true
     initial_pose:
-      x: 2.0
-      y: 3.6
-      yaw: 3.14
+      x: 1.55
+      y: 24.5
+      yaw: 0.0
     # receptionist initial_pose:
     # initial_pose:
     #   x: 0.99
@@ -278,8 +278,7 @@ global_costmap:
       use_sim_time: False
       robot_radius: 0.29
       resolution: 0.05
-      track_unknown_space: true
-      plugins: ["static_layer", "inflation_layer", "clear_people_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "clear_people_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True

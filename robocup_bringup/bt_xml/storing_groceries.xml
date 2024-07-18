@@ -8,11 +8,11 @@
             <Action ID="InitGroceries"/>
             <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>
 
-            <RetryUntilSuccessful num_attempts="-1">
+            <!-- <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
             </RetryUntilSuccessful>
 
-            <Action ID="MoveAlongAxis" speed="0.25" distance="1.0" axis="x"/>
+            <Action ID="MoveAlongAxis" speed="0.25" distance="1.0" axis="x"/> -->
             
             <Repeat num_cycles="5"> 
                 <Sequence>                    

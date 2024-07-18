@@ -130,7 +130,7 @@ def generate_launch_description():
             # 'map': os.path.join(
             #                     package_dir,
             #                     'maps',
-            #                     'robocup_arena_2.yaml'), # ARENA C
+            #                     'robocup_arena_1.yaml'), # ARENA C
             'map': os.path.join(
                                 package_dir,
                                 'maps',

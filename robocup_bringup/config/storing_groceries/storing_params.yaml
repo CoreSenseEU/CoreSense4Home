@@ -16,7 +16,7 @@
     # ARENA B:
     waypoints: # [x, y, yaw] only 3 numbers!!
       entrance: [-0.711, -0.612, -3.078]
-      table: [-13.471, -1.875, 2.500]
+      table: [-11.251, -2.897, -0.245]
       secure_pick: [5.567, 2.208, 1.9218]
       cabinet: [-8.263, -1.846, 1.239]
       secure_place: [4.968, 2.2, 1.824]

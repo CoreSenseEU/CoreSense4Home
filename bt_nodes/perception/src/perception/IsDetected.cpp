@@ -244,7 +244,7 @@ BT::NodeStatus IsDetected::tick()
 
     cv::putText(
       last_image_, "[X]", center2d, cv::FONT_HERSHEY_SIMPLEX, 1.0,
-      cv::Scalar(0, 0, 0), 2);
+      cv::Scalar(0, 0, 0), 1);
 
     auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", last_image_).toImageMsg();
     bb_img_pub_->publish(*msg);

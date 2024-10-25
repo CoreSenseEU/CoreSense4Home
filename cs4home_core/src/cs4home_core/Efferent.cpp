@@ -21,7 +21,6 @@ namespace cs4home_core
 Efferent::Efferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
 : parent_(parent)
 {
-
 }
 
 bool
@@ -32,4 +31,3 @@ Efferent::configure()
 
 
 }  // namespace cs4home_core
-

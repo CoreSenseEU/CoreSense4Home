@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef CS4HOME__EFFERENT_HPP_
-#define CS4HOME__EFFERENT_HPP_
+#ifndef CS4HOME_CORE__EFFERENT_HPP_
+#define CS4HOME_CORE__EFFERENT_HPP_
 
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp/macros.hpp"
@@ -24,10 +24,10 @@ namespace cs4home_core
 
 class Efferent
 {
-public:    
+public:
   RCLCPP_SMART_PTR_DEFINITIONS(Efferent)
-  
-  Efferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
+
+  explicit Efferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
   bool configure();
 
@@ -37,4 +37,4 @@ protected:
 
 }  // namespace cs4home_core
 
-#endif  // CS4HOME__EFFERENT_HPP_
+#endif  // CS4HOME_CORE__EFFERENT_HPP_

@@ -14,19 +14,28 @@
 
 
 #include "cs4home_core/Core.hpp"
+#include "cs4home_core/macros.hpp"
 
-namespace cs4home_core
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include "rclcpp/macros.hpp"
+
+class ImageFilter : public cs4home_core::Core
 {
+public:
+  RCLCPP_SMART_PTR_DEFINITIONS(ImageFilter)
 
-Core::Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
-}
+  explicit  ImageFilter(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
+  : Core(parent)
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Core created: [ImageFilter]");
+  }
 
-bool
-Core::configure()
-{
-  return true;
-}
 
-}  // namespace cs4home_core
+  bool configure()
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Core configured");
+    return true;
+  }
+};
+
+CS_REGISTER_COMPONENT(ImageFilter)

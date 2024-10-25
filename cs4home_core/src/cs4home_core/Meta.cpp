@@ -21,7 +21,6 @@ namespace cs4home_core
 Meta::Meta(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
 : parent_(parent)
 {
-
 }
 
 bool

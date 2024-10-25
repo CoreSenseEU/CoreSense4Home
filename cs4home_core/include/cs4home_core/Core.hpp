@@ -13,8 +13,10 @@
 // limitations under the License.
 
 
-#ifndef CS4HOME__CORE_HPP_
-#define CS4HOME__CORE_HPP_
+#ifndef CS4HOME_CORE__CORE_HPP_
+#define CS4HOME_CORE__CORE_HPP_
+
+#include <memory>
 
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp/macros.hpp"
@@ -24,10 +26,10 @@ namespace cs4home_core
 
 class Core
 {
-public:    
+public:
   RCLCPP_SMART_PTR_DEFINITIONS(Core)
-  
-  Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
+
+  explicit Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
   bool configure();
 
@@ -38,4 +40,4 @@ protected:
 
 }  // namespace cs4home_core
 
-#endif  // CS4HOME__CORE_HPP_
+#endif  // CS4HOME_CORE__CORE_HPP_

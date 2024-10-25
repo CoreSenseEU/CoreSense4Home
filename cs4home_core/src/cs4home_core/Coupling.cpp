@@ -21,7 +21,6 @@ namespace cs4home_core
 Coupling::Coupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
 : parent_(parent)
 {
-
 }
 
 bool
@@ -31,4 +30,3 @@ Coupling::configure()
 }
 
 }  // namespace cs4home_core
-

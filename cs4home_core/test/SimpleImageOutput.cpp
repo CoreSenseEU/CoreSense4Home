@@ -13,20 +13,29 @@
 // limitations under the License.
 
 
-#include "cs4home_core/Core.hpp"
+#include "cs4home_core/Afferent.hpp"
+#include "cs4home_core/macros.hpp"
 
-namespace cs4home_core
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include "rclcpp/macros.hpp"
+
+class SimpleImageOutput : public cs4home_core::Afferent
 {
+public:
+  RCLCPP_SMART_PTR_DEFINITIONS(SimpleImageOutput)
 
-Core::Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
-}
+  explicit SimpleImageOutput(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
+  : Afferent(parent)
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Afferent created: [SimpleImageOutput]");
+  }
 
-bool
-Core::configure()
-{
-  return true;
-}
 
-}  // namespace cs4home_core
+  bool configure()
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Afferent configured");
+    return true;
+  }
+};
+
+CS_REGISTER_COMPONENT(SimpleImageOutput)

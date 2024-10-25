@@ -13,19 +13,13 @@
 // limitations under the License.
 
 
-#ifndef CS4HOME_CORE__COGNITIVEMODULE_HPP_
-#define CS4HOME_CORE__COGNITIVEMODULE_HPP_
+#ifndef CS4HOME_CORE__MASTER_HPP_
+#define CS4HOME_CORE__MASTER_HPP_
 
-#include <dlfcn.h>
-
-#include <tuple>
+#include <map>
 #include <string>
 
-#include "cs4home_core/Afferent.hpp"
-#include "cs4home_core/Efferent.hpp"
-#include "cs4home_core/Core.hpp"
-#include "cs4home_core/Meta.hpp"
-#include "cs4home_core/Coupling.hpp"
+#include "cs4home_core/CognitiveModule.hpp"
 
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -34,14 +28,14 @@
 namespace cs4home_core
 {
 
-class CognitiveModule : public rclcpp_lifecycle::LifecycleNode
+class Master : public rclcpp_lifecycle::LifecycleNode
 {
 public:
-  RCLCPP_SMART_PTR_DEFINITIONS(CognitiveModule)
+  RCLCPP_SMART_PTR_DEFINITIONS(Master)
   using CallbackReturnT =
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-  explicit CognitiveModule(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit Master(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   CallbackReturnT on_configure(const rclcpp_lifecycle::State & state);
   CallbackReturnT on_activate(const rclcpp_lifecycle::State & state);
@@ -51,30 +45,16 @@ public:
   CallbackReturnT on_error(const rclcpp_lifecycle::State & state);
 
 protected:
-  Afferent::SharedPtr afferent_;
-  Efferent::SharedPtr efferent_;
-  Core::SharedPtr core_;
-  Meta::SharedPtr meta_;
-  Coupling::SharedPtr coupling_;
-
-  std::string core_name_;
-  std::string afferent_name_;
-  std::string efferent_name_;
-  std::string meta_name_;
-  std::string coupling_name_;
-
-  template<class T>
-  std::tuple<typename T::SharedPtr, std::string> load_component(
-    const std::string & name, rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
+  std::map<std::string, cs4home_core::CognitiveModule::SharedPtr> cog_modules_;
 };
 
 }  // namespace cs4home_core
 
-#endif  // CS4HOME_CORE__COGNITIVEMODULE_HPP_
+#endif  // CS4HOME_CORE__MASTER_HPP_
 
 // #include "rclcpp_components/register_node_macro.hpp"
 //
 // // Register the component with class_loader.
 // // This acts as a sort of entry point, allowing the component to be discoverable when its library
 // // is being loaded into a running process.
-// RCLCPP_COMPONENTS_REGISTER_NODE(cs4home_core::CognitiveModule)
+// RCLCPP_COMPONENTS_REGISTER_NODE(cs4home_core::Master)

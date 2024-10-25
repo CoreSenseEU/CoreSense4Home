@@ -37,7 +37,6 @@ protected:
   rclcpp_lifecycle::LifecycleNode::SharedPtr parent_;
 };
 
-
 }  // namespace cs4home_core
 
 #endif  // CS4HOME_CORE__CORE_HPP_

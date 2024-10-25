@@ -34,11 +34,11 @@ TEST(cognitive_module_test, startup_simple)
   auto cm1 = cs4home_core::CognitiveModule::make_shared(options);
   ASSERT_EQ(std::string(cm1->get_name()), "cognitive_module_1");
 
-  auto params = cm1->list_parameters({}, 0);
-  std::cerr << params.names.size();
-  for (const auto & names : params.names) {
-    std::cerr << names << std::endl;
-  }
+  // auto params = cm1->list_parameters({}, 0);
+  // std::cerr << params.names.size();
+  // for (const auto & names : params.names) {
+  //   std::cerr << names << std::endl;
+  // }
 
   cm1->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   ASSERT_EQ(cm1->get_current_state().id(), lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE);

@@ -1,0 +1,38 @@
+/**:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_rgb_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    waypoints_names: ["entrance", "party", "guest_confirmation"]
+    # ARENA C:
+    waypoints: # [x, y, yaw] only 3 numbers!!
+      entrance: [10.552, -8.863, -2.737]
+      party: [15.103, -8.220, -0.446]
+      guest_confirmation: [15.103, -8.220, -1.949]
+
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    bt_xml_file: receptionist.xml
+    plugins:
+    - set_wp_bt_node
+    - init_receptionist_bt_node
+    - move_to_bt_node
+    - speak_bt_node
+    - is_detected_bt_node
+    - store_detection_bt_node
+    - look_at_bt_node
+    - listen_bt_node
+    - query_bt_node
+    - dialogConfirmation_bt_node
+    - pan_bt_node
+    - is_sittable_bt_node
+    - point_at_bt_node
+    - move_to_predefined_bt_node
+    - increment_variable_bt_node
+    - filter_entity_bt_node
+    - extract_entity_color_bt_node
+    - move_along_axis_bt_node

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <RetryUntilSuccessful num_attempts="-1">
+            <SequenceStar>
+                <Sequence>
+                    <Action ID="Speak" say_text="What is your name?"/>
+                    <Action ID="Listen" listen_text="{text_value}"/>
+                    <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
+                    <Action ID="Speak" say_text="well, so are you " param="{name_value}"/>
+                    <Action ID="DialogConfirmation" />
+                </Sequence>
+                <Sequence>
+                    <Action ID="Speak" say_text="What is your favorite drink?"/>
+                    <Action ID="Listen" listen_text="{text_value2}"/>
+                    <Action ID="Query" text="{text_value2}" intention="drink" intention_value="{drink_value}"/>
+                    <Action ID="Speak" say_text="do you like " param="{drink_value}"/>
+                    <Action ID="DialogConfirmation" />
+                </Sequence>
+            </SequenceStar>
+        </RetryUntilSuccessful>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="Query">
+            <input_port name="text"/>
+            <input_port name="intention"/>
+            <output_port name="intention_value"/>
+        </Action>
+        <Action ID="Listen">
+            <output_port name="listen_text"/>
+        </Action>
+        <Action ID="Speak">
+            <input_port name="say_text"/>
+            <input_port name="param"/>
+        </Action>
+        <Action ID="DialogConfirmation">
+        </Action>
+    </TreeNodesModel>
+</root>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="InitCarry"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <ReactiveSequence>
+                    <Condition ID="IsDetected" confidence="0.4"
+                                               interest="person"
+                                               max_depth="6"
+                                               max_entities="1"
+                                               order="depth"
+                                               cam_frame="head_front_camera_rgb_frame"/>
+                    <Action ID ="LookAt" tf_frame="person_0"/>
+                    <Action ID="FollowEntity" frame_to_follow="person_0"
+                                              distance_tolerance="1.5"
+                                              camera_frame="head_front_camera_rgb_frame"/>
+                </ReactiveSequence>
+            </RetryUntilSuccessful>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Condition ID="IsDetected">
+            <input_port default="0.6" name="confidence"/>
+            <input_port default="person" name="interest"/>
+            <output_port name="frames">array of frames</output_port>
+            <input_port default="2" name="max_depth">value in meters</input_port>
+            <input_port default="1" name="max_entities"/>
+            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]</input_port>
+        </Condition>
+        <Action ID="LookAt">
+            <input_port default="person_0" name="tf_frame"/>
+        </Action>
+        <Action ID="FollowEntity">
+            <input_port default="person_0" name="frame_to_follow"/>
+            <input_port default="head_front_camera_rgb_frame" name="camera_frame"/>
+            <input_port default="0.2" name="distance_tolerance"/>
+        </Action>
+        <Action ID="InitCarry"/>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

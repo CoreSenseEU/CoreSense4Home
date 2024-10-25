@@ -1,0 +1,458 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            
+            <Action ID="SetWp"/>
+            <Action ID="InitGroceries"/>
+            <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>
+
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
+            </RetryUntilSuccessful>
+
+            <Action ID="MoveAlongAxis" speed="0.25" distance="1.0" axis="x"/>
+            
+            <Repeat num_cycles="5"> 
+                <Sequence>                    
+                    <Action ID="MoveTo" distance_tolerance="1" tf_frame="table"/>
+                    <Action ID="MoveJoint" joint_name="torso_lift_joint"
+                                           joint_value="0.3"
+                                           group_name="arm_torso"/>
+                    <RetryUntilSuccessful num_attempts="-1">
+                    
+                    <ReactiveFallback>
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame" confidence="0.6" frames="{frames}" interest="" max_depth="5" max_entities="1" order="depth"/>
+                            <Action ID="Pan" period="20.0" range="20" pitch_angle="-34"/>
+                        </ReactiveFallback>
+                    </RetryUntilSuccessful>
+                    <RetryUntilSuccessful num_attempts="-1">
+                        <Sequence>
+                            <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                    confidence="0.6"
+                                                    frames="{frames}"
+                                                    interest=""
+                                                    max_depth="5"
+                                                    max_entities="1"
+                                                    order="depth"
+                                                    best_detection="{best_detection}"
+                                                    pub_bb_img="true"/>
+                        
+                            <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                            suffix="_"
+                                                            result="{possible_pick}"/>
+                        </Sequence>
+                    </RetryUntilSuccessful>
+                    
+                    <Action ID="ClearOctomap" />
+                    <Action ID="Speak" say_text="I am detecting " param="{possible_pick}"/>
+                    <Action ID="Speak" say_text="as you can see it on my chest"/>                    
+                    <Action ID="Speak" say_text="Trying to pick it from the table "/>
+                     <RetryUntilSuccessful num_attempts="-1">
+                        <Sequence>
+                            <Action ID="ExtractPcFromClass" class_pc="{point_cloud}" selected_object="{possible_pick}"/>
+                            <Action ID="ExtractCollisionScene" selected_object="{possible_pick}"/>
+                        </Sequence>
+                    </RetryUntilSuccessful>
+                    <Fallback>
+                        <Sequence>
+                            <Action ID="PickObjectFromPC" object_to_pick="{point_cloud}"/>
+                            <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                            <Delay delay_msec="140">
+                                <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+                            </Delay>
+                            <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
+                            <Action ID="MoveJoint" joint_name="torso_lift_joint"
+                                           joint_value="0.27"
+                                           group_name="arm_torso"/>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <ReactiveFallback>
+                                    <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                               confidence="0.6"
+                                                               frames="{frames}"
+                                                               interest=""
+                                                               max_depth="5"
+                                                               max_entities="5"
+                                                               order="depth"
+                                                               best_detection="{best_detection}"/>
+                                    <Action ID="Pan" period="20.0" range="35" pitch_angle="-40"/>
+                                </ReactiveFallback>
+                            </RetryUntilSuccessful>
+                            <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{possible_pick}" selected_class_text="{selected_class}"/>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Sequence>
+                                    <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                            confidence="0.6"
+                                                            frames="{frames}"
+                                                            interest="{selected_class}"
+                                                            max_depth="2"
+                                                            max_entities="1"
+                                                            order="depth"
+                                                            best_detection="{best_detection}"/>
+                                    <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                                    suffix="_"
+                                                                    result="{possible_place}"/>
+                                </Sequence>
+                            </RetryUntilSuccessful>
+                            <Action ID="ClearOctomap" />
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Action ID="ExtractCabinetPlacePose" selected_object="{possible_place}" place_pose="{pose}"/>
+                            </RetryUntilSuccessful>
+                            <Fallback>
+                                <Sequence>
+                                    <Action ID="MoveEndEffector" pose="{pose}"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+                                    </Delay>
+                                </Sequence>
+                                <Sequence>
+                                    <Action ID="Speak" say_text="Please put " param="{possible_pick}"/>
+                                    <Action ID="Speak" say_text="on the cabinet"/>
+                                    <Action ID="Speak" say_text="The best option is to put it next to " param="{possible_place}"/>
+                                    <Action ID="Speak" say_text="Openning the gripper in 3 2 1"/>
+                                    <Delay delay_msec="240">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="Going back a little bit"/>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                </Sequence>
+                            </Fallback>                      
+                            <Action ID="Speak" say_text="Now im Going back to the table to pick an object"/>
+                        </Sequence>
+                        
+                        <Sequence>
+                            <Action ID="GenerateGraspPoses" object_to_pick="{point_cloud}" best_pose="{pick_pose}"/>
+                            <Delay delay_msec="140">
+                                <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                            </Delay>
+                            <Action ID="MoveEndEffector" pose="{pick_pose}"/>
+                            <Delay delay_msec="140">
+                                <Action ID="MoveToPredefined" pose="close" group_name="gripper"/>
+                            </Delay>
+                            <Delay delay_msec="140">
+                                <Action ID="MoveJoint" joint_name="torso_lift_joint"
+                                                    joint_value="0.37"
+                                                    group_name="arm_torso"/>
+                            </Delay>
+                            <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                            <Delay delay_msec="140">
+                                <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+                            </Delay>
+                            <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
+                            <Action ID="MoveJoint" joint_name="torso_lift_joint"
+                                           joint_value="0.27"
+                                           group_name="arm_torso"/>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <ReactiveFallback>
+                                    <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                               confidence="0.6"
+                                                               frames="{frames}"
+                                                               interest=""
+                                                               max_depth="5"
+                                                               max_entities="5"
+                                                               order="depth"
+                                                               best_detection="{best_detection}"/>
+                                    <Action ID="Pan" period="30.0" range="35" pitch_angle="-38"/>
+                                </ReactiveFallback>
+                            </RetryUntilSuccessful>
+                            <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{possible_pick}" selected_class_text="{selected_class}"/>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Sequence>
+                                    <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                            confidence="0.6"
+                                                            frames="{frames}"
+                                                            interest="{selected_class}"
+                                                            max_depth="2"
+                                                            max_entities="1"
+                                                            order="depth"
+                                                            best_detection="{best_detection}"/>
+                                    <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                                    suffix="_"
+                                                                    result="{possible_place}"/>
+                                </Sequence>
+                            </RetryUntilSuccessful>
+                            <Action ID="ClearOctomap" />
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Action ID="ExtractCabinetPlacePose" selected_object="{possible_place}" place_pose="{pose}"/>
+                            </RetryUntilSuccessful>
+                            <Fallback>
+                                <Sequence>
+                                    <Action ID="MoveEndEffector" pose="{pose}"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+                                    </Delay>
+                                </Sequence>
+                                <Sequence>
+                                    <Action ID="Speak" say_text="Please put " param="{possible_pick}"/>
+                                    <Action ID="Speak" say_text="on the cabinet"/>
+                                    <Action ID="Speak" say_text="The best option is to put it next to " param="{possible_place}"/>
+                                    <Action ID="Speak" say_text="Openning the gripper in 3 2 1"/>
+                                    <Delay delay_msec="240">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="Going back a little bit"/>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                </Sequence>
+                            </Fallback>                      
+                            <Action ID="Speak" say_text="Now im Going back to the table to pick an object"/>
+                        </Sequence>
+
+                        <Sequence>
+                            <Action ID="Speak" say_text="I was not able to manipulate the object"/>
+                            <Action ID="Speak" say_text="Please put " param="{possible_pick}"/>
+                            <Action ID="Speak" say_text="in my gripper when i tell you"/>
+                            <Fallback>
+                                <Sequence>
+                                    <Action ID="MoveEndEffector" pose="{pick_pose}"/>
+                                    <Action ID="Speak" say_text="You can now put the " param="{possible_pick}"/>
+                                    <Action ID="Speak" say_text="whihch im pointng to in my gripper"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="You can now put it in my gripper"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="close" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="Thanks!!"/>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                    <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+                                </Sequence>
+                                <Sequence>
+                                    <Action ID="Speak" say_text="Please put the " param="{possible_pick}"/>
+                                    <Action ID="Speak" say_text="in my gripper"/>                                               
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="Closing the gripper now"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="close" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="Thanks!!"/>
+                                </Sequence>
+                            </Fallback>
+                            <Action ID="MoveTo" distance_tolerance="0" tf_frame="cabinet"/>
+                            <Action ID="MoveJoint" joint_name="torso_lift_joint"
+                                                   joint_value="0.27"
+                                                   group_name="arm_torso"/>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <ReactiveFallback>
+                                    <Sequence>
+                                        <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                                    confidence="0.6"
+                                                                    frames="{frames}"
+                                                                    interest=""
+                                                                    max_depth="5"
+                                                                    max_entities="5"
+                                                                    order="depth"
+                                                                    best_detection="{best_detection}"/>
+                                        
+                                    </Sequence>
+                                    <Action ID="Pan" period="25.0" range="10" pitch_angle="-30"/>
+                                </ReactiveFallback>
+                            </RetryUntilSuccessful>
+                            <Action ID="ChooseFromClasses" class_options="{frames}" target_class="{possible_pick}" selected_class_text="{selected_class}"/>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Sequence>
+                                    <Condition ID="IsDetected" cam_frame="head_front_camera_rgb_optical_frame"
+                                                            confidence="0.6"
+                                                            frames="{frames}"
+                                                            interest="{selected_class}"
+                                                            max_depth="2"
+                                                            max_entities="1"
+                                                            order="depth"
+                                                            best_detection="{best_detection}"/>
+                                    <Action ID="RemoveStringSuffix" string_to_remove="{best_detection}"
+                                                                    suffix="_"
+                                                                    result="{possible_place}"/>
+                                </Sequence>
+                            </RetryUntilSuccessful>
+                            <Action ID="ExtractPcFromClass" class_pc="{point_cloud}" selected_object="{possible_place}"/>
+                            <Action ID="ClearOctomap" />
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Action ID="ExtractCabinetPlacePose" selected_object="{selected_object}"
+                                                                     nearest_pc="{point_cloud}"
+                                                                     place_pose="{pose}"/>
+                            </RetryUntilSuccessful>
+                            <Fallback>
+                                <Sequence>
+                                    <Action ID="MoveEndEffector" pose="{pose}"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                    <Delay delay_msec="140">
+                                        <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+                                    </Delay>
+                                </Sequence>
+                                <Sequence>
+                                    <Action ID="Speak" say_text="Please put " param="{possible_pick}"/>
+                                    <Action ID="Speak" say_text="on the cabinet"/>
+                                    <Action ID="Speak" say_text="The best option is to put it next to " param="{possible_place}"/>
+                                    <Action ID="Speak" say_text="Openning the gripper in 3 2 1"/>
+                                    <Delay delay_msec="240">
+                                        <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                                    </Delay>
+                                    <Action ID="Speak" say_text="Going back a little bit"/>
+                                    <Action ID="MoveAlongAxis" speed="-0.05" distance="0.4" axis="x"/>
+                                </Sequence>
+                            </Fallback>
+                            <Action ID="Speak" say_text="Going back to the table to pick an object"/>
+                        </Sequence>
+                    </Fallback>             
+                </Sequence>                
+            </Repeat> 
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AskForSomething">
+            <input_port default="name" name="Intention"/>
+            <output_port name="intention_value"/>
+        </Action>
+        <Action ID="CalculateGoal">
+            <inout_port name="goal"/>
+        </Action>
+        <Condition ID="CheckStop"/>
+        <Action ID="DetectEntity">
+            <input_port default="person" name="entity"/>
+        </Action>
+        <Action ID="DetectNearestEntity">
+            <output_port name="tf_frame"/>
+        </Action>
+        <Action ID="DetectObjet">
+            <input_port default="Table" name="Object"/>
+            <output_port name="tf"/>
+        </Action>
+        <SubTree ID="Dialog">
+            <input_port default="false" name="__shared_blackboard">If false (default), the Subtree has an isolated blackboard and needs port remapping</input_port>
+        </SubTree>
+        <Action ID="DialogConfirmation">
+            <input_port name="prompt"/>
+        </Action>
+        <Action ID="Dialogue">
+            <input_port default="Hi welcome to the party" name="say_text"/>
+        </Action>
+        <Action ID="ExtractBagPosition">
+            <output_port name="position"/>
+        </Action>
+        <Action ID="FindCorrectPlace">
+            <input_port default="nearest" name="tf_frame"/>
+            <output_port default="to_place" name="tf_frame_to_put"/>
+        </Action>
+        <Action ID="FindEmptyPlace">
+            <output_port default="position" name="position"/>
+            <input_port default="table" name="where"/>
+        </Action>
+        <Action ID="FollowEntity">
+            <input_port default="person" name="entity_frame"/>
+        </Action>
+        <Action ID="GoBack">
+            <input_port default="0.2" name="velocity"/>
+        </Action>
+        <Condition ID="HasEntityStopped">
+            <input_port name="entity_frame"/>
+            <input_port name="tolerance"/>
+        </Condition>
+        <Action ID="InfferCategory">
+            <output_port name="category"/>
+            <input_port name="class_id"/>
+        </Action>
+        <Action ID="InitBreakfast"/>
+        <Action ID="InitGroceries"/>
+        <Action ID="InitReceptionist"/>
+        <Condition ID="IsDetected">
+            <input_port default="0.6" name="confidence"/>
+            <input_port default="person" name="entity"/>
+            <output_port name="frames">array of frames</output_port>
+            <input_port default="2" name="max_depth">value in meters</input_port>
+            <input_port default="1" name="max_entities"/>
+            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]^</input_port>
+        </Condition>
+        <Condition ID="IsEntityMoving">
+            <input_port default="0.5" name="distance_tolerance"/>
+        </Condition>
+        <Condition ID="IsPointing">
+            <output_port default="front" name="tf_target">the tf frame of the object to navigate</output_port>
+        </Condition>
+        <Condition ID="IsSeateble">
+            <output_port name="tf_frame"/>
+        </Condition>
+        <Condition ID="IsSittable">
+            <output_port name="tf_frame"/>
+        </Condition>
+        <Action ID="Listen">
+            <output_port name="extracted_info">String list of extracted information</output_port>
+            <output_port name="say_text">String to speak</output_port>
+        </Action>
+        <Action ID="LookAround">
+            <input_port name="direction"/>
+        </Action>
+        <Action ID="LookAt">
+            <input_port name="tf_frame"/>
+        </Action>
+        <Action ID="LookAtPerson"/>
+        <Action ID="MoveArmTo">
+            <input_port name="tf_frame"/>
+            <input_port name="tolerance"/>
+        </Action>
+        <Action ID="MoveArmToPredefined">
+            <input_port default="offer" name="position"/>
+        </Action>
+        <Action ID="MoveGripperTo">
+            <input_port default="open" name="Pos"/>
+        </Action>
+        <Action ID="MoveHeadTo">
+            <input_port name="angle"/>
+        </Action>
+        <Action ID="MoveTo">
+            <input_port default="0" name="distance_tolerance"/>
+            <input_port default="object1" name="tf_frame"/>
+        </Action>
+        <Action ID="Patrol">
+            <input_port default="0.3" name="velocity"/>
+        </Action>
+        <Action ID="PickObject">
+            <input_port default="Bowl" name="tf_frame"/>
+        </Action>
+        <Action ID="PlaceObject">
+            <output_port default="tf" name="left_position"/>
+            <input_port default="tf" name="position"/>
+        </Action>
+        <Action ID="PourObjectToObject2">
+            <input_port default="tf2" name="position_obj2"/>
+        </Action>
+        <Action ID="PrintTarget">
+            <inout_port name="target"/>
+        </Action>
+        <Action ID="SetWp"/>
+        <Action ID="Speak">
+            <input_port name="say_text"/>
+        </Action>
+        <Action ID="StoreDetection">
+            <input_port name="entity"/>
+            <input_port name="id"/>
+        </Action>
+        <Condition ID="isListened">
+            <output_port name="gotten_parameters"/>
+            <input_port name="needed_parameters"/>
+            <output_port name="say_text"/>
+        </Condition>
+        <Condition ID="isPersonDetected">
+            <output_port name="say_text"/>
+        </Condition>
+        <Condition ID="isReceived">
+            <output_port name="needed_parameters"/>
+            <input_port name="received_parameters"/>
+        </Condition>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

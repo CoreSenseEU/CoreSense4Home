@@ -22,14 +22,14 @@
 #include <string>
 
 #include "cs4home_core/Afferent.hpp"
-#include "cs4home_core/Efferent.hpp"
 #include "cs4home_core/Core.hpp"
-#include "cs4home_core/Meta.hpp"
 #include "cs4home_core/Coupling.hpp"
+#include "cs4home_core/Efferent.hpp"
+#include "cs4home_core/Meta.hpp"
 
-#include "rclcpp_lifecycle/lifecycle_node.hpp"
-#include "rclcpp/rclcpp.hpp"
 #include "rclcpp/macros.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 namespace cs4home_core
 {

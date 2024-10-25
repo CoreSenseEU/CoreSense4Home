@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/Afferent.hpp"
 
 #include "rclcpp/node.hpp"

@@ -1,0 +1,77 @@
+repositories:
+  ThirdParty/pointcloud_to_laserscan:
+    type: git
+    url: https://github.com/Juancams/pointcloud_to_laserscan.git
+    version: humble
+  ThirdParty/small_objects_detector:
+    type: git
+    url: https://github.com/gentlebots/small_objects_detector.git
+    version: robocup
+  ThirdParty/audio_common:
+    type: git
+    url: https://github.com/mgonzs13/audio_common.git
+    version: main
+  ThirdParty/whisper_ros:
+    type: git
+    url: https://github.com/mgonzs13/whisper_ros.git
+    version: main
+  ThirdParty/llama_ros:
+    type: git
+    url: https://github.com/mgonzs13/llama_ros.git
+    version: main
+  ThirdParty/moveit_task_constructor:
+    type: git
+    url: https://github.com/juandpenan/moveit_task_constructor.git
+    version: humble
+  ThirdParty/tiago_mtc_examples:
+    type: git
+    url: https://github.com/juandpenan/tiago_mtc_examples.git
+    version: main
+  ThirdParty/yolov8_ros:
+    type: git
+    url: https://github.com/jmguerreroh/yolov8_ros.git
+    version: main
+  ThirdParty/rclcpp_cascade_lifecycle:
+    type: git
+    url: https://github.com/fmrico/cascade_lifecycle.git
+    version: rolling
+  ThirdParty/tts_ros:
+    type: git
+    url: https://github.com/mgonzs13/tts_ros
+    version: main
+  ThirdParty/slam_toolbox:
+    type: git
+    url: https://github.com/SteveMacenski/slam_toolbox.git
+    version: ros2
+  ThirdParty/tiago_robot:
+    type: git
+    url: https://github.com/juandpenan/tiago_robot.git 
+    version: steamdeck
+  ThirdParty/gpd:
+    type: git
+    url: https://github.com/atenpas/gpd.git
+    version: master
+  systems/manipulation_server:
+    type: git
+    url: https://github.com/rodperex/manipulation_server.git
+    version: main
+  systems/perception_system:
+    type: git
+    url: https://github.com/jmguerreroh/perception_system.git
+    version: main
+  systems/attention_system:
+    type: git
+    url: https://github.com/aaggj/attention_system
+    version: humble
+  systems/navigation_system:
+    type: git
+    url: https://github.com/Juancams/navigation_system.git
+    version: main
+  ThirdParty/gpsr_planning:
+    type: git
+    url: https://github.com/igonzf/GPSR_planning
+    version: main
+
+    
+
+    

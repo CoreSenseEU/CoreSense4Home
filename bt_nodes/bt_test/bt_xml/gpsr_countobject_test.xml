@@ -1,0 +1,8 @@
+<root>
+    <BehaviorTree ID="GPSR">
+        <Sequence>
+            <Action ID="SetupGPSR" plugins="{plugins}"/>
+            <Action ID="Deferred" bt_pkg="gpsr_planning" rel_path="bt_xml/count_object.xml" plugins="{plugins}"/>
+        </Sequence>
+    </BehaviorTree> 
+</root>

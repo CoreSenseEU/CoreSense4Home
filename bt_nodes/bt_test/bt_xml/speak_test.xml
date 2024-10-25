@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <RetryUntilSuccessful num_attempts="-1">
+            <Sequence>
+                <Action ID="Speak" say_text="please put the bag in my gripper"/>
+                <Action ID="Speak" say_text="do you understand?"/>
+                <Action ID="DialogConfirmation" />
+            </Sequence>
+        </RetryUntilSuccessful>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="Speak">
+            <input_port name="say_text"/>
+        </Action>
+        <Action ID="DialogConfirmation">
+        </Action>
+    </TreeNodesModel>
+</root>

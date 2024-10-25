@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "cs4home_core/CognitiveModule.hpp"
 
 namespace cs4home_core
@@ -28,11 +27,9 @@ CognitiveModule::CognitiveModule(const rclcpp::NodeOptions & options)
   declare_parameter("coupling", coupling_name_);
 }
 
-using CallbackReturnT =
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturnT = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-CallbackReturnT
-CognitiveModule::on_configure(const rclcpp_lifecycle::State & state)
+CallbackReturnT CognitiveModule::on_configure(const rclcpp_lifecycle::State & state)
 {
   (void)state;
 
@@ -84,40 +81,35 @@ CognitiveModule::on_configure(const rclcpp_lifecycle::State & state)
   return CallbackReturnT::SUCCESS;
 }
 
-CallbackReturnT
-CognitiveModule::on_activate(const rclcpp_lifecycle::State & state)
+CallbackReturnT CognitiveModule::on_activate(const rclcpp_lifecycle::State & state)
 {
   (void)state;
 
   return CallbackReturnT::SUCCESS;
 }
 
-CallbackReturnT
-CognitiveModule::on_deactivate(const rclcpp_lifecycle::State & state)
+CallbackReturnT CognitiveModule::on_deactivate(const rclcpp_lifecycle::State & state)
 {
   (void)state;
 
   return CallbackReturnT::SUCCESS;
 }
 
-CallbackReturnT
-CognitiveModule::on_cleanup(const rclcpp_lifecycle::State & state)
+CallbackReturnT CognitiveModule::on_cleanup(const rclcpp_lifecycle::State & state)
 {
   (void)state;
 
   return CallbackReturnT::SUCCESS;
 }
 
-CallbackReturnT
-CognitiveModule::on_shutdown(const rclcpp_lifecycle::State & state)
+CallbackReturnT CognitiveModule::on_shutdown(const rclcpp_lifecycle::State & state)
 {
   (void)state;
 
   return CallbackReturnT::SUCCESS;
 }
 
-CallbackReturnT
-CognitiveModule::on_error(const rclcpp_lifecycle::State & state)
+CallbackReturnT CognitiveModule::on_error(const rclcpp_lifecycle::State & state)
 {
   (void)state;
 

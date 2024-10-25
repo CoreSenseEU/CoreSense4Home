@@ -1,0 +1,29 @@
+behaviors_main:
+  ros__parameters:
+    use_sim_time: False
+    cam_frame: "head_front_camera_rgb_optical_frame"
+    home_position: [0.0, 0.0, 0.0]
+    home_pose: "home"
+    offer_pose: "offer"
+    person_id: 001122334455
+    bt_xml_file: carry_my_luggage.xml
+    use_people_filter: False
+    plugins:
+    - init_carry_bt_node
+    - is_detected_bt_node
+    - is_pointing_bt_node
+    - extract_entity_color_bt_node
+    - move_to_bt_node
+    - move_to_predefined_bt_node
+    - look_at_bt_node
+    - speak_bt_node
+    - is_entity_moving_bt_node
+    - dialogConfirmation_bt_node
+    - filter_entity_bt_node
+    - is_moving_bt_node
+    - follow_entity_bt_node
+    - goal_publisher_bt_node
+    - configure_navigate_back_bt_node
+    - set_start_position_bt_node
+    - remove_string_suffix_bt_node
+

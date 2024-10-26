@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(cs4home_core)
 
+set(CMAKE_BUILD_TYPE debug)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -20,6 +22,7 @@ set(dependencies
 include_directories(include)
 
 add_library(${PROJECT_NAME} SHARED
+  src/cs4home_core/Master.cpp
   src/cs4home_core/CognitiveModule.cpp
   src/cs4home_core/Afferent.cpp
   src/cs4home_core/Efferent.cpp

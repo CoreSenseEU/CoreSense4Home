@@ -12,11 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 #ifndef CS4HOME_CORE__AFFERENT_HPP_
 #define CS4HOME_CORE__AFFERENT_HPP_
 
-#include "rclcpp/macros.hpp"
+#include <memory>
+#include <vector>
+#include <string>
+
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/macros.hpp"
 
 namespace cs4home_core
 {
@@ -32,6 +38,11 @@ public:
 
 protected:
   rclcpp_lifecycle::LifecycleNode::SharedPtr parent_;
+
+  std::vector<std::shared_ptr<rclcpp::GenericSubscription>> subs_;
+
+private:
+  bool create_subscriber(const std::string & topic, const std::string & type);
 };
 
 }  // namespace cs4home_core

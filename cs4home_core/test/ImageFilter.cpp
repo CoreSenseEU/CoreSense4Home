@@ -12,20 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cs4home_core/Coupling.hpp"
 
-namespace cs4home_core
+#include "cs4home_core/Core.hpp"
+#include "cs4home_core/macros.hpp"
+
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include "rclcpp/macros.hpp"
+
+class ImageFilter : public cs4home_core::Core
 {
+public:
+  RCLCPP_SMART_PTR_DEFINITIONS(ImageFilter)
 
-Coupling::Coupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
-}
+  explicit  ImageFilter(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
+  : Core(parent)
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Core created: [ImageFilter]");
+  }
 
-bool
-Coupling::configure()
-{
-  return true;
-}
 
-}  // namespace cs4home_core
+  bool configure()
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Core configured");
+    return true;
+  }
+};
+
+CS_REGISTER_COMPONENT(ImageFilter)

@@ -18,8 +18,14 @@ namespace cs4home_core
 {
 
 Core::Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent) {}
+: parent_(parent)
+{
+}
 
-bool Core::configure() {return true;}
+bool
+Core::configure()
+{
+  return true;
+}
 
 }  // namespace cs4home_core

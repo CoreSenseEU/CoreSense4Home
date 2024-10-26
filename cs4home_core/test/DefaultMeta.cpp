@@ -12,20 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cs4home_core/Coupling.hpp"
 
-namespace cs4home_core
+#include "cs4home_core/Meta.hpp"
+#include "cs4home_core/macros.hpp"
+
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include "rclcpp/macros.hpp"
+
+class DefaultMeta : public cs4home_core::Meta
 {
+public:
+  RCLCPP_SMART_PTR_DEFINITIONS(DefaultMeta)
 
-Coupling::Coupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
-}
+  explicit DefaultMeta(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
+  : Meta(parent)
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Meta created: [DefaultMeta]");
+  }
 
-bool
-Coupling::configure()
-{
-  return true;
-}
 
-}  // namespace cs4home_core
+  bool configure()
+  {
+    RCLCPP_INFO(parent_->get_logger(), "Meta configured");
+    return true;
+  }
+};
+
+CS_REGISTER_COMPONENT(DefaultMeta)

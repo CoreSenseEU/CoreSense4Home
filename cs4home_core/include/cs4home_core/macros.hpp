@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cs4home_core/Coupling.hpp"
+
+#ifndef CS4HOME_CORE__MACROS_HPP_
+#define CS4HOME_CORE__MACROS_HPP_
+
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/macros.hpp"
 
 namespace cs4home_core
 {
 
-Coupling::Coupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent)
-{
-}
-
-bool
-Coupling::configure()
-{
-  return true;
-}
+#define CS_REGISTER_COMPONENT(class_name) \
+  extern "C" class_name::SharedPtr create_instance( \
+    rclcpp_lifecycle::LifecycleNode::SharedPtr parent) \
+  { \
+    return class_name::make_shared(parent); \
+  }
 
 }  // namespace cs4home_core
+
+#endif  // CS4HOME_CORE__MACROS_HPP_

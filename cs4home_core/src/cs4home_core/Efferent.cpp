@@ -18,8 +18,14 @@ namespace cs4home_core
 {
 
 Efferent::Efferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
-: parent_(parent) {}
+: parent_(parent)
+{
+}
 
-bool Efferent::configure() {return true;}
+bool
+Efferent::configure()
+{
+  return true;
+}
 
 }  // namespace cs4home_core

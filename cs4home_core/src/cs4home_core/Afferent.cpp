@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 #include "cs4home_core/Afferent.hpp"
 
-#include "rclcpp/node.hpp"
-#include "rclcpp/serialization.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace cs4home_core
 {
@@ -25,38 +25,48 @@ Afferent::Afferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
 {
 }
 
-bool
-Afferent::configure()
+void
+Afferent::set_mode(
+  EfferentProcessMode mode,
+  std::function<void(std::unique_ptr<rclcpp::SerializedMessage>)> cb)
 {
-  /*std::vector<std::string> afferents;
-  parent_->declare_parameter("afferent", afferents);
-  parent_->get_parameter("afferent", afferents);
-
-  for (const auto & afferent: afferents) {
-    std::string topic, type;
-    parent_->declare_parameter("afferent." + afferent + ".topic", topic);
-    parent_->get_parameter("afferent." + afferent + ".type", type);
-
-    if (topic == "" || type == "") {
-      return false;
-    }
-
-    if (!create_subscriber(topic, type)) {
-      RCLCPP_ERROR(
-        parent_->get_logger(), "Error creating afferent [%s, %s]", topic.c_str(), type.c_str());
-      return false;
+  if (mode == CALLBACK) {
+    if (cb) {
+      callback_ = cb;
+    } else {
+      RCLCPP_WARN(
+        parent_->get_logger(), "[Afferent] Error setting callback: not function specified");
+      return;
     }
   }
-*/
-  return true;
+  mode_ = mode;
 }
 
 bool
 Afferent::create_subscriber(const std::string & topic, const std::string & type)
 {
-  auto sub = parent_->create_generic_subscription(topic, type, 100,
-      [&](std::shared_ptr<rclcpp::SerializedMessage> msg) {
-        RCLCPP_INFO(parent_->get_logger(), "Llega el mensaje");
+  RCLCPP_DEBUG(
+    parent_->get_logger(),
+    "[Afferent] Creating subscription [%s, %s]",
+    topic.c_str(), type.c_str());
+
+  auto sub = rclcpp::create_generic_subscription(
+    parent_->get_node_topics_interface(), topic, type, 100,
+    [&](std::unique_ptr<rclcpp::SerializedMessage> msg)
+    {
+      if (mode_ == CALLBACK) {
+        if (callback_) {
+          callback_(std::move(msg));
+        } else {
+          RCLCPP_WARN(
+            parent_->get_logger(), "[Afferent] Error calling callback: not function specified");
+        }
+      } else {
+        msg_queue_.push(std::move(msg));
+        if (msg_queue_.size() > max_queue_size_) {
+          msg_queue_.pop();
+        }
+      }
     });
 
   subs_.push_back(sub);

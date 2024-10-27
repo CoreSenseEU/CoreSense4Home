@@ -12,6 +12,10 @@ add_library(image_filter SHARED ImageFilter.cpp)
 ament_target_dependencies(image_filter ${dependencies} ${test_dependencies})
 target_link_libraries(image_filter ${PROJECT_NAME})
 
+add_library(image_filter_cb SHARED ImageFilterCB.cpp)
+ament_target_dependencies(image_filter_cb ${dependencies} ${test_dependencies})
+target_link_libraries(image_filter_cb ${PROJECT_NAME})
+
 add_library(simple_image_input SHARED SimpleImageInput.cpp)
 ament_target_dependencies(simple_image_input ${dependencies} ${test_dependencies})
 target_link_libraries(simple_image_input ${PROJECT_NAME})
@@ -31,6 +35,7 @@ target_link_libraries(default_coupling ${PROJECT_NAME})
 
 install(TARGETS
   image_filter
+  image_filter_cb
   simple_image_input
   simple_image_output
   default_meta

@@ -34,7 +34,8 @@ CallbackReturnT CognitiveModule::on_configure(const rclcpp_lifecycle::State & st
   (void)state;
 
   get_parameter("core", core_name_);
-  auto [core_, error_core] = load_component<Core>(core_name_, shared_from_this());
+  std::string error_core;
+  std::tie(core_, error_core) = load_component<Core>(core_name_, shared_from_this());
   if (core_ == nullptr || !core_->configure()) {
     RCLCPP_ERROR(
       get_logger(), "Error configuring core at %s with name %s: %s",
@@ -43,7 +44,9 @@ CallbackReturnT CognitiveModule::on_configure(const rclcpp_lifecycle::State & st
   }
 
   get_parameter("efferent", efferent_name_);
-  auto [efferent_, error_efferent] = load_component<Efferent>(efferent_name_, shared_from_this());
+  std::string error_efferent;
+  std::tie(efferent_, error_efferent) = load_component<Efferent>(efferent_name_,
+    shared_from_this());
   if (efferent_ == nullptr || !efferent_->configure()) {
     RCLCPP_ERROR(
       get_logger(), "Error configuring efferent at %s with name %s: %s",
@@ -52,7 +55,9 @@ CallbackReturnT CognitiveModule::on_configure(const rclcpp_lifecycle::State & st
   }
 
   get_parameter("afferent", afferent_name_);
-  auto [afferent_, error_afferent] = load_component<Afferent>(afferent_name_, shared_from_this());
+  std::string error_afferent;
+  std::tie(afferent_, error_afferent) = load_component<Afferent>(afferent_name_,
+    shared_from_this());
   if (afferent_ == nullptr || !afferent_->configure()) {
     RCLCPP_ERROR(
       get_logger(), "Error configuring afferent at %s with name %s: %s",
@@ -60,8 +65,12 @@ CallbackReturnT CognitiveModule::on_configure(const rclcpp_lifecycle::State & st
     return CallbackReturnT::FAILURE;
   }
 
+  core_->set_afferent(afferent_);
+  core_->set_efferent(efferent_);
+
   get_parameter("meta", meta_name_);
-  auto [meta_, error_meta] = load_component<Meta>(meta_name_, shared_from_this());
+  std::string error_meta;
+  std::tie(meta_, error_meta) = load_component<Meta>(meta_name_, shared_from_this());
   if (meta_ == nullptr || !meta_->configure()) {
     RCLCPP_ERROR(
       get_logger(), "Error configuring efferent at %s with name %s: %s",
@@ -70,7 +79,9 @@ CallbackReturnT CognitiveModule::on_configure(const rclcpp_lifecycle::State & st
   }
 
   get_parameter("coupling", coupling_name_);
-  auto [coupling_, error_coupling] = load_component<Coupling>(coupling_name_, shared_from_this());
+  std::string error_coupling;
+  std::tie(coupling_, error_coupling) = load_component<Coupling>(coupling_name_,
+    shared_from_this());
   if (coupling_ == nullptr || !coupling_->configure()) {
     RCLCPP_ERROR(
       get_logger(), "Error configuring efferent at %s with name %s: %s",
@@ -85,12 +96,22 @@ CallbackReturnT CognitiveModule::on_activate(const rclcpp_lifecycle::State & sta
 {
   (void)state;
 
+  if (!core_->activate()) {
+    RCLCPP_ERROR(get_logger(), "Unable to activate Core");
+    return CallbackReturnT::FAILURE;
+  }
+
   return CallbackReturnT::SUCCESS;
 }
 
 CallbackReturnT CognitiveModule::on_deactivate(const rclcpp_lifecycle::State & state)
 {
   (void)state;
+
+  if (!core_->deactivate()) {
+    RCLCPP_ERROR(get_logger(), "Unable to activate Core");
+    return CallbackReturnT::FAILURE;
+  }
 
   return CallbackReturnT::SUCCESS;
 }

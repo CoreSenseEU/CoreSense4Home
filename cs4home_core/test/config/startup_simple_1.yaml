@@ -1,0 +1,11 @@
+cognitive_module_1:
+  ros__parameters:
+    core: image_filter
+    afferent: simple_image_input
+    simple_image_input:
+      topics: ["/image_raw"]
+    efferent: simple_image_output
+    simple_image_output:
+      topics: ["/detections"]
+    meta: default_meta
+    coupling: default_coupling

@@ -23,8 +23,13 @@ Efferent::Efferent(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
 }
 
 bool
-Efferent::configure()
+Efferent::create_publisher(const std::string & topic, const std::string & type)
 {
+  auto pub = rclcpp::create_generic_publisher(
+    parent_->get_node_topics_interface(), topic, type, 100);
+
+  pubs_.push_back(pub);
+
   return true;
 }
 

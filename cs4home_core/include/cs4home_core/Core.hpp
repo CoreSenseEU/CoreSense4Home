@@ -18,6 +18,10 @@
 
 #include <memory>
 
+
+#include "cs4home_core/Afferent.hpp"
+#include "cs4home_core/Efferent.hpp"
+
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp/macros.hpp"
 
@@ -31,10 +35,17 @@ public:
 
   explicit Core(rclcpp_lifecycle::LifecycleNode::SharedPtr parent);
 
-  bool configure();
+  virtual bool configure() = 0;
+  virtual bool activate() = 0;
+  virtual bool deactivate() = 0;
+
+  void set_afferent(cs4home_core::Afferent::SharedPtr afferent) {afferent_ = afferent;}
+  void set_efferent(cs4home_core::Efferent::SharedPtr efferent) {efferent_ = efferent;}
 
 protected:
   rclcpp_lifecycle::LifecycleNode::SharedPtr parent_;
+  cs4home_core::Afferent::SharedPtr afferent_;
+  cs4home_core::Efferent::SharedPtr efferent_;
 };
 
 }  // namespace cs4home_core

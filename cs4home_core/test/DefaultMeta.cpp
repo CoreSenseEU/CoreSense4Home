@@ -27,13 +27,13 @@ public:
   explicit DefaultMeta(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
   : Meta(parent)
   {
-    RCLCPP_INFO(parent_->get_logger(), "Meta created: [DefaultMeta]");
+    RCLCPP_DEBUG(parent_->get_logger(), "Meta created: [DefaultMeta]");
   }
 
 
   bool configure()
   {
-    RCLCPP_INFO(parent_->get_logger(), "Meta configured");
+    RCLCPP_DEBUG(parent_->get_logger(), "Meta configured");
     return true;
   }
 };

@@ -24,44 +24,40 @@
 using std::placeholders::_1;
 using namespace std::chrono_literals;
 
-class ImageFilter : public cs4home_core::Core
+class ImageFilterCB : public cs4home_core::Core
 {
 public:
-  RCLCPP_SMART_PTR_DEFINITIONS(ImageFilter)
+  RCLCPP_SMART_PTR_DEFINITIONS(ImageFilterCB)
 
-  explicit  ImageFilter(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
+  explicit  ImageFilterCB(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
   : Core(parent)
   {
-    RCLCPP_DEBUG(parent_->get_logger(), "Core created: [ImageFilter]");
+    RCLCPP_DEBUG(parent_->get_logger(), "Core created: [ImageFilterCB]");
   }
 
-  void process_in_image(sensor_msgs::msg::Image::UniquePtr msg)
+  void process_in_image(std::unique_ptr<rclcpp::SerializedMessage> msg)
   {
-    int counter = std::atoi(msg->header.frame_id.c_str());
+    auto image_msg = afferent_->get_msg<sensor_msgs::msg::Image>(std::move(msg));
+
+    int counter = std::atoi(image_msg->header.frame_id.c_str());
     counter = counter * 2;
-    msg->header.frame_id = std::to_string(counter);
+    image_msg->header.frame_id = std::to_string(counter);
 
-    efferent_->publish(std::move(msg));
-  }
-
-  void timer_callback()
-  {
-    auto msg = afferent_->get_msg<sensor_msgs::msg::Image>();
-    if (msg != nullptr) {
-      process_in_image(std::move(msg));
-    }
+    efferent_->publish(std::move(image_msg));
   }
 
   bool configure()
   {
     RCLCPP_DEBUG(parent_->get_logger(), "Core configured");
+
+    afferent_->set_mode(
+      cs4home_core::Afferent::CALLBACK, std::bind(&ImageFilterCB::process_in_image, this, _1));
+
     return true;
   }
 
   bool activate()
   {
-    timer_ = parent_->create_wall_timer(
-      50ms, std::bind(&ImageFilter::timer_callback, this));
     return true;
   }
 
@@ -75,4 +71,4 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
-CS_REGISTER_COMPONENT(ImageFilter)
+CS_REGISTER_COMPONENT(ImageFilterCB)

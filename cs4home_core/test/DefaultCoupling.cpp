@@ -27,13 +27,13 @@ public:
   explicit DefaultCoupling(rclcpp_lifecycle::LifecycleNode::SharedPtr parent)
   : Coupling(parent)
   {
-    RCLCPP_INFO(parent_->get_logger(), "Coupling created: [DefaultCoupling]");
+    RCLCPP_DEBUG(parent_->get_logger(), "Coupling created: [DefaultCoupling]");
   }
 
 
   bool configure()
   {
-    RCLCPP_INFO(parent_->get_logger(), "Coupling configured");
+    RCLCPP_DEBUG(parent_->get_logger(), "Coupling configured");
     return true;
   }
 };

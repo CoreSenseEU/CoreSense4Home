@@ -37,6 +37,7 @@ BT::NodeStatus StoreDetection::tick()
   getInput("drink", current_drink_);
   getInput("guest_id", current_id_);
   getInput("guest_color_id", current_color_id_);
+  getInput("guest_description", current_description_);
 
   if (current_name_.empty() || current_drink_.empty()) {
     return BT::NodeStatus::FAILURE;
@@ -48,6 +49,7 @@ BT::NodeStatus StoreDetection::tick()
     setOutput("name_1", name_1_);
     setOutput("drink_1", drink_1_);
     setOutput("guest_color_id_1", current_color_id_);
+    setOutput("guest_description_id_1", current_description_);
     return BT::NodeStatus::SUCCESS;
   } else if (current_id_ == "2") {
     name_2_ = current_name_;
@@ -55,6 +57,7 @@ BT::NodeStatus StoreDetection::tick()
     setOutput("name_2", name_2_);
     setOutput("drink_2", drink_2_);
     setOutput("guest_color_id_2", current_color_id_);
+    setOutput("guest_description_id_2", current_description_);
     return BT::NodeStatus::SUCCESS;
   }
   return BT::NodeStatus::SUCCESS;

@@ -51,13 +51,13 @@ void Listen::on_tick()
 
 BT::NodeStatus Listen::on_success()
 {
-  fprintf(stderr, "%s\n", result_.result->text.c_str());
+  fprintf(stderr, "%s\n", result_.result->transcription.text.c_str());
 
-  if (result_.result->text.size() == 0) {
+  if (result_.result->transcription.text.size() == 0) {
     return BT::NodeStatus::FAILURE;
   }
 
-  setOutput("listen_text", result_.result->text);
+  setOutput("listen_text", result_.result->transcription.text);
   return BT::NodeStatus::SUCCESS;
 }
 

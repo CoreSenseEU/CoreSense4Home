@@ -42,7 +42,7 @@ repositories:
   ThirdParty/slam_toolbox:
     type: git
     url: https://github.com/SteveMacenski/slam_toolbox.git
-    version: ros2
+    version: 0e5df90d51b5346e2c1be8b42dd59b3a4271eb67
   ThirdParty/tiago_robot:
     type: git
     url: https://github.com/juandpenan/tiago_robot.git 

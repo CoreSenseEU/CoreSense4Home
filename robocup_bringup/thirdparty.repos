@@ -21,8 +21,8 @@ repositories:
     version: main
   ThirdParty/moveit_task_constructor:
     type: git
-    url: https://github.com/juandpenan/moveit_task_constructor.git
-    version: humble
+    url: https://github.com/moveit/moveit_task_constructor.git
+    version: jazzy
   ThirdParty/tiago_mtc_examples:
     type: git
     url: https://github.com/juandpenan/tiago_mtc_examples.git
@@ -42,7 +42,7 @@ repositories:
   ThirdParty/slam_toolbox:
     type: git
     url: https://github.com/SteveMacenski/slam_toolbox.git
-    version: 0e5df90d51b5346e2c1be8b42dd59b3a4271eb67
+    version: jazzy
   ThirdParty/tiago_robot:
     type: git
     url: https://github.com/juandpenan/tiago_robot.git 

@@ -1,6 +1,6 @@
 /**:
   ros__parameters:
-    use_sim_time: false
+    use_sim_time: False
     allow_duplicate_names: true
 
 attention_server:

@@ -1,18 +1,12 @@
 # Dockerfile for ROSCon 2024 Deliberation Workshop
 
-FROM ros:humble AS robocup2024
+FROM ros:jazzy AS robocup2024
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install apt dependencies.
 ARG DEBIAN_FRONTEND=noninteractive
-# RUN apt-get update && \
-#     apt-get upgrade -y && \
-#     apt-get install -y \
-#     gcc \
-#     git \
-#     wget \
-#     python3 nlohmann-json3-dev python3-pip portaudio19-dev \
-#     ros-humble-moveit
+
+
 RUN apt-get update \
     && apt-get -y --quiet --no-install-recommends install \
     gcc \
@@ -21,7 +15,7 @@ RUN apt-get update \
     portaudio19-dev \
     python3 \
     python3-pip \
-    ros-humble-moveit \
+    ros-jazzy-moveit \
     nlohmann-json3-dev
    
 
@@ -36,25 +30,19 @@ ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/req
 ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
 
 # Install external dependencies.
-RUN pip install -r requirements1.txt
-RUN pip install -r requirements2.txt
-RUN pip install -r requirements3.txt
-RUN pip install -r requirements4.txt
-RUN pip install -r requirements5.txt
+# RUN pip install -r requirements1.txt --break-system-packages
+# RUN pip install -r requirements2.txt --break-system-packages
+# RUN pip install -r requirements3.txt --break-system-packages
+# RUN pip install -r requirements4.txt --break-system-packages
+# RUN pip install -r requirements5.txt --break-system-packages
 
 
 WORKDIR /robocup/src
-RUN git clone https://github.com/juandpenan/CoreSense4Home.git -b humble-devel
+RUN git clone https://github.com/juandpenan/CoreSense4Home.git -b rolling
 RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
 
 WORKDIR /robocup
 RUN rosdep install --from-paths src --ignore-src -r -y
-
-# Remove MatPlotLib display warnings.
-RUN mkdir /tmp/runtime-root
-ENV XDG_RUNTIME_DIR "/tmp/runtime-root"
-RUN chmod -R 0700 /tmp/runtime-root
-ENV NO_AT_BRIDGE 1
 
 # Set up the entrypoint.
 # Install CUDA nvcc
@@ -62,7 +50,7 @@ ARG USE_CUDA
 ARG CUDA_VERSION=12-6
 
 RUN if [ "$USE_CUDA" = "1" ]; then \
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
     rm cuda-keyring_1.1-1_all.deb; \
     apt-get update && apt-get install -y cuda-toolkit-$CUDA_VERSION; \

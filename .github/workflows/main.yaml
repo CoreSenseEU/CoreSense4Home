@@ -20,18 +20,15 @@ jobs:
       - name: Setup ROS 2
         uses: ros-tooling/setup-ros@0.7.0
         with:
-          required-ros-distributions: humble
+          required-ros-distributions: jazzy
       - name: Install nlohmann
         run: sudo apt -y install nlohmann-json3-dev
-      - name: Install ceres dependencies
-        run: sudo apt -y install libunwind-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev libgflags-dev
-      - name: Install ceres
-        run: sudo apt -y install libceres-dev
+      - name 
       - name: build and test
         uses: ros-tooling/action-ros-ci@0.3.3
         with:
           package-name: arm bt_test hri motion perception robocup_bringup cs4home_core
-          target-ros2-distro: humble
+          target-ros2-distro: jazzy
           colcon-defaults: |
             {
               "test": {

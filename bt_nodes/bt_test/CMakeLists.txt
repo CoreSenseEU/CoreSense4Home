@@ -24,6 +24,7 @@ find_package(arm REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(hri REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 # find_package(backward_ros REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -45,6 +46,7 @@ set(dependencies
   arm
   geometry_msgs
   perception_system_interfaces
+  ament_index_cpp
   # backward_ros
 )
 

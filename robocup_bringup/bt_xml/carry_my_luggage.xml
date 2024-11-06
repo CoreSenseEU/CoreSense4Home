@@ -4,7 +4,7 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
-            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage, please point to the correct bag"/>
+            <Action ID="Speak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage,please point to the correct bag and dont be too close"/>
             <Action ID="SetStartPosition" 
                                           reference_frame="map"
                                           frame_name="initial"
@@ -65,15 +65,15 @@
                                                            interest="person"
                                                            max_depth="3.0" 
                                                            max_entities="2"
-                                                           order="color"/>
+                                                           order="depth"/>
                             </RetryUntilSuccessful>
                             <Action ID="FilterEntity" frame="person_0" lambda="0.1"/>
                             <Action ID="LookAt" tf_frame="person_0_filtered"/>
 
                             <Condition ID="IsEntityMoving" distance_tolerance="0.6"
-                                                           robot_distance_to_person="1.0"
+                                                           robot_distance_to_person="1.5"
                                                            frame="person_0_filtered"
-                                                           check_time="9.0"/>
+                                                           check_time="8.0"/>
                             <Action ID="FollowEntity" camera_frame="head_front_camera_rgb_optical_frame"
                                                       distance_tolerance="0.2"
                                                       frame_to_follow="person_0_filtered"
@@ -100,6 +100,7 @@
                     </ReactiveSequence>
                 </Sequence>
             </RetryUntilSuccessful>
+            <Action ID="Speak" param="" say_text="I will give you the bag now, please be carefull"/>
             <Action ID="MoveToPredefined" pose="offer" group_name="arm_torso"/>
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0"/>

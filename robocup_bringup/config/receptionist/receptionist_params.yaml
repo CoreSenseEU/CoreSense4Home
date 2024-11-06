@@ -8,10 +8,15 @@
     person_id: 001122334455
     waypoints_names: ["entrance", "party", "guest_confirmation"]
     # ARENA C:
+    # waypoints: # [x, y, yaw] only 3 numbers!!
+    #   entrance: [10.552, -8.863, -2.737]
+    #   party: [15.103, -8.220, -0.446]
+    #   guest_confirmation: [15.103, -8.220, -1.949]
+    # ARENA B:
     waypoints: # [x, y, yaw] only 3 numbers!!
-      entrance: [10.552, -8.863, -2.737]
-      party: [15.103, -8.220, -0.446]
-      guest_confirmation: [15.103, -8.220, -1.949]
+      entrance: [-11.886, 2.915, 1.952]
+      party: [-13.452, -1.870, -2.39]
+      guest_confirmation: [-13.452, -1.870, 2.500]
 
 behaviors_main:
   ros__parameters:
@@ -36,3 +41,4 @@ behaviors_main:
     - filter_entity_bt_node
     - extract_entity_color_bt_node
     - move_along_axis_bt_node
+    - check_policy_bt_node

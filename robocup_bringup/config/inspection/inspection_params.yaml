@@ -9,9 +9,8 @@
     waypoints_names: ["inspection_zone", "exit"]
     # allow_duplicate_names: false
     waypoints:
-      inspection_zone: [14.001, -8.264, -0.044] # REAL ONE
-      # inspection_zone: [11.499, -7.174, -1.299]
-      exit: [11.541, -4.412, 1.775]
+      inspection_zone: [-12.933, -0.495, -2.132] 
+      exit: [-8.242, -0.344, -0.441]
 
 behaviors_main:
   ros__parameters:

@@ -15,6 +15,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(yolov8_msgs REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -28,6 +29,7 @@ set(dependencies
   tf2
   tf2_ros
   yolov8_msgs
+  ament_index_cpp
 )
 
 include_directories(include)

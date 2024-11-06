@@ -21,8 +21,8 @@ repositories:
     version: main
   ThirdParty/moveit_task_constructor:
     type: git
-    url: https://github.com/juandpenan/moveit_task_constructor.git
-    version: humble
+    url: https://github.com/moveit/moveit_task_constructor.git
+    version: jazzy
   ThirdParty/tiago_mtc_examples:
     type: git
     url: https://github.com/juandpenan/tiago_mtc_examples.git
@@ -42,7 +42,7 @@ repositories:
   ThirdParty/slam_toolbox:
     type: git
     url: https://github.com/SteveMacenski/slam_toolbox.git
-    version: ros2
+    version: jazzy
   ThirdParty/tiago_robot:
     type: git
     url: https://github.com/juandpenan/tiago_robot.git 
@@ -54,22 +54,22 @@ repositories:
   systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git
-    version: main
+    version: jazzy
   systems/perception_system:
     type: git
     url: https://github.com/jmguerreroh/perception_system.git
-    version: main
+    version: jazzy
   systems/attention_system:
     type: git
-    url: https://github.com/aaggj/attention_system
-    version: humble
+    url: https://github.com/aaggj/attention_system.git
+    version: jazzy
   systems/navigation_system:
     type: git
     url: https://github.com/Juancams/navigation_system.git
     version: main
   ThirdParty/gpsr_planning:
     type: git
-    url: https://github.com/igonzf/GPSR_planning
+    url: https://github.com/igonzf/GPSR_planning.git
     version: main
 
     

@@ -63,6 +63,7 @@ def generate_launch_description():
             {'depth_topic': '/head_front_camera/depth/image_raw'},
             {'yolo_topic': '/detections_3d'},
             {'camera_info_topic': '/head_front_camera/depth/camera_info'},
+            {'min_cluster_size': 1}
         ]
         )
 
@@ -107,7 +108,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'model': "yolov8x-seg.pt",  # change to pretrained
+            'model': yolo_model,  # change to pretrained
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
@@ -130,7 +131,11 @@ def generate_launch_description():
             'map': os.path.join(
                                 package_dir,
                                 'maps',
-                                'ir_lab.yaml'),
+                                'robocup_arena_1.yaml') # ARENA C
+            # 'map': os.path.join(
+            #                     package_dir,
+            #                     'maps',
+            #                     'robocup_arena_2.yaml'), # ARENA B
         }.items()
     )
 

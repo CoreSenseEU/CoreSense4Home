@@ -47,7 +47,8 @@ public:
     return BT::PortsList(
       {BT::InputPort<std::string>("question"),
         BT::InputPort<std::string>("image_topic"),
-        BT::OutputPort<bool>("output")});
+        BT::OutputPort<bool>("output"),
+        BT::OutputPort<std::string>("output_text")});
   }
 
 private:

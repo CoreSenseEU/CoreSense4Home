@@ -43,19 +43,22 @@ public:
         BT::InputPort<std::string>("drink"),
         BT::InputPort<std::string>("guest_id"),
         BT::InputPort<std::int64_t>("guest_color_id"),
+        BT::InputPort<std::string>("guest_description"),
 
         BT::OutputPort<std::string>("name_1"),
         BT::OutputPort<std::string>("name_2"),
         BT::OutputPort<std::string>("drink_1"),
         BT::OutputPort<std::string>("drink_2"),
         BT::OutputPort<std::int64_t>("guest_color_id_1"),
-        BT::OutputPort<std::int64_t>("guest_color_id_2")});
+        BT::OutputPort<std::int64_t>("guest_color_id_2"),
+        BT::OutputPort<std::string>("guest_description_id_1"),
+        BT::OutputPort<std::string>("guest_description_id_2")});
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
-  std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_;
+  std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_, current_description_;
   std::string current_id_ = "0";
   std::int64_t current_color_id_ = 0;
 };

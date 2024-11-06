@@ -54,16 +54,16 @@ void DialogConfirmation::on_tick()
 
 BT::NodeStatus DialogConfirmation::on_success()
 {
-  fprintf(stderr, "%s\n", result_.result->text.c_str());
+  fprintf(stderr, "%s\n", result_.result->transcription.text.c_str());
 
-  if (result_.result->text.size() == 0) {
+  if (result_.result->transcription.text.size() == 0) {
     return BT::NodeStatus::FAILURE;
   }
 
   std::transform(
-    result_.result->text.begin(), result_.result->text.end(), result_.result->text.begin(),
+    result_.result->transcription.text.begin(), result_.result->transcription.text.end(), result_.result->transcription.text.begin(),
     [](unsigned char c) {return std::tolower(c);});
-  if (result_.result->text.find("yes") != std::string::npos) {
+  if (result_.result->transcription.text.find("yes") != std::string::npos) {
     return BT::NodeStatus::SUCCESS;
   } else {
     return BT::NodeStatus::FAILURE;

@@ -101,6 +101,7 @@ BT::NodeStatus CheckPolicy::on_success()
     return BT::NodeStatus::FAILURE;
   }
   std::string answer = result_.result->response.text;
+  setOutput("output_text", answer);
 
   answer.erase(
     std::remove_if(
@@ -121,7 +122,6 @@ BT::NodeStatus CheckPolicy::on_success()
     RCLCPP_ERROR(node_->get_logger(), "Not a valid answer: %s", answer.c_str());
     return BT::NodeStatus::FAILURE;
   }
-
   setOutput("output", value_);
   return BT::NodeStatus::SUCCESS;
 }

@@ -35,7 +35,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "sensor_msgs/msg/image.hpp"
-#include "cv_bridge/cv_bridge.h"
+#include "cv_bridge/cv_bridge.hpp"
 
 namespace perception
 {

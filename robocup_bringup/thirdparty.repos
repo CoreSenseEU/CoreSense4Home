@@ -57,20 +57,20 @@ repositories:
     version: jazzy
   systems/perception_system:
     type: git
-    url: https://github.com/juandpenan/perception_system.git
-    version: rolling
+    url: https://github.com/jmguerreroh/perception_system.git
+    version: jazzy
   systems/attention_system:
     type: git
-    url: https://github.com/juandpenan/attention_system.git
-    version: rolling
+    url: https://github.com/aaggj/attention_system.git
+    version: jazzy
   systems/navigation_system:
     type: git
     url: https://github.com/Juancams/navigation_system.git
     version: main
   ThirdParty/gpsr_planning:
     type: git
-    url: https://github.com/juandpenan/GPSR_planning.git
-    version: rolling
+    url: https://github.com/igonzf/GPSR_planning.git
+    version: main
 
     
 

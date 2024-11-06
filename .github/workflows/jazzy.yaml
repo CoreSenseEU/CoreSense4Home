@@ -1,12 +1,12 @@
-name: rolling
+name: jazzy
 
 on:
   pull_request:
     branches:
-      - rolling
+      - jazzy
   push:
     branches:
-      - rolling
+      - jazzy
   schedule:
       - cron: '0 0 * * 6'     
 jobs:

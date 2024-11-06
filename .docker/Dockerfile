@@ -30,15 +30,15 @@ ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/req
 ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
 
 # Install external dependencies.
-# RUN pip install -r requirements1.txt --break-system-packages
-# RUN pip install -r requirements2.txt --break-system-packages
-# RUN pip install -r requirements3.txt --break-system-packages
-# RUN pip install -r requirements4.txt --break-system-packages
-# RUN pip install -r requirements5.txt --break-system-packages
+RUN pip install -r requirements1.txt --break-system-packages
+RUN pip install -r requirements2.txt --break-system-packages
+RUN pip install -r requirements3.txt --break-system-packages
+RUN pip install -r requirements4.txt --break-system-packages
+RUN pip install -r requirements5.txt --break-system-packages
 
 
 WORKDIR /robocup/src
-RUN git clone https://github.com/juandpenan/CoreSense4Home.git -b rolling
+RUN git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b jazzy
 RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
 
 WORKDIR /robocup

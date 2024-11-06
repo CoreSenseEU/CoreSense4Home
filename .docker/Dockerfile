@@ -5,14 +5,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install apt dependencies.
 ARG DEBIAN_FRONTEND=noninteractive
-# RUN apt-get update && \
-#     apt-get upgrade -y && \
-#     apt-get install -y \
-#     gcc \
-#     git \
-#     wget \
-#     python3 nlohmann-json3-dev python3-pip portaudio19-dev \
-#     ros-humble-moveit
+
 RUN apt-get update \
     && apt-get -y --quiet --no-install-recommends install \
     gcc \
@@ -22,6 +15,8 @@ RUN apt-get update \
     python3 \
     python3-pip \
     ros-humble-moveit \
+    ros-humble-nav2-bringup \
+    ros-humble-rmw-cyclonedds-cpp \
     nlohmann-json3-dev
    
 
@@ -29,14 +24,13 @@ RUN apt-get update \
 RUN mkdir -p /robocup/src/
 WORKDIR /robocup
 
-ADD https://raw.githubusercontent.com/mgonzs13/audio_common/refs/heads/main/requirements.txt /robocup/requirements1.txt
-ADD https://raw.githubusercontent.com/mgonzs13/whisper_ros/refs/heads/main/requirements.txt /robocup/requirements2.txt
-ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
-ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements4.txt
-ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
+ADD https://raw.githubusercontent.com/mgonzs13/audio_common/refs/heads/main/requirements.txt /robocup/requirements2.txt
+ADD https://raw.githubusercontent.com/mgonzs13/whisper_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
+ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements4.txt
+ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
 
 # Install external dependencies.
-RUN pip install -r requirements1.txt
+RUN pip install coqui-tts
 RUN pip install -r requirements2.txt
 RUN pip install -r requirements3.txt
 RUN pip install -r requirements4.txt
@@ -44,22 +38,18 @@ RUN pip install -r requirements5.txt
 
 
 WORKDIR /robocup/src
-RUN git clone https://github.com/juandpenan/CoreSense4Home.git -b humble-devel
+RUN git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b humble-devel
 RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
 
 WORKDIR /robocup
 RUN rosdep install --from-paths src --ignore-src -r -y
 
-# Remove MatPlotLib display warnings.
-RUN mkdir /tmp/runtime-root
-ENV XDG_RUNTIME_DIR "/tmp/runtime-root"
-RUN chmod -R 0700 /tmp/runtime-root
-ENV NO_AT_BRIDGE 1
-
 # Set up the entrypoint.
 # Install CUDA nvcc
-ARG USE_CUDA
+ARG USE_CUDA=1
 ARG CUDA_VERSION=12-6
+# HOW TO PRINT THE VALUE OF USE_CUDA?
+RUN echo "USE_CUDA: $USE_CUDA"
 
 RUN if [ "$USE_CUDA" = "1" ]; then \
     wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
@@ -86,16 +76,21 @@ ARG CMAKE_BUILD_TYPE=Release
 ENV PATH=/usr/local/cuda/bin${PATH:+:${PATH}}
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 
+RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
+
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
     if [ "$USE_CUDA" = "1" ]; then \
     source ~/.bashrc && \
     colcon build --packages-skip tts_bringup --cmake-args -DGGML_CUDA=ON; \
     else \
+    source ~/.bashrc && \
     colcon build --packages-skip tts_bringup; \
     fi
 
 # Source the ROS 2 setup file
 RUN echo "source /root/robocup/install/setup.bash" >> ~/.bashrc
+
+RUN echo "export ROS_DOMAIN_ID=1" >> ~/.bashrc
 
 # Run a default command, e.g., starting a bash shell
 CMD ["bash"]

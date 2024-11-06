@@ -1,0 +1,27 @@
+name: humble
+
+on:
+  pull_request:
+    branches:
+      - humble-devel
+  push:
+    branches:
+      - humble-devel
+  schedule:
+      - cron: '0 0 * * 6'     
+jobs:
+  docker_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker
+        uses: docker/build-push-action@v6
+        with:
+          build-args: USE_CUDA=0
+          file: .docker/Dockerfile
+          push: false

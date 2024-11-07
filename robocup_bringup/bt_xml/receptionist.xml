@@ -43,13 +43,7 @@
                     </RetryUntilSuccessful>
                     <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
                     <Action ID="LookAt" tf_frame="person_0_filtered"/> 
-                    <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{guest_color_id}"/>
-                    <RetryUntilSuccessful num_attempts="5">
-
-                        <Action ID="CheckPolicy" question="Describe the person in the picture, Please extract 3-5 features. Start the description with 'the guest is...'"
-                                            output_text="{description}"
-                                            image_topic="/camera/color/image_raw"/>
-                    </RetryUntilSuccessful>
+                    <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{guest_color_id}"/>                                      
                     <RetryUntilSuccessful num_attempts="-1">
                             <SequenceStar>
                                 <Sequence>
@@ -141,7 +135,6 @@
                             </SequenceStar>
                     </RetryUntilSuccessful>
                     <Action ID="StoreDetection" current_name="{name_value}"
-                                                guest_description="{description}"
                                                 drink="{drink_value}"
                                                 guest_id="{n}"
                                                 guest_color_id="{guest_color_id}"
@@ -150,9 +143,7 @@
                                                 drink_1="{drink_1}"
                                                 drink_2="{drink_2}"
                                                 guest_color_id_1="{guest_color_id_1}"
-                                                guest_color_id_2="{guest_color_id_2}"
-                                                guest_description_id_1="{guest_description_id_1}"
-                                                guest_description_id_2="{guest_description_id_2}"/>
+                                                guest_color_id_2="{guest_color_id_2}"/>
                     <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
                     <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="party"/>
@@ -217,7 +208,6 @@
                             <Action ID="LookAt" tf_frame="{best_detection}"/>
                             <Action ID="Speak" say_text="Hi" param="{h_name}"/>
                             <Action ID="Speak" say_text=" this is" param="{name_1}"/>
-                            <Action ID="Speak" say_text=" " param="{guest_description_id_1}"/>
                             <Action ID="Speak" say_text=" and their favorite drink is" param="{drink_1}"/>
                             <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="guest_confirmation"/>                                
                             <ReactiveFallback>
@@ -255,8 +245,7 @@
                             <Action ID="LookAt" tf_frame="{best_detection}"/>
 
                             <Action ID="Speak" say_text="Hi" param="{h_name}"/>
-                            <Action ID="Speak" say_text=" this is" param="{name_2}"/>
-                            <Action ID="Speak" say_text=" " param="{guest_description_id_2}"/>                                
+                            <Action ID="Speak" say_text=" this is" param="{name_2}"/>                                
                             <Action ID="Speak" say_text=" and their favorite drink is" param="{drink_2}"/>
                             
                             <ReactiveFallback>
@@ -303,12 +292,12 @@
                         <Action ID="Pan" period="45.0" range="30" pitch_angle="-15"/>
                     </ReactiveFallback>
                     <Action ID="LookAt" tf_frame="{chair_frame}"/>
-                    <Action ID="PointAt" tf_frame="{chair_frame}" 
+                    <!-- <Action ID="PointAt" tf_frame="{chair_frame}" 
                                          base_frame="{man_frame}"
                                          low_z="0.6"
-                                         high_z="0.9"/>
+                                         high_z="0.9"/> -->
                     <Action ID="Speak" say_text="Please, sit over there"/> 
-                    <Action ID="MoveToPredefined" pose="home"/>
+                    <!-- <Action ID="MoveToPredefined" pose="home"/> -->
                     <Action ID="LookAt" tf_frame="{attention_home}"/>
 
                     <Action ID="IncrementVariable" variable="{n}"/>

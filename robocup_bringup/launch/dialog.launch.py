@@ -78,7 +78,7 @@ def generate_launch_description():
         parameters=[
             {'chunk': 4096},
             {'frame_id': ''},
-            {'model': 'tts_models/en/ljspeech/vits'},
+            {'model': 'tts_models/en/ljspeech/glow-tts'},
             {'speaker_wav': ''},
             {'device': 'cuda'}]
     )

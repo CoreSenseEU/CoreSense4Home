@@ -23,10 +23,10 @@ RUN apt-get update \
 RUN mkdir -p /robocup/src/
 WORKDIR /robocup
 
-ADD https://raw.githubusercontent.com/mgonzs13/whisper_ros/refs/heads/main/requirements.txt /robocup/requirements2.txt
-ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
-ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements4.txt
-ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
+ADD https://raw.githubusercontent.com/mgonzs13/audio_common/refs/heads/main/requirements.txt /robocup/requirements2.txt
+ADD https://raw.githubusercontent.com/mgonzs13/whisper_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
+ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements4.txt
+ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
 
 # Install external dependencies.
 RUN pip install coqui-tts --break-system-packages

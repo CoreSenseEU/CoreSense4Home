@@ -2,14 +2,40 @@
 
 ## Installation
 
-See [Software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/C-Software-Setup)
+### Clone the repos:
 
+```bash
+$ mkdir -p robocup24_ws/src
+$ cd robocup24_ws/src
+robocup24_ws/src $ git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b jazzy
+```
+### Install dependencies 
+```bash
+robocup24_ws/src $ vcs import --recursive < CoreSense4Home/robocup_bringup/thirdparty.repos
+robocup24_ws/src $ cd ..
+robocup24_ws $ rosdep install --from-paths src --ignore-src -r -y
+```
+
+### Install Python dependencies 
+If you have exeperience working using venv with python please use them. Otherwise:
+```bash
+cd robocup24_ws
+pip install -r  src/CoreSense4Home/requirements.txt --break-system-packages
+pip install -r src/ThirdParty/whisper_ros/requirements.txt --break-system-packages
+pip install -r src/ThirdParty/llama_ros/requirements.txt --break-system-packages
+pip install -r src/ThirdParty/yolov8_ros/requirements.txt --break-system-packages
+pip install -r src/ThirdParty/audio_common/requirements.txt --break-system-packages
+```
+### Compile 
+``` bash
+cd robocup24_ws
+colcon build --cmake-args -DGGML_CUDA=ON
+```
 
 ## Usage 
-### Navigation
-```bash
-ros2 launch robocup_bringup navigation.launch.py
-```
+
+Dont forget to put the flag use_sim_time:=False
+
 ### Launch current carry my luggage implementation
 
 First kill move_group node inside tiago robot. Then in separate terminals launch:

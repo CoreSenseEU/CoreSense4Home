@@ -14,9 +14,9 @@
     #   guest_confirmation: [15.103, -8.220, -1.949]
     # ARENA B:
     waypoints: # [x, y, yaw] only 3 numbers!!
-      entrance: [-11.886, 2.915, 1.952]
-      party: [-13.452, -1.870, -2.39]
-      guest_confirmation: [-13.452, -1.870, 2.500]
+      entrance: [0.676, -4.427, 2.142]
+      party: [2.048, -5.675, 0.604]
+      guest_confirmation: [2.048, -5.675, 2.170]
 
 behaviors_main:
   ros__parameters:

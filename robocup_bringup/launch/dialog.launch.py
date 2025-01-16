@@ -78,9 +78,9 @@ def generate_launch_description():
         parameters=[
             {'chunk': 4096},
             {'frame_id': ''},
-            {'model': 'tts_models/en/ljspeech/vits'},
+            {'model': 'tts_models/en/ljspeech/glow-tts'},
             {'speaker_wav': ''},
-            {'device': 'cuda'}]
+            {'device': 'cpu'}]
     )
 
     audio_common_player_node = Node(
@@ -97,12 +97,12 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(declare_model_repo_cmd)
-    ld.add_action(declare_model_filename_cmd)
-    ld.add_action(whisper_cmd)
-    ld.add_action(llama_cmd)
+    # ld.add_action(declare_model_repo_cmd)
+    # ld.add_action(declare_model_filename_cmd)
+    # ld.add_action(whisper_cmd)
+    # ld.add_action(llama_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
-    ld.add_action(music_player_node)
+    # ld.add_action(music_player_node)
 
     return ld

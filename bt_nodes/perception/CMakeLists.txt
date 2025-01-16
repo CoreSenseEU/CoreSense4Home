@@ -23,7 +23,8 @@ find_package(OpenCV REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
-# find_package(backward_ros REQUIRED)
+find_package(hri REQUIRED)
+find_package(hri_msgs REQUIRED)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -47,8 +48,8 @@ set(dependencies
   perception_system_interfaces
   sensor_msgs
   std_srvs
-  # vqa_interfaces
-  # backward_ros
+  hri
+  hri_msgs
 )
 
 include_directories(include)
@@ -114,6 +115,9 @@ list(APPEND plugin_libs switch_yolo_model_bt_node)
 
 add_library(extract_pc_from_class_bt_node SHARED src/perception/extract_pc_from_class.cpp)
 list(APPEND plugin_libs extract_pc_from_class_bt_node)
+
+add_library(is_face_detected_bt_node SHARED src/perception/is_face_detected.cpp)
+list(APPEND plugin_libs is_face_detected_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

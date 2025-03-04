@@ -15,18 +15,15 @@
 
                     <Action ID="LookAt" tf_frame="{attention_home}"/>                                        
 
-                    <Action ID="MoveTo" is_truncated="false" distance_tolerance="-1.0" tf_frame="entrance" will_finish="true"/>
+                    <!-- <Action ID="MoveTo" is_truncated="false" distance_tolerance="-1.0" tf_frame="entrance" will_finish="true"/> -->
                     <Action ID="Speak" say_text="Hi, this is Gentlebot. I'm ready to receive a new guest"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Fallback>
                             <Timeout msec="2000">
                                 <ReactiveFallback>                                
-                                    <Condition ID="IsDetected" confidence="0.6"
-                                                               interest="person"
-                                                               frames=""
-                                                               max_depth="2"
-                                                               max_entities="1"
-                                                               order="depth_nearest"/>
+                                    <Condition ID="IsFaceDetected" max_depth="2"
+                                                                   max_entities="1"
+                                                                   cam_frame="{cam_frame}"/>
                                     <Action ID="Pan" period="20.0" range="45" pitch_angle="10"/>                                    
                                 </ReactiveFallback>
                             </Timeout>
@@ -38,278 +35,6 @@
                             </Delay>
                         </Fallback>
                     </RetryUntilSuccessful>
-                    <RetryUntilSuccessful num_attempts="-1">
-                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                    </RetryUntilSuccessful>
-                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
-                    <Action ID="LookAt" tf_frame="person_0_filtered"/> 
-                    <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{guest_color_id}"/>
-                    <RetryUntilSuccessful num_attempts="5">
-
-                        <Action ID="CheckPolicy" question="Describe the person in the picture, Please extract 3-5 features. Start the description with 'the guest is...'"
-                                            output_text="{description}"
-                                            image_topic="/camera/color/image_raw"/>
-                    </RetryUntilSuccessful>
-                    <RetryUntilSuccessful num_attempts="-1">
-                            <SequenceStar>
-                                <Sequence>
-                                    <ReactiveSequence>
-                                        <RetryUntilSuccessful num_attempts="-1">  
-                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                        </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
-                                        <Action ID="Speak" say_text="What's your name?"/>
-                                    </ReactiveSequence>
-                                    <ReactiveSequence>
-                                        <RetryUntilSuccessful num_attempts="-1">  
-                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                        </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
-                                    </ReactiveSequence>
-
-                                    <ReactiveSequence>
-                                        <RetryUntilSuccessful num_attempts="-1">  
-                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                        </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
-                                        <Action ID="Listen" listen_text="{text_value}"/>
-                                    </ReactiveSequence>
-
-                                    <ReactiveSequence>
-                                        <RetryUntilSuccessful num_attempts="-1">  
-                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                        </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
-                                        <Action ID="Query" text="{text_value}" intention="name" intention_value="{name_value}"/>
-                                    </ReactiveSequence>
-                                
-                                    <ReactiveSequence>
-                                        <RetryUntilSuccessful num_attempts="-1">  
-                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                        </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/>
-                                        <Action ID="Speak" say_text="So you are" param="{name_value}"/>
-                                        <Action ID="Speak" say_text="Please say yes or no"/>
-                                    </ReactiveSequence> 
-
-                                    <ReactiveSequence>
-                                        <RetryUntilSuccessful num_attempts="-1">  
-                                            <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                        </RetryUntilSuccessful>
-                                        <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
-                                        <Action ID="DialogConfirmation" />
-                                    </ReactiveSequence>
-                                </Sequence>
-
-                                <Sequence>
-                                    <Action ID="Speak" say_text="What's your favorite drink?"/>
-                                <ReactiveSequence>
-                                    <RetryUntilSuccessful num_attempts="-1">  
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                    </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
-                                </ReactiveSequence>
-
-                                <ReactiveSequence>
-                                    <RetryUntilSuccessful num_attempts="-1">  
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                    </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
-                                    <Action ID="Listen" listen_text="{text_value2}"/>
-                                </ReactiveSequence>
-
-                                <ReactiveSequence>
-                                    <RetryUntilSuccessful num_attempts="-1">  
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                    </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
-                                    <Action ID="Query" text="{text_value2}" intention="drink" intention_value="{drink_value}"/>
-                                </ReactiveSequence>
-
-                                <Action ID="Speak" say_text="So it seems you like " param="{drink_value}"/>
-                                <Action ID="Speak" say_text="Please say yes or no"/>
-
-                                <ReactiveSequence>
-                                    <RetryUntilSuccessful num_attempts="-1">  
-                                        <Condition ID="IsDetected" confidence="0.6" interest="person" frames="" max_depth="3" max_entities="1" order="depth_nearest"/>
-                                    </RetryUntilSuccessful>
-                                    <Action ID="FilterEntity" frame="person_0" lambda="0.05"/> 
-                                    <Action ID="DialogConfirmation" />
-                                </ReactiveSequence>
-
-                                </Sequence>
-                            </SequenceStar>
-                    </RetryUntilSuccessful>
-                    <Action ID="StoreDetection" current_name="{name_value}"
-                                                guest_description="{description}"
-                                                drink="{drink_value}"
-                                                guest_id="{n}"
-                                                guest_color_id="{guest_color_id}"
-                                                name_1="{name_1}"
-                                                name_2="{name_2}"
-                                                drink_1="{drink_1}"
-                                                drink_2="{drink_2}"
-                                                guest_color_id_1="{guest_color_id_1}"
-                                                guest_color_id_2="{guest_color_id_2}"
-                                                guest_description_id_1="{guest_description_id_1}"
-                                                guest_description_id_2="{guest_description_id_2}"/>
-                    <Action ID="Speak" say_text="Please follow me, i will get you to the  party"/>
-                    <Action ID="LookAt" tf_frame="{attention_home}"/>
-                    <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="party"/>
-                    <Switch2 variable="{n}"  case_1="1" case_2="2" >
-
-                        <Sequence>
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                                                interest="person"
-                                                                frames="{frames}" 
-                                                                max_depth="3" 
-                                                                max_entities="1"
-                                                                order="depth_nearest"/>
-                                                
-                                <Action ID="Pan" period="20.0" range="45" pitch_angle="-10"/>
-                            </ReactiveFallback>
-                            <Action ID="ExtractEntityColor" confidence="0.5" interest="person" person_id="{host_id}"/>
-                        </Sequence>
-
-                        <ReactiveFallback>
-                        
-                                <Condition ID="IsDetected" confidence="0.6"
-                                                            interest="person"
-                                                            frames="{frames}" 
-                                                            max_depth="3" 
-                                                            max_entities="2"
-                                                            person_id="{host_id}"
-                                                            order="color"/>
-                            <Action ID="Pan" period="20.0" range="45" pitch_angle="-10"/>
-                        </ReactiveFallback>
-
-                        <Sequence>
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                                                interest="person"
-                                                                frames="{frames}" 
-                                                                max_depth="3" 
-                                                                max_entities="1"
-                                                                order="depth_nearest"/>
-                                                
-                                <Action ID="Pan" period="20.0" range="45" pitch_angle="-10"/>
-                            </ReactiveFallback>
-                            <Action ID="ExtractEntityColor" confidence="0.6" interest="person" person_id="{host_id}"/>
-                        </Sequence>
-
-                    </Switch2>
-
-                    <Switch2 variable="{n}"  case_1="1" case_2="2" >
-
-                        <Sequence>
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                                            interest="person"
-                                                            frames="{frames}" 
-                                                            max_depth="3" 
-                                                            max_entities="1"
-                                                            order="depth_nearest"
-                                                            best_detection="{best_detection}"/>
-                                            
-                                <Action ID="Pan" period="45.0" range="45" pitch_angle="-10"/>
-                            </ReactiveFallback>
-                            <Action ID="LookAt" tf_frame="{best_detection}"/>
-                            <Action ID="Speak" say_text="Hi" param="{h_name}"/>
-                            <Action ID="Speak" say_text=" this is" param="{name_1}"/>
-                            <Action ID="Speak" say_text=" " param="{guest_description_id_1}"/>
-                            <Action ID="Speak" say_text=" and their favorite drink is" param="{drink_1}"/>
-                            <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="guest_confirmation"/>                                
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                    interest="person"
-                                    max_depth="1.5" 
-                                    max_entities="2"
-                                    person_id="{guest_color_id_1}"
-                                    order="color"
-                                    best_detection="{best_detection}"/>
-
-                                <Action ID="MoveAlongAxis" 
-                                                            speed="0.5"
-                                                            distance="6.28"
-                                                            axis="z"/>
-                            </ReactiveFallback>
-                            <Action ID="LookAt" tf_frame="{best_detection}"/>
-                            <Action ID="Speak" say_text=" By the way" param="{name_1}"/>
-                            <Action ID="Speak" say_text="our host" param="{h_name}"/>
-                            <Action ID="Speak" say_text="enjoys" param="{h_drink}"/>
-                        </Sequence>
-                        
-                        <Sequence>
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                                                interest="person"
-                                                                frames="{frames}" 
-                                                                max_depth="3" 
-                                                                max_entities="2"
-                                                                person_id="{host_id}"
-                                                                order="color"
-                                                                best_detection="{best_detection}"/>
-                                <Action ID="Pan" period="30.0" range="45" pitch_angle="-10"/>
-                            </ReactiveFallback>
-                            <Action ID="LookAt" tf_frame="{best_detection}"/>
-
-                            <Action ID="Speak" say_text="Hi" param="{h_name}"/>
-                            <Action ID="Speak" say_text=" this is" param="{name_2}"/>
-                            <Action ID="Speak" say_text=" " param="{guest_description_id_2}"/>                                
-                            <Action ID="Speak" say_text=" and their favorite drink is" param="{drink_2}"/>
-                            
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                                                interest="person"
-                                                                frames="{frames}" 
-                                                                max_depth="3" 
-                                                                max_entities="2"
-                                                                person_id="{guest_color_id_1}"
-                                                                order="color"
-                                                                best_detection="{best_detection}"/>
-                                <Action ID="Pan" period="20.0" range="45" pitch_angle="-10"/>
-                            </ReactiveFallback>
-                            <Action ID="LookAt" tf_frame="{best_detection}"/>
-
-                            <Action ID="Speak" say_text="Also we have here with us our guest" param="{name_1}"/>
-                            <Action ID="Speak" say_text="they like " param="{drink_1}"/>
-                            <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="guest_confirmation"/>                    
-
-                            <ReactiveFallback>
-                                <Condition ID="IsDetected" confidence="0.6"
-                                    interest="person"
-                                    max_depth="1.5" 
-                                    max_entities="2"
-                                    person_id="{guest_color_id_2}"
-                                    order="color"
-                                    best_detection="{best_detection}"
-                                    />
-                                <Action ID="MoveAlongAxis" speed="-0.5" distance="6.28" axis="z"/>
-                            </ReactiveFallback>
-                            <Action ID="LookAt" tf_frame="{best_detection}"/>
-
-                            <Action ID="Speak" say_text=" By the way" param="{name_2}"/>
-                            <Action ID="Speak" say_text="our host" param="{h_name}"/>
-                            <Action ID="Speak" say_text="enjoys" param="{h_drink}"/>
-                        </Sequence>
-                        
-                        <Action ID="Speak" say_text="Hi every one this is our new guest. Please have fun! "/>
-                    </Switch2>
-                    
-                    <Action ID="MoveTo" is_truncated="false" distance_tolerance="0" tf_frame="party"/>
-                    <ReactiveFallback>
-                        <Condition ID="IsSittable" cam_frame="{cam_frame}" chair_frame="{chair_frame}"/>
-                        <Action ID="Pan" period="45.0" range="30" pitch_angle="-15"/>
-                    </ReactiveFallback>
-                    <Action ID="LookAt" tf_frame="{chair_frame}"/>
-                    <Action ID="PointAt" tf_frame="{chair_frame}" 
-                                         base_frame="{man_frame}"
-                                         low_z="0.6"
-                                         high_z="0.9"/>
-                    <Action ID="Speak" say_text="Please, sit over there"/> 
-                    <Action ID="MoveToPredefined" pose="home"/>
-                    <Action ID="LookAt" tf_frame="{attention_home}"/>
 
                     <Action ID="IncrementVariable" variable="{n}"/>
                 </Sequence>  
@@ -350,13 +75,11 @@
         <Action ID="InitReceptionist">
             <output_port default="0" name="n">Number of guests introduced</output_port>
         </Action>
-        <Condition ID="IsDetected">
+        <Condition ID="IsFaceDetected">
             <input_port default="0.6" name="confidence"/>
             <input_port default="person" name="entity"/>
-            <output_port name="frames">array of frames</output_port>
             <input_port default="2" name="max_depth">value in meters</input_port>
             <input_port default="1" name="max_entities"/>
-            <input_port default="depth_nearest" name="order">[depth_nearest, left_to_right]^</input_port>
         </Condition>
         <Condition ID="IsEntityMoving">
             <input_port default="0.5" name="distance_tolerance"/>

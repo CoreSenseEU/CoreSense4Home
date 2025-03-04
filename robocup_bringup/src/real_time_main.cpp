@@ -37,8 +37,9 @@ int main(int argc, char ** argv)
   // Creating of all systems nodes
   std::list<std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode>> sched_nodes = {
     std::make_shared<attention_system::AttentionServerNode>(node_options),
-    std::make_shared<perception_system::PeopleDetectionNode>(node_options),
-    std::make_shared<perception_system::ObjectsDetectionNode>(node_options)};
+    // std::make_shared<perception_system::PeopleDetectionNode>(node_options),
+    std::make_shared<perception_system::ObjectsDetectionNode>(node_options)
+  };
 
   // Adding systems nodes to the appropiate executor
   for (auto & sched_node : sched_nodes) {

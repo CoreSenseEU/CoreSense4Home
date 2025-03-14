@@ -25,6 +25,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(hri REQUIRED)
 find_package(hri_msgs REQUIRED)
+find_package(backward_ros REQUIRED)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -50,6 +51,7 @@ set(dependencies
   std_srvs
   hri
   hri_msgs
+  backward_ros
 )
 
 include_directories(include)
@@ -118,6 +120,12 @@ list(APPEND plugin_libs extract_pc_from_class_bt_node)
 
 add_library(is_face_detected_bt_node SHARED src/perception/is_face_detected.cpp)
 list(APPEND plugin_libs is_face_detected_bt_node)
+
+add_library(is_body_detected_bt_node SHARED src/perception/is_body_detected.cpp)
+list(APPEND plugin_libs is_body_detected_bt_node)
+
+add_library(pal_is_pointing_bt_node SHARED src/perception/pal_is_pointing.cpp)
+list(APPEND plugin_libs pal_is_pointing_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

@@ -19,29 +19,46 @@ public:
   explicit ExecuteBTServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
   : CascadeLifecycleNode("behavior_server", options)
   {
+    // auto options = rclcpp::NodeOptions();
+    // options.allow_undeclared_parameters(true);
+    // options.automatically_declare_parameters_from_overrides(true);
+    auxiliary_node_ = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>("behaviors_main");
+
     this->declare_parameter("plugins", std::vector<std::string>());
     this->declare_parameter("rate", 1.0);
+    this->declare_parameter("use_shared_bb", true);
+
   }
+  rclcpp::CallbackGroup::SharedPtr callback_group;
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_configure(const rclcpp_lifecycle::State &)
   {
     RCLCPP_INFO(this->get_logger(), "Configuring");
 
     this->get_parameter("plugins", this->plugins_);
+    this->get_parameter("use_shared_bb", this->use_shared_bb_);
     double rate;
     this->get_parameter("rate", rate);
+    callback_group = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     rate_ = std::make_unique<rclcpp::Rate>(rate);
 
     for (const auto & plugin : plugins_) {
       RCLCPP_INFO(this->get_logger(), "Loading BT Node: [%s]", plugin.c_str());
       factory_.registerFromPlugin(loader_.getOSName(plugin));
     }
+    blackboard_ = BT::Blackboard::create();
+    blackboard_->set("node", std::static_pointer_cast<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(auxiliary_node_));
     
     this->action_server_ = rclcpp_action::create_server<DummyBehavior>(
-      this,
+      this->get_node_base_interface(),
+      this->get_node_clock_interface(),
+      this->get_node_logging_interface(),
+      this->get_node_waitables_interface(),
       "execute_bt",
       std::bind(&ExecuteBTServer::handle_goal, this, _1, _2),
       std::bind(&ExecuteBTServer::handle_cancel, this, _1),
-      std::bind(&ExecuteBTServer::handle_accepted, this, _1));
+      std::bind(&ExecuteBTServer::handle_accepted, this, _1),
+      rcl_action_server_get_default_options(),
+      callback_group);
     // Add your configuration code here
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
@@ -53,13 +70,16 @@ public:
   }
 
 private:
-  rclcpp_action::Server<DummyBehavior>::SharedPtr action_server_;
-
+  rclcpp_action::Server<DummyBehavior>::SharedPtr action_server_;;
   std::vector<std::string> plugins_;
   std::string bt_xml_file_;
+  bool use_shared_bb_;
+  rclcpp_cascade_lifecycle::CascadeLifecycleNode::SharedPtr auxiliary_node_;
+
   std::unique_ptr<rclcpp::Rate> rate_;
   BT::BehaviorTreeFactory factory_;
   BT::SharedLibrary loader_;
+  BT::Blackboard::Ptr blackboard_;
 
   rclcpp_action::GoalResponse handle_goal(
     const rclcpp_action::GoalUUID & uuid,
@@ -89,33 +109,21 @@ private:
     const auto goal = goal_handle->get_goal();
     auto result = std::make_shared<DummyBehavior::Result>();
     RCLCPP_INFO(this->get_logger(), "Loading BT: [%s]", goal->command.data.c_str());
-    auto blackboard = BT::Blackboard::create();
-    blackboard->set("node", std::static_pointer_cast<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(this->shared_from_this()));
-    std::string test_tree = R"(
-      <?xml version="1.0"?>
-      <root main_tree_to_execute="BehaviorTree">
-          <BehaviorTree ID="BehaviorTree">
-              <Repeat num_cycles="4">
-                  <Delay delay_msec="1000">
-                      <Action ID="Rotate" angle="1.57" speed="0.3" />
-                  </Delay>
-              </Repeat>
-          </BehaviorTree>
-          <TreeNodesModel>
-              <Action ID="Rotate">
-                  <input_port default="0.0" name="angle"/>
-                  <input_port default="0.0" name="speed"/>
-              </Action>
-          </TreeNodesModel>
-      </root>
-    )";  
-    BT::Tree tree = factory_.createTreeFromText(test_tree, blackboard);
+    BT::Tree tree = factory_.createTreeFromText(goal->command.data, blackboard_);
     while (rclcpp::ok()) {
       if (tree.tickRoot() != BT::NodeStatus::RUNNING) {
         break;
       }
+      RCLCPP_INFO(this->get_logger(), "Now spinning");
+      rclcpp::spin_some(auxiliary_node_->get_node_base_interface());
       rate_->sleep();
     }
+    
+    if (use_shared_bb_)
+    {
+      blackboard_ = tree.rootBlackboard();
+    }
+    
     goal_handle->succeed(result);
 
   }
@@ -125,10 +133,13 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions node_options;
+  // auto executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   auto node = std::make_shared<ExecuteBTServer>(node_options);
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
-  rclcpp::spin(node->get_node_base_interface());
+  // executor->add_callback_group(node->callback_group, node->get_node_base_interface());
+  // executor->spin();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }

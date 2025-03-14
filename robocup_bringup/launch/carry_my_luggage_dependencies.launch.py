@@ -1,17 +1,3 @@
-# Copyright 2024 Intelligent Robotics Lab - Gentlebots
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -19,108 +5,80 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-# from launch.actions import LogInfo, RegisterEventHandler
-# from launch.event_handlers import OnExecutionComplete
-# import lifecycle_msgs
-# from launch_ros.events.lifecycle
-
+from launch_ros.actions import SetRemap
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
     move_group_dir = get_package_share_directory('tiago_mtc_examples')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
-    yolo3d_dir = get_package_share_directory('yolov8_bringup')
-    navigation_dir = get_package_share_directory('navigation_system')
+    hri_body_detect_dir = get_package_share_directory('hri_body_detect')
     whisper_dir = get_package_share_directory('whisper_bringup')
     package_dir = get_package_share_directory('robocup_bringup')
-
-    # audio related launchers:
 
     whisper_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(whisper_dir, 'launch', 'whisper.launch.py')
-        )
-    )
-    audio_common_player_node = Node(
-        package='audio_common',
-        executable='audio_player_node',
-        parameters=[
-            {'channels': 2},
-            {'device': -1}]
-    )
-
-    audio_common_tts_node = Node(
-        package='tts_ros',
-        executable='tts_node',
-        parameters=[
-            {'chunk': 4096},
-            {'frame_id': ''},
-            {'model': 'tts_models/en/ljspeech/vits'},
-            {'speaker_wav': ''},
-            {'device': 'cuda'}]
-    )
-
-    # manipulation launchers
-    move_group = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(move_group_dir, 'launch', 'move_group.launch.py')
-        )
-    )
-
-    manipulation_server = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(manipulation_dir, 'launch', 'server.launch.py')
-        )
-    )
-
-    # real time launcher
-    real_time = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'launch', 'real_time.launch.py')
-        )
-    )
-
-    yolo3d = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
         ),
         launch_arguments={
-            # 'namespace': 'perception_system',
-            'model': 'yolov8n-pose.pt',
-            'input_image_topic': '/head_front_camera/rgb/image_raw',
-            'input_depth_topic': '/head_front_camera/depth/image_raw',
-            'input_depth_info_topic': '/head_front_camera/depth/camera_info',
-            'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_rgb_optical_frame',
-            'threshold': '0.5'
-            }.items()
-    )
-
-    navigation = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(navigation_dir, 'launch', 'navigation_system.launch.py')
-        ),
-        launch_arguments={
-            'rviz': 'True',
-            'mode': 'amcl',
-            'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
-            'slam_params_file': package_dir +
-                    '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
-            'map': os.path.join(
-                                package_dir,
-                                'maps',
-                                'carry_map.yaml'),
+            'silero_vad_use_cuda': 'False',
         }.items()
     )
 
+    execute_bt_server = Node(
+        package='robocup_bringup',
+        executable='behavior_server_main',
+        output='screen',
+        name='behavior_server2',
+        parameters=[
+            os.path.join(package_dir,
+                         'config',
+                         'carry_my_luggage',
+                         'behavior_server.yaml')
+        ]
+    )
+    
+    hri_body_detect = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(hri_body_detect_dir, 'launch', 'hri_body_detect.launch.py')
+        ),
+        launch_arguments={
+            'use_depth': 'true',
+            'use_cmc': 'true',
+            }.items()
+        
+    )
+    
     ld = LaunchDescription()
-    ld.add_action(navigation)
+
     ld.add_action(whisper_cmd)
-    ld.add_action(audio_common_player_node)
-    ld.add_action(audio_common_tts_node)
-    ld.add_action(yolo3d)
-    ld.add_action(real_time)
-    ld.add_action(move_group)
-    ld.add_action(manipulation_server)
+    ld.add_action(
+        SetRemap(
+            src='image',
+            dst='/head_front_camera/rgb/image_raw'
+        )
+    )
+    ld.add_action(
+        SetRemap(
+            src='camera_info',
+            dst='/head_front_camera/rgb/camera_info'
+        )
+    )
+    ld.add_action(
+        SetRemap(
+            src='depth_image',
+            dst='/head_front_camera/depth/image_raw'
+        )
+    )
+    ld.add_action(
+        SetRemap(
+            src='depth_info',
+            dst='/head_front_camera/rgb/camera_info'
+        )
+    )
+    ld.add_action(hri_body_detect)
+    ld.add_action(execute_bt_server)
+    # ld.add_action(navigation)
 
     return ld

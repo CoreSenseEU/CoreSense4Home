@@ -21,6 +21,7 @@ find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(gpsr_msgs REQUIRED)
 find_package(audio_common_msgs REQUIRED)
+find_package(tts_msgs REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
@@ -38,6 +39,7 @@ set(dependencies
   gpsr_msgs
   std_srvs
   audio_common_msgs
+  tts_msgs
 )
 
 include_directories(include)
@@ -74,6 +76,9 @@ list(APPEND plugin_libs start_music_bt_node)
 
 add_library(stop_music_bt_node SHARED src/robocup_hri/stop_music.cpp)
 list(APPEND plugin_libs stop_music_bt_node)
+
+add_library(pal_speak_bt_node SHARED src/robocup_hri/dialog/PalSpeak.cpp)
+list(APPEND plugin_libs pal_speak_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

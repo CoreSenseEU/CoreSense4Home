@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsBodyDetected" best_detection="{current_person}"/>
+            </RetryUntilSuccessful>
+            <Action ID="LookAt" tf_frame="{current_person}"/>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Sequence>
+                    <Fallback>
+                        <ReactiveSequence>
+                            <RetryUntilSuccessful num_attempts="-1">
+                                <Condition ID="IsBodyDetected" best_detection="{current_person}"/>
+                            </RetryUntilSuccessful>
+                            <Action ID="LookAt" tf_frame="{current_person}"/>
+                            <Condition ID="IsEntityMoving" distance_tolerance="0.6"
+                                                            robot_distance_to_person="1.5"
+                                                            frame="{current_person}"
+                                                            check_time="8.0"/>
+                            <Action ID="FollowEntity" camera_frame="head_front_camera_rgb_optical_frame"
+                                                        distance_tolerance="0.2"
+                                                        frame_to_follow="{current_person}"
+                                                        x_axis_max="{max_x}"
+                                                        x_axis_min="{min_x}"
+                                                        y_axis_max="{max_y}"
+                                                        y_axis_min="{min_y}"/>
+                        </ReactiveSequence>
+                        <Action ID="Speak" param="" say_text="have we arrived to the destination?"/>
+                    </Fallback>
+                    <ReactiveSequence>
+                        <RetryUntilSuccessful num_attempts="-1">
+                            <Condition ID="IsBodyDetected" best_detection="{current_person}"/>
+                        </RetryUntilSuccessful>
+                        <Action ID="LookAt" tf_frame="{current_person}"/>
+                        <ForceSuccess>
+                            <Action ID="GoalPublisher" 
+                                camera_frame="head_front_camera_rgb_optical_frame"
+                                distance_tolerance="0.2"
+                                frame_to_follow="{current_person}"/>  
+                        </ForceSuccess>
+                        <Action ID="DialogConfirmation"/>
+                    </ReactiveSequence>
+                </Sequence>
+            </RetryUntilSuccessful>
+        </Sequence>
+    </BehaviorTree>
+</root>

@@ -23,7 +23,7 @@
 #include "attention_system_msgs/msg/attention_command.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/point_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -44,8 +44,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::vector<std::string>>("tf_frames"),
-        BT::InputPort<std::string>("tf_frame")});
+      {BT::InputPort<std::string>("tf_frame")});
   }
 
 private:
@@ -53,7 +52,7 @@ private:
 
   geometry_msgs::msg::PoseStamped pose_;
 
-  rclcpp_lifecycle::LifecyclePublisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr
+  rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PointStamped>::SharedPtr
     attention_points_pub_;
 
   std::vector<std::string> tf_frames_;

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action ID="InitCarry" x_axis_max="{max_x}" x_axis_min="{min_x}" y_axis_max="{max_y}" y_axis_min="{min_y}"/>
+            <Action ID="PalSpeak" param="" say_text="Hi, This is gentlebots. Im ready to carry your luggage,please point to the correct bag and dont be too close"/>
+            <Action ID="SetStartPosition" 
+                                          reference_frame="map"
+                                          frame_name="initial"
+                                          initial_pose="{going_back}"
+                                          x_offset="0.0"
+                                          y_offset="0.0"
+                                          />
+        <RetryUntilSuccessful num_attempts="-1">
+            <Condition ID="IsBodyDetected" />
+        </RetryUntilSuccessful>
+        </Sequence> 
+    </BehaviorTree>
+</root>

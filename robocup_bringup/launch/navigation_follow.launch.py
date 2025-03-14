@@ -25,115 +25,25 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     package_dir = get_package_share_directory('robocup_bringup')
-    nav2_dir = get_package_share_directory('nav2_bringup')
-    small_objects_dir = get_package_share_directory('small_objects_detector')
-    pcl_to_laser_dir = get_package_share_directory('pointcloud_to_laserscan')
-
-    # Configuration Variables
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    # slam = LaunchConfiguration('slam')
-    rviz = LaunchConfiguration('rviz')
-    # map_file = LaunchConfiguration('map')
-    params_file = LaunchConfiguration('params_file')
-
-    declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time', default_value='false')
-
-    declare_slam_cmd = DeclareLaunchArgument(
-        'slam', default_value='True')
-
-    declare_use_rviz_cmd = DeclareLaunchArgument(
-        'rviz', default_value='False')
-
-    declare_map_cmd = DeclareLaunchArgument(
-        'map', default_value='')
-
-    declare_nav_params_cmd = DeclareLaunchArgument(
-        'params_file', default_value=os.path.join(
-            package_dir,
-            'params',
-            'tiago_nav_follow_params.yaml')
-    )
-
-    # Actions
-    small_objects_cmd = IncludeLaunchDescription(
+    navigation_dir = get_package_share_directory('navigation_system')
+    
+    navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(small_objects_dir, 'launch', 'detector.launch.py')
-        ),
-    )
-
-    pcl_to_laser_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pcl_to_laser_dir,
-                         'launch',
-                         'sample_pointcloud_to_laserscan_launch.py')
-        ),
-    )
-
-    # localization_cmd = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         os.path.join(nav2_dir, 'launch', 'localization_launch.py')
-    #     ),
-    #     launch_arguments={
-    #         'use_sim_time': use_sim_time,
-    #         'slam': slam,
-    #         'map': map_file,
-    #         'params_file': params_file
-    #     }.items(),
-    # )
-
-    slam_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'launch', 'slam_launch.py')
+            os.path.join(navigation_dir, 'launch', 'navigation_system.launch.py')
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,
-            'params_file': params_file
-        }.items(),
-    )
-
-    navigation_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(nav2_dir, 'launch', 'navigation_launch.py')
-        ),
-        launch_arguments={
-            'use_sim_time': use_sim_time,
-            'params_file': params_file
+            'rviz': 'True',
+            'mode': 'amcl',
+            'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
+            'slam_params_file': package_dir +
+                    '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
+            'map': os.path.join(
+                                package_dir,
+                                'maps',
+                                'lab_test.yaml'),
         }.items()
     )
 
-    # navigation_system_node = Node(
-    #     package='navigation_system',
-    #     executable='navigation_system_node',
-    #     name='navigation_system_node',
-    #     output='screen',
-    #     parameters=[{'nodes': [],
-    #                  'mode': 'amcl'}]
-    # )
-
-    rviz_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(nav2_dir, 'launch', 'rviz_launch.py')
-        ),
-        launch_arguments={
-            'use_sim_time': use_sim_time,
-            'rviz': rviz
-        }.items(),
-        condition=IfCondition(rviz)
-    )
-
     ld = LaunchDescription()
-    ld.add_action(declare_use_sim_time_cmd)
-    ld.add_action(declare_slam_cmd)
-    ld.add_action(declare_nav_params_cmd)
-    ld.add_action(declare_use_rviz_cmd)
-    ld.add_action(declare_map_cmd)
-    ld.add_action(small_objects_cmd)
-    ld.add_action(pcl_to_laser_cmd)
-    # ld.add_action(localization_cmd) Not needed for slam =P
-    ld.add_action(slam_cmd)
-    ld.add_action(navigation_cmd)
-    ld.add_action(rviz_cmd)
-    # ld.add_action(navigation_system_node)
-
+    ld.add_action(navigation)
     return ld

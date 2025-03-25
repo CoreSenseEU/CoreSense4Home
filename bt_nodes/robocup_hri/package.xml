@@ -14,11 +14,11 @@
   <depend>behaviortree_cpp_v3</depend>
   <depend>audio_common_msgs</depend>
   <depend>whisper_msgs</depend>
-  <depend>llama_msgs</depend>
+  <!-- <depend>llama_msgs</depend> -->
   <depend>moveit_msgs</depend>
   <depend>shape_msgs</depend>
   <depend>std_msgs</depend>
-  <depend>gpsr_msgs</depend>
+  <!-- <depend>gpsr_msgs</depend>  (juandpenan) todo: uncomment after pal finishes testing-->
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

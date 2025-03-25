@@ -12,7 +12,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>rclcpp_cascade_lifecycle</depend>
-  <depend>manipulation_interfaces</depend>
+  <!-- <depend>manipulation_interfaces</depend> (juandpenan) uncomment this after pal finishes testing -->
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

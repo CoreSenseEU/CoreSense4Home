@@ -18,15 +18,13 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(perception_system REQUIRED)
+# find_package(perception_system REQUIRED) (juandpenan) todo: uncomment this when pal team finishes testing
 find_package(OpenCV REQUIRED)
-find_package(perception_system_interfaces REQUIRED)
+# find_package(perception_system_interfaces REQUIRED) (juandpenan) todo: uncomment this when pal team finishes testing
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(hri REQUIRED)
 find_package(hri_msgs REQUIRED)
-find_package(backward_ros REQUIRED)
-
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -44,79 +42,80 @@ set(dependencies
   tf2
   rclcpp_action
   behaviortree_cpp_v3
-  perception_system
+  # perception_system (juandpenan) todo: uncomment this when pal team finishes testing
   OpenCV
-  perception_system_interfaces
+  # perception_system_interfaces (juandpenan) todo: uncomment this when pal team finishes testing
   sensor_msgs
   std_srvs
   hri
   hri_msgs
-  backward_ros
 )
 
 include_directories(include)
 
-add_library(extract_object_from_scene_bt_node SHARED src/perception/ExtractObjectsFromScene.cpp)
-list(APPEND plugin_libs extract_object_from_scene_bt_node)
+# add_library(extract_object_from_scene_bt_node SHARED src/perception/ExtractObjectsFromScene.cpp)
+# list(APPEND plugin_libs extract_object_from_scene_bt_node)
 
-add_library(convert_color_bt_node SHARED src/perception/convert_color.cpp)
-list(APPEND plugin_libs convert_color_bt_node)
+# add_library(convert_color_bt_node SHARED src/perception/convert_color.cpp)
+# list(APPEND plugin_libs convert_color_bt_node)
 
-add_library(is_detected_bt_node SHARED src/perception/IsDetected.cpp)
-list(APPEND plugin_libs is_detected_bt_node)
+# add_library(is_detected_bt_node SHARED src/perception/IsDetected.cpp)
+# list(APPEND plugin_libs is_detected_bt_node)
 
-add_library(follow_person_bt_node SHARED src/perception/FollowPerson.cpp)
-list(APPEND plugin_libs follow_person_bt_node)
+# add_library(follow_person_bt_node SHARED src/perception/FollowPerson.cpp)
+# list(APPEND plugin_libs follow_person_bt_node)
 
-add_library(extract_collision_scene_bt_node SHARED src/perception/extract_collision_scene.cpp)
-list(APPEND plugin_libs extract_collision_scene_bt_node)
+# add_library(extract_collision_scene_bt_node SHARED src/perception/extract_collision_scene.cpp)
+# list(APPEND plugin_libs extract_collision_scene_bt_node)
 
-add_library(is_entity_moving_bt_node SHARED src/perception/is_entity_moving.cpp)
-list(APPEND plugin_libs is_entity_moving_bt_node)
+# add_library(is_entity_moving_bt_node SHARED src/perception/is_entity_moving.cpp)
+# list(APPEND plugin_libs is_entity_moving_bt_node)
 
-add_library(is_moving_bt_node SHARED src/perception/is_moving.cpp)
-list(APPEND plugin_libs is_moving_bt_node)
+# add_library(is_moving_bt_node SHARED src/perception/is_moving.cpp)
+# list(APPEND plugin_libs is_moving_bt_node)
 
-add_library(filter_entity_bt_node SHARED src/perception/filter_entity.cpp)
-list(APPEND plugin_libs filter_entity_bt_node)
+# add_library(filter_entity_bt_node SHARED src/perception/filter_entity.cpp)
+# list(APPEND plugin_libs filter_entity_bt_node)
 
-add_library(is_pointing_bt_node SHARED src/perception/is_pointing.cpp)
-list(APPEND plugin_libs is_pointing_bt_node)
+# add_library(is_pointing_bt_node SHARED src/perception/is_pointing.cpp)
+# list(APPEND plugin_libs is_pointing_bt_node)
 
-add_library(extract_entity_color_bt_node SHARED src/perception/extract_entity_color.cpp)
-list(APPEND plugin_libs extract_entity_color_bt_node)
+# add_library(extract_entity_color_bt_node SHARED src/perception/extract_entity_color.cpp)
+# list(APPEND plugin_libs extract_entity_color_bt_node)
 
-add_library(is_sittable_bt_node SHARED src/perception/is_sittable.cpp)
-list(APPEND plugin_libs is_sittable_bt_node)
+# add_library(is_sittable_bt_node SHARED src/perception/is_sittable.cpp)
+# list(APPEND plugin_libs is_sittable_bt_node)
 
-add_library(is_door_open_bt_node SHARED src/perception/IsDoorOpen.cpp)
-list(APPEND plugin_libs is_door_open_bt_node)
+# add_library(is_door_open_bt_node SHARED src/perception/IsDoorOpen.cpp)
+# list(APPEND plugin_libs is_door_open_bt_node)
 
-add_library(extract_cabinet_place_pose_bt_node SHARED src/perception/extract_cabinet_place_pose.cpp)
-list(APPEND plugin_libs extract_cabinet_place_pose_bt_node)
+# add_library(extract_cabinet_place_pose_bt_node SHARED src/perception/extract_cabinet_place_pose.cpp)
+# list(APPEND plugin_libs extract_cabinet_place_pose_bt_node)
 
-add_library(is_gesturing_bt_node SHARED src/perception/is_gesturing.cpp)
-list(APPEND plugin_libs is_gesturing_bt_node)
+# add_library(is_gesturing_bt_node SHARED src/perception/is_gesturing.cpp)
+# list(APPEND plugin_libs is_gesturing_bt_node)
 
-add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
-list(APPEND plugin_libs count_people_bt_node)
+# add_library(count_people_bt_node SHARED src/perception/count_people.cpp)
+# list(APPEND plugin_libs count_people_bt_node)
 
-add_library(filter_object_bt_node SHARED src/perception/filter_object.cpp)
-list(APPEND plugin_libs filter_object_bt_node)
+# add_library(filter_object_bt_node SHARED src/perception/filter_object.cpp)
+# list(APPEND plugin_libs filter_object_bt_node)
 
-add_library(filter_prev_detections_bt_node SHARED src/perception/filter_prev_detections.cpp)
-list(APPEND plugin_libs filter_prev_detections_bt_node)
+# add_library(filter_prev_detections_bt_node SHARED src/perception/filter_prev_detections.cpp)
+# list(APPEND plugin_libs filter_prev_detections_bt_node)
 
-add_library(extract_person_description_bt_node SHARED src/perception/extract_person_description.cpp)
-list(APPEND plugin_libs extract_person_description_bt_node)
-add_library(clear_octomap_bt_node SHARED src/perception/clear_octomap.cpp)
-list(APPEND plugin_libs clear_octomap_bt_node)
+# add_library(extract_person_description_bt_node SHARED src/perception/extract_person_description.cpp)
+# list(APPEND plugin_libs extract_person_description_bt_node)
+# add_library(clear_octomap_bt_node SHARED src/perception/clear_octomap.cpp)
+# list(APPEND plugin_libs clear_octomap_bt_node)
 
-add_library(switch_yolo_model_bt_node SHARED src/perception/switch_yolo_model.cpp)
-list(APPEND plugin_libs switch_yolo_model_bt_node)
+# add_library(switch_yolo_model_bt_node SHARED src/perception/switch_yolo_model.cpp)
+# list(APPEND plugin_libs switch_yolo_model_bt_node)
 
-add_library(extract_pc_from_class_bt_node SHARED src/perception/extract_pc_from_class.cpp)
-list(APPEND plugin_libs extract_pc_from_class_bt_node)
+# add_library(extract_pc_from_class_bt_node SHARED src/perception/extract_pc_from_class.cpp)
+# list(APPEND plugin_libs extract_pc_from_class_bt_node)
+
+# (juandpenan) todo: uncomment this when pal team finishes testing
 
 add_library(is_face_detected_bt_node SHARED src/perception/is_face_detected.cpp)
 list(APPEND plugin_libs is_face_detected_bt_node)

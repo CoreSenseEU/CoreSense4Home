@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 
 from nav2_msgs.action import DummyBehavior
 from hri_actions_msgs.msg import Intent
@@ -20,8 +19,6 @@ from rclpy.action import ActionClient
 from rclpy.lifecycle import Node
 from rclpy.lifecycle import State
 from rclpy.lifecycle import TransitionCallbackReturn
-# from sample_skill_msgs.action import SkillControl
-
 
 class MissionController(Node):
 
@@ -205,7 +202,7 @@ class MissionController(Node):
 
     def on_intent(self, msg):
         
-        self.get_logger().info("Received an intent: %s" % msg.intent)
+        self.get_logger().info('Received an intent: %s' % msg.intent)
         self._last_intent = msg.intent
         if msg.intent == Intent.ENGAGE_WITH:
             self.get_logger().info('Engaging user')
@@ -214,11 +211,11 @@ class MissionController(Node):
             self.get_logger().info(f'Executing following xml: {self._engage_xml}')
             goal.command.data = self._engage_xml
             self.get_logger().info('Sending goal!')
-            self._greet_task_future = self._execute_bt_client.send_goal_async(
+            self._task_future = self._execute_bt_client.send_goal_async(
                 goal,
                 feedback_callback=self.on_feedback)
             self.get_logger().info('Goal sent!')
-            self._greet_task_future.add_done_callback(self.on_execute_bt_goal)
+            self._task_future.add_done_callback(self.on_execute_bt_goal)
             return
         elif msg.intent == 'INSTRUCTION':
             self.get_logger().info('Received instruction intent')
@@ -228,11 +225,11 @@ class MissionController(Node):
             self.get_logger().info(f'Executing following xml: {self._engage_xml}')
             goal.command.data = self._instruction_xml
             self.get_logger().info('Sending goal!')
-            self._greet_task_future = self._execute_bt_client.send_goal_async(
+            self._task_future = self._execute_bt_client.send_goal_async(
                 goal,
                 feedback_callback=self.on_feedback)
             self.get_logger().info('Goal sent!')
-            self._greet_task_future.add_done_callback(self.on_execute_bt_goal)
+            self._task_future.add_done_callback(self.on_execute_bt_goal)
             return
         elif msg.intent == 'TASK_EXECUTION':
             self.get_logger().info('Received task execution intent')
@@ -240,11 +237,11 @@ class MissionController(Node):
             goal = DummyBehavior.Goal()
             goal.command.data = self._execution_xml
             self.get_logger().info('Sending goal')
-            self._greet_task_future = self._execute_bt_client.send_goal_async(
+            self._task_future = self._execute_bt_client.send_goal_async(
                 goal,
                 feedback_callback=self.on_feedback)
             self.get_logger().info('Goal sent!')
-            self._greet_task_future.add_done_callback(self.on_execute_bt_goal)
+            self._task_future.add_done_callback(self.on_execute_bt_goal)
             return
         elif msg.intent == 'DISENGAGE_FROM':
             self.get_logger().info('Received disengagement intent')
@@ -252,18 +249,18 @@ class MissionController(Node):
             goal = DummyBehavior.Goal()
             goal.command.data = self._disengagement_xml
             self.get_logger().info('Sending goal')
-            self._greet_task_future = self._execute_bt_client.send_goal_async(
+            self._task_future = self._execute_bt_client.send_goal_async(
                 goal,
                 feedback_callback=self.on_feedback)
             self.get_logger().info('Goal sent!')
-            self._greet_task_future.add_done_callback(self.on_execute_bt_goal)
+            self._task_future.add_done_callback(self.on_execute_bt_goal)
             return
         else:
             self.get_logger().warn("I don't know yet how to process intent "
                                    "<%s>" % msg.intent)
 
     def on_feedback(self, msg):
-        self.get_logger().info("Received feedback")
+        self.get_logger().info('Received feedback')
 
     def on_execute_bt_goal(self, future):
         goal_handle = future.result()
@@ -291,23 +288,6 @@ class MissionController(Node):
             msg = Intent()
             msg.intent = 'DISENGAGE_FROM'
             self._intent_pub.publish(msg)
-
-
-    def on_say_goal(self, future):
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().info('Failed to say something. Goal rejected')
-            return
-
-        self._get_result_future = goal_handle.get_result_async()
-        self._get_result_future.add_done_callback(self.on_say_done)
-
-    def on_say_done(self, future):
-        result = future.result().result
-        if result:
-            self.get_logger().error(f"Say skill returned: {result.result}")
-        else:
-            self.get_logger().info("Successfully said something")
 
     #########################################################################
 

@@ -20,7 +20,6 @@
 #include <memory>
 #include <string>
 
-#include "attention_system_msgs/msg/attention_command.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/point_stamped.hpp"

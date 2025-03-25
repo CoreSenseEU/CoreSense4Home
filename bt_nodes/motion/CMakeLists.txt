@@ -40,7 +40,7 @@ set(dependencies
   tf2_ros
   tf2_geometry_msgs
   tf2
-  attention_system
+  # attention_system
   nav2_costmap_2d
   pluginlib
   navigation_system_interfaces

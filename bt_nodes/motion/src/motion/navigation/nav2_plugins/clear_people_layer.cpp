@@ -85,7 +85,7 @@ void ClearPeopleLayer::updateCosts(
   std::string current_person_frame;
   id_list_msg_mutex_.lock();
   current_person_frame = person_frame_;
-  person_frame_{};  
+  person_frame_ = "";  
   id_list_msg_mutex_.unlock();
 
   if (current_person_frame.empty()) {

@@ -35,10 +35,10 @@ repositories:
     type: git
     url: https://github.com/fmrico/cascade_lifecycle.git
     version: rolling
-  ThirdParty/tts_ros:
-    type: git
-    url: https://github.com/mgonzs13/tts_ros
-    version: main
+  # ThirdParty/tts_ros:
+  #   type: git
+  #   url: https://github.com/mgonzs13/tts_ros
+  #   version: main
   ThirdParty/slam_toolbox:
     type: git
     url: https://github.com/SteveMacenski/slam_toolbox.git

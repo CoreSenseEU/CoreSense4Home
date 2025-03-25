@@ -43,7 +43,7 @@ IsBodyDetected::IsBodyDetected(const std::string & xml_tag_name, const BT::NodeC
 
 BT::NodeStatus IsBodyDetected::tick()
 {
-  rclcpp::spin_some(node_);
+  rclcpp::spin_some(node_->get_node_base_interface());
   if (!last_ids_list_msg_) {
     RCLCPP_ERROR(node_->get_logger(), "[IsBodyDetected] No bodies detected so far");
     return BT::NodeStatus::FAILURE;

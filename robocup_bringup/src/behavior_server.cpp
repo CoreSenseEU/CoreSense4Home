@@ -110,6 +110,8 @@ private:
     auto result = std::make_shared<DummyBehavior::Result>();
     RCLCPP_INFO(this->get_logger(), "Loading BT: [%s]", goal->command.data.c_str());
     BT::Tree tree = factory_.createTreeFromText(goal->command.data, blackboard_);
+    // auto  zmq_publisher_ = std::make_unique<BT::PublisherZMQ>(tree, 10, 1666, 1667);
+    
     while (rclcpp::ok()) {
       if (tree.tickRoot() != BT::NodeStatus::RUNNING) {
         break;
@@ -139,7 +141,7 @@ int main(int argc, char ** argv)
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
   // executor->add_callback_group(node->callback_group, node->get_node_base_interface());
   // executor->spin();
-  rclcpp::spin(node);
+  rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();
   return 0;
 }

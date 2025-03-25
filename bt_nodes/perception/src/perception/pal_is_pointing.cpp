@@ -18,7 +18,6 @@
 #include <utility>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
-#include "perception_system/PerceptionUtils.hpp"
 
 namespace perception
 {
@@ -26,7 +25,6 @@ namespace perception
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-using pl = perception_system::PerceptionListener;
 
 PalIsPointing::PalIsPointing(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
 : BT::ConditionNode(xml_tag_name, conf)

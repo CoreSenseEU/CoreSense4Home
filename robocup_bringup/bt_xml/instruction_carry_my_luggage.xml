@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <RetryUntilSuccessful num_attempts="-1">
+                <Condition ID="IsPointing" output_frame="{bag_tf}"/>
+            </RetryUntilSuccessful>
+            <Action ID="RemoveStringSuffix" string_to_remove="{bag_tf}"
+                                            suffix="_"
+                                            result="{bag_direction}"/> 
+            <Action ID="Speak" param="{bag_direction}" say_text="I see you are pointing to the bag at my"/>
+            <Action ID="Speak" param="" say_text="I am on my way"/>
+            <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.2" tf_frame="{bag_tf}"/>
+            <Action ID="PalMoveToPredefined" pose="offer"/> 
+            <Action ID="Speak" param="" say_text="please put the bag in my gripper"/> 
+            <Delay delay_msec="140">
+                <Action ID="PalMoveToPredefined" pose="open"/>
+            </Delay>
+            <ReactiveSequence>
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Condition ID="IsBodyDetected" best_detection="{current_person}"/>
+                </RetryUntilSuccessful>
+            <Action ID="LookAt" tf_frame="{current_person}"/>
+            </ReactiveSequence>
+            <Delay delay_msec="300">
+                <Action ID="PalMoveToPredefined" pose="close" />
+            </Delay>
+            <Delay delay_msec="500">
+                <Action ID="PalMoveToPredefined" pose="home"/>
+            </Delay>
+            <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
+        </Sequence> 
+    </BehaviorTree>
+</root>

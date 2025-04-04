@@ -11,13 +11,13 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_cascade_lifecycle</depend>
   <depend>behaviortree_cpp_v3</depend>
-  <depend>backward_ros</depend>
 
   <exec_depend>arm</exec_depend>
   <exec_depend>configuration</exec_depend>
-  <exec_depend>hri</exec_depend>
   <exec_depend>motion</exec_depend>
   <exec_depend>perception</exec_depend>
+  <exec_depend>robocup_hri</exec_depend>
+  <exec_depend>carry</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

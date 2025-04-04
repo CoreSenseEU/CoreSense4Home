@@ -21,16 +21,14 @@ LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & c
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  node_->add_activation("attention_server");
-  attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
-    "attention/attention_command", 1);
+  attention_points_pub_ = node_->create_publisher<geometry_msgs::msg::PointStamped>(
+    "/look_at", 1);
   attention_points_pub_->on_activate();
 }
 
 BT::NodeStatus LookAt::tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "LookAt ticked");
-  getInput("tf_frames", tf_frames_);
   getInput("tf_frame", tf_frame_);
 
   if (status() == BT::NodeStatus::IDLE) {
@@ -40,22 +38,15 @@ BT::NodeStatus LookAt::tick()
 
   std::string goal_frame;
 
-  if (tf_frames_.size() == 0 && !tf_frame_.empty()) {
-    goal_frame = tf_frame_;
-  } else if (tf_frames_.size() > 0) {
-    goal_frame = tf_frames_[0];
-  } else {
+  if (tf_frame_.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "No goal frame provided");
-    return BT::NodeStatus::RUNNING;
-  }
+    return BT::NodeStatus::FAILURE;
+  } 
 
-  attention_system_msgs::msg::AttentionCommand attention_command_msg;
+  geometry_msgs::msg::PointStamped attention_command_msg;
   RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", goal_frame.c_str());
-
-  attention_command_msg.frame_id_to_track = goal_frame;
-
+  attention_command_msg.header.frame_id = tf_frame_;
   attention_points_pub_->publish(attention_command_msg);
-
   RCLCPP_INFO(node_->get_logger(), "LookAt published attention points");
   return BT::NodeStatus::SUCCESS;
 }

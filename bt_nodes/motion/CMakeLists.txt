@@ -12,7 +12,6 @@ find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
-find_package(attention_system REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
@@ -23,11 +22,11 @@ find_package(slam_toolbox REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
-find_package(attention_system_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(manipulation_interfaces REQUIRED)
 find_package(action_msgs REQUIRED)
+find_package(hri_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -41,7 +40,7 @@ set(dependencies
   tf2_ros
   tf2_geometry_msgs
   tf2
-  attention_system
+  # attention_system
   nav2_costmap_2d
   pluginlib
   navigation_system_interfaces
@@ -49,11 +48,11 @@ set(dependencies
   ament_index_cpp
   trajectory_msgs
   lifecycle_msgs
-  attention_system_msgs
   trajectory_msgs
   sensor_msgs
-  manipulation_interfaces
+  # manipulation_interfaces (juandpenan) todo: uncomment this when pal team finishes testing
   action_msgs
+  hri_msgs
 )
 
 include_directories(include)
@@ -89,11 +88,13 @@ list(APPEND plugin_libs move_along_axis_bt_node)
 add_library(rotate_bt_node SHARED src/motion/base/Rotate.cpp)
 list(APPEND plugin_libs rotate_bt_node)
 
-add_library(set_torso_height_bt_node SHARED src/motion/torso/set_torso_height.cpp)
-list(APPEND plugin_libs set_torso_height_bt_node)
+# add_library(set_torso_height_bt_node SHARED src/motion/torso/set_torso_height.cpp)
+# list(APPEND plugin_libs set_torso_height_bt_node)
 
-add_library(set_head_joint_position_bt_node SHARED src/motion/head/set_joint_position.cpp)
-list(APPEND plugin_libs set_head_joint_position_bt_node)
+# add_library(set_head_joint_position_bt_node SHARED src/motion/head/set_joint_position.cpp)
+# list(APPEND plugin_libs set_head_joint_position_bt_node)
+
+# (juandpenan) todo: uncomment this when pal team finishes testing
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

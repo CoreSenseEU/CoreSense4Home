@@ -31,6 +31,7 @@ def generate_launch_description():
     package_dir = get_package_share_directory('robocup_bringup')
     yolo3d_dir = get_package_share_directory('yolov8_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
+    face_detection_dir = get_package_share_directory('hri_face_detect')
 
     # manipulation launchers
     move_group = IncludeLaunchDescription(
@@ -68,6 +69,18 @@ def generate_launch_description():
             }.items()
     )
 
+    hri_face_detect = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(face_detection_dir, 'launch', 'face_detect_with_args.launch.py')
+        ),
+        launch_arguments={
+            'filtering_frame': 'head_front_camera_link_color_optical_frame',
+            'deterministic_ids': 'false',
+            'rgb_camera_topic': '/head_front_camera/image',
+            'rgb_camera_info': '/head_front_camera/camera_info'
+        }.items()
+    )
+
     dialog = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(package_dir, 'launch', 'dialog.launch.py')
@@ -91,11 +104,12 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(navigation)
+    # ld.add_action(navigation)
     ld.add_action(dialog)
     ld.add_action(yolo3d)
+    ld.add_action(hri_face_detect)
     ld.add_action(real_time)
-    ld.add_action(move_group)
-    ld.add_action(manipulation_server)
+    # ld.add_action(move_group)
+    # ld.add_action(manipulation_server)
 
     return ld

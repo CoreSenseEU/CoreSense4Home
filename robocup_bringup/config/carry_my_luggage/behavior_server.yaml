@@ -1,0 +1,20 @@
+
+/**:
+  ros__parameters:
+    use_sim_time: False
+    plugins:
+    - init_carry_bt_node
+    - is_body_detected_bt_node
+    - pal_speak_bt_node
+    - set_start_position_bt_node
+    - rotate_bt_node
+    - pal_is_pointing_bt_node
+    - remove_string_suffix_bt_node
+    - pan_bt_node
+    - move_to_bt_node
+    - pal_move_to_predefined_bt_node
+    - look_at_bt_node
+    - is_entity_moving_bt_node
+    - dialogConfirmation_bt_node
+    - follow_entity_bt_node
+    - goal_publisher_bt_node

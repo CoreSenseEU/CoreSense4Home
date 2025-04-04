@@ -21,7 +21,6 @@ namespace nav2_costmap_2d
 // of need_recalculation_ variable.
 void ClearPeopleLayer::onInitialize()
 {
-  declareParameter("person_frame", rclcpp::ParameterValue("person_0"));
   declareParameter("person_radius", rclcpp::ParameterValue(0.5));
 
   const auto node = node_.lock();
@@ -33,22 +32,31 @@ void ClearPeopleLayer::onInitialize()
     throw std::runtime_error("ClearPeopleLayer::onInitialize: Failed to initialize tf buffer");
   }
 
-  // Declaring ROS parameters:
-  auto getString = [&](const std::string & parameter_name) {
-      std::string param{};
-      node->get_parameter(name_ + "." + parameter_name, param);
-      return param;
-    };
   auto getDouble = [&](const std::string & parameter_name) {
       double param{};
       node->get_parameter(name_ + "." + parameter_name, param);
       return param;
     };
 
-  person_frame_ = getString("person_frame");
   person_radius_ = getDouble("person_radius");
 
+  // Create a subscription to the hri_msgs/msg/IdsList topic
+  ids_list_sub_ = node->create_subscription<hri_msgs::msg::IdsList>(
+    "/humans/bodies/tracked", 10,
+    std::bind(&ClearPeopleLayer::idsListCallback, this, std::placeholders::_1));
+
   RCLCPP_INFO(logger_, "Initialized plugin clear_people_layer");
+}
+
+void ClearPeopleLayer::idsListCallback(const hri_msgs::msg::IdsList::SharedPtr msg)
+{
+  id_list_msg_mutex_.lock();
+  if (!msg->ids.empty()) {
+    person_frame_ = msg->ids[0];  // Assuming the first ID is the person to track
+  } else {
+    person_frame_.clear();
+  }
+  id_list_msg_mutex_.unlock();
 }
 
 // The method is called to ask the plugin: which area of costmap it needs to update.
@@ -74,9 +82,18 @@ void ClearPeopleLayer::updateCosts(
   // if (!enabled_) {
   //   return;
   // }
+  std::string current_person_frame;
+  id_list_msg_mutex_.lock();
+  current_person_frame = person_frame_;
+  person_frame_ = "";  
+  id_list_msg_mutex_.unlock();
+
+  if (current_person_frame.empty()) {
+    return;
+  }
 
   try {
-    person_transform_ = tf_->lookupTransform("map", person_frame_, tf2::TimePointZero);
+    person_transform_ = tf_->lookupTransform("map", "waist_"+person_frame_, tf2::TimePointZero);
   } catch (std::exception & ex) {
     RCLCPP_ERROR(
       logger_, "ClearPeopleLayer::updateCosts error transforming map to %s : %s ",
@@ -117,7 +134,7 @@ void ClearPeopleLayer::removePerson(
     for (int i = person_x - person_radius_cells; i <= person_x + person_radius_cells; i++) {
       int index = master_grid.getIndex(i, j);
       master[index] = FREE_SPACE;
-      // master_grid.setCost(i, j, FREE_SPACE);
+      // master_grid.setCost(i, j, FREE_SPACE)
     }
   }
 }

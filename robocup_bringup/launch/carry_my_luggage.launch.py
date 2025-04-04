@@ -30,17 +30,16 @@ def generate_launch_description():
 
     package_dir = get_package_share_directory('robocup_bringup')
 
-    config = os.path.join(
-        package_dir,
-        'config',
-        'carry_my_luggage',
-        'carry_my_luggage.yaml'
-        )
+    # config = os.path.join(
+    #     package_dir,
+    #     'config',
+    #     'carry_my_luggage',
+    #     'carry_my_luggage.yaml'
+    #     )
 
     carry_my_luggage = Node(
-        package='robocup_bringup',
-        executable='behaviors_main',
-        parameters=[config],
+        package='carry',
+        executable='run_app',
         output='screen',
     )
 

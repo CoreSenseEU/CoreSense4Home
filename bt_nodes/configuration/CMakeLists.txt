@@ -14,7 +14,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
-find_package(yolov8_msgs REQUIRED)
+# find_package(yolov8_msgs REQUIRED) (juandpenan) todo: uncomment this when pal team finishes testing
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -27,7 +27,7 @@ set(dependencies
   tf2_geometry_msgs
   tf2
   tf2_ros
-  yolov8_msgs
+  # yolov8_msgs (juandpenan) todo: uncomment this when pal team finishes testing
 )
 
 include_directories(include)
@@ -73,8 +73,9 @@ list(APPEND plugin_libs bt_service_node)
 add_library(get_perception_model_bt_node SHARED src/configuration/get_perception_model.cpp)
 list(APPEND plugin_libs get_perception_model_bt_node)
 
-add_library(set_perception_model_bt_node SHARED src/configuration/set_perception_model.cpp)
-list(APPEND plugin_libs set_perception_model_bt_node)
+# (juandpenan) todo: uncomment this when pal team finishes testing
+# add_library(set_perception_model_bt_node SHARED src/configuration/set_perception_model.cpp)
+# list(APPEND plugin_libs set_perception_model_bt_node)
 
 add_library(init_protected_queue_bt_node SHARED src/configuration/init_queue.cpp)
 list(APPEND plugin_libs init_protected_queue_bt_node)

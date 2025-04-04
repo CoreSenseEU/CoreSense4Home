@@ -1,0 +1,3 @@
+# example of resource file. Remove it if you do not need it!
+- app_id: carry
+  my_key: my_value

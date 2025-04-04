@@ -41,4 +41,4 @@ behaviors_main:
     - filter_entity_bt_node
     - extract_entity_color_bt_node
     - move_along_axis_bt_node
-    - check_policy_bt_node
+    - is_face_detected_bt_node

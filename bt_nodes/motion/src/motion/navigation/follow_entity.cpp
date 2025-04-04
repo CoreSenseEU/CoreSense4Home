@@ -123,6 +123,9 @@ BT::NodeStatus FollowEntity::tick()
   if (status() == BT::NodeStatus::IDLE || !is_goal_sent_) {
     return on_idle();
   }
+  if (abort_counter_ > 5) {
+    return BT::NodeStatus::FAILURE;
+  }
   // if (current_pos_ != geometry_msgs::msg::PoseWithCovarianceStamped()) {
   //   check_robot_inside_map();
   // }
@@ -268,6 +271,9 @@ void FollowEntity::goal_status_callback(const action_msgs::msg::GoalStatusArray:
       status == action_msgs::msg::GoalStatus::STATUS_CANCELED)
     {
       is_goal_sent_ = false;
+    }
+    if (status == action_msgs::msg::GoalStatus::STATUS_ABORTED) {
+      abort_counter_++;
     }
   }
 }

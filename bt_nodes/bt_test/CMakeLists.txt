@@ -22,7 +22,7 @@ find_package(motion REQUIRED)
 find_package(perception REQUIRED)
 find_package(arm REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(hri REQUIRED)
+find_package(robocup_hri REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
 # find_package(backward_ros REQUIRED)
 
@@ -41,7 +41,7 @@ set(dependencies
   motion
   perception
   tf2_ros
-  hri
+  robocup_hri
   arm
   geometry_msgs
   perception_system_interfaces
@@ -101,7 +101,7 @@ target_link_libraries(follow_test perception::is_detected_bt_node motion::move_t
 # Speak test
 add_executable(speak_test src/speak_test.cpp)
 ament_target_dependencies(speak_test ${dependencies})
-target_link_libraries(speak_test hri::speak_bt_node hri::dialogConfirmation_bt_node)
+target_link_libraries(speak_test robocup_hri::speak_bt_node robocup_hri::dialogConfirmation_bt_node)
 # ExtractObjectFromScene test
 add_executable(extract_object_from_scene_test src/extract_object_from_scene_test.cpp)
 ament_target_dependencies(extract_object_from_scene_test ${dependencies})
@@ -110,24 +110,24 @@ target_link_libraries(extract_object_from_scene_test perception::extract_object_
 # GenerateTextFromObjets test
 add_executable(generate_text_from_objects_test src/generate_text_from_objects_test.cpp)
 ament_target_dependencies(generate_text_from_objects_test ${dependencies})
-target_link_libraries(generate_text_from_objects_test hri::generate_text_from_objects_bt_node)
+target_link_libraries(generate_text_from_objects_test robocup_hri::generate_text_from_objects_bt_node)
 
 # pick_demo test
 add_executable(pick_demo_test src/pick_demo_test.cpp)
 ament_target_dependencies(pick_demo_test ${dependencies})
 target_link_libraries(pick_demo_test
   arm::pick_bt_node
-  hri::generate_text_from_objects_bt_node
+  robocup_hri::generate_text_from_objects_bt_node
   perception::extract_object_from_scene_bt_node
   perception::extract_collision_scene_bt_node
-  hri::speak_bt_node
-  hri::dialogConfirmation_bt_node
+  robocup_hri::speak_bt_node
+  robocup_hri::dialogConfirmation_bt_node
 )
 
 # Ask test
 add_executable(ask_test src/ask_test.cpp)
 ament_target_dependencies(ask_test ${dependencies})
-target_link_libraries(ask_test hri::query_bt_node hri::speak_bt_node hri::listen_bt_node hri::dialogConfirmation_bt_node)
+target_link_libraries(ask_test robocup_hri::query_bt_node robocup_hri::speak_bt_node robocup_hri::listen_bt_node robocup_hri::dialogConfirmation_bt_node)
 
 # init_carry test
 add_executable(init_carry src/init_carry_test.cpp)
@@ -176,8 +176,8 @@ target_link_libraries(set_perception_model_test
 add_executable(music_test src/music_test.cpp)
 ament_target_dependencies(music_test ${dependencies})
 target_link_libraries(music_test 
-  hri::start_music_bt_node
-  hri::stop_music_bt_node
+  robocup_hri::start_music_bt_node
+  robocup_hri::stop_music_bt_node
   configuration::sleep_bt_node
 )
 
@@ -202,7 +202,7 @@ target_link_libraries(filter_object_test perception::filter_object_bt_node)
 # extract the description of the person test
 add_executable(extract_person_description_test src/extract_person_description_test.cpp)
 ament_target_dependencies(extract_person_description_test ${dependecies})
-target_link_libraries(extract_person_description_test perception::extract_person_description_bt_node perception::is_detected_bt_node hri::speak_bt_node)
+target_link_libraries(extract_person_description_test perception::extract_person_description_bt_node perception::is_detected_bt_node robocup_hri::speak_bt_node)
 
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
@@ -216,12 +216,12 @@ perception::filter_entity_bt_node
 perception::is_entity_moving_bt_node
 perception::extract_entity_color_bt_node
 perception::extract_collision_scene_bt_node
-hri::generate_text_from_objects_bt_node
-hri::speak_bt_node
-hri::dialogConfirmation_bt_node
-hri::listen_bt_node
-hri::query_bt_node
-hri::command_planning_bt_node
+robocup_hri::generate_text_from_objects_bt_node
+robocup_hri::speak_bt_node
+robocup_hri::dialogConfirmation_bt_node
+robocup_hri::listen_bt_node
+robocup_hri::query_bt_node
+robocup_hri::command_planning_bt_node
 arm::move_to_predefined_bt_node
 arm::pick_bt_node
 motion::move_to_bt_node
@@ -252,12 +252,12 @@ foreach(test ${GPSR_TESTS})
     perception::is_entity_moving_bt_node
     perception::extract_entity_color_bt_node
     perception::extract_collision_scene_bt_node
-    hri::generate_text_from_objects_bt_node
-    hri::speak_bt_node
-    hri::dialogConfirmation_bt_node
-    hri::listen_bt_node
-    hri::query_bt_node
-    hri::command_planning_bt_node
+    robocup_hri::generate_text_from_objects_bt_node
+    robocup_hri::speak_bt_node
+    robocup_hri::dialogConfirmation_bt_node
+    robocup_hri::listen_bt_node
+    robocup_hri::query_bt_node
+    robocup_hri::command_planning_bt_node
     arm::move_to_predefined_bt_node
     arm::pick_bt_node
     motion::move_to_bt_node
@@ -285,8 +285,8 @@ target_link_libraries(carry_my_luggage_test
   motion::move_to_bt_node
   motion::look_at_bt_node
   motion::configure_navigate_back_bt_node
-  hri::speak_bt_node
-  hri::dialogConfirmation_bt_node
+  robocup_hri::speak_bt_node
+  robocup_hri::dialogConfirmation_bt_node
 )
 # Follow entity test
 add_executable(follow_entity_test src/follow_entity_test.cpp)
@@ -299,8 +299,8 @@ target_link_libraries(follow_entity_test
   # motion::move_to_bt_node
   motion::look_at_bt_node
   motion::follow_entity_bt_node
-  # hri::speak_bt_node
-  # hri::dialogConfirmation_bt_node
+  # robocup_hri::speak_bt_node
+  # robocup_hri::dialogConfirmation_bt_node
 )
 
 # SetBlackboardInt test
@@ -320,13 +320,13 @@ target_link_libraries(receptionist_test
   configuration::set_wp_bt_node
   # configuration::init_receptionist_bt_node
   motion::move_to_bt_node
-  hri::speak_bt_node
+  robocup_hri::speak_bt_node
   perception::is_detected_bt_node
   # perception::store_detection_bt_node
   motion::look_at_bt_node
-  hri::listen_bt_node
-  hri::query_bt_node
-  hri::dialogConfirmation_bt_node
+  robocup_hri::listen_bt_node
+  robocup_hri::query_bt_node
+  robocup_hri::dialogConfirmation_bt_node
   # motion::look_around_bt_node
   perception::is_sittable_bt_node
   # arm::point_at_bt_node
@@ -350,13 +350,13 @@ target_link_libraries(storing_groceries_test
   configuration::set_wp_bt_node
   # configuration::init_receptionist_bt_node
   motion::move_to_bt_node
-  hri::speak_bt_node
+  robocup_hri::speak_bt_node
   perception::is_detected_bt_node
   # perception::store_detection_bt_node
   motion::look_at_bt_node
-  hri::listen_bt_node
-  hri::query_bt_node
-  hri::dialogConfirmation_bt_node
+  robocup_hri::listen_bt_node
+  robocup_hri::query_bt_node
+  robocup_hri::dialogConfirmation_bt_node
   # motion::look_around_bt_node
   perception::is_sittable_bt_node
   # arm::point_at_bt_node

@@ -21,13 +21,15 @@
 #include "behaviortree_cpp_v3/action_node.h"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+
 
 namespace dialog
 {
 
 using namespace std::chrono_literals;  // NOLINT
 
-template<class ActionT, class NodeT = rclcpp::Node>
+template<class ActionT, class NodeT = rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 class BtActionNode : public BT::ActionNodeBase
 {
 public:

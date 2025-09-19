@@ -101,13 +101,12 @@ def generate_launch_description():
             os.path.join(navigation_dir, 'launch', 'navigation_system.launch.py')
         ),
         launch_arguments={
-            'rviz': 'True',
+            'rviz': 'False',
             'mode': 'amcl',
             'params_file': package_dir + '/config/carry_my_luggage/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
                     '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
-            'map': os.path.join(
-                                package_dir,
+            'map': os.path.join(package_dir,
                                 'maps',
                                 'carry_map.yaml'),
         }.items()

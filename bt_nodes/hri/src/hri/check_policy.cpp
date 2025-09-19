@@ -57,7 +57,7 @@ void CheckPolicy::on_tick()
 
   std::string prompt_ = text_ + ". Please answer only with 'yes' or 'no'";
   goal_.prompt = prompt_;
-  goal_.image = *image_;
+  goal_.images.push_back(*image_);
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;
   goal_.sampling_config.grammar =

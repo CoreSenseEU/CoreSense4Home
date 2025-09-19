@@ -56,7 +56,7 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<double>("distance_tolerance"), BT::InputPort<std::string>("tf_frame"),
-        BT::InputPort<bool>("will_finish"), BT::InputPort<bool>("is_truncated")});
+      BT::InputPort<bool>("will_finish"), BT::InputPort<bool>("is_truncated")});
   }
 
 private:

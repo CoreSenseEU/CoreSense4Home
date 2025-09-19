@@ -53,7 +53,7 @@ repositories:
     version: master
   systems/manipulation_server:
     type: git
-    url: https://github.com/rodperex/manipulation_server.git
+    url: https://github.com/juandpenan/manipulation_server.git
     version: main
   systems/perception_system:
     type: git

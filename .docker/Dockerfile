@@ -32,9 +32,8 @@ RUN pip install -r requirements2.txt
 RUN pip install -r requirements3.txt
 
 WORKDIR /robocup/src
-# RUN git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b humble-devel
-# RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
-COPY src/ /robocup/src/
+RUN git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b humble-devel
+RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
 
 
 WORKDIR /robocup

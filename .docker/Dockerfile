@@ -1,11 +1,8 @@
-# Dockerfile for ROSCon 2024 Deliberation Workshop
-
 FROM ros:humble AS robocup2024
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install apt dependencies.
 ARG DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update \
     && apt-get -y --quiet --no-install-recommends install \
     gcc \
@@ -18,28 +15,26 @@ RUN apt-get update \
     ros-humble-nav2-bringup \
     ros-humble-rmw-cyclonedds-cpp \
     nlohmann-json3-dev
-   
+
+RUN pip install setuptools==58.2.0
 
 # Create a ROS 2 workspace.
 RUN mkdir -p /robocup/src/
 WORKDIR /robocup
 
-ADD https://raw.githubusercontent.com/mgonzs13/audio_common/refs/heads/main/requirements.txt /robocup/requirements2.txt
-ADD https://raw.githubusercontent.com/mgonzs13/whisper_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
-ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements4.txt
-ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements5.txt
+ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements1.txt
+ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements2.txt
+ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
 
 # Install external dependencies.
-RUN pip install coqui-tts
+RUN pip install -r requirements1.txt
 RUN pip install -r requirements2.txt
 RUN pip install -r requirements3.txt
-RUN pip install -r requirements4.txt
-RUN pip install -r requirements5.txt
-
 
 WORKDIR /robocup/src
 RUN git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b humble-devel
 RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
+
 
 WORKDIR /robocup
 RUN rosdep install --from-paths src --ignore-src -r -y

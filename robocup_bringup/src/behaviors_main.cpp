@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
   RCLCPP_INFO(node->get_logger(), "Loading BT: [%s]", xml_file.c_str());
 
   auto blackboard = BT::Blackboard::create();
-  blackboard->set("node", node);
+  blackboard->set("node", std::static_pointer_cast<rclcpp_cascade_lifecycle::CascadeLifecycleNode>(node));
   BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);

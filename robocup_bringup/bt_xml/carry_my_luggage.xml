@@ -32,10 +32,10 @@
         <Action ID="Speak" param="{bag_direction}" say_text="I see you are pointing to the bag at my"/>
         <Action ID="Speak" param="" say_text="I am on my way"/>
         <Action ID="MoveTo" is_truncated="true"  distance_tolerance="1.2" tf_frame="{bag_tf}"/>
-        <Action ID="MoveToPredefined" pose="offer" group_name="arm_torso"/> 
+        <Action ID="PlayMotionPredefined" motion_name="offer" /> 
         <Action ID="Speak" param="" say_text="please put the bag in my gripper"/> 
         <Delay delay_msec="140">
-            <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+            <Action ID="PlayMotionPredefined" motion_name="open"/>
         </Delay>
         <ReactiveSequence>
             <RetryUntilSuccessful num_attempts="-1">
@@ -45,10 +45,10 @@
             <Action ID="LookAt" tf_frame="person_0_filtered" />
         </ReactiveSequence>
         <Delay delay_msec="300">
-            <Action ID="MoveToPredefined" pose="close" group_name="gripper"/>
-        </Delay>
+            <Action ID="PlayMotionPredefined" motion_name="close"/>
+        </Delay> 
         <Delay delay_msec="500">
-            <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+            <Action ID="PlayMotionPredefined" motion_name="home"/>
         </Delay>
         <Action ID="Speak" param="" say_text="Perfect, now i will follow you. Please stop at the end "/>
         <ReactiveSequence>
@@ -101,15 +101,15 @@
                 </Sequence>
             </RetryUntilSuccessful>
             <Action ID="Speak" param="" say_text="I will give you the bag now, please be carefull"/>
-            <Action ID="MoveToPredefined" pose="offer" group_name="arm_torso"/>
+            <Action ID="PlayMotionPredefined" motion_name="offer" />
             <ReactiveSequence>
                 <Action ID="LookAt" tf_frame="person_0"/>
                 <Action ID="Speak" param="" say_text="Here is the bag, please take it"/>
             </ReactiveSequence>
             <Delay delay_msec="140">
-                <Action ID="MoveToPredefined" pose="open" group_name="gripper"/>
+                <Action ID="PlayMotionPredefined" motion_name="open"/>
             </Delay>
-            <Action ID="MoveToPredefined" pose="home" group_name="arm_torso"/>
+            <Action ID="PlayMotionPredefined" motion_name="home"/>
             <Delay delay_msec="3000">
                 <Action ID="Speak" param="" say_text="I am going back, have a nice day"/>
             </Delay>

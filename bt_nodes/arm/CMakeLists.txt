@@ -15,6 +15,7 @@ find_package(manipulation_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(play_motion2_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -30,6 +31,7 @@ set(dependencies
   tf2_ros
   geometry_msgs
   sensor_msgs
+  play_motion2_msgs
 )
 
 include_directories(include)
@@ -39,6 +41,9 @@ list(APPEND plugin_libs pick_bt_node)
 
 add_library(move_to_predefined_bt_node SHARED src/manipulation/move_to_predefined.cpp)
 list(APPEND plugin_libs move_to_predefined_bt_node)
+
+add_library(play_motion_predefined_bt_node SHARED src/manipulation/play_motion_predefined.cpp)
+list(APPEND plugin_libs play_motion_predefined_bt_node)
 
 add_library(point_at_bt_node SHARED src/manipulation/point_at.cpp)
 list(APPEND plugin_libs point_at_bt_node)

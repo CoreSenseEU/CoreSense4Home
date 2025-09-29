@@ -14,7 +14,7 @@ behaviors_main:
     - is_pointing_bt_node
     - extract_entity_color_bt_node
     - move_to_bt_node
-    - move_to_predefined_bt_node
+    - play_motion_predefined_bt_node
     - look_at_bt_node
     - speak_bt_node
     - is_entity_moving_bt_node

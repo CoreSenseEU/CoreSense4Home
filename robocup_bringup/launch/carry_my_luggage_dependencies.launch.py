@@ -82,16 +82,17 @@ def generate_launch_description():
 
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolo_3d.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolo.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
             'model': 'yolov8n-pose.pt',
+            'use_3d': 'True',
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_rgb_optical_frame',
+            'target_frame': 'head_front_camera_optical_frame',
             'threshold': '0.5'
             }.items()
     )

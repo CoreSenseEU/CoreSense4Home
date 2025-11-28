@@ -2,7 +2,7 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Action ID="SetPerceptionModel" model_name="yolov8m-pose.pt"/>
+        <Action ID="SetPerceptionModel" model_name="yolom-pose.pt"/>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>

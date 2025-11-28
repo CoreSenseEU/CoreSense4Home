@@ -31,7 +31,7 @@ def generate_launch_description():
     move_group_dir = get_package_share_directory('tiago_mtc_examples')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     package_dir = get_package_share_directory('robocup_bringup')
-    yolo3d_dir = get_package_share_directory('yolov8_bringup')
+    yolo3d_dir = get_package_share_directory('yolo_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
 
     # manipulation launchers
@@ -104,7 +104,7 @@ def generate_launch_description():
     yolo_model = package_dir + "/config/storing_groceries/yolo_groceries.pt"
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolo_3d.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',

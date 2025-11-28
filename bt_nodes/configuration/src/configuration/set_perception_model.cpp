@@ -26,7 +26,7 @@ using namespace std::placeholders;
 SetPerceptionModel::SetPerceptionModel(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: configuration::BtServiceNode<yolov8_msgs::srv::ChangeModel,
+: configuration::BtServiceNode<yolo_msgs::srv::ChangeModel,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {

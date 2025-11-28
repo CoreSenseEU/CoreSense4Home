@@ -27,9 +27,9 @@ repositories:
     type: git
     url: https://github.com/juandpenan/tiago_mtc_examples.git
     version: main
-  ThirdParty/yolov8_ros:
+  ThirdParty/yolo_ros:
     type: git
-    url: https://github.com/jmguerreroh/yolov8_ros.git
+    url: https://github.com/igonzf/yolo_ros.git
     version: robocup24
   ThirdParty/rclcpp_cascade_lifecycle:
     type: git

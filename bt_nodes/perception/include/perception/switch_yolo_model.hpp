@@ -22,7 +22,7 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "moveit_msgs/msg/collision_object.hpp"
 #include "perception/bt_service_node.hpp"
-#include "yolov8_msgs/srv/change_model.hpp"
+#include "yolo_msgs/srv/change_model.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
@@ -30,7 +30,7 @@ namespace perception
 {
 
 class SwitchYoloModel : public perception::BtServiceNode<
-    yolov8_msgs::srv::ChangeModel,
+    yolo_msgs::srv::ChangeModel,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:

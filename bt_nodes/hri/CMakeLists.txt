@@ -21,6 +21,7 @@ find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(gpsr_msgs REQUIRED)
 find_package(audio_common_msgs REQUIRED)
+find_package(perception_system_interfaces REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
@@ -38,6 +39,7 @@ set(dependencies
   gpsr_msgs
   std_srvs
   audio_common_msgs
+  perception_system_interfaces
 )
 
 include_directories(include)

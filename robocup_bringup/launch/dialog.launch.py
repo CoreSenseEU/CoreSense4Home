@@ -54,22 +54,37 @@ def generate_launch_description():
             # model_filename="Spaetzle-v60-7b_Q4_0.gguf",
 
             # comment this for GPSR:
-            model_repo='TheBloke/Marcoroni-7B-v3-GGUF',
-            model_filename='marcoroni-7b-v3.Q3_K_L.gguf',
+            model_repo='qwen/Qwen2.5-Coder-7B-Instruct-GGUF',
+            model_filename='qwen2.5-coder-7b-instruct-q4_k_m-00001-of-00002.gguf',
+            system_prompt_type= "ChatML"
 
-            prefix='\n\n### Instruction:\n',
-            suffix='\n\n### Response:\n',
-            stopping_words=["\n\n\n\n"],
+    )
+
+    llava_cmd = create_llama_launch(
+            use_llava=True,
+            n_ctx=2048,
+            n_batch=256,
+            n_gpu_layers=23,
+            n_threads=4,
+            n_predict=-1,
+
+            # uncomment this for GPSR:
+            # model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
+            # model_filename="Spaetzle-v60-7b_Q4_0.gguf",
+
+            # comment this for GPSR:
+            model_repo='bartowski/Qwen2-VL-2B-Instruct-GGUF',
+            model_filename='Qwen2-VL-2B-Instruct-Q4_K_M.gguf',
+            mmproj_repo= "bartowski/Qwen2-VL-2B-Instruct-GGUF",
+            mmproj_filename= "mmproj-Qwen2-VL-2B-Instruct-f16.gguf",
+            system_prompt_type= "ChatML"
+
     )
 
     whisper_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(whisper_dir, 'launch', 'whisper.launch.py')
-        ),
-        launch_arguments={
-            'model_repo': model_repo,
-            'model_filename': model_filename
-        }.items()
+        )
     )
 
     audio_common_tts_node = Node(
@@ -99,10 +114,11 @@ def generate_launch_description():
     ld = LaunchDescription()
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
-    ld.add_action(whisper_cmd)
-    ld.add_action(llama_cmd)
+    #ld.add_action(whisper_cmd)
+    #ld.add_action(llama_cmd)
+    ld.add_action(llava_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
-    ld.add_action(music_player_node)
+    #ld.add_action(music_player_node)
 
     return ld

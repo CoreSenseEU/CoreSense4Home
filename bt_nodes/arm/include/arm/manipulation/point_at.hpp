@@ -20,29 +20,26 @@
 #include <algorithm>
 #include <string>
 
-#include "arm/manipulation/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "manipulation_interfaces/action/move_end_effector.hpp"
+#include "moveit/move_group_interface/move_group_interface.h"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace manipulation
 {
 
-class PointAt : public manipulation::BtActionNode<
-    manipulation_interfaces::action::MoveEndEffector,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class PointAt : public BT::ActionNodeBase
 {
 public:
   explicit PointAt(
-    const std::string & xml_tag_name, const std::string & action_name,
+    const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
+  void halt() override;
+  BT::NodeStatus tick() override;
 
   static BT::PortsList providedPorts()
   {
@@ -53,6 +50,7 @@ public:
   }
 
 private:
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   geometry_msgs::msg::PoseStamped::SharedPtr pose_to_point_;
   std::string tf_frame_, base_frame_;
   tf2_ros::Buffer::SharedPtr tf_buffer_;

@@ -28,6 +28,7 @@ find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(manipulation_interfaces REQUIRED)
 find_package(action_msgs REQUIRED)
+find_package(control_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -54,6 +55,7 @@ set(dependencies
   sensor_msgs
   manipulation_interfaces
   action_msgs
+  control_msgs
 )
 
 include_directories(include)

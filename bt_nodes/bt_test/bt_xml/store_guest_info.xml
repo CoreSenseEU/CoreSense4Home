@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <!-- <Action ID="StoreGuestInfo" guest_name="Irene" guest_drink="Cola" guest_description="Long hair and glasses."/> -->
+            <Action ID="GetGuestInfo" guest_name="{guest_name}" guest_drink="{guest_drink}" guest_description="{guest_description}"/>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="StoreGuestInfo">
+            <input_port name="guest_name"/>
+            <input_port name="guest_drink"/>
+            <input_port name="guest_description"/>
+        </Action>
+    </TreeNodesModel>
+</root>

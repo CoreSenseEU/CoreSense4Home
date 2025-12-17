@@ -26,7 +26,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
 
-    move_group_dir = get_package_share_directory('tiago_mtc_examples')
+    move_group_dir = get_package_share_directory('tiago_moveit_config')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     package_dir = get_package_share_directory('robocup_bringup')
     yolo3d_dir = get_package_share_directory('yolo_bringup')
@@ -54,7 +54,7 @@ def generate_launch_description():
 
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolo_3d.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolo.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
@@ -63,7 +63,7 @@ def generate_launch_description():
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 real
-            'target_frame': 'head_front_camera_color_optical_frame',
+            'target_frame': 'camera_color_optical_frame',
             'threshold': '0.5'
             }.items()
     )

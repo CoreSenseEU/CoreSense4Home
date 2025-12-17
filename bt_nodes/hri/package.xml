@@ -19,6 +19,8 @@
   <depend>shape_msgs</depend>
   <depend>std_msgs</depend>
   <depend>gpsr_msgs</depend>
+  <depend>perception_system_interfaces</depend>
+  <depend>kb_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

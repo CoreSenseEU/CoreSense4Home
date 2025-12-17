@@ -26,6 +26,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "std_msgs/msg/int8.hpp"
+#include "perception_system_interfaces/msg/detection_array.hpp"
 
 namespace dialog
 {
@@ -56,8 +57,8 @@ private:
   std::string image_topic_;
   bool value_;
   sensor_msgs::msg::Image::SharedPtr image_;
-  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
-  void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
+  rclcpp::Subscription<perception_system_interfaces::msg::DetectionArray>::SharedPtr image_sub_;
+  void image_callback(const perception_system_interfaces::msg::DetectionArray::SharedPtr msg);
 
 };
 

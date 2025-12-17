@@ -37,10 +37,16 @@ IsSittable::IsSittable(const std::string & xml_tag_name, const BT::NodeConfigura
 BT::NodeStatus IsSittable::tick()
 {
   is_person_ = false;
+  is_place_to_sit_ = false; 
+
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] ticked");
     config().blackboard->get("tf_static_broadcaster", tf_static_broadcaster_);
     config().blackboard->get("tf_buffer", tf_buffer_);
+    if (!tf_static_broadcaster_) {
+      RCLCPP_ERROR(node_->get_logger(), "[IsSittable] tf_static_broadcaster is null");
+      return BT::NodeStatus::FAILURE;
+    }
     getInput("cam_frame", camera_frame_);
     pl::getInstance(node_)->set_interest("", true);
     pl::getInstance(node_)->set_interest("person", true);
@@ -62,6 +68,7 @@ BT::NodeStatus IsSittable::tick()
   } else if (!person_detections.empty()) {
     is_person_ = true;
     person_detection_ = retrieve_detection("person", person_detections);
+    RCLCPP_INFO(node_->get_logger(), "[IsSittable] person detected");
   }
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] one person detected");
 
@@ -70,6 +77,9 @@ BT::NodeStatus IsSittable::tick()
     if (is_place_to_sit_) {
       place_to_sit_ = object;
       chair_detection_ = retrieve_detection(place_to_sit_, chair_detections);
+      RCLCPP_INFO(
+        node_->get_logger(), "[IsSittable] place to sit detected: %s ",
+        place_to_sit_.c_str());
       break;
     }
   }

@@ -23,6 +23,7 @@
 #include "llama_msgs/action/generate_response.hpp"
 #include "std_msgs/msg/int8.hpp"
 
+
 namespace dialog
 {
 
@@ -38,7 +39,7 @@ CheckPolicy::CheckPolicy(
     xml_tag_name, action_name, conf)
 {
   getInput("image_topic", image_topic_);
-  image_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+  image_sub_ = node_->create_subscription<perception_system_interfaces::msg::DetectionArray>(
     image_topic_, 10, std::bind(&CheckPolicy::image_callback, this, _1));
 }
 
@@ -46,62 +47,73 @@ void CheckPolicy::on_tick()
 {
   rclcpp::spin_some(node_->get_node_base_interface());
   RCLCPP_DEBUG(node_->get_logger(), "CheckPolicy ticked");
+  RCLCPP_INFO(node_->get_logger(), "CheckPolicy ticked");
   if (!image_) {
     RCLCPP_ERROR(node_->get_logger(), "No image received");
+    RCLCPP_INFO(node_->get_logger(), "No image received, setting to IDLE");
     setStatus(BT::NodeStatus::IDLE);
     return;
   }
+  RCLCPP_INFO(node_->get_logger(), "Image received, proceeding with CheckPolicy");
 
   std::string text_;
   getInput("question", text_);
 
-  std::string prompt_ = text_ + ". Please answer only with 'yes' or 'no'";
+  std::string prompt_ = text_;
   goal_.prompt = prompt_;
   goal_.images.push_back(*image_);
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;
-  goal_.sampling_config.grammar =
-    R"(root   ::= object
-value  ::= object | array | string | number | ("true" | "false" | "null") ws
+//   goal_.sampling_config.grammar =
+//     R"(root   ::= object
+// value  ::= object | array | string | number | ("true" | "false" | "null") ws
 
-object ::=
-  "{" ws (
-            string ":" ws value
-    ("," ws string ":" ws value)*
-  )? "}" ws
+// object ::=
+//   "{" ws (
+//             string ":" ws value
+//     ("," ws string ":" ws value)*
+//   )? "}" ws
 
-array  ::=
-  "[" ws (
-            value
-    ("," ws value)*
-  )? "]" ws
+// array  ::=
+//   "[" ws (
+//             value
+//     ("," ws value)*
+//   )? "]" ws
 
-string ::=
-  "\"" (
-    [^"\\] |
-    "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
-  )* "\"" ws
+// string ::=
+//   "\"" (
+//     [^"\\] |
+//     "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
+//   )* "\"" ws
 
-number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
+// number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
 
-# Optional space: by convention, applied in this grammar after literal chars when allowed
-ws ::= ([ \t\n] ws)?)";
+// # Optional space: by convention, applied in this grammar after literal chars when allowed
+// ws ::= ([ \t\n] ws)?)";
 }
 
-void CheckPolicy::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
+void CheckPolicy::image_callback(const perception_system_interfaces::msg::DetectionArray::SharedPtr msg)
 {
-  image_ = msg;
+  image_ = std::make_shared<sensor_msgs::msg::Image>(msg->source_img);
+  RCLCPP_INFO(node_->get_logger(), "Image received in CheckPolicy");
 }
 
 BT::NodeStatus CheckPolicy::on_success()
 {
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
+  RCLCPP_INFO(node_->get_logger(), "CheckPolicy succeeded");
+  RCLCPP_INFO(
+    node_->get_logger(), "LLM response: %s",
+    result_.result->response.text.c_str());
 
   if (result_.result->response.text.empty() || result_.result->response.text == "{}") {
     return BT::NodeStatus::FAILURE;
   }
   std::string answer = result_.result->response.text;
   setOutput("output_text", answer);
+  RCLCPP_INFO(
+    node_->get_logger(), "CheckPolicy extracted answer: %s",
+    answer.c_str());
 
   answer.erase(
     std::remove_if(
@@ -114,15 +126,7 @@ BT::NodeStatus CheckPolicy::on_success()
   if (answer.empty()) {
     return BT::NodeStatus::FAILURE;
   }
-  if (answer.find("yes") != std::string::npos) {
-    value_ = true;
-  } else if (answer.find("no") != std::string::npos) {
-    value_ = false;
-  } else {
-    RCLCPP_ERROR(node_->get_logger(), "Not a valid answer: %s", answer.c_str());
-    return BT::NodeStatus::FAILURE;
-  }
-  setOutput("output", value_);
+
   return BT::NodeStatus::SUCCESS;
 }
 
@@ -131,7 +135,7 @@ BT::NodeStatus CheckPolicy::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::CheckPolicy>(name, "/llava/generate_response", config);
+      return std::make_unique<dialog::CheckPolicy>(name, "/llama/generate_response", config);
     };
 
   factory.registerBuilder<dialog::CheckPolicy>("CheckPolicy", builder);

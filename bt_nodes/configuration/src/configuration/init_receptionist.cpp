@@ -23,13 +23,13 @@ InitReceptionist::InitReceptionist(
 {
   config().blackboard->get("node", node_);
 
-  node_->declare_parameter("cam_frame", "head_front_camera_rgb_optical_frame");
+  node_->declare_parameter("cam_frame", "head_front_camera_color_optical_frame");
   node_->declare_parameter("manipulation_frame", "base_link");
   // node_->declare_parameter("party_wp",  std::vector<double>{0.0, 0.0, 0.0});
   // node_->declare_parameter("entrance_wp",  std::vector<double>{0.0, 0.0, 0.0});
   node_->declare_parameter("host_name", "John Doe");
   node_->declare_parameter("host_drink", "beer");
-  // node_->declare_parameter("waypoints_names", std::vector<std::string>{});
+  node_->declare_parameter("waypoints_names", std::vector<std::string>{});
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -43,39 +43,50 @@ BT::NodeStatus InitReceptionist::tick()
 
   if (
     node_->has_parameter("cam_frame") && node_->has_parameter("manipulation_frame") &&
-    node_->has_parameter("host_name") && node_->has_parameter("host_drink"))
-  // && node_->has_parameter("waypoints_names"))
+    node_->has_parameter("host_name") && node_->has_parameter("host_drink")
+    && node_->has_parameter("waypoints_names"))
   // node_->has_parameter("party_wp") && node_->has_parameter("entrance_wp"))
   {
     node_->get_parameter("cam_frame", cam_frame_);
     node_->get_parameter("manipulation_frame", manipulation_frame_);
     node_->get_parameter("host_name", host_name_);
     node_->get_parameter("host_drink", host_drink_);
-    // node_->get_parameter("waypoints_names", wp_names_);
+    node_->get_parameter("waypoints_names", wp_names_);
 
-    // for (auto wp : wp_names_) {
-    //   node_->declare_parameter("waypoints." + wp, std::vector<double>());
-    //   std::vector<double> wp_pos;
-    //   node_->get_parameter("waypoints." + wp, wp_pos);
-    //   geometry_msgs::msg::TransformStamped transform_msg;
-    //   tf2::Quaternion q;
+    RCLCPP_INFO(
+      node_->get_logger(), "Waypoints to be initialized: [%s]",
+      std::to_string(wp_names_.size()).c_str());
 
-    //   if (wp.find("entrance")!=std::string::npos) {
-    //     setOutput("entrance_wp", wp);
-    //   } else if (wp.find("party")!=std::string::npos) {
-    //     setOutput("party_wp", wp);
-    //   }
+    for (auto wp : wp_names_) {
+      node_->declare_parameter("waypoints." + wp, std::vector<double>());
+      std::vector<double> wp_pos;
+      node_->get_parameter("waypoints." + wp, wp_pos);
+      RCLCPP_INFO(
+        node_->get_logger(), "Waypoint [%s] position: x: %.2f, y: %.2f, yaw: %.2f", wp.c_str(),
+        wp_pos[0], wp_pos[1], wp_pos[2]);
+      geometry_msgs::msg::TransformStamped transform_msg;
+      tf2::Quaternion q;
 
-    //   q.setRPY(0, 0, wp_pos[2]);
-    //   transform_msg.header.frame_id = "map";
+      if (wp.find("entrance")!=std::string::npos) {
+        setOutput("entrance_wp", wp);
+        RCLCPP_INFO(
+          node_->get_logger(), "Entrance waypoint set to frame: [%s]", wp.c_str());
+      } else if (wp.find("party")!=std::string::npos) {
+        setOutput("party_wp", wp);
+      }
 
-    //   transform_msg.child_frame_id = wp;
-    //   transform_msg.transform.translation.x = wp_pos[0];
-    //   transform_msg.transform.translation.y = wp_pos[1];
-    //   transform_msg.transform.rotation = tf2::toMsg(q);
-    //   tf_static_broadcaster_->sendTransform(transform_msg);
-    //   rclcpp::spin_some(node_);
-    // }
+      q.setRPY(0, 0, wp_pos[2]);
+      transform_msg.header.frame_id = "map";
+
+      transform_msg.child_frame_id = wp;
+      transform_msg.transform.translation.x = wp_pos[0];
+      transform_msg.transform.translation.y = wp_pos[1];
+      transform_msg.transform.rotation = tf2::toMsg(q);
+      tf_static_broadcaster_->sendTransform(transform_msg);
+      RCLCPP_INFO(
+        node_->get_logger(), "Published static transform for waypoint [%s]", wp.c_str());
+      rclcpp::spin_some(node_->get_node_base_interface());
+    }
 
     geometry_msgs::msg::TransformStamped transform_msg;
 
@@ -83,7 +94,7 @@ BT::NodeStatus InitReceptionist::tick()
 
     transform_msg.child_frame_id = "attention_home";
     transform_msg.transform.translation.x = 1.5;
-    transform_msg.transform.translation.z = 1.5;
+    transform_msg.transform.translation.z = 0.5;
     tf_static_broadcaster_->sendTransform(transform_msg);
     rclcpp::spin_some(node_->get_node_base_interface());
 

@@ -24,6 +24,7 @@ find_package(arm REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(hri REQUIRED)
 find_package(perception_system_interfaces REQUIRED)
+find_package(kb_msgs REQUIRED)
 # find_package(backward_ros REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -45,6 +46,7 @@ set(dependencies
   arm
   geometry_msgs
   perception_system_interfaces
+  kb_msgs
   # backward_ros
 )
 
@@ -203,6 +205,11 @@ target_link_libraries(filter_object_test perception::filter_object_bt_node)
 add_executable(extract_person_description_test src/extract_person_description_test.cpp)
 ament_target_dependencies(extract_person_description_test ${dependecies})
 target_link_libraries(extract_person_description_test perception::extract_person_description_bt_node perception::is_detected_bt_node hri::speak_bt_node)
+
+# store guest info test
+add_executable(store_guest_info_test src/store_guest_info_test.cpp)
+ament_target_dependencies(store_guest_info_test ${dependencies})
+target_link_libraries(store_guest_info_test hri::store_guest_info_bt_node hri::get_guest_info_bt_node)
 
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
@@ -400,6 +407,7 @@ install(TARGETS
   extract_person_description_test
   music_test
   set_blackboard_test
+  store_guest_info_test
   
   gpsr_test
   gpsr_answerquiz_test

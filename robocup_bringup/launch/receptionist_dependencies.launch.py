@@ -26,7 +26,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
 
-    move_group_dir = get_package_share_directory('tiago_mtc_examples')
+    move_group_dir = get_package_share_directory('tiago_moveit_config')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     package_dir = get_package_share_directory('robocup_bringup')
     yolo3d_dir = get_package_share_directory('yolo_bringup')

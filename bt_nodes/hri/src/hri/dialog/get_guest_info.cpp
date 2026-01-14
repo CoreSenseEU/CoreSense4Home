@@ -37,21 +37,41 @@ void GetGuestInfo::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[GetGuestInfo] ticked");
   rclcpp::spin_some(node_->get_node_base_interface());
-  
+
+  getInput("guest_attending", guest_attending_);
+  getInput("guest_attending_id", guest_attending_id_);
+
+  int id = guest_attending_id_.back() - '0';
+
+  std::string guest_name_pattern, guest_drink_pattern, guest_desc_pattern;
+
+  if(guest_attending_){
+
+    guest_name_pattern = guest_attending_id_ + " oro:hasName ?name";
+    guest_drink_pattern = guest_attending_id_ + " oro:hasFavoriteDrink ?drink";
+    guest_desc_pattern = guest_attending_id_ + " oro:description ?desc";
+
+  } else {
+    
+    std::string other_guest_id = "guest" + std::to_string(id + 1);
+    guest_name_pattern = other_guest_id + " oro:hasName ?name";
+    guest_drink_pattern = other_guest_id + " oro:hasFavoriteDrink ?drink";
+    guest_desc_pattern = other_guest_id + " oro:description ?desc";
+    
+  }
+
   // Patterns
-  request_->patterns.push_back("robot1 oro:attends ?guest");
-  request_->patterns.push_back("?guest oro:hasName ?name");
-  request_->patterns.push_back("?guest oro:hasFavoriteDrink ?drink");
-  request_->patterns.push_back("?guest oro:description ?desc");
+  request_->patterns.push_back(guest_name_pattern);
+  request_->patterns.push_back(guest_drink_pattern);
+  request_->patterns.push_back(guest_desc_pattern);
 
   // Vars
-  request_->vars.push_back("?guest");
   request_->vars.push_back("?name");
   request_->vars.push_back("?drink");
   request_->vars.push_back("?desc");
 
-
   setStatus(BT::NodeStatus::SUCCESS);
+
 }
 
 void GetGuestInfo::on_result()

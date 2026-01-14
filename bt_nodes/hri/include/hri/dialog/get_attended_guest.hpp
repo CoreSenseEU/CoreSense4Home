@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef HRI__GEST_GUEST_INFO_HPP_
-#define HRI__GEST_GUEST_INFO_HPP_
+#ifndef HRI__GEST_ATTENDED_GUEST_HPP_
+#define HRI__GEST_ATTENDED_GUEST_HPP_
 
 #include <chrono>
 #include <functional>
@@ -29,12 +29,12 @@
 namespace dialog
 {
 
-class GetGuestInfo : public hri::BtServiceNode<
+class GetAttendedGuest : public hri::BtServiceNode<
     kb_msgs::srv::Query,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
-  explicit GetGuestInfo(const std::string & xml_tag_name, const std::string & srv_name,
+  explicit GetAttendedGuest(const std::string & xml_tag_name, const std::string & srv_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -43,22 +43,15 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<bool>("guest_attending", true, "Is the guest being attended?"),
-        BT::InputPort<std::string>("guest_attending_id"),
-        BT::OutputPort<std::string>("guest_name"),
-        BT::OutputPort<std::string>("guest_drink"),
-        BT::OutputPort<std::string>("guest_description"),
+      {BT::OutputPort<std::string>("guest_attended")
       });
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr kb_publisher_;
-
-  std::string guest_name_, guest_drink_, guest_description_, guest_attending_id_, guest_id_;
-  bool guest_attending_;
+  std::string guest_attended_, guest_id_;
 };
 
 }  // namespace dialog
 
-#endif  // HRI__GEST_GUEST_INFO_HPP_
+#endif  // HRI__GEST_ATTENDED_GUEST_HPP_

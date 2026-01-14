@@ -16,7 +16,13 @@ find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(play_motion2_msgs REQUIRED)
-# uncomment the following section in order to fill in
+find_package(Eigen3 REQUIRED)
+find_package(srdfdom REQUIRED)
+find_package(eigen_stl_containers REQUIRED)
+find_package(geometric_shapes REQUIRED)
+find_package(moveit_core REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIRS})
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
@@ -32,7 +38,14 @@ set(dependencies
   geometry_msgs
   sensor_msgs
   play_motion2_msgs
+  srdfdom
+  eigen_stl_containers
+  geometric_shapes
+  moveit_core
+  tf2_geometry_msgs
+  Eigen3
 )
+
 
 include_directories(include)
 

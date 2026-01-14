@@ -41,7 +41,7 @@ def generate_launch_description():
 
     manipulation_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(manipulation_dir, 'launch', 'server.launch.py')
+            os.path.join(manipulation_dir, 'launch', 'simple_server.launch.py')
         )
     )
 
@@ -58,12 +58,13 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
+            'use_3d': 'True',
             'model': 'yolov8n.pt',
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/depth/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 real
-            'target_frame': 'camera_color_optical_frame',
+            'target_frame': 'head_front_camera_optical_frame',
             'threshold': '0.5'
             }.items()
     )
@@ -81,7 +82,7 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
-            'map': package_dir + '/maps/robocup_arena_2.yaml', # ARENA B
+            'map': package_dir + '/maps/apartamento_leon_gimp_con_mesa_tv.yaml', # ARENA B
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
@@ -95,7 +96,7 @@ def generate_launch_description():
     ld.add_action(dialog)
     ld.add_action(yolo3d)
     ld.add_action(real_time)
-    ld.add_action(move_group)
+    #ld.add_action(move_group)
     ld.add_action(manipulation_server)
 
     return ld

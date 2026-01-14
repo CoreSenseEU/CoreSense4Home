@@ -97,8 +97,10 @@ void GetGuestInfo::on_result()
   std_msgs::msg::String fact_msg;
 
   // Delete attending fact
-  fact_msg.data = "robot1 oro:attends " + guest_id_;
-  kb_publisher_->publish(fact_msg);
+  if (!guest_id_.empty()) {
+    fact_msg.data = "robot1 oro:attends " + guest_id_;
+    kb_publisher_->publish(fact_msg);
+  }
 
   setStatus(BT::NodeStatus::SUCCESS);
 }

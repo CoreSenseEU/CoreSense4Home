@@ -14,108 +14,131 @@
 
 #include "motion/head/Pan.hpp"
 
-#include <cmath>
-
 namespace head
 {
 
 using namespace std::chrono_literals;
 
-Pan::Pan(
-  const std::string & xml_tag_name,
-  const std::string & action_name,
-  const BT::NodeConfiguration & conf)
-: head::BtActionNode<
-    control_msgs::action::FollowJointTrajectory,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
-      xml_tag_name, action_name, conf)
+Pan::Pan(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf), phase_(0.0)
 {
-}
-
-void Pan::on_tick()
-{
-  // Leer parámetros
+  config().blackboard->get("node", node_);
+  // joint_range_ = 20.0 * M_PI / 180.0;
   getInput("range", joint_range_);
+  joint_range_ = joint_range_ * M_PI / 180.0;
   getInput("period", period_);
   getInput("pitch_angle", pitch_angle_);
-
-  // Convertir a radianes
-  //joint_range_ = joint_range_ * M_PI / 180.0;
   pitch_angle_ = pitch_angle_ * M_PI / 180.0;
 
-  // pitch_angle_ = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
+  // if (!joint_range_) {
+  //   // throw BT::RuntimeError("Missing required input [range]: ", joint_range_);
+  //   RCLCPP_WARN(
+  //     node_->get_logger(), "Missing required input [range]. Using default value 45.0 degrees");
+  //   joint_range_.value() = 45.0 * M_PI / 180.0;
+  // }
+  // if (!period_) {
+  //   // throw BT::RuntimeError("Missing required input [period]: ", period_);
+  //   RCLCPP_WARN(
+  //     node_->get_logger(), "Missing required input [period]. Using default value 5.0 seconds");
+  //   period_.value() = 5.0;
+  // }
+  // if (!pitch_angle_) {
+  //   // throw BT::RuntimeError("Missing required input [pitch_angle]: ", pitch_angle_);
+  //   RCLCPP_WARN(
+  //     node_->get_logger(), "Missing required input [pitch_angle]. Using default value 0.0 degrees");
+  //   pitch_angle_.value() = 0.0;
+  // }
+  RCLCPP_DEBUG(
+    node_->get_logger(), "Pan: range: %f, period: %f, pitch_angle: %f", joint_range_, period_,
+    pitch_angle_);
+  joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+    "/head_controller/joint_trajectory", 100);
+  joint_cmd_pub_->on_activate();
 
-  if (current_step_ >= yaw_steps_.size()) {
-    RCLCPP_WARN(node_->get_logger(), "Pan: no more scan positions");
-    current_step_ = 0;
+  joint_state_sub_ = node_->create_subscription<sensor_msgs::msg::JointState>(
+    "/joint_states", 100, [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
+      for (size_t i = 0; i < msg->name.size(); ++i) {
+        if (msg->name[i] == "head_1_joint") {  // TODO: remove hardcoded joint name (TIAGo specific)
+          phase_ = msg->position[i];
+          break;
+        }
+      }
+    });
+}
+
+void Pan::halt()
+{
+  // node_->add_activation("attention_server");
+}
+
+double Pan::get_joint_yaw(double period, double range, double time, double phase)
+{
+  return std::clamp(
+    range * sin((2 * M_PI / period) * time + phase), -1.3,
+    1.3);  // TODO: remove hardcoded limits (TIAGo specific)
+}
+
+BT::NodeStatus Pan::tick()
+{
+  rclcpp::spin_some(node_->get_node_base_interface());
+  bool is_first_tick = false;
+  
+  if (status() == BT::NodeStatus::IDLE) {
+    // node_->remove_activation("attention_server");
+    start_time_ = node_->now();
+    initial_yaw_ = phase_;  // Store the actual starting position
+    is_first_tick = true;
+    
+    // Calculate phase so the sine wave starts exactly at the current position
+    // The sine wave equation is: yaw = range * sin(2π/period * t + phase)
+    // At t=0, we want: initial_yaw = range * sin(phase)
+    // Therefore: phase = asin(initial_yaw / range)
+    
+    // Clamp the ratio to valid range for asin [-1, 1]
+    double ratio = initial_yaw_ / joint_range_;
+    
+    // If we're outside the range, clamp to the range limit
+    if (std::abs(ratio) > 1.0) {
+      ratio = (ratio > 0) ? 1.0 : -1.0;
+    }
+    
+    phase_offset_ = asin(ratio);
+    
+    RCLCPP_INFO(
+      node_->get_logger(), 
+      "Pan initialized: initial_yaw=%f rad, range=%f rad, calculated phase_offset=%f rad", 
+      initial_yaw_, joint_range_, phase_offset_);
+    
   }
 
-  const double yaw = yaw_steps_[current_step_];
-  // Construir goal
-  goal_ = control_msgs::action::FollowJointTrajectory::Goal();
-  goal_.trajectory.header.stamp = node_->now(); 
-  goal_.trajectory.joint_names = {"head_1_joint", "head_2_joint"};
+  trajectory_msgs::msg::JointTrajectory command_msg;
+  auto elapsed = node_->now() - start_time_;
 
-  trajectory_msgs::msg::JointTrajectoryPoint p;
-  p.positions = { yaw, pitch_angle_ };
-  p.time_from_start = rclcpp::Duration::from_seconds(1.5);
+  double yaw = get_joint_yaw(period_, joint_range_, elapsed.seconds(), phase_offset_);
+  RCLCPP_INFO_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 5000,
+    "Pan: current_yaw: %f, desired_yaw: %f, elapsed: %.2f", phase_, yaw, elapsed.seconds());
+  command_msg.joint_names = std::vector<std::string>{
+    "head_1_joint", "head_2_joint"};  // TODO: remove hardcoded joint names (TIAGo specific)
+  command_msg.points.resize(1);
+  command_msg.points[0].positions.resize(2);
+  command_msg.points[0].velocities.resize(2);
+  command_msg.points[0].accelerations.resize(2);
+  command_msg.points[0].positions[0] = std::clamp(yaw, -yaw_limit_, yaw_limit_);
+  command_msg.points[0].positions[1] = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
+  command_msg.points[0].velocities[0] = 0.0;
+  command_msg.points[0].velocities[1] = 0.0;
+  // Use 1.0 second for first command to smoothly transition, then 0.1 for rest
+  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(is_first_tick ? 1.0 : 0.1);
+  joint_cmd_pub_->publish(command_msg);
+  rclcpp::spin_some(node_->get_node_base_interface());
 
-  goal_.trajectory.points.clear();
-  goal_.trajectory.points.push_back(p);
-
-  RCLCPP_INFO(
-    node_->get_logger(),
-    "Pan step %ld → yaw=%.2f rad",
-    current_step_, yaw
-  );
-
-  //build_trajectory(goal_.trajectory.points);
-
-  RCLCPP_DEBUG(node_->get_logger(), "Pan action goal sent");
-  current_step_++;
-
-}
-
-BT::NodeStatus Pan::on_success()
-{
-  RCLCPP_DEBUG(node_->get_logger(), "Pan action finished");
-  
-  return BT::NodeStatus::SUCCESS;
-}
-
-void Pan::build_trajectory(
-  std::vector<trajectory_msgs::msg::JointTrajectoryPoint> & points)
-{
-  points.clear();
-
-  const double yaw_left  = std::clamp(-joint_range_, -yaw_limit_, yaw_limit_);
-  const double yaw_right = std::clamp( joint_range_, -yaw_limit_, yaw_limit_);
-
-  trajectory_msgs::msg::JointTrajectoryPoint p1;
-  p1.positions = {yaw_left, pitch_angle_};
-  p1.time_from_start = rclcpp::Duration::from_seconds(period_ * 0.25);
-
-  trajectory_msgs::msg::JointTrajectoryPoint p2;
-  p2.positions = {yaw_right, pitch_angle_};
-  p2.time_from_start = rclcpp::Duration::from_seconds(period_ * 0.75);
-
-  trajectory_msgs::msg::JointTrajectoryPoint p3;
-  p3.positions = {yaw_left, pitch_angle_};
-  p3.time_from_start = rclcpp::Duration::from_seconds(period_);
-
-  points.push_back(p1);
-  points.push_back(p2);
-  points.push_back(p3);
+  return BT::NodeStatus::RUNNING;
 }
 
 }  // namespace head
 
 #include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory)
-{
-  BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<head::Pan>(name, "/head_controller/follow_joint_trajectory", config);
-    };
-
-  factory.registerBuilder<head::Pan>("Pan", builder);
+BT_REGISTER_NODES(factory) {
+  factory.registerNodeType<head::Pan>("Pan");
 }

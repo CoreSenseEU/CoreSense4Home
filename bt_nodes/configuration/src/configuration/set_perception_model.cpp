@@ -26,7 +26,7 @@ using namespace std::placeholders;
 SetPerceptionModel::SetPerceptionModel(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
-: configuration::BtServiceNode<yolo_msgs::srv::ChangeModel,
+: configuration::BtServiceNode<yolov8_msgs::srv::ChangeModel,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
@@ -48,7 +48,7 @@ inline std::string joinPaths(const std::string & path1, const std::string & path
 
 void SetPerceptionModel::on_tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "SetPerceptionModelNode ticked");
+  RCLCPP_INFO(node_->get_logger(), "SetPerceptionModelNode ticked");
   getInput("model_name", model_name_);
   getInput("model_type", model_type_);
   getInput("model_path", model_path_);

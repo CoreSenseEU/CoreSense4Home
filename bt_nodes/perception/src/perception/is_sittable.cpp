@@ -51,7 +51,6 @@ BT::NodeStatus IsSittable::tick()
     pl::getInstance(node_)->set_interest("", true);
     pl::getInstance(node_)->set_interest("person", true);
     pl::getInstance(node_)->update(30);
-    return BT::NodeStatus::RUNNING;
   }
   pl::getInstance(node_)->set_interest("", true);
   pl::getInstance(node_)->set_interest("person", true);

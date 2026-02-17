@@ -12,30 +12,29 @@
 // See the License for the specific language governing permissions andGO2OBJECT
 // limitations under the License.
 
-#ifndef PERCEPTION__EXTRACT_COLLISION_SCENE_HPP_
-#define PERCEPTION__EXTRACT_COLLISION_SCENE_HPP_
+#ifndef HRI__GEST_ATTENDED_GUEST_HPP_
+#define HRI__GEST_ATTENDED_GUEST_HPP_
 
-#include <algorithm>
-#include <string>
+#include <chrono>
+#include <functional>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "moveit_msgs/msg/collision_object.hpp"
-#include "perception/bt_service_node.hpp"
-#include "yolov8_msgs/srv/change_model.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "kb_msgs/srv/query.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
+#include "hri/bt_service_node.hpp"
 
-namespace perception
+namespace dialog
 {
 
-class SwitchYoloModel : public perception::BtServiceNode<
-    yolov8_msgs::srv::ChangeModel,
+class GetAttendedGuest : public hri::BtServiceNode<
+    kb_msgs::srv::Query,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
-  explicit SwitchYoloModel(
-    const std::string & xml_tag_name, const std::string & action_name,
+  explicit GetAttendedGuest(const std::string & xml_tag_name, const std::string & srv_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;
@@ -44,10 +43,15 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::InputPort<std::string>("model")});
+      {BT::OutputPort<std::string>("guest_attended")
+      });
   }
+
+private:
+  std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
+  std::string guest_attended_, guest_id_;
 };
 
-}  // namespace perception
+}  // namespace dialog
 
-#endif  // PERCEPTION__EXTRACT_COLLISION_SCENE_HPP_
+#endif  // HRI__GEST_ATTENDED_GUEST_HPP_

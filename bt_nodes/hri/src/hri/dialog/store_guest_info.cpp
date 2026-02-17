@@ -75,6 +75,26 @@ std::string obtain_guest_id(const std::string & json)
   return "guest" + std::to_string(max_id + 1);
 }
 
+static std::string escape_turtle_literal(std::string s)
+{
+  // 1) Escape backslashes
+  for (size_t pos = 0; (pos = s.find('\\', pos)) != std::string::npos; pos += 2) {
+    s.replace(pos, 1, "\\\\");
+  }
+
+  // 2) Escape double quotes
+  for (size_t pos = 0; (pos = s.find('"', pos)) != std::string::npos; pos += 2) {
+    s.replace(pos, 1, "\\\"");
+  }
+
+  // 3) Optional: normalize newlines (depends on parser strictness)
+  for (size_t pos = 0; (pos = s.find('\n', pos)) != std::string::npos; pos += 2) {
+    s.replace(pos, 1, "\\n");
+  }
+
+  return s;
+}
+
 void StoreGuestInfo::on_result()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[StoreGuestInfo] result received");
@@ -101,6 +121,7 @@ void StoreGuestInfo::on_result()
   kb_publisher_->publish(fact_msg);
 
   if (!guest_description_.empty()) {
+    guest_description_ = escape_turtle_literal(guest_description_);
     fact_msg.data = guest_id + " oro:description \"" + guest_description_ + "\"";
     kb_publisher_->publish(fact_msg);
   }
@@ -128,4 +149,3 @@ BT_REGISTER_NODES(factory)
 
   factory.registerBuilder<dialog::StoreGuestInfo>("StoreGuestInfo", builder);
 }
-

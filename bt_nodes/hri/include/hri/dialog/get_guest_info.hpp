@@ -43,7 +43,9 @@ public:
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
-      {BT::OutputPort<std::string>("guest_name"),
+      {BT::InputPort<bool>("guest_attending", true, "Is the guest being attended?"),
+        BT::InputPort<std::string>("guest_attending_id"),
+        BT::OutputPort<std::string>("guest_name"),
         BT::OutputPort<std::string>("guest_drink"),
         BT::OutputPort<std::string>("guest_description"),
       });
@@ -53,7 +55,8 @@ private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr kb_publisher_;
 
-  std::string guest_name_, guest_drink_, guest_description_, guest_id_;
+  std::string guest_name_, guest_drink_, guest_description_, guest_attending_id_, guest_id_;
+  bool guest_attending_;
 };
 
 }  // namespace dialog

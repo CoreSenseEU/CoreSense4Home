@@ -27,7 +27,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
-#include "yolo_msgs/msg/detection_array.hpp"
+#include "yolov8_msgs/msg/detection_array.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
 namespace perception
@@ -51,12 +51,12 @@ public:
         BT::OutputPort<std::string>("objects_count")});
   }
 
-  void detection_callback_(yolo_msgs::msg::DetectionArray::UniquePtr msg);
+  void detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg);
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-  rclcpp::Subscription<yolo_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
-  yolo_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
+  rclcpp::Subscription<yolov8_msgs::msg::DetectionArray>::SharedPtr detected_objs_sub_;
+  yolov8_msgs::msg::DetectionArray::UniquePtr last_detected_objs_ = {nullptr};
   std::string interest_class_{""};
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;

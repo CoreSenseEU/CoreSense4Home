@@ -9,52 +9,46 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions andGO2OBJECT
+// See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TORSO__SET_TORSO_HEIGHT_HPP_
-#define TORSO__SET_TORSO_HEIGHT_HPP_
+#ifndef CONFIGURATION__ACTIVATION_CONTROL_HPP_
+#define CONFIGURATION__ACTIVATION_CONTROL_HPP_
 
-#include <algorithm>
+#include <memory>
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "ctrl_support/BTActionNode.hpp"
-#include "control_msgs/action/follow_joint_trajectory.hpp"
 
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 
-namespace torso
+namespace configuration
 {
 
-class SetTorsoHeight
-  : public motion::BtActionNode<
-    control_msgs::action::FollowJointTrajectory,
-    rclcpp_cascade_lifecycle::CascadeLifecycleNode>
+class ActivationControl : public BT::ActionNodeBase
 {
 public:
-  explicit SetTorsoHeight(
-    const std::string & xml_tag_name, const std::string & action_name,
-    const BT::NodeConfiguration & conf);
+  explicit ActivationControl(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
 
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
+  void halt();
+  BT::NodeStatus tick();
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList(
-      {BT::InputPort<double>("height", 0.1, "torso height")});
+    return BT::PortsList({
+      BT::InputPort<bool>("deactivate", "If true, remove activation, otherwise add"),
+      BT::InputPort<std::string>("node_name", "Name of the node to (de)activate")
+    });
   }
 
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
-
-  double height_;
+  bool deactivate_ {false};
+  std::string node_name_;
 };
 
-}  // namespace torso
+}  // namespace configuration
 
-#endif  // TORSO__SET_HEIGHT_HPP_
+#endif  // CONFIGURATION__ACTIVATION_CONTROL_HPP_

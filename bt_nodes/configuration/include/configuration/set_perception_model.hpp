@@ -23,14 +23,14 @@
 #include "configuration/bt_service_node.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
-#include "yolo_msgs/srv/change_model.hpp"
+#include "yolov8_msgs/srv/change_model.hpp"
 
 
 namespace configuration
 {
 
 class SetPerceptionModel
-  : public configuration::BtServiceNode<yolo_msgs::srv::ChangeModel,
+  : public configuration::BtServiceNode<yolov8_msgs::srv::ChangeModel,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:

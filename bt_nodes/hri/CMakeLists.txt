@@ -82,6 +82,9 @@ list(APPEND plugin_libs stop_music_bt_node)
 add_library(store_guest_info_bt_node SHARED src/hri/dialog/store_guest_info.cpp)
 list(APPEND plugin_libs store_guest_info_bt_node)
 
+add_library(get_attended_guest_bt_node SHARED src/hri/dialog/get_attended_guest.cpp)
+list(APPEND plugin_libs get_attended_guest_bt_node)
+
 add_library(get_guest_info_bt_node SHARED src/hri/dialog/get_guest_info.cpp)
 list(APPEND plugin_libs get_guest_info_bt_node)
 

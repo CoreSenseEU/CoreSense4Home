@@ -25,7 +25,7 @@ SetTorsoHeight::SetTorsoHeight(
   const std::string & xml_tag_name, const std::string & action_name,
   const BT::NodeConfiguration & conf)
 : motion::BtActionNode<
-    manipulation_interfaces::action::MoveJoint,
+    control_msgs::action::FollowJointTrajectory,
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(
     xml_tag_name, action_name, conf)
 {
@@ -38,9 +38,10 @@ void SetTorsoHeight::on_tick()
 
   getInput("height", height_);
 
-  goal_.group_name = "arm_torso";
-  goal_.joint_name = "torso_lift_joint";
-  goal_.joint_value = height_;
+  goal_.trajectory.joint_names = {"torso_lift_joint"};
+  goal_.trajectory.points.resize(1);
+  goal_.trajectory.points[0].positions = {height_};
+  goal_.trajectory.points[0].time_from_start = rclcpp::Duration(1, 0);
 }
 
 BT::NodeStatus SetTorsoHeight::on_success()
@@ -50,12 +51,15 @@ BT::NodeStatus SetTorsoHeight::on_success()
   return BT::NodeStatus::SUCCESS;
 }
 
-}  // namespace manipulation
+}  // namespace torso
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<torso::SetTorsoHeight>(name, "/move_joint", config);
+      return std::make_unique<torso::SetTorsoHeight>(
+        name,
+        "/torso_controller/follow_joint_trajectory",
+        config);
     };
 
   factory.registerBuilder<torso::SetTorsoHeight>("SetTorsoHeight", builder);

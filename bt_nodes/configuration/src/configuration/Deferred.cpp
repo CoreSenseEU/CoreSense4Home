@@ -82,7 +82,9 @@ BT::NodeStatus Deferred::tick()
     // publisher_zmq_ = std::make_unique<BT::PublisherZMQ>(subtree_, 10, 2666, 2667);
   }
 
+  std::cerr << "[DeferredBT] Executing tick to the subtree!!" << std::endl;
   auto state = subtree_.rootNode()->executeTick();
+  std::cerr << "[DeferredBT] Executed tick " << std::endl;
 
 //  if (state == BT::NodeStatus::FAILURE || state == BT::NodeStatus::SUCCESS) {
 //     publisher_zmq_.reset();

@@ -21,7 +21,6 @@ LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & c
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  node_->add_activation("attention_server");
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
     "attention/attention_command", 1);
   attention_points_pub_->on_activate();
@@ -29,6 +28,8 @@ LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & c
 
 BT::NodeStatus LookAt::tick()
 {
+  node_->add_activation("attention_server");
+
   RCLCPP_DEBUG(node_->get_logger(), "LookAt ticked");
   getInput("tf_frames", tf_frames_);
   getInput("tf_frame", tf_frame_);
@@ -63,7 +64,7 @@ BT::NodeStatus LookAt::tick()
 void LookAt::halt()
 {
   RCLCPP_INFO(node_->get_logger(), "LookAt halted");
-  node_->remove_activation("attention_server");
+  // node_->remove_activation("attention_server");
 }
 
 }  // namespace head

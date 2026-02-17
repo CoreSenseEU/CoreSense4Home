@@ -34,7 +34,7 @@ SetHeadJointPosition::SetHeadJointPosition(
 
 void SetHeadJointPosition::on_tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "SetTorsoHeight ticked");
+  RCLCPP_INFO(node_->get_logger(), "SetHeadJointPosition ticked");
 
   getInput("vertical", vertical_);
   getInput("horizontal", horizontal_);

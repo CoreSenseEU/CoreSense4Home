@@ -9,7 +9,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_cascade_lifecycle REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
-find_package(yolo_msgs REQUIRED)
+find_package(yolov8_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
 find_package(rclpy REQUIRED)
@@ -33,7 +33,7 @@ set(dependencies
   rclcpp_cascade_lifecycle
   rclpy
   behaviortree_cpp_v3
-  yolo_msgs
+  yolov8_msgs
   moveit_msgs
   shape_msgs
   tf2_ros

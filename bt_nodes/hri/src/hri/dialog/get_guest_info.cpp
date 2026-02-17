@@ -45,7 +45,7 @@ void GetGuestInfo::on_tick()
 
   std::string guest_name_pattern, guest_drink_pattern, guest_desc_pattern;
 
-  if (guest_attending_) {
+  if(guest_attending_){
 
     guest_name_pattern = guest_attending_id_ + " oro:hasName ?name";
     guest_drink_pattern = guest_attending_id_ + " oro:hasFavoriteDrink ?drink";

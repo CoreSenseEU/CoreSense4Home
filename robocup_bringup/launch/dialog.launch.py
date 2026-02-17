@@ -27,19 +27,12 @@ def generate_launch_description():
     # package_dir = get_package_share_directory('robocup_bringup')
     # llama_dir = get_package_share_directory('llama_bringup')
     whisper_dir = get_package_share_directory('whisper_bringup')
+    kb_dir = get_package_share_directory('knowledge_core')
     # audio_common_dir = get_package_share_directory('audio_common')
 
     # Configuration Variables
     model_repo = LaunchConfiguration('model_repo')
     model_filename = LaunchConfiguration('model_filename')
-
-    declare_model_repo_cmd = DeclareLaunchArgument(
-        'model_repo', default_value='ggerganov/whisper.cpp',
-        description='Hugging Face model repo')
-
-    declare_model_filename_cmd = DeclareLaunchArgument(
-        'model_filename', default_value='ggml-large-v3-q5_0.bin',
-        description='Hugging Face model filename')
 
     # Actions
     llama_cmd = create_llama_launch(
@@ -82,6 +75,12 @@ def generate_launch_description():
         }.items()
     )
 
+    kb_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(kb_dir, 'launch', 'knowledge_core.launch.py')
+        )
+    )
+
     audio_common_tts_node = Node(
         package='tts_ros',
         executable='tts_node',
@@ -107,8 +106,8 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(declare_model_repo_cmd)
-    ld.add_action(declare_model_filename_cmd)
+    # ld.add_action(declare_model_repo_cmd)
+    # ld.add_action(declare_model_filename_cmd)
     ld.add_action(whisper_cmd)
     ld.add_action(llama_cmd)
     ld.add_action(audio_common_tts_node)

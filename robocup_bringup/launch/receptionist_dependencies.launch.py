@@ -59,6 +59,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
+            'use_3d': 'True',
             'model': 'yolov8n.pt',
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',

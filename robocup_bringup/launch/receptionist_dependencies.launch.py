@@ -29,8 +29,9 @@ def generate_launch_description():
     move_group_dir = get_package_share_directory('tiago_moveit_config')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     package_dir = get_package_share_directory('robocup_bringup')
-    yolo3d_dir = get_package_share_directory('yolo_bringup')
+    yolo3d_dir = get_package_share_directory('yolov8_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
+    knowledge_core_dir = get_package_share_directory('knowledge_core')
 
     # manipulation launchers
     move_group = IncludeLaunchDescription(
@@ -41,7 +42,7 @@ def generate_launch_description():
 
     manipulation_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(manipulation_dir, 'launch', 'server.launch.py')
+            os.path.join(manipulation_dir, 'launch', 'simple_server.launch.py')
         )
     )
 
@@ -54,18 +55,18 @@ def generate_launch_description():
 
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolo.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
             'model': 'yolov8n.pt',
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
-            'input_depth_info_topic': '/head_front_camera/depth/camera_info',
+            'input_depth_info_topic': '/head_front_camera/rgb/camera_info',
             'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 real
-            'target_frame': 'camera_color_optical_frame',
+            'target_frame': 'head_front_camera_color_optical_frame',
             'threshold': '0.5'
-            }.items()
+        }.items()
     )
 
     dialog = IncludeLaunchDescription(
@@ -81,7 +82,7 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
-            'map': package_dir + '/maps/robocup_arena_2.yaml', # ARENA B
+            'map': package_dir + '/maps/new_lab.yaml', # ARENA B
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
@@ -90,12 +91,19 @@ def generate_launch_description():
         }.items()
     )
 
+    knowledge_core = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(knowledge_core_dir, 'launch', 'knowledge_core.launch.py')
+        )
+    )
+
     ld = LaunchDescription()
+    ld.add_action(knowledge_core)
     ld.add_action(navigation)
     ld.add_action(dialog)
     ld.add_action(yolo3d)
     ld.add_action(real_time)
-    ld.add_action(move_group)
+    # ld.add_action(move_group)
     ld.add_action(manipulation_server)
 
     return ld

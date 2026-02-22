@@ -29,7 +29,7 @@ def generate_launch_description():
     move_group_dir = get_package_share_directory('tiago_moveit_config')
     manipulation_dir = get_package_share_directory('manipulation_action_server')
     package_dir = get_package_share_directory('robocup_bringup')
-    yolo3d_dir = get_package_share_directory('yolov8_bringup')
+    yolo3d_dir = get_package_share_directory('yolo_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
     knowledge_core_dir = get_package_share_directory('knowledge_core')
 
@@ -55,7 +55,7 @@ def generate_launch_description():
 
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolov8_3d.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolo.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
@@ -83,7 +83,7 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
-            'map': package_dir + '/maps/new_lab.yaml', # ARENA B
+            'map': package_dir + '/maps/apartamento_leon_gimp_con_mesa_tv.yaml', # ARENA B
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +

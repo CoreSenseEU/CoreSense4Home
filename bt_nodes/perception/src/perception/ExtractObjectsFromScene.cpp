@@ -32,7 +32,7 @@ ExtractObjectsFromScene::ExtractObjectsFromScene(
 {
   config().blackboard->get("node", node_);
 
-  detected_objs_sub_ = node_->create_subscription<yolov8_msgs::msg::DetectionArray>(
+  detected_objs_sub_ = node_->create_subscription<yolo_msgs::msg::DetectionArray>(
     "detections_3d", 100, std::bind(&ExtractObjectsFromScene::detection_callback_, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -43,7 +43,7 @@ void ExtractObjectsFromScene::halt()
   RCLCPP_INFO(node_->get_logger(), "ExtractObjectsFromScene halted");
 }
 
-void ExtractObjectsFromScene::detection_callback_(yolov8_msgs::msg::DetectionArray::UniquePtr msg)
+void ExtractObjectsFromScene::detection_callback_(yolo_msgs::msg::DetectionArray::UniquePtr msg)
 {
   last_detected_objs_ = std::move(msg);
 }

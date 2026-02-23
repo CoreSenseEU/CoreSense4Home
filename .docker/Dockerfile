@@ -23,7 +23,7 @@ RUN mkdir -p /robocup/src/
 WORKDIR /robocup
 
 ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements1.txt
-ADD https://raw.githubusercontent.com/jmguerreroh/yolov8_ros/refs/heads/main/requirements.txt /robocup/requirements2.txt
+ADD https://raw.githubusercontent.com/jmguerreroh/yolo_ros/refs/heads/main/requirements.txt /robocup/requirements2.txt
 ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
 
 # Install external dependencies.

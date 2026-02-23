@@ -54,8 +54,4 @@ private:
 
 }  // namespace dialog
 
-<<<<<<< HEAD
 #endif  // HRI__GEST_ATTENDED_GUEST_HPP_
-=======
-#endif  // HRI__GEST_ATTENDED_GUEST_HPP_
->>>>>>> 1f1491be56267206e8ecccbbb4ccc130df93e609

@@ -16,7 +16,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_cascade_lifecycle</depend>
   <depend>behaviortree_cpp_v3</depend>
-  <depend>yolov8_msgs</depend>
+  <depend>yolo_msgs</depend>
   <depend>moveit_msgs</depend>
   <depend>shape_msgs</depend>
   <depend>rclpy</depend>

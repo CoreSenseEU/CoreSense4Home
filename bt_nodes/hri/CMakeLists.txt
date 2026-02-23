@@ -88,9 +88,6 @@ list(APPEND plugin_libs get_attended_guest_bt_node)
 add_library(get_guest_info_bt_node SHARED src/hri/dialog/get_guest_info.cpp)
 list(APPEND plugin_libs get_guest_info_bt_node)
 
-add_library(get_attended_guest_bt_node SHARED src/hri/dialog/get_attended_guest.cpp)
-list(APPEND plugin_libs get_attended_guest_bt_node)
-
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

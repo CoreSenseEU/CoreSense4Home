@@ -61,7 +61,7 @@ repositories:
     version: main
   systems/attention_system:
     type: git
-    url: https://github.com/aaggj/attention_system
+    url: https://github.com/juandpenan/attention_system
     version: humble
   systems/navigation_system:
     type: git

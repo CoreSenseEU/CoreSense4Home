@@ -83,16 +83,11 @@ void GetGuestInfo::on_result()
     setStatus(BT::NodeStatus::FAILURE);
   }
 
-  std::regex guest_regex("\"guest\"\\s*:\\s*\"([^\"]*)\"");
   std::regex name_regex("\"name\"\\s*:\\s*\"([^\"]*)\"");
   std::regex drink_regex("\"drink\"\\s*:\\s*\"([^\"]*)\"");
   std::regex desc_regex("\"desc\"\\s*:\\s*\"([^\"]*)\"");
 
   std::smatch match;
-
-  if (std::regex_search(result_.json, match, guest_regex)) {
-    guest_id_ = match[1];
-  }
 
   if (std::regex_search(result_.json, match, name_regex)) {
     guest_name_ = match[1];
@@ -117,9 +112,10 @@ void GetGuestInfo::on_result()
   std_msgs::msg::String fact_msg;
 
   // Delete attending fact
-  if (!guest_id_.empty()) {
-    fact_msg.data = "robot1 oro:attends " + guest_id_;
+  if (!guest_attending_id_.empty()) {
+    fact_msg.data = "robot1 oro:attends " + guest_attending_id_;
     kb_publisher_->publish(fact_msg);
+    RCLCPP_INFO(node_->get_logger(), "[GetGuestInfo] Removing fact: robot1 oro:attends %s", guest_id_.c_str());
   }
 
   setStatus(BT::NodeStatus::SUCCESS);

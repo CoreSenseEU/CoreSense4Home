@@ -22,14 +22,23 @@ InitReceptionist::InitReceptionist(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-
-  node_->declare_parameter("cam_frame", "head_front_camera_color_optical_frame");
-  node_->declare_parameter("manipulation_frame", "base_link");
+  if (!node_->has_parameter("cam_frame")) {
+    node_->declare_parameter("cam_frame", "head_front_camera_color_optical_frame");
+  }
+  if (!node_->has_parameter("manipulation_frame")) {
+    node_->declare_parameter("manipulation_frame", "base_link");
+  }
   // node_->declare_parameter("party_wp",  std::vector<double>{0.0, 0.0, 0.0});
   // node_->declare_parameter("entrance_wp",  std::vector<double>{0.0, 0.0, 0.0});
-  node_->declare_parameter("host_name", "John Doe");
-  node_->declare_parameter("host_drink", "beer");
-  node_->declare_parameter("waypoints_names", std::vector<std::string>{});
+  if (!node_->has_parameter("host_name")) {
+    node_->declare_parameter("host_name", "John Doe");
+  }
+  if (!node_->has_parameter("host_drink")) {
+    node_->declare_parameter("host_drink", "beer");
+  }
+  if (!node_->has_parameter("waypoints_names")) {
+    node_->declare_parameter("waypoints_names", std::vector<std::string>{});
+  }
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -58,7 +67,7 @@ BT::NodeStatus InitReceptionist::tick()
       std::to_string(wp_names_.size()).c_str());
 
     for (auto wp : wp_names_) {
-      node_->declare_parameter("waypoints." + wp, std::vector<double>());
+      // node_->declare_parameter("waypoints." + wp, std::vector<double>());
       std::vector<double> wp_pos;
       node_->get_parameter("waypoints." + wp, wp_pos);
       RCLCPP_INFO(

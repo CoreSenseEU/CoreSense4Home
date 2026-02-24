@@ -34,6 +34,14 @@ def generate_launch_description():
     model_repo = LaunchConfiguration('model_repo')
     model_filename = LaunchConfiguration('model_filename')
 
+    declare_model_repo_cmd = DeclareLaunchArgument(
+        'model_repo', default_value='ggerganov/whisper.cpp',
+        description='Hugging Face model repo')
+
+    declare_model_filename_cmd = DeclareLaunchArgument(
+        'model_filename', default_value='ggml-large-v3-q5_0.bin',
+        description='Hugging Face model filename')
+
     # Actions
     llama_cmd = create_llama_launch(
             n_ctx=2048,
@@ -111,7 +119,8 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-
+    ld.add_action(declare_model_repo_cmd)
+    ld.add_action(declare_model_filename_cmd)
     ld.add_action(whisper_cmd)
     ld.add_action(llava_cmd)
     ld.add_action(audio_common_tts_node)

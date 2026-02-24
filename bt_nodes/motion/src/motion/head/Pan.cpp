@@ -81,13 +81,13 @@ double Pan::get_joint_yaw(double period, double range, double time, double phase
 BT::NodeStatus Pan::tick()
 {
   rclcpp::spin_some(node_->get_node_base_interface());
-  bool is_first_tick = false;
+  // bool is_first_tick = false;
   
   if (status() == BT::NodeStatus::IDLE) {
     // node_->remove_activation("attention_server");
     start_time_ = node_->now();
     initial_yaw_ = phase_;  // Store the actual starting position
-    is_first_tick = true;
+    // is_first_tick = true;
     
     // Calculate phase so the sine wave starts exactly at the current position
     // The sine wave equation is: yaw = range * sin(2π/period * t + phase)
@@ -128,8 +128,9 @@ BT::NodeStatus Pan::tick()
   command_msg.points[0].positions[1] = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
   command_msg.points[0].velocities[0] = 0.0;
   command_msg.points[0].velocities[1] = 0.0;
-  // Use 1.0 second for first command to smoothly transition, then 0.1 for rest
-  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(is_first_tick ? 1.0 : 0.1);
+  double yaw_diff = std::abs(yaw - phase_);
+  double time_to_reach = yaw_diff / 1.5;  // 1.5 is max velocity
+  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(time_to_reach);
   joint_cmd_pub_->publish(command_msg);
   rclcpp::spin_some(node_->get_node_base_interface());
 

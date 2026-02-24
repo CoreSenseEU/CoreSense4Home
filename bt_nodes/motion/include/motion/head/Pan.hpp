@@ -42,16 +42,15 @@ public:
       {
         BT::InputPort<double>("range"),     // in degrees
         BT::InputPort<double>("period"),    // in seconds
-        BT::InputPort<double>("pitch_angle") // in degrees
+        BT::InputPort<double>("pitch_angle"), // in degrees
+        BT::InputPort<double>("max_vel_yaw") // in rad/s (optional)
       });
   }
 
 private:
-  // std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
-  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr
-    joint_cmd_pub_;
+  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
   double yaw_limit_{1.3};
   double pitch_limit_{0.92};
   double pitch_{0.0};
@@ -64,8 +63,9 @@ private:
   double phase_;
   double phase_offset_{0.0};
   double initial_yaw_{0.0};
-
   int current_position_{0};
+  double max_vel_yaw_{1.0}; // rad/s, default value
+  rclcpp::Time last_tick_time_;
 
   double get_joint_yaw(double period, double range, double time, double phase);
 };

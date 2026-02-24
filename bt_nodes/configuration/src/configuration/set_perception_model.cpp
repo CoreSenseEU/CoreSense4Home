@@ -48,7 +48,7 @@ inline std::string joinPaths(const std::string & path1, const std::string & path
 
 void SetPerceptionModel::on_tick()
 {
-  RCLCPP_DEBUG(node_->get_logger(), "SetPerceptionModelNode ticked");
+  RCLCPP_INFO(node_->get_logger(), "SetPerceptionModelNode ticked");
   getInput("model_name", model_name_);
   getInput("model_type", model_type_);
   getInput("model_path", model_path_);

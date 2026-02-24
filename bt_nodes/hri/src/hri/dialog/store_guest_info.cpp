@@ -149,4 +149,3 @@ BT_REGISTER_NODES(factory)
 
   factory.registerBuilder<dialog::StoreGuestInfo>("StoreGuestInfo", builder);
 }
-

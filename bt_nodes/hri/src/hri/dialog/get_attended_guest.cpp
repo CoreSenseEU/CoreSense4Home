@@ -87,4 +87,3 @@ BT_REGISTER_NODES(factory)
 
   factory.registerBuilder<dialog::GetAttendedGuest>("GetAttendedGuest", builder);
 }
-

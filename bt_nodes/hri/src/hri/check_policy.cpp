@@ -95,7 +95,7 @@ void CheckPolicy::on_tick()
 void CheckPolicy::image_callback(const perception_system_interfaces::msg::DetectionArray::SharedPtr msg)
 {
   image_ = std::make_shared<sensor_msgs::msg::Image>(msg->source_img);
-  RCLCPP_INFO(node_->get_logger(), "Image received in CheckPolicy");
+  RCLCPP_INFO_ONCE(node_->get_logger(), "Image received in CheckPolicy");
 }
 
 BT::NodeStatus CheckPolicy::on_success()

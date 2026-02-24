@@ -137,4 +137,3 @@ BT_REGISTER_NODES(factory)
 
   factory.registerBuilder<dialog::GetGuestInfo>("GetGuestInfo", builder);
 }
-

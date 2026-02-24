@@ -69,7 +69,9 @@ public:
 
     // Make sure the server is actually there before continuing
     RCLCPP_INFO(node_->get_logger(), "Waiting for \"%s\" action server", action_name.c_str());
-    action_client_->wait_for_action_server();
+    if (!action_client_->wait_for_action_server(5s)) {
+      RCLCPP_WARN(node_->get_logger(), "Action server \"%s\" not available after 5s timeout", action_name.c_str());
+    }
   }
 
   // Any subclass of BtActionNode that accepts parameters must provide a

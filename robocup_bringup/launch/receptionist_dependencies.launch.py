@@ -18,6 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
 # from launch.actions import LogInfo, RegisterEventHandler
 # from launch.event_handlers import OnExecutionComplete
 # import lifecycle_msgs
@@ -32,6 +33,7 @@ def generate_launch_description():
     yolo3d_dir = get_package_share_directory('yolo_bringup')
     navigation_dir = get_package_share_directory('navigation_system')
     knowledge_core_dir = get_package_share_directory('knowledge_core')
+    person_tracker_dir = get_package_share_directory('cs4home_person_tracker')
 
     # manipulation launchers
     move_group = IncludeLaunchDescription(
@@ -59,8 +61,8 @@ def generate_launch_description():
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'use_3d': 'True',
-            'model': 'yolov8n.pt',
+            # 'use_3d': 'True',
+            'model': 'yolo11n.pt',
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
             'input_depth_info_topic': '/head_front_camera/rgb/camera_info',
@@ -83,7 +85,7 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
-            'map': package_dir + '/maps/apartamento_leon_gimp_con_mesa_tv.yaml', # ARENA B
+            'map': package_dir + '/maps/ir_lab.yaml', # ARENA B
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
@@ -98,12 +100,31 @@ def generate_launch_description():
         )
     )
 
+    laser_people_detector = Node(
+        package='upo_laser_people_detector',
+        executable='lasermodelnode',
+        output='screen',
+        parameters=[
+            {'model_file': os.path.join(package_dir, 'models', 'LFE-PPN.onnx')},
+            {'laser_topic': '/scan'}
+        ]
+    )
+
+
+    person_tracker = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(person_tracker_dir, 'launch', 'person_tracker.launch.py')
+        )
+    )
+
     ld = LaunchDescription()
-    ld.add_action(knowledge_core)
     ld.add_action(navigation)
     ld.add_action(dialog)
     ld.add_action(yolo3d)
     ld.add_action(real_time)
+    ld.add_action(knowledge_core)
+    ld.add_action(laser_people_detector)
+    ld.add_action(person_tracker)
     # ld.add_action(move_group)
     ld.add_action(manipulation_server)
 

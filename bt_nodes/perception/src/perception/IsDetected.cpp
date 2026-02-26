@@ -208,14 +208,13 @@ BT::NodeStatus IsDetected::tick()
       }
 
       if (!removed) {
-        frames_.push_back(detection.class_name + "_" + std::to_string(entity_counter));
-
-        if (
-          pl::getInstance(node_)->publicTF(
-            detection, std::to_string(entity_counter)) == -1)
-        {
-          return BT::NodeStatus::FAILURE;
-        }
+        frames_.push_back(detection.unique_id);
+        // if (
+        //   pl::getInstance(node_)->publicTF(
+        //     detection) == -1)
+        // {
+        //   return BT::NodeStatus::FAILURE;
+        // }
         entity_counter++;
         ++it;
       }
@@ -234,7 +233,7 @@ BT::NodeStatus IsDetected::tick()
   }
 
 
-  setOutput("best_detection", detections[0].class_name);
+  setOutput("best_detection", detections[0].unique_id);
 
   if (pub_bb_img_) {
     cv::Point center2d(

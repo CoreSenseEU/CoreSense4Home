@@ -39,8 +39,12 @@ def generate_launch_description():
         description='Hugging Face model repo')
 
     declare_model_filename_cmd = DeclareLaunchArgument(
-        'model_filename', default_value='ggml-large-v3-q5_0.bin',
+        'model_filename', default_value='ggml-small.en.bin',
         description='Hugging Face model filename')
+    
+    declare_min_silence_ms_cmd = DeclareLaunchArgument(
+        'min_silence_ms', default_value='500',
+        description='Minimum silence duration in milliseconds for segmenting audio') 
 
     # Actions
     llama_cmd = create_llama_launch(
@@ -121,6 +125,7 @@ def generate_launch_description():
     ld = LaunchDescription()
     ld.add_action(declare_model_repo_cmd)
     ld.add_action(declare_model_filename_cmd)
+    ld.add_action(declare_min_silence_ms_cmd)
     ld.add_action(whisper_cmd)
     ld.add_action(llava_cmd)
     ld.add_action(audio_common_tts_node)

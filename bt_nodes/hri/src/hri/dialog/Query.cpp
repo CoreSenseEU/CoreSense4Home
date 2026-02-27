@@ -96,14 +96,37 @@ BT::NodeStatus Query::on_success()
     return BT::NodeStatus::FAILURE;
   }
 
-  json response = json::parse(result_.result->response.text);
-  std::string value_ = response["intention"];
-  fprintf(stderr, "%s\n", value_.c_str());
-
-  if (value_.empty()) {
+  json response;
+  try{
+    response = json::parse(result_.result->response.text);
+  }
+  catch (json::parse_error& e) {
+    RCLCPP_ERROR(node_->get_logger(), "Failed to parse JSON response: %s", e.what());
     return BT::NodeStatus::FAILURE;
   }
 
+  auto get_string_field = [&](const std::string & key) -> std::string {
+    auto it = response.find(key);
+    if (it == response.end() || it->is_null() || !it->is_string()) {
+      return "";
+    }
+    return it->get<std::string>();
+  };
+
+  std::string value_ = get_string_field("intention");
+  if (value_.empty()) {
+    value_ = get_string_field(intention_);
+  }
+
+  if (value_.empty()) {
+    value_= get_string_field("value");
+  }
+
+  if(value_.empty()) {
+    value_ = "unknown";
+  }
+
+  RCLCPP_INFO(node_->get_logger(), "Extracted intention: %s", value_.c_str());
   setOutput("intention_value", value_);
 
   return BT::NodeStatus::SUCCESS;

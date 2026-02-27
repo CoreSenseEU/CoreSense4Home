@@ -99,7 +99,6 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(knowledge_core)
     ld.add_action(navigation)
     ld.add_action(dialog)
     ld.add_action(yolo3d)

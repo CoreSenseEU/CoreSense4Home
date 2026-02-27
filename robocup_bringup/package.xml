@@ -18,6 +18,8 @@
   <exec_depend>hri</exec_depend>
   <exec_depend>motion</exec_depend>
   <exec_depend>perception</exec_depend>
+  <exec_depend>upo_laser_people_detector</exec_depend>
+  <exec_depend>cs4home_person_tracker</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

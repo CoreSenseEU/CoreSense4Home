@@ -67,7 +67,7 @@ BT::NodeStatus InitReceptionist::tick()
       std::to_string(wp_names_.size()).c_str());
 
     for (auto wp : wp_names_) {
-      node_->declare_parameter("waypoints." + wp, std::vector<double>());
+      // node_->declare_parameter("waypoints." + wp, std::vector<double>());
       std::vector<double> wp_pos;
       node_->get_parameter("waypoints." + wp, wp_pos);
       RCLCPP_INFO(

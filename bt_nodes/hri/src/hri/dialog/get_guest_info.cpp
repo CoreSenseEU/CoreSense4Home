@@ -109,14 +109,6 @@ void GetGuestInfo::on_result()
     node_->get_logger(), "[GetGuestInfo] Guest info retrieved: Name: %s, Drink: %s, Description: %s",
     guest_name_.c_str(), guest_drink_.c_str(), guest_description_.c_str());
 
-  std_msgs::msg::String fact_msg;
-
-  // Delete attending fact
-  if (!guest_attending_id_.empty()) {
-    fact_msg.data = "robot1 oro:attends " + guest_attending_id_;
-    kb_publisher_->publish(fact_msg);
-    RCLCPP_INFO(node_->get_logger(), "[GetGuestInfo] Removing fact: robot1 oro:attends %s", guest_id_.c_str());
-  }
 
   setStatus(BT::NodeStatus::SUCCESS);
 }

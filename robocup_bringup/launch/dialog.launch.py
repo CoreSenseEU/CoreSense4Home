@@ -130,7 +130,7 @@ def generate_launch_description():
     ld.add_action(llava_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
-    ld.add_action(kb_cmd)
+    # ld.add_action(kb_cmd)
 
     #ld.add_action(music_player_node)
 

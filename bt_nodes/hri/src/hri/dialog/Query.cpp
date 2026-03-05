@@ -54,31 +54,10 @@ void Query::on_tick()
   goal_.prompt = prompt_;
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;
+  // Fix 1: fixed-key grammar forces LLM to always emit {"intention": "..."}
   goal_.sampling_config.grammar =
-    R"(root   ::= object
-value  ::= object | array | string | number | ("true" | "false" | "null") ws
-
-object ::=
-  "{" ws (
-            string ":" ws value
-    ("," ws string ":" ws value)*
-  )? "}" ws
-
-array  ::=
-  "[" ws (
-            value
-    ("," ws value)*
-  )? "]" ws
-
-string ::=
-  "\"" (
-    [^"\\] |
-    "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
-  )* "\"" ws
-
-number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
-
-# Optional space: by convention, applied in this grammar after literal chars when allowed
+    R"(root ::= "{" ws "\"intention\"" ws ":" ws "\"" chars "\"" ws "}"
+chars ::= [^"]*
 ws ::= ([ \t\n] ws)?)";
 
   auto msg_dialog_action = std_msgs::msg::Int8();
@@ -105,24 +84,27 @@ BT::NodeStatus Query::on_success()
     return BT::NodeStatus::FAILURE;
   }
 
-  auto get_string_field = [&](const std::string & key) -> std::string {
-    auto it = response.find(key);
-    if (it == response.end() || it->is_null() || !it->is_string()) {
-      return "";
+  // Try the expected key first
+  std::string value_;
+  auto it = response.find("intention");
+  if (it != response.end() && it->is_string()) {
+    value_ = it->get<std::string>();
+  }
+
+  // Fix 2: fallback — scan all values for the first non-empty string
+  if (value_.empty()) {
+    for (auto & [key, val] : response.items()) {
+      if (val.is_string() && !val.get<std::string>().empty()) {
+        value_ = val.get<std::string>();
+        RCLCPP_WARN(
+          node_->get_logger(),
+          "'intention' key not found, using value from key '%s'", key.c_str());
+        break;
+      }
     }
-    return it->get<std::string>();
-  };
-
-  std::string value_ = get_string_field("intention");
-  if (value_.empty()) {
-    value_ = get_string_field(intention_);
   }
 
   if (value_.empty()) {
-    value_= get_string_field("value");
-  }
-
-  if(value_.empty()) {
     value_ = "unknown";
   }
 

@@ -51,13 +51,14 @@ BT::NodeStatus LookAt::tick()
   }
 
   attention_system_msgs::msg::AttentionCommand attention_command_msg;
-  RCLCPP_INFO(node_->get_logger(), "LookAt tf_frame_: %s", goal_frame.c_str());
+  RCLCPP_INFO_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 5000, "LookAt tf_frame_: %s", goal_frame.c_str());
 
   attention_command_msg.frame_id_to_track = goal_frame;
 
   attention_points_pub_->publish(attention_command_msg);
 
-  RCLCPP_INFO(node_->get_logger(), "LookAt published attention points");
+  RCLCPP_DEBUG(node_->get_logger(), "LookAt published attention points");
   return BT::NodeStatus::SUCCESS;
 }
 

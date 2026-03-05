@@ -75,24 +75,43 @@ std::string obtain_guest_id(const std::string & json)
   return "guest" + std::to_string(max_id + 1);
 }
 
-static std::string escape_turtle_literal(std::string s)
+static std::string sanitize_turtle_literal(const std::string & s)
 {
-  // 1) Escape backslashes
-  for (size_t pos = 0; (pos = s.find('\\', pos)) != std::string::npos; pos += 2) {
-    s.replace(pos, 1, "\\\\");
-  }
+  // Strip ALL backslashes — the KB parser (OWL/Turtle) only accepts a fixed set of
+  // escape sequences (\t \n \r \\ \") and chokes on anything else (e.g. "\,").
+  // Rather than trying to selectively re-escape, we simply remove stray backslashes
+  // and then escape only what Turtle actually requires.
+  std::string result;
+  result.reserve(s.size());
 
-  // 2) Escape double quotes
-  for (size_t pos = 0; (pos = s.find('"', pos)) != std::string::npos; pos += 2) {
-    s.replace(pos, 1, "\\\"");
+  for (size_t i = 0; i < s.size(); ++i) {
+    char c = s[i];
+    if (c == '\\') {
+      // Keep only valid Turtle single-char escapes; everything else: drop the backslash
+      if (i + 1 < s.size()) {
+        char next = s[i + 1];
+        if (next == '\\' || next == '"' || next == 'n' || next == 'r' || next == 't') {
+          result += c;      // keep the backslash
+          result += next;   // keep the escape char
+          ++i;              // skip next
+          continue;
+        }
+        // Invalid escape (e.g. '\,'): drop the backslash, keep the following char
+        result += next;
+        ++i;
+      }
+      // Trailing backslash at end of string: just drop it
+    } else if (c == '"') {
+      result += "\\\"";   // escape bare double quotes for Turtle
+    } else if (c == '\n') {
+      result += ' ';      // newlines → space (cleaner than \n inside a single-line literal)
+    } else if (c == '\r') {
+      // skip carriage returns
+    } else {
+      result += c;
+    }
   }
-
-  // 3) Optional: normalize newlines (depends on parser strictness)
-  for (size_t pos = 0; (pos = s.find('\n', pos)) != std::string::npos; pos += 2) {
-    s.replace(pos, 1, "\\n");
-  }
-
-  return s;
+  return result;
 }
 
 void StoreGuestInfo::on_result()
@@ -121,7 +140,7 @@ void StoreGuestInfo::on_result()
   kb_publisher_->publish(fact_msg);
 
   if (!guest_description_.empty()) {
-    guest_description_ = escape_turtle_literal(guest_description_);
+    guest_description_ = sanitize_turtle_literal(guest_description_);
     fact_msg.data = guest_id + " oro:description \"" + guest_description_ + "\"";
     kb_publisher_->publish(fact_msg);
   }

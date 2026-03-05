@@ -129,7 +129,7 @@ BT::NodeStatus Pan::tick()
   command_msg.points[0].velocities[0] = 0.0;
   command_msg.points[0].velocities[1] = 0.0;
   double yaw_diff = std::abs(yaw - phase_);
-  double time_to_reach = yaw_diff / 1.5;  // 1.5 is max velocity
+  double time_to_reach = yaw_diff / 0.5;  // 1.5 is max velocity
   command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(time_to_reach);
   joint_cmd_pub_->publish(command_msg);
   rclcpp::spin_some(node_->get_node_base_interface());

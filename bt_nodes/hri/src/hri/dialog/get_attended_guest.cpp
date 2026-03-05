@@ -63,14 +63,18 @@ void GetAttendedGuest::on_result()
     guest_id_ = match[1];
   }
 
-  setOutput("guest_attended", guest_id_);
+  if (guest_id_.empty()) {
+    RCLCPP_ERROR(node_->get_logger(), "[GetAttendedGuest] No attended guest found in the result");
+    setStatus(BT::NodeStatus::FAILURE);
+  }else{
 
-  RCLCPP_INFO(
+    setOutput("guest_attended", guest_id_);
+
+    RCLCPP_INFO(
     node_->get_logger(), "[GetAttendedGuest] Guest attended: %s", guest_id_.c_str());
 
-  std_msgs::msg::String fact_msg;
-
-  setStatus(BT::NodeStatus::SUCCESS);
+    setStatus(BT::NodeStatus::SUCCESS);
+  }
 }
 
 

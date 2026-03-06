@@ -41,9 +41,20 @@ void StoreGuestInfo::on_tick()
   getInput("guest_name", guest_name_);
   getInput("guest_drink", guest_drink_);
   getInput("guest_description", guest_description_);
-  guest_description_.erase(
-    std::remove(guest_description_.begin(), guest_description_.end(), '.'),
-    guest_description_.end());
+  // Strip characters that cause Turtle/OWL syntax errors:
+  // - dots (.): break Turtle statement terminator
+  // - backslashes: LLM sometimes outputs \, or \\ in descriptions; neither is valid here
+  auto strip_chars = [](const std::string & in, const std::string & chars) {
+    std::string out;
+    out.reserve(in.size());
+    for (char c : in) {
+      if (chars.find(c) == std::string::npos) {
+        out += c;
+      }
+    }
+    return out;
+  };
+  guest_description_ = strip_chars(guest_description_, ".\\/");
 
   if (guest_name_.empty() || guest_drink_.empty()) {
     setStatus(BT::NodeStatus::FAILURE);

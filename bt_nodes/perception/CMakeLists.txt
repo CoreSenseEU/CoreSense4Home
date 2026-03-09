@@ -112,8 +112,14 @@ list(APPEND plugin_libs clear_octomap_bt_node)
 add_library(switch_yolo_model_bt_node SHARED src/perception/switch_yolo_model.cpp)
 list(APPEND plugin_libs switch_yolo_model_bt_node)
 
+add_library(set_persistent_id_bt_node SHARED src/perception/set_persistent_id.cpp)
+list(APPEND plugin_libs set_persistent_id_bt_node)
+
 add_library(extract_pc_from_class_bt_node SHARED src/perception/extract_pc_from_class.cpp)
 list(APPEND plugin_libs extract_pc_from_class_bt_node)
+
+add_library(extract_handover_alignment_bt_node SHARED src/perception/ExtractHandoverAlignment.cpp)
+list(APPEND plugin_libs extract_handover_alignment_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

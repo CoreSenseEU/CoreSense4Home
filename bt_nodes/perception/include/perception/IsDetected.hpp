@@ -61,6 +61,7 @@ public:
         BT::InputPort<std::string>("gesture", "unknown", "gesture"),
         BT::InputPort<std::string>("pose", "unknown", "pose"),
         BT::InputPort<bool>("pub_bb_img"),
+        BT::InputPort<std::string>("target_identity"),
 
         BT::OutputPort<std::vector<std::string>>("frames"),
         BT::OutputPort<std::string>("best_detection")});
@@ -79,6 +80,7 @@ private:
   std::string color_;
   std::string gesture_;
   std::string pose_;
+  std::string target_identity_;
 
   double hue_threshold_{20.0};
   double saturation_threshold_{50.0};

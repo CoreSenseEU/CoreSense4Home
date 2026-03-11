@@ -90,6 +90,7 @@ BT::NodeStatus IsDetected::tick()
   getInput("color", color_);
   getInput("gesture", gesture_);
   getInput("pose", pose_);
+  getInput("target_identity", target_identity_);
 
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "IsDetected idle");
@@ -102,7 +103,16 @@ BT::NodeStatus IsDetected::tick()
   pl::getInstance(node_)->update(35);
   rclcpp::spin_some(node_->get_node_base_interface());
 
-  auto detections = pl::getInstance(node_)->get_by_type(interest_);
+  std::vector<perception_system_interfaces::msg::Detection> detections;
+
+  if (!target_identity_.empty() && target_identity_ != "unknown") {
+    std::string perception_id = "person_" + target_identity_;
+    detections = pl::getInstance(node_)->get_by_id(perception_id);
+  } else {
+    detections = pl::getInstance(node_)->get_by_type(interest_);
+  }
+
+  //auto detections = pl::getInstance(node_)->get_by_type(interest_);
 
   if (detections.empty()) {
     RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "[IsDetected] No detections");

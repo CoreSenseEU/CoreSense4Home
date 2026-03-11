@@ -115,6 +115,12 @@ list(APPEND plugin_libs switch_yolo_model_bt_node)
 add_library(extract_pc_from_class_bt_node SHARED src/perception/extract_pc_from_class.cpp)
 list(APPEND plugin_libs extract_pc_from_class_bt_node)
 
+add_library(store_identity_vector_bt_node SHARED src/perception/store_identity_vector.cpp)
+list(APPEND plugin_libs store_identity_vector_bt_node)
+
+add_library(enable_detect_by_identity_bt_node SHARED src/perception/enable_detect_by_identity.cpp)
+list(APPEND plugin_libs enable_detect_by_identity_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})
 target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

@@ -61,6 +61,9 @@ list(APPEND plugin_libs init_restaurant_bt_node)
 add_library(remove_string_suffix_bt_node SHARED src/configuration/remove_string_suffix.cpp)
 list(APPEND plugin_libs remove_string_suffix_bt_node)
 
+add_library(add_string_suffix_bt_node SHARED src/configuration/add_string_suffix.cpp)
+list(APPEND plugin_libs add_string_suffix_bt_node)
+
 add_library(remove_string_prefix_bt_node SHARED src/configuration/remove_string_prefix.cpp)
 list(APPEND plugin_libs remove_string_prefix_bt_node)
 

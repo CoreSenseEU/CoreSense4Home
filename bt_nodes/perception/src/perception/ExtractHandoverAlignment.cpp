@@ -101,20 +101,14 @@ BT::NodeStatus ExtractHandoverAlignment::tick()
         detected_object.bbox3d.center.position.z));
     camera_2_object.setRotation(tf2::Quaternion(0.0, 0.0, 0.0, 1.0));
 
-    // Get transform from arm_4_link to camera
+    // Get transform from arm_4_link to object frame
     geometry_msgs::msg::TransformStamped arm_2_camera_msg;
     try {
       arm_2_camera_msg = tf_buffer_->lookupTransform(
-        "arm_4_link", "head_front_camera_rgb_optical_frame", tf2::TimePointZero);
+        "arm_4_link", detected_object.bbox3d.frame_id, tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
-      // Try regular frame if optical fails
-      try {
-        arm_2_camera_msg = tf_buffer_->lookupTransform(
-          "arm_4_link", "head_front_camera_rgb_frame", tf2::TimePointZero);
-      } catch (const tf2::TransformException & ex2) {
-        RCLCPP_ERROR(node_->get_logger(), "TF Error: %s", ex2.what());
-        return BT::NodeStatus::FAILURE;
-      }
+      RCLCPP_ERROR(node_->get_logger(), "TF Error looking up %s: %s", detected_object.bbox3d.frame_id.c_str(), ex.what());
+      return BT::NodeStatus::FAILURE;
     }
 
     tf2::Transform arm_2_camera;
@@ -147,7 +141,7 @@ BT::NodeStatus ExtractHandoverAlignment::tick()
     double new_torso_height = current_torso_height_ + torso_z_error;
     
     // Limits
-    double min_height = 0.0;
+    double min_height = 0.11;
     double max_height = 0.35;
     if (new_torso_height < min_height) {
       new_torso_height = min_height;

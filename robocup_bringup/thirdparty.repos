@@ -73,7 +73,7 @@ repositories:
     version: main
   ThirdParty/upo_laser_people_detector:
     type: git
-    url: https://github.com/robotics-upo/upo_laser_people_detector.git
+    url: https://github.com/juandpenan/upo_laser_people_detector.git
     version: ros2
   ThirdParty/cs4home_person_tracker:
     type: git

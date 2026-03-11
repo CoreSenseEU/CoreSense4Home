@@ -85,7 +85,7 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
-            'map': package_dir + '/maps/ir_lab.yaml', # ARENA B
+            'map': package_dir + '/maps/lab_marzo.yaml', # ARENA B
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
@@ -114,7 +114,15 @@ def generate_launch_description():
     person_tracker = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(person_tracker_dir, 'launch', 'person_tracker.launch.py')
-        )
+        ),
+        launch_arguments={
+            'target_frame': 'map',
+            'only_yolo': 'true',
+            'ema_alpha': '0.1',
+            'yolo_only_gate': '2.0',
+            'yolo_only_delete_threshold': '1.5',
+            'yolo_only_confirm_threshold': '2'
+        }.items()
     )
 
     ld = LaunchDescription()
@@ -123,7 +131,7 @@ def generate_launch_description():
     ld.add_action(yolo3d)
     ld.add_action(real_time)
     ld.add_action(knowledge_core)
-    ld.add_action(laser_people_detector)
+    # ld.add_action(laser_people_detector) Not working so far, only yolo for the moment
     ld.add_action(person_tracker)
     # ld.add_action(move_group)
     ld.add_action(manipulation_server)

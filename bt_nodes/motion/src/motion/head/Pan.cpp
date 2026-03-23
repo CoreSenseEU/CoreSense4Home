@@ -51,16 +51,17 @@ Pan::Pan(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
   RCLCPP_DEBUG(
     node_->get_logger(), "Pan: range: %f, period: %f, pitch_angle: %f", joint_range_, period_,
     pitch_angle_);
-  joint_cmd_pub_ = node_->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-    "/head_controller/joint_trajectory", 100);
-  joint_cmd_pub_->on_activate();
+  attention_cmd_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
+    "attention/attention_command", 1);
+  attention_cmd_pub_->on_activate();
 
   joint_state_sub_ = node_->create_subscription<sensor_msgs::msg::JointState>(
     "/joint_states", 100, [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
       for (size_t i = 0; i < msg->name.size(); ++i) {
         if (msg->name[i] == "head_1_joint") {  // TODO: remove hardcoded joint name (TIAGo specific)
           phase_ = msg->position[i];
-          break;
+        } else if (msg->name[i] == "head_2_joint") {
+          pitch_ = msg->position[i];
         }
       }
     });
@@ -84,6 +85,7 @@ BT::NodeStatus Pan::tick()
   // bool is_first_tick = false;
   
   if (status() == BT::NodeStatus::IDLE) {
+    config().blackboard->get("tf_broadcaster", tf_broadcaster_);
     // node_->remove_activation("attention_server");
     start_time_ = node_->now();
     initial_yaw_ = phase_;  // Store the actual starting position
@@ -108,30 +110,40 @@ BT::NodeStatus Pan::tick()
       node_->get_logger(), 
       "Pan initialized: initial_yaw=%f rad, range=%f rad, calculated phase_offset=%f rad", 
       initial_yaw_, joint_range_, phase_offset_);
-    
+      
+    attention_system_msgs::msg::AttentionCommand attention_command_msg;
+    attention_command_msg.frame_id_to_track = "pan_target";
+    attention_cmd_pub_->publish(attention_command_msg);
   }
 
-  trajectory_msgs::msg::JointTrajectory command_msg;
   auto elapsed = node_->now() - start_time_;
 
   double yaw = get_joint_yaw(period_, joint_range_, elapsed.seconds(), phase_offset_);
   RCLCPP_INFO_THROTTLE(
     node_->get_logger(), *node_->get_clock(), 5000,
     "Pan: current_yaw: %f, desired_yaw: %f, elapsed: %.2f", phase_, yaw, elapsed.seconds());
-  command_msg.joint_names = std::vector<std::string>{
-    "head_1_joint", "head_2_joint"};  // TODO: remove hardcoded joint names (TIAGo specific)
-  command_msg.points.resize(1);
-  command_msg.points[0].positions.resize(2);
-  command_msg.points[0].velocities.resize(2);
-  command_msg.points[0].accelerations.resize(2);
-  command_msg.points[0].positions[0] = std::clamp(yaw, -yaw_limit_, yaw_limit_);
-  command_msg.points[0].positions[1] = std::clamp(pitch_angle_, -pitch_limit_, pitch_limit_);
-  command_msg.points[0].velocities[0] = 0.0;
-  command_msg.points[0].velocities[1] = 0.0;
-  double yaw_diff = std::abs(yaw - phase_);
-  double time_to_reach = yaw_diff / 0.5;  // 1.5 is max velocity
-  command_msg.points[0].time_from_start = rclcpp::Duration::from_seconds(time_to_reach);
-  joint_cmd_pub_->publish(command_msg);
+
+  geometry_msgs::msg::TransformStamped transform_msg;
+  transform_msg.header.stamp = node_->now();
+  transform_msg.header.frame_id = "torso_lift_link";
+  transform_msg.child_frame_id = "pan_target";
+
+  double r = 5.0;
+  transform_msg.transform.translation.x = r * cos(yaw) * cos(pitch_angle_) + 0.182;
+  transform_msg.transform.translation.y = r * sin(yaw) * cos(pitch_angle_);
+  transform_msg.transform.translation.z = r * sin(pitch_angle_);
+  
+  transform_msg.transform.rotation.x = 0.0;
+  transform_msg.transform.rotation.y = 0.0;
+  transform_msg.transform.rotation.z = 0.0;
+  transform_msg.transform.rotation.w = 1.0;
+
+  if (tf_broadcaster_) {
+    tf_broadcaster_->sendTransform(transform_msg);
+  } else {
+    RCLCPP_ERROR_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000, "Pan: tf_broadcaster_ is null!");
+  }
+  
   rclcpp::spin_some(node_->get_node_base_interface());
 
   return BT::NodeStatus::RUNNING;

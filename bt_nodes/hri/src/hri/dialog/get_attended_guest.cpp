@@ -53,28 +53,33 @@ void GetAttendedGuest::on_result()
   if (!result_.error_msg.empty()) {
     RCLCPP_ERROR(node_->get_logger(), "[GetAttendedGuest] error");
     setStatus(BT::NodeStatus::FAILURE);
+    return;
   }
 
-  std::regex guest_regex("\"guest\"\\s*:\\s*\"([^\"]*)\"");
-
+  // Find ALL guest matches and pick the one with the highest numeric ID
+  std::regex guest_regex("\"guest\"\\s*:\\s*\"guest([0-9]+)\"");
   std::smatch match;
+  int max_id = 0;
 
-  if (std::regex_search(result_.json, match, guest_regex)) {
-    guest_id_ = match[1];
+  auto begin = result_.json.cbegin();
+  auto end = result_.json.cend();
+
+  while (std::regex_search(begin, end, match, guest_regex)) {
+    int id = std::stoi(match[1]);
+    max_id = std::max(max_id, id);
+    begin = match.suffix().first;
   }
 
-  if (guest_id_.empty()) {
-    RCLCPP_ERROR(node_->get_logger(), "[GetAttendedGuest] No attended guest found in the result");
-    setStatus(BT::NodeStatus::FAILURE);
-  }else{
+  guest_id_ = "guest" + std::to_string(max_id);
 
-    setOutput("guest_attended", guest_id_);
-
-    RCLCPP_INFO(
-    node_->get_logger(), "[GetAttendedGuest] Guest attended: %s", guest_id_.c_str());
-
-    setStatus(BT::NodeStatus::SUCCESS);
+  if (max_id == 0) {
+    RCLCPP_WARN(node_->get_logger(), "[GetAttendedGuest] No attended guest found in the result");
+  } else {
+    RCLCPP_INFO(node_->get_logger(), "[GetAttendedGuest] Found latest guest: %s", guest_id_.c_str());
   }
+
+  setOutput("guest_attended", guest_id_);
+  setStatus(BT::NodeStatus::SUCCESS);
 }
 
 

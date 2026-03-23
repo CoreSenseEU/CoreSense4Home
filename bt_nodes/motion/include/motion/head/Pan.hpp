@@ -23,7 +23,9 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
-#include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "tf2_ros/transform_broadcaster.h"
+#include "attention_system_msgs/msg/attention_command.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 
 namespace head
 {
@@ -50,7 +52,8 @@ public:
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
-  rclcpp_lifecycle::LifecyclePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_pub_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  rclcpp_lifecycle::LifecyclePublisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr attention_cmd_pub_;
   double yaw_limit_{1.3};
   double pitch_limit_{0.92};
   double pitch_{0.0};

@@ -24,11 +24,11 @@ LookAt::LookAt(const std::string & xml_tag_name, const BT::NodeConfiguration & c
   attention_points_pub_ = node_->create_publisher<attention_system_msgs::msg::AttentionCommand>(
     "attention/attention_command", 1);
   attention_points_pub_->on_activate();
+  node_->add_activation("attention_server");
 }
 
 BT::NodeStatus LookAt::tick()
 {
-  node_->add_activation("attention_server");
 
   RCLCPP_DEBUG(node_->get_logger(), "LookAt ticked");
   getInput("tf_frames", tf_frames_);

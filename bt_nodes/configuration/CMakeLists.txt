@@ -15,7 +15,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(yolo_msgs REQUIRED)
-
+find_package(ament_index_cpp REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(dependencies
@@ -28,6 +28,7 @@ set(dependencies
   tf2
   tf2_ros
   yolo_msgs
+  ament_index_cpp
 )
 
 include_directories(include)
@@ -78,6 +79,9 @@ list(APPEND plugin_libs bt_service_node)
 
 add_library(get_perception_model_bt_node SHARED src/configuration/get_perception_model.cpp)
 list(APPEND plugin_libs get_perception_model_bt_node)
+
+add_library(get_model_path_bt_node SHARED src/configuration/get_model_path.cpp)
+list(APPEND plugin_libs get_model_path_bt_node)
 
 add_library(set_perception_model_bt_node SHARED src/configuration/set_perception_model.cpp)
 list(APPEND plugin_libs set_perception_model_bt_node)

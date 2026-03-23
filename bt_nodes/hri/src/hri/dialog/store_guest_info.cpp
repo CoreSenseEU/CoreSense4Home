@@ -88,28 +88,21 @@ std::string obtain_guest_id(const std::string & json)
 
 static std::string sanitize_turtle_literal(const std::string & s)
 {
-  // Strip ALL backslashes — the KB parser (OWL/Turtle) only accepts a fixed set of
-  // escape sequences (\t \n \r \\ \") and chokes on anything else (e.g. "\,").
-  // Rather than trying to selectively re-escape, we simply remove stray backslashes
-  // and then escape only what Turtle actually requires.
+  // Strip ALL backslashes unconditionally — LLM-generated descriptions never need
+  // legitimate escape sequences, and the KB parser (OWL/Turtle) chokes on anything
+  // that isn't one of the five valid escapes (\t \n \r \\ \").
+  // Also strip dots (.) which break Turtle statement terminators.
   std::string result;
   result.reserve(s.size());
 
   for (size_t i = 0; i < s.size(); ++i) {
     char c = s[i];
     if (c == '\\') {
-      // Keep only valid Turtle single-char escapes; everything else: drop the backslash
+      // Drop ALL backslashes unconditionally — skip the backslash.
+      // If there is a following character, keep it (it's the intended content).
       if (i + 1 < s.size()) {
-        char next = s[i + 1];
-        if (next == '\\' || next == '"' || next == 'n' || next == 'r' || next == 't') {
-          result += c;      // keep the backslash
-          result += next;   // keep the escape char
-          ++i;              // skip next
-          continue;
-        }
-        // Invalid escape (e.g. '\,'): drop the backslash, keep the following char
-        result += next;
         ++i;
+        result += s[i];
       }
       // Trailing backslash at end of string: just drop it
     } else if (c == '"') {

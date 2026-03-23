@@ -108,6 +108,7 @@ BT::NodeStatus IsDetected::tick()
   if (!target_identity_.empty() && target_identity_ != "unknown") {
     std::string perception_id = "person_" + target_identity_;
     detections = pl::getInstance(node_)->get_by_id(perception_id);
+    RCLCPP_INFO_THROTTLE(node_->get_logger(), *node_->get_clock(), 8000, "[IsDetected] Searching for identity: %s", perception_id.c_str());
   } else {
     detections = pl::getInstance(node_)->get_by_type(interest_);
   }

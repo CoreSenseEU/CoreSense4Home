@@ -82,6 +82,10 @@ BT::NodeStatus InitReceptionist::tick()
           node_->get_logger(), "Entrance waypoint set to frame: [%s]", wp.c_str());
       } else if (wp.find("party")!=std::string::npos) {
         setOutput("party_wp", wp);
+      } else if (wp.find("follow_ready")!=std::string::npos) {
+        setOutput("follow_ready_wp", wp);
+        RCLCPP_INFO(
+          node_->get_logger(), "Follow ready waypoint set to frame: [%s]", wp.c_str());
       }
 
       q.setRPY(0, 0, wp_pos[2]);

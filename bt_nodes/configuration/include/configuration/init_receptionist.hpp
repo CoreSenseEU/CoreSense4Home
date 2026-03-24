@@ -48,6 +48,7 @@ public:
         BT::OutputPort<std::string>("manipulation_frame", "base_frame for manipulation"),
         BT::OutputPort<std::string>("party_wp", "frame to the party wp"),
         BT::OutputPort<std::string>("entrance_wp", "frame to the the entrance wp"),
+        BT::OutputPort<std::string>("follow_ready_wp", "frame to the follow ready wp"),
         BT::OutputPort<std::string>("host_name", "name of the host"),
         BT::OutputPort<std::string>("host_drink", "host's favorite drink"),
         BT::OutputPort<std::string>("current_guest", "current guest_number STARTING FROM 1"),

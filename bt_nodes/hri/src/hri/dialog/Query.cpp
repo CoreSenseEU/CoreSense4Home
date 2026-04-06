@@ -76,10 +76,9 @@ BT::NodeStatus Query::on_success()
   }
 
   json response;
-  try{
+  try {
     response = json::parse(result_.result->response.text);
-  }
-  catch (json::parse_error& e) {
+  } catch (json::parse_error & e) {
     RCLCPP_ERROR(node_->get_logger(), "Failed to parse JSON response: %s", e.what());
     return BT::NodeStatus::FAILURE;
   }
@@ -119,8 +118,8 @@ BT::NodeStatus Query::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::Query>(name, "/llama/generate_response", config);
-    };
+    return std::make_unique<dialog::Query>(name, "/llama/generate_response", config);
+  };
 
   factory.registerBuilder<dialog::Query>("Query", builder);
 }

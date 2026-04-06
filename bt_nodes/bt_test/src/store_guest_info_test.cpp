@@ -9,7 +9,8 @@
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>("store_guest_info_test_node");
+  auto node =
+    std::make_shared<rclcpp_cascade_lifecycle::CascadeLifecycleNode>("store_guest_info_test_node");
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 

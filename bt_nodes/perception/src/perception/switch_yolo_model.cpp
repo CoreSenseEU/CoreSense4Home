@@ -60,9 +60,9 @@ void SwitchYoloModel::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::SwitchYoloModel>(
-        name, "change_model", config);
-    };
+    return std::make_unique<perception::SwitchYoloModel>(
+      name, "change_model", config);
+  };
 
   factory.registerBuilder<perception::SwitchYoloModel>("SwitchYoloModel", builder);
 }

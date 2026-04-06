@@ -37,7 +37,7 @@ IsSittable::IsSittable(const std::string & xml_tag_name, const BT::NodeConfigura
 BT::NodeStatus IsSittable::tick()
 {
   is_person_ = false;
-  is_place_to_sit_ = false; 
+  is_place_to_sit_ = false;
 
   if (status() == BT::NodeStatus::IDLE) {
     RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] ticked");
@@ -179,6 +179,9 @@ BT::NodeStatus IsSittable::tick()
       return BT::NodeStatus::SUCCESS;
     }
 
+    RCLCPP_INFO_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 2000,
+      "[IsSittable] No free space in chair — occupied by person");
     return BT::NodeStatus::FAILURE;
   }
 
@@ -198,6 +201,12 @@ bool IsSittable::check_object_class(
       result.class_name == obj && result.score >= threshold_ && result.center3d.position.z < 7.0)
     {
       ret = true;
+    } else if (result.class_name == obj) {
+      // Chair found but below confidence/distance threshold — logged for explainability
+      RCLCPP_INFO_THROTTLE(
+        node_->get_logger(), *node_->get_clock(), 2000,
+        "[IsSittable] '%s' detected but filtered: confidence=%.2f (thresh=%.2f), depth=%.2fm",
+        obj.c_str(), result.score, threshold_, result.center3d.position.z);
     }
   }
 

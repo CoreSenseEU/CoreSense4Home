@@ -27,7 +27,7 @@ RemoveGuestAttended::RemoveGuestAttended(
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
-  this->kb_publisher_= node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", 10);
+  this->kb_publisher_ = node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", 10);
 }
 
 BT::NodeStatus RemoveGuestAttended::tick()
@@ -41,8 +41,10 @@ BT::NodeStatus RemoveGuestAttended::tick()
   if (!guest_attending_id_.empty()) {
     fact_msg.data = "robot1 oro:attends " + guest_attending_id_;
     kb_publisher_->publish(fact_msg);
-    RCLCPP_INFO(node_->get_logger(), "[RemoveGuestAttended] Removing fact: robot1 oro:attends %s", guest_attending_id_.c_str());
-  }else{
+    RCLCPP_INFO(
+      node_->get_logger(), "[RemoveGuestAttended] Removing fact: robot1 oro:attends %s",
+      guest_attending_id_.c_str());
+  } else {
     return BT::NodeStatus::FAILURE;
   }
 

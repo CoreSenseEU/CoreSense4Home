@@ -52,11 +52,11 @@ BT::NodeStatus SetHeadJointPosition::on_success() {return BT::NodeStatus::SUCCES
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<head::SetHeadJointPosition>(
-        name,
-        "/head_controller/follow_joint_trajectory",
-        config);
-    };
+    return std::make_unique<head::SetHeadJointPosition>(
+      name,
+      "/head_controller/follow_joint_trajectory",
+      config);
+  };
 
   factory.registerBuilder<head::SetHeadJointPosition>("SetHeadJointPosition", builder);
 }

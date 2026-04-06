@@ -30,7 +30,7 @@ BT::NodeStatus RemoveStringPrefix::tick()
   if (string_to_remove_.empty() || prefix_.empty()) {
     return BT::NodeStatus::FAILURE;
   }
-  
+
   size_t pos = string_to_remove_.find(prefix_);
   if (pos != std::string::npos) {
     result_ = string_to_remove_.substr(pos + prefix_.length());

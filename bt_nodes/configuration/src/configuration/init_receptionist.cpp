@@ -52,8 +52,8 @@ BT::NodeStatus InitReceptionist::tick()
 
   if (
     node_->has_parameter("cam_frame") && node_->has_parameter("manipulation_frame") &&
-    node_->has_parameter("host_name") && node_->has_parameter("host_drink")
-    && node_->has_parameter("waypoints_names"))
+    node_->has_parameter("host_name") && node_->has_parameter("host_drink") &&
+    node_->has_parameter("waypoints_names"))
   // node_->has_parameter("party_wp") && node_->has_parameter("entrance_wp"))
   {
     node_->get_parameter("cam_frame", cam_frame_);
@@ -76,13 +76,13 @@ BT::NodeStatus InitReceptionist::tick()
       geometry_msgs::msg::TransformStamped transform_msg;
       tf2::Quaternion q;
 
-      if (wp.find("entrance")!=std::string::npos) {
+      if (wp.find("entrance") != std::string::npos) {
         setOutput("entrance_wp", wp);
         RCLCPP_INFO(
           node_->get_logger(), "Entrance waypoint set to frame: [%s]", wp.c_str());
-      } else if (wp.find("party")!=std::string::npos) {
+      } else if (wp.find("party") != std::string::npos) {
         setOutput("party_wp", wp);
-      } else if (wp.find("follow_ready")!=std::string::npos) {
+      } else if (wp.find("follow_ready") != std::string::npos) {
         setOutput("follow_ready_wp", wp);
         RCLCPP_INFO(
           node_->get_logger(), "Follow ready waypoint set to frame: [%s]", wp.c_str());

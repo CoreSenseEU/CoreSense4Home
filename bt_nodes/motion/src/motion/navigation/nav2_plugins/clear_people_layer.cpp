@@ -35,15 +35,15 @@ void ClearPeopleLayer::onInitialize()
 
   // Declaring ROS parameters:
   auto getString = [&](const std::string & parameter_name) {
-      std::string param{};
-      node->get_parameter(name_ + "." + parameter_name, param);
-      return param;
-    };
+    std::string param{};
+    node->get_parameter(name_ + "." + parameter_name, param);
+    return param;
+  };
   auto getDouble = [&](const std::string & parameter_name) {
-      double param{};
-      node->get_parameter(name_ + "." + parameter_name, param);
-      return param;
-    };
+    double param{};
+    node->get_parameter(name_ + "." + parameter_name, param);
+    return param;
+  };
 
   person_frame_ = getString("person_frame");
   person_radius_ = getDouble("person_radius");

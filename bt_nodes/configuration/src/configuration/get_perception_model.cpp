@@ -61,9 +61,9 @@ void GetPerceptionModel::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<configuration::GetPerceptionModel>(
-        name, "/yolo/yolo_node/get_parameters", config);
-    };
+    return std::make_unique<configuration::GetPerceptionModel>(
+      name, "/yolo/yolo_node/get_parameters", config);
+  };
 
   factory.registerBuilder<configuration::GetPerceptionModel>("GetPerceptionModel", builder);
 }

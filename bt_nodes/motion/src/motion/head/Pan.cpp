@@ -83,34 +83,34 @@ BT::NodeStatus Pan::tick()
 {
   rclcpp::spin_some(node_->get_node_base_interface());
   // bool is_first_tick = false;
-  
+
   if (status() == BT::NodeStatus::IDLE) {
     config().blackboard->get("tf_broadcaster", tf_broadcaster_);
     // node_->remove_activation("attention_server");
     start_time_ = node_->now();
     initial_yaw_ = phase_;  // Store the actual starting position
     // is_first_tick = true;
-    
+
     // Calculate phase so the sine wave starts exactly at the current position
     // The sine wave equation is: yaw = range * sin(2π/period * t + phase)
     // At t=0, we want: initial_yaw = range * sin(phase)
     // Therefore: phase = asin(initial_yaw / range)
-    
+
     // Clamp the ratio to valid range for asin [-1, 1]
     double ratio = initial_yaw_ / joint_range_;
-    
+
     // If we're outside the range, clamp to the range limit
     if (std::abs(ratio) > 1.0) {
       ratio = (ratio > 0) ? 1.0 : -1.0;
     }
-    
+
     phase_offset_ = asin(ratio);
-    
+
     RCLCPP_INFO(
-      node_->get_logger(), 
-      "Pan initialized: initial_yaw=%f rad, range=%f rad, calculated phase_offset=%f rad", 
+      node_->get_logger(),
+      "Pan initialized: initial_yaw=%f rad, range=%f rad, calculated phase_offset=%f rad",
       initial_yaw_, joint_range_, phase_offset_);
-      
+
     attention_system_msgs::msg::AttentionCommand attention_command_msg;
     attention_command_msg.frame_id_to_track = "pan_target";
     attention_cmd_pub_->publish(attention_command_msg);
@@ -132,7 +132,7 @@ BT::NodeStatus Pan::tick()
   transform_msg.transform.translation.x = r * cos(yaw) * cos(pitch_angle_) + 0.182;
   transform_msg.transform.translation.y = r * sin(yaw) * cos(pitch_angle_);
   transform_msg.transform.translation.z = r * sin(pitch_angle_);
-  
+
   transform_msg.transform.rotation.x = 0.0;
   transform_msg.transform.rotation.y = 0.0;
   transform_msg.transform.rotation.z = 0.0;
@@ -141,9 +141,11 @@ BT::NodeStatus Pan::tick()
   if (tf_broadcaster_) {
     tf_broadcaster_->sendTransform(transform_msg);
   } else {
-    RCLCPP_ERROR_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000, "Pan: tf_broadcaster_ is null!");
+    RCLCPP_ERROR_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 5000,
+      "Pan: tf_broadcaster_ is null!");
   }
-  
+
   rclcpp::spin_some(node_->get_node_base_interface());
 
   return BT::NodeStatus::RUNNING;

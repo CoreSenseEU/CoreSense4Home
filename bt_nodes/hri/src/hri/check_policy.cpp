@@ -92,7 +92,8 @@ void CheckPolicy::on_tick()
 // ws ::= ([ \t\n] ws)?)";
 }
 
-void CheckPolicy::image_callback(const perception_system_interfaces::msg::DetectionArray::SharedPtr msg)
+void CheckPolicy::image_callback(
+  const perception_system_interfaces::msg::DetectionArray::SharedPtr msg)
 {
   image_ = std::make_shared<sensor_msgs::msg::Image>(msg->source_img);
   RCLCPP_INFO_ONCE(node_->get_logger(), "Image received in CheckPolicy");
@@ -135,8 +136,8 @@ BT::NodeStatus CheckPolicy::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::CheckPolicy>(name, "/llama/generate_response", config);
-    };
+    return std::make_unique<dialog::CheckPolicy>(name, "/llama/generate_response", config);
+  };
 
   factory.registerBuilder<dialog::CheckPolicy>("CheckPolicy", builder);
 }

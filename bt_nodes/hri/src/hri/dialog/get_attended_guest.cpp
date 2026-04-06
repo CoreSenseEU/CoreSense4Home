@@ -36,7 +36,7 @@ void GetAttendedGuest::on_tick()
 {
   RCLCPP_DEBUG(node_->get_logger(), "[GetAttendedGuest] ticked");
   rclcpp::spin_some(node_->get_node_base_interface());
-  
+
   // Patterns
   request_->patterns.push_back("robot1 oro:attends ?guest");
 
@@ -75,13 +75,14 @@ void GetAttendedGuest::on_result()
   if (max_id == 0) {
     RCLCPP_WARN(node_->get_logger(), "[GetAttendedGuest] No attended guest found in the result");
   } else {
-    RCLCPP_INFO(node_->get_logger(), "[GetAttendedGuest] Found latest guest: %s", guest_id_.c_str());
+    RCLCPP_INFO(
+      node_->get_logger(), "[GetAttendedGuest] Found latest guest: %s",
+      guest_id_.c_str());
   }
 
   setOutput("guest_attended", guest_id_);
   setStatus(BT::NodeStatus::SUCCESS);
 }
-
 
 
 }  // namespace hri
@@ -90,9 +91,9 @@ void GetAttendedGuest::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::GetAttendedGuest>(
-        name, "/kb/query", config);
-    };
+    return std::make_unique<dialog::GetAttendedGuest>(
+      name, "/kb/query", config);
+  };
 
   factory.registerBuilder<dialog::GetAttendedGuest>("GetAttendedGuest", builder);
 }

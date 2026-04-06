@@ -34,7 +34,8 @@ class GetGuestInfo : public hri::BtServiceNode<
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
-  explicit GetGuestInfo(const std::string & xml_tag_name, const std::string & srv_name,
+  explicit GetGuestInfo(
+    const std::string & xml_tag_name, const std::string & srv_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;

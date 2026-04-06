@@ -58,9 +58,9 @@ void StoreIdentityVector::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::StoreIdentityVector>(
-        name, "/store_identity_vector", config);
-    };
+    return std::make_unique<perception::StoreIdentityVector>(
+      name, "/store_identity_vector", config);
+  };
 
   factory.registerBuilder<perception::StoreIdentityVector>("StoreIdentityVector", builder);
 }

@@ -17,7 +17,9 @@
 namespace configuration
 {
 
-ActivationControl::ActivationControl(const std::string & xml_tag_name, const BT::NodeConfiguration & conf)
+ActivationControl::ActivationControl(
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
   config().blackboard->get("node", node_);
@@ -29,7 +31,9 @@ BT::NodeStatus ActivationControl::tick()
 
   // Read inputs
   if (!getInput("deactivate", deactivate_)) {
-    RCLCPP_WARN(node_->get_logger(), "ActivationControl: missing 'deactivate' input, defaulting to false");
+    RCLCPP_WARN(
+      node_->get_logger(),
+      "ActivationControl: missing 'deactivate' input, defaulting to false");
     deactivate_ = false;
   }
   if (!getInput("node_name", node_name_)) {
@@ -38,10 +42,14 @@ BT::NodeStatus ActivationControl::tick()
   }
 
   if (deactivate_) {
-    RCLCPP_INFO(node_->get_logger(), "ActivationControl: removing activation for %s", node_name_.c_str());
+    RCLCPP_INFO(
+      node_->get_logger(), "ActivationControl: removing activation for %s",
+      node_name_.c_str());
     node_->remove_activation(node_name_);
   } else {
-    RCLCPP_INFO(node_->get_logger(), "ActivationControl: adding activation for %s", node_name_.c_str());
+    RCLCPP_INFO(
+      node_->get_logger(), "ActivationControl: adding activation for %s",
+      node_name_.c_str());
     node_->add_activation(node_name_);
   }
 

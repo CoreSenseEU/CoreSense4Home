@@ -83,3 +83,12 @@ repositories:
     type: git
     url: https://github.com/JRL-CARI-CNR-UNIBS/state_observers.git
     version: master
+  ThirdParty/cs4home_architecture:
+    type: git
+    url: https://github.com/CoreSenseEU/cs4home_architecture.git
+    version: humble
+
+  ThirdParty/explainability:
+    type: git
+    url: https://github.com/CoreSenseEU/cs4home-explainability.git
+    version: main

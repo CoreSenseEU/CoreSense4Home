@@ -32,7 +32,9 @@ namespace dialog
 class RemoveGuestAttended : public BT::ActionNodeBase
 {
 public:
-  explicit RemoveGuestAttended(const std::string & xml_tag_name, const BT::NodeConfiguration & conf);
+  explicit RemoveGuestAttended(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
 
   void halt();
   BT::NodeStatus tick();

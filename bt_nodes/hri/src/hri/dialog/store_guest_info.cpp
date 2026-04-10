@@ -107,10 +107,8 @@ static std::string sanitize_turtle_literal(const std::string & s)
       // Trailing backslash at end of string: just drop it
     } else if (c == '"') {
       result += "\\\"";   // escape bare double quotes for Turtle
-    } else if (c == '\n') {
-      result += ' ';      // newlines → space (cleaner than \n inside a single-line literal)
-    } else if (c == '\r') {
-      // skip carriage returns
+    } else if (c == '\n' || c == '\r' || c == '-' ) {
+      result += ' ';
     } else {
       result += c;
     }

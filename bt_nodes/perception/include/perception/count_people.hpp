@@ -61,7 +61,7 @@ public:
         BT::InputPort<int>("input_num_person"),
 
         BT::OutputPort<std::vector<std::string>>("frames"),
-        BT::OutputPort<int>("num_person")});
+        BT::OutputPort<std::string>("num_person")});
   }
 
 private:

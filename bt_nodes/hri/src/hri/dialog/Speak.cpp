@@ -100,7 +100,7 @@ BT::NodeStatus Speak::on_idle()
   this->publisher_->publish(msg);
   this->publisher_start_->publish(msg_dialog_action);
 
-  RCLCPP_INFO(node_->get_logger(), "Sending goal");
+  RCLCPP_INFO(node_->get_logger(), "[Speak] Sending TTS goal: \"%s\"", goal.text.c_str());
 
   auto future_goal_handle = client_->async_send_goal(goal);
   if (

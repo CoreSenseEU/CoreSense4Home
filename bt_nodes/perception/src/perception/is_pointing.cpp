@@ -85,7 +85,8 @@ int IsPointing::publicTF_map2object(
 
   // 0 is right, 1 is down-right, 2 is down, 3 is down-left, 4 is left, 5 is up-left, 6 is up, 7 is up-right
   RCLCPP_INFO(
-    node_->get_logger(), "[IsPointing] Low pointing limit %d High point limit %d", low_pointing_limit_,
+    node_->get_logger(), "[IsPointing] Low pointing limit %d High point limit %d",
+    low_pointing_limit_,
     high_pointing_limit_);
   bool is_in_limits = false;
   for (int i = low_pointing_limit_; i <= high_pointing_limit_; i++) {
@@ -195,7 +196,7 @@ BT::NodeStatus IsPointing::tick()
   std::sort(
     detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
       return perception_system::diffIDs(this->person_id_, a.color_person) <
-      perception_system::diffIDs(this->person_id_, b.color_person);
+             perception_system::diffIDs(this->person_id_, b.color_person);
     });
 
   best_detection = detections[0];

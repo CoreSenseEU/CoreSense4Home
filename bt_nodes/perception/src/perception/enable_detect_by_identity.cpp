@@ -57,9 +57,9 @@ void EnableDetectByIdentity::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::EnableDetectByIdentity>(
-        name, "/detect_person_by_identity", config);
-    };
+    return std::make_unique<perception::EnableDetectByIdentity>(
+      name, "/detect_person_by_identity", config);
+  };
 
   factory.registerBuilder<perception::EnableDetectByIdentity>("EnableDetectByIdentity", builder);
 }

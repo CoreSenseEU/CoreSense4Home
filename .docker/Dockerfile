@@ -23,7 +23,7 @@ RUN mkdir -p /robocup/src/
 WORKDIR /robocup
 
 ADD https://raw.githubusercontent.com/mgonzs13/llama_ros/refs/heads/main/requirements.txt /robocup/requirements1.txt
-ADD https://raw.githubusercontent.com/jmguerreroh/yolo_ros/refs/heads/main/requirements.txt /robocup/requirements2.txt
+ADD https://raw.githubusercontent.com/juandpenan/yolov8_ros/refs/heads/irenes/requirements.txt /robocup/requirements2.txt
 ADD https://raw.githubusercontent.com/mgonzs13/tts_ros/refs/heads/main/requirements.txt /robocup/requirements3.txt
 
 # Install external dependencies.
@@ -33,8 +33,7 @@ RUN pip install -r requirements3.txt
 
 WORKDIR /robocup/src
 RUN git clone https://github.com/CoreSenseEU/CoreSense4Home.git -b humble-devel
-RUN vcs import --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
-
+RUN vcs import --retry 5 --workers 2 --debug --recursive < ./CoreSense4Home/robocup_bringup/thirdparty.repos
 
 WORKDIR /robocup
 RUN rosdep install --from-paths src --ignore-src -r -y
@@ -62,6 +61,12 @@ WORKDIR /robocup/src/ThirdParty/gpd/build
 RUN cmake ..
 RUN make -j
 RUN make install
+
+# Onnix runtime
+RUN wget https://robotics.upo.es/~famozur/onnx/onnxruntime-gpu_1.16.3_amd64.deb \
+    && apt-get update \
+    && apt-get install -y ./onnxruntime-gpu_1.16.3_amd64.deb \
+    && rm onnxruntime-gpu_1.16.3_amd64.deb
 
 # Colcon the ws
 WORKDIR /robocup

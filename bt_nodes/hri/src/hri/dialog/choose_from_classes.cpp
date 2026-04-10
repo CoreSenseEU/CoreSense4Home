@@ -166,8 +166,8 @@ std::string ChooseFromClasses::retrieve_class(
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::ChooseFromClasses>(name, "/llama/generate_response", config);
-    };
+    return std::make_unique<dialog::ChooseFromClasses>(name, "/llama/generate_response", config);
+  };
 
   factory.registerBuilder<dialog::ChooseFromClasses>("ChooseFromClasses", builder);
 }

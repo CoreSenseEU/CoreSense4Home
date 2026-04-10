@@ -44,10 +44,10 @@ public:
   {
     return BT::PortsList(
       {BT::InputPort<std::string>("interest_class"),
-       BT::InputPort<double>("target_z_distance"),
-       BT::InputPort<double>("target_y_distance"),
-       BT::OutputPort<double>("base_x_movement"),
-       BT::OutputPort<double>("torso_z_movement")});
+        BT::InputPort<double>("target_z_distance"),
+        BT::InputPort<double>("target_y_distance"),
+        BT::OutputPort<double>("base_x_movement"),
+        BT::OutputPort<double>("torso_z_movement")});
   }
 
   void detection_callback_(yolo_msgs::msg::DetectionArray::UniquePtr msg);

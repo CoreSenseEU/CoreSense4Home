@@ -56,11 +56,11 @@ BT::NodeStatus SetTorsoHeight::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<torso::SetTorsoHeight>(
-        name,
-        "/torso_controller/follow_joint_trajectory",
-        config);
-    };
+    return std::make_unique<torso::SetTorsoHeight>(
+      name,
+      "/torso_controller/follow_joint_trajectory",
+      config);
+  };
 
   factory.registerBuilder<torso::SetTorsoHeight>("SetTorsoHeight", builder);
 }

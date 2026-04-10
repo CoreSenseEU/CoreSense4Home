@@ -61,7 +61,8 @@ BT::NodeStatus DialogConfirmation::on_success()
   }
 
   std::transform(
-    result_.result->transcription.text.begin(), result_.result->transcription.text.end(), result_.result->transcription.text.begin(),
+    result_.result->transcription.text.begin(), result_.result->transcription.text.end(),
+    result_.result->transcription.text.begin(),
     [](unsigned char c) {return std::tolower(c);});
   if (result_.result->transcription.text.find("yes") != std::string::npos) {
     return BT::NodeStatus::SUCCESS;
@@ -75,8 +76,8 @@ BT::NodeStatus DialogConfirmation::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::DialogConfirmation>(name, "/whisper/listen", config);
-    };
+    return std::make_unique<dialog::DialogConfirmation>(name, "/whisper/listen", config);
+  };
 
   factory.registerBuilder<dialog::DialogConfirmation>("DialogConfirmation", builder);
 }

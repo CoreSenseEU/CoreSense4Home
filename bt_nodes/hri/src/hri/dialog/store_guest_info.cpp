@@ -30,7 +30,7 @@ StoreGuestInfo::StoreGuestInfo(
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, srv_name, conf)
 {
   config().blackboard->get("node", node_);
-  this->kb_publisher_= node_->create_publisher<std_msgs::msg::String>("/kb/add_fact", 10);
+  this->kb_publisher_ = node_->create_publisher<std_msgs::msg::String>("/kb/add_fact", 10);
 }
 
 void StoreGuestInfo::on_tick()
@@ -60,7 +60,7 @@ void StoreGuestInfo::on_tick()
     setStatus(BT::NodeStatus::FAILURE);
   }
 
-  
+
   request_->patterns.push_back("?guest rdf:type oro:Person");
   request_->vars.push_back("?guest");
 
@@ -155,18 +155,15 @@ void StoreGuestInfo::on_result()
 }
 
 
-
-
-
 }  // namespace hri
 
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::StoreGuestInfo>(
-        name, "/kb/query", config);
-    };
+    return std::make_unique<dialog::StoreGuestInfo>(
+      name, "/kb/query", config);
+  };
 
   factory.registerBuilder<dialog::StoreGuestInfo>("StoreGuestInfo", builder);
 }

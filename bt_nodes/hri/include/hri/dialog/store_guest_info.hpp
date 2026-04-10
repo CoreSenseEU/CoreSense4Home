@@ -34,7 +34,8 @@ class StoreGuestInfo : public hri::BtServiceNode<
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>
 {
 public:
-  explicit StoreGuestInfo(const std::string & xml_tag_name, const std::string & srv_name,
+  explicit StoreGuestInfo(
+    const std::string & xml_tag_name, const std::string & srv_name,
     const BT::NodeConfiguration & conf);
 
   void on_tick() override;

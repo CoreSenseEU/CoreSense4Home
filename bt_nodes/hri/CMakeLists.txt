@@ -12,6 +12,7 @@ find_package(rclcpp_cascade_lifecycle REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(audio_common_msgs REQUIRED)
+find_package(explainability_msgs REQUIRED)
 find_package(whisper_msgs REQUIRED)
 find_package(llama_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
@@ -20,7 +21,7 @@ find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(gpsr_msgs REQUIRED)
-find_package(audio_common_msgs REQUIRED)
+# (duplicate audio_common_msgs removed)
 find_package(perception_system_interfaces REQUIRED)
 find_package(kb_msgs REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
@@ -39,9 +40,9 @@ set(dependencies
   sensor_msgs
   gpsr_msgs
   std_srvs
-  audio_common_msgs
   perception_system_interfaces
   kb_msgs
+  explainability_msgs
 )
 
 include_directories(include)
@@ -90,6 +91,9 @@ list(APPEND plugin_libs get_guest_info_bt_node)
 
 add_library(remove_guest_attended_bt_node SHARED src/hri/dialog/remove_guest_attended.cpp)
 list(APPEND plugin_libs remove_guest_attended_bt_node)
+
+add_library(explain_bt_node SHARED src/hri/dialog/Explain.cpp)
+list(APPEND plugin_libs explain_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
 ament_target_dependencies(${bt_plugin} ${dependencies})

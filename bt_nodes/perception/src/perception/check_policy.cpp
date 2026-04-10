@@ -58,8 +58,8 @@ void CheckPolicy::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::CheckPolicy>(name, "answer_boolean_question", config);
-    };
+    return std::make_unique<perception::CheckPolicy>(name, "answer_boolean_question", config);
+  };
 
   factory.registerBuilder<perception::CheckPolicy>("CheckPolicy", builder);
 }

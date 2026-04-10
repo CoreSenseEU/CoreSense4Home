@@ -61,9 +61,9 @@ void StartMusic::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<hri::StartMusic>(
-        name, "/music_play", config);
-    };
+    return std::make_unique<hri::StartMusic>(
+      name, "/music_play", config);
+  };
 
   factory.registerBuilder<hri::StartMusic>("StartMusic", builder);
 }

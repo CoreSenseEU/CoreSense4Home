@@ -61,9 +61,9 @@ void ExtractPcFromClass::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::ExtractPcFromClass>(
-        name, "perception_system/isolate_pc_classes", config);
-    };
+    return std::make_unique<perception::ExtractPcFromClass>(
+      name, "perception_system/isolate_pc_classes", config);
+  };
 
   factory.registerBuilder<perception::ExtractPcFromClass>("ExtractPcFromClass", builder);
 }

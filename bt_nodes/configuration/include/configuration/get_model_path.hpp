@@ -21,10 +21,11 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<std::string>("model"),
-      BT::OutputPort<std::string>("model_path")
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<std::string>("model"),
+        BT::OutputPort<std::string>("model_path")
+      });
   }
 };
 

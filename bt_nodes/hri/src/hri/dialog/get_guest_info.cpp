@@ -30,7 +30,7 @@ GetGuestInfo::GetGuestInfo(
     rclcpp_cascade_lifecycle::CascadeLifecycleNode>(xml_tag_name, srv_name, conf)
 {
   config().blackboard->get("node", node_);
-  this->kb_publisher_= node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", 10);
+  this->kb_publisher_ = node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", 10);
 }
 
 void GetGuestInfo::on_tick()
@@ -45,19 +45,19 @@ void GetGuestInfo::on_tick()
 
   std::string guest_name_pattern, guest_drink_pattern, guest_desc_pattern;
 
-  if(guest_attending_){
+  if (guest_attending_) {
 
     guest_name_pattern = guest_attending_id_ + " oro:hasName ?name";
     guest_drink_pattern = guest_attending_id_ + " oro:hasFavoriteDrink ?drink";
     guest_desc_pattern = guest_attending_id_ + " oro:description ?desc";
 
   } else {
-    
+
     std::string other_guest_id = "guest" + std::to_string(id + 1);
     guest_name_pattern = other_guest_id + " oro:hasName ?name";
     guest_drink_pattern = other_guest_id + " oro:hasFavoriteDrink ?drink";
     guest_desc_pattern = other_guest_id + " oro:description ?desc";
-    
+
   }
 
   // Patterns
@@ -106,15 +106,13 @@ void GetGuestInfo::on_result()
   setOutput("guest_description", guest_description_);
 
   RCLCPP_INFO(
-    node_->get_logger(), "[GetGuestInfo] Guest info retrieved: Name: %s, Drink: %s, Description: %s",
+    node_->get_logger(),
+    "[GetGuestInfo] Guest info retrieved: Name: %s, Drink: %s, Description: %s",
     guest_name_.c_str(), guest_drink_.c_str(), guest_description_.c_str());
 
 
   setStatus(BT::NodeStatus::SUCCESS);
 }
-
-
-
 
 
 }  // namespace hri
@@ -123,9 +121,9 @@ void GetGuestInfo::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::GetGuestInfo>(
-        name, "/kb/query", config);
-    };
+    return std::make_unique<dialog::GetGuestInfo>(
+      name, "/kb/query", config);
+  };
 
   factory.registerBuilder<dialog::GetGuestInfo>("GetGuestInfo", builder);
 }

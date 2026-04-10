@@ -98,8 +98,8 @@ void ClearMapAtGoal::clearLayerRegion(
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<navigation::ClearMapAtGoal>(name, config);
-    };
+    return std::make_unique<navigation::ClearMapAtGoal>(name, config);
+  };
 
   factory.registerBuilder<navigation::ClearMapAtGoal>("ClearMapAtGoal", builder);
   // factory.registerNodeType<navigation::ClearMapAtGoal>("ClearMapAtGoal");

@@ -58,7 +58,8 @@ public:
 private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
 
-  std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_, current_description_;
+  std::string current_name_, current_drink_, name_1_, name_2_, drink_1_, drink_2_,
+    current_description_;
   std::string current_id_ = "0";
   std::int64_t current_color_id_ = 0;
 };

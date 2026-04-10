@@ -41,8 +41,8 @@ void ClearOctomap::on_result() {setStatus(BT::NodeStatus::SUCCESS);}
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::ClearOctomap>(name, "clear_octomap", config);
-    };
+    return std::make_unique<perception::ClearOctomap>(name, "clear_octomap", config);
+  };
 
   factory.registerBuilder<perception::ClearOctomap>("ClearOctomap", builder);
 }

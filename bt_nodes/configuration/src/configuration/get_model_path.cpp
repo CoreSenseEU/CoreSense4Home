@@ -47,11 +47,15 @@ BT::NodeStatus GetModelPath::tick()
       RCLCPP_INFO(rclcpp::get_logger("GetModelPath"), "Found model at: %s", model_path.c_str());
       return BT::NodeStatus::SUCCESS;
     } else {
-      RCLCPP_ERROR(rclcpp::get_logger("GetModelPath"), "Model not found at: %s", model_path.c_str());
+      RCLCPP_ERROR(
+        rclcpp::get_logger("GetModelPath"), "Model not found at: %s",
+        model_path.c_str());
       return BT::NodeStatus::FAILURE;
     }
   } catch (const std::exception & e) {
-    RCLCPP_ERROR(rclcpp::get_logger("GetModelPath"), "Failed to get package share directory: %s", e.what());
+    RCLCPP_ERROR(
+      rclcpp::get_logger("GetModelPath"), "Failed to get package share directory: %s",
+      e.what());
     return BT::NodeStatus::FAILURE;
   }
 }

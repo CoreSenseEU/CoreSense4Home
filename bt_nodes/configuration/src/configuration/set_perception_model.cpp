@@ -92,9 +92,9 @@ void SetPerceptionModel::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<configuration::SetPerceptionModel>(
-        name, "/change_model", config);
-    };
+    return std::make_unique<configuration::SetPerceptionModel>(
+      name, "/change_model", config);
+  };
 
   factory.registerBuilder<configuration::SetPerceptionModel>("SetPerceptionModel", builder);
 }

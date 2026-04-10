@@ -60,9 +60,9 @@ void SetPersistentId::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::SetPersistentId>(
-        name, "set_persitent_id", config);
-    };
+    return std::make_unique<perception::SetPersistentId>(
+      name, "set_persitent_id", config);
+  };
 
   factory.registerBuilder<perception::SetPersistentId>("SetPersistentId", builder);
 }

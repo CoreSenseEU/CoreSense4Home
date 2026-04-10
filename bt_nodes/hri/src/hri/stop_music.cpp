@@ -55,9 +55,9 @@ void StopMusic::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<hri::StopMusic>(
-        name, "/music_stop", config);
-    };
+    return std::make_unique<hri::StopMusic>(
+      name, "/music_stop", config);
+  };
 
   factory.registerBuilder<hri::StopMusic>("StopMusic", builder);
 }

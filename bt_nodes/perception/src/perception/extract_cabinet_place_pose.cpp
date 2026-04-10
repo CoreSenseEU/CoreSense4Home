@@ -102,9 +102,9 @@ void ExtractCabinetPlacePose::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<perception::ExtractCabinetPlacePose>(
-        name, "perception_system/isolate_pc_background", config);
-    };
+    return std::make_unique<perception::ExtractCabinetPlacePose>(
+      name, "perception_system/isolate_pc_background", config);
+  };
 
   factory.registerBuilder<perception::ExtractCabinetPlacePose>("ExtractCabinetPlacePose", builder);
 }

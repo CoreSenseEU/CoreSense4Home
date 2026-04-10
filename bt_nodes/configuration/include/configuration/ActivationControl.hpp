@@ -37,10 +37,11 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({
-      BT::InputPort<bool>("deactivate", "If true, remove activation, otherwise add"),
-      BT::InputPort<std::string>("node_name", "Name of the node to (de)activate")
-    });
+    return BT::PortsList(
+      {
+        BT::InputPort<bool>("deactivate", "If true, remove activation, otherwise add"),
+        BT::InputPort<std::string>("node_name", "Name of the node to (de)activate")
+      });
   }
 
 private:

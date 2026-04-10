@@ -108,38 +108,80 @@ BT::NodeStatus IsDetected::tick()
   if (!target_identity_.empty() && target_identity_ != "unknown") {
     std::string perception_id = "person_" + target_identity_;
     detections = pl::getInstance(node_)->get_by_id(perception_id);
-    RCLCPP_INFO_THROTTLE(node_->get_logger(), *node_->get_clock(), 8000, "[IsDetected] Searching for identity: %s", perception_id.c_str());
+    RCLCPP_INFO_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 8000,
+      "[IsDetected] Searching for identity: %s", perception_id.c_str());
+
+    if (detections.empty()) {
+      // Check whether any person is visible at all (useful for explainability)
+      auto all_persons = pl::getInstance(node_)->get_by_type("person");
+      if (!all_persons.empty()) {
+        RCLCPP_WARN_THROTTLE(
+          node_->get_logger(), *node_->get_clock(), 4000,
+          "[IsDetected] %zu person(s) detected but not the target identity '%s'",
+          all_persons.size(), target_identity_.c_str());
+      } else {
+        RCLCPP_WARN_THROTTLE(
+          node_->get_logger(), *node_->get_clock(), 2000,
+          "[IsDetected] No detections at all while searching for identity '%s'",
+          target_identity_.c_str());
+      }
+      return BT::NodeStatus::FAILURE;
+    }
   } else {
     detections = pl::getInstance(node_)->get_by_type(interest_);
+
+    if (detections.empty()) {
+      // Log all currently visible types to help the explainability module
+      auto all_detections = pl::getInstance(node_)->get_by_type("");
+      if (!all_detections.empty()) {
+        std::string visible_types;
+        for (const auto & d : all_detections) {
+          visible_types += d.class_name + " ";
+        }
+        RCLCPP_WARN_THROTTLE(
+          node_->get_logger(), *node_->get_clock(), 4000,
+          "[IsDetected] Visible objects: [%s] but not '%s'",
+          visible_types.c_str(), interest_.c_str());
+      } else {
+        RCLCPP_WARN_THROTTLE(
+          node_->get_logger(), *node_->get_clock(), 2000,
+          "[IsDetected] No detections at all (looking for '%s')", interest_.c_str());
+      }
+      return BT::NodeStatus::FAILURE;
+    }
   }
 
-  //auto detections = pl::getInstance(node_)->get_by_type(interest_);
-
-  if (detections.empty()) {
-    RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "[IsDetected] No detections");
-    return BT::NodeStatus::FAILURE;
-  }
-
-  RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "[IsDetected] Processing %ld detections...", detections.size());
+  RCLCPP_DEBUG_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 1000,
+    "[IsDetected] Processing %ld detections...", detections.size());
 
   if (order_ == "color") {
     // sorted by the distance to the color person we should sort it by distance and also by left to right or right to left
-    RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "[IsDetected] Sorting detections by color");
+    RCLCPP_DEBUG_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 2000,
+      "[IsDetected] Sorting detections by color");
     std::sort(
       detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
         return perception_system::diffIDs(this->person_id_, a.color_person) <
-        perception_system::diffIDs(this->person_id_, b.color_person);
+               perception_system::diffIDs(this->person_id_, b.color_person);
       });
   } else if (order_ == "depth") {
-    RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "[IsDetected] Sorting detections by depth");
+    RCLCPP_DEBUG_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 2000,
+      "[IsDetected] Sorting detections by depth");
     std::sort(
       detections.begin(), detections.end(), [this](const auto & a, const auto & b) {
         return a.center3d.position.z < b.center3d.position.z;
       });
   }
 
-  RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000, "[IsDetected] Max Depth: %f", max_depth_);
-  RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000, "[IsDetected] Threshold: %f", threshold_);
+  RCLCPP_DEBUG_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 5000,
+    "[IsDetected] Max Depth: %f", max_depth_);
+  RCLCPP_DEBUG_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 5000,
+    "[IsDetected] Threshold: %f", threshold_);
   auto entity_counter = 0;
   for (auto it = detections.begin(); it != detections.end() && entity_counter < max_entities_; ) {
     auto const & detection = *it;
@@ -178,7 +220,7 @@ BT::NodeStatus IsDetected::tick()
             detection.unique_id.c_str(), color_.c_str());
         } else {
           RCLCPP_DEBUG(
-            node_->get_logger(), "[CountPeople] Detection %s is not %s",
+            node_->get_logger(), "[IsDetected] Detection %s is not %s",
             detection.unique_id.c_str(), color_.c_str());
           it = detections.erase(it);
           removed = true;
@@ -231,16 +273,27 @@ BT::NodeStatus IsDetected::tick()
       }
 
     } else {
+      RCLCPP_WARN_THROTTLE(
+        node_->get_logger(), *node_->get_clock(), 2000,
+        "[IsDetected] Detection %s skipped: confidence=%.2f (thresh=%.2f), depth=%.2fm (max=%.2fm)",
+        detection.unique_id.c_str(), detection.score, threshold_,
+        detection.center3d.position.z, max_depth_);
       ++it;
     }
   }
 
-  RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "[IsDetected] Detections sorted and filtered");
+  RCLCPP_DEBUG_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 1000,
+    "[IsDetected] Detections sorted and filtered");
   if (frames_.empty()) {
-    RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "[IsDetected] No detections after filter");
+    RCLCPP_WARN_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 2000,
+      "[IsDetected] No detections after filter");
     return BT::NodeStatus::FAILURE;
   } else {
-    RCLCPP_INFO_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "[IsDetected] %d detections after filter", frames_.size());
+    RCLCPP_INFO_THROTTLE(
+      node_->get_logger(), *node_->get_clock(), 1000,
+      "[IsDetected] %d detections after filter", frames_.size());
   }
 
 
@@ -260,7 +313,9 @@ BT::NodeStatus IsDetected::tick()
     bb_img_pub_->publish(*msg);
   }
 
-  RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "[IsDetected] Detections sorted");
+  RCLCPP_DEBUG_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 2000,
+    "[IsDetected] Detections sorted");
   // implement more sorting methods
 
   setOutput("frames", frames_);
@@ -268,7 +323,9 @@ BT::NodeStatus IsDetected::tick()
   // print pointing_direction
   // RCLCPP_INFO(node_->get_logger(), "Pointing direction: %d", detections[0].pointing_direction);
 
-  RCLCPP_DEBUG_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "[IsDetected] Detections published");
+  RCLCPP_DEBUG_THROTTLE(
+    node_->get_logger(), *node_->get_clock(), 1000,
+    "[IsDetected] Detections published");
   return BT::NodeStatus::SUCCESS;
 }
 

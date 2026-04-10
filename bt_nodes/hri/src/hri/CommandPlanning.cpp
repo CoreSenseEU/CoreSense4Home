@@ -105,9 +105,9 @@ void CommandPlanning::on_result()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<hri::CommandPlanning>(
-        name, "gpsr_planning", config);
-    };
+    return std::make_unique<hri::CommandPlanning>(
+      name, "gpsr_planning", config);
+  };
 
   factory.registerBuilder<hri::CommandPlanning>("CommandPlanning", builder);
 }

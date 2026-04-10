@@ -34,6 +34,7 @@ def generate_launch_description():
     navigation_dir = get_package_share_directory('navigation_system')
     knowledge_core_dir = get_package_share_directory('knowledge_core')
     person_tracker_dir = get_package_share_directory('cs4home_person_tracker')
+    explainer_selector_dir = get_package_share_directory('explainer_selector')
 
     # manipulation launchers
     move_group = IncludeLaunchDescription(
@@ -125,6 +126,12 @@ def generate_launch_description():
         }.items()
     )
 
+    explainer_selector = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(explainer_selector_dir, 'launch', 'explainer_selector.launch.py')
+        )
+    )
+
     ld = LaunchDescription()
     ld.add_action(navigation)
     ld.add_action(dialog)
@@ -133,6 +140,7 @@ def generate_launch_description():
     ld.add_action(knowledge_core)
     # ld.add_action(laser_people_detector) Not working so far, only yolo for the moment
     ld.add_action(person_tracker)
+    ld.add_action(explainer_selector)
     # ld.add_action(move_group)
     ld.add_action(manipulation_server)
 

@@ -75,7 +75,7 @@ BT::NodeStatus IsGesturing::tick()
         gestures_[this->type_].begin(),
         gestures_[this->type_].end(),
         obj.pointing_direction) !=
-      gestures_[this->type_].end();
+             gestures_[this->type_].end();
     });
   if (it != detections.end()) {
     setOutput("person_id", it->color_person);

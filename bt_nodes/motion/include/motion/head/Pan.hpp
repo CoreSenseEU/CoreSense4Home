@@ -53,7 +53,8 @@ private:
   std::shared_ptr<rclcpp_cascade_lifecycle::CascadeLifecycleNode> node_;
   rclcpp::Time start_time_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-  rclcpp_lifecycle::LifecyclePublisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr attention_cmd_pub_;
+  rclcpp_lifecycle::LifecyclePublisher<attention_system_msgs::msg::AttentionCommand>::SharedPtr
+    attention_cmd_pub_;
   double yaw_limit_{1.3};
   double pitch_limit_{0.92};
   double pitch_{0.0};

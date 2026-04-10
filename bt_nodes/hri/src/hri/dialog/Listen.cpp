@@ -66,8 +66,8 @@ BT::NodeStatus Listen::on_success()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
-    };
+    return std::make_unique<dialog::Listen>(name, "whisper/listen", config);
+  };
 
   factory.registerBuilder<dialog::Listen>("Listen", builder);
 }

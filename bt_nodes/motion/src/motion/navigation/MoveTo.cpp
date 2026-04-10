@@ -153,8 +153,8 @@ BT::NodeStatus MoveTo::on_cancelled()
 BT_REGISTER_NODES(factory)
 {
   BT::NodeBuilder builder = [](const std::string & name, const BT::NodeConfiguration & config) {
-      return std::make_unique<navigation::MoveTo>(name, "/navigate_to_pose", config);
-    };
+    return std::make_unique<navigation::MoveTo>(name, "/navigate_to_pose", config);
+  };
 
   factory.registerBuilder<navigation::MoveTo>("MoveTo", builder);
 }

@@ -88,29 +88,23 @@ std::string obtain_guest_id(const std::string & json)
 
 static std::string sanitize_turtle_literal(const std::string & s)
 {
-  // Strip ALL backslashes unconditionally — LLM-generated descriptions never need
-  // legitimate escape sequences, and the KB parser (OWL/Turtle) chokes on anything
-  // that isn't one of the five valid escapes (\t \n \r \\ \").
-  // Also strip dots (.) which break Turtle statement terminators.
+  // Strip ALL backslashes and dots unconditionally
   std::string result;
   result.reserve(s.size());
 
   for (size_t i = 0; i < s.size(); ++i) {
     char c = s[i];
     if (c == '\\') {
-      // Drop ALL backslashes unconditionally — skip the backslash.
-      // If there is a following character, keep it (it's the intended content).
-      if (i + 1 < s.size()) {
-        ++i;
-        result += s[i];
-      }
-      // Trailing backslash at end of string: just drop it
+      // Completely drop backslashes
+      continue;
     } else if (c == '"') {
       result += "\\\"";   // escape bare double quotes for Turtle
     } else if (c == '\n') {
-      result += ' ';      // newlines → space (cleaner than \n inside a single-line literal)
+      result += ' ';      // newlines → space
     } else if (c == '\r') {
       // skip carriage returns
+    } else if (c == '.') {
+      // skip dots
     } else {
       result += c;
     }

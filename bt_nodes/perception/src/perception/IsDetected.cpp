@@ -187,6 +187,15 @@ BT::NodeStatus IsDetected::tick()
     auto const & detection = *it;
     bool removed = false;
 
+    if (detection.unique_id.find("-1") != std::string::npos) {
+      RCLCPP_WARN_THROTTLE(
+        node_->get_logger(), *node_->get_clock(), 2000,
+        "[IsDetected] Detection %s skipped (id is -1)",
+        detection.unique_id.c_str());
+      it = detections.erase(it);
+      continue;
+    }
+
     if (detection.score > threshold_ && detection.center3d.position.z < max_depth_) {
       // Color filtering
       if (color_ != "unknown") {
@@ -313,7 +322,7 @@ BT::NodeStatus IsDetected::tick()
     bb_img_pub_->publish(*msg);
   }
 
-  RCLCPP_DEBUG_THROTTLE(
+  RCLCPP_INFO_THROTTLE(
     node_->get_logger(), *node_->get_clock(), 2000,
     "[IsDetected] Detections sorted");
   // implement more sorting methods
@@ -323,7 +332,7 @@ BT::NodeStatus IsDetected::tick()
   // print pointing_direction
   // RCLCPP_INFO(node_->get_logger(), "Pointing direction: %d", detections[0].pointing_direction);
 
-  RCLCPP_DEBUG_THROTTLE(
+  RCLCPP_INFO_THROTTLE(
     node_->get_logger(), *node_->get_clock(), 1000,
     "[IsDetected] Detections published");
   return BT::NodeStatus::SUCCESS;

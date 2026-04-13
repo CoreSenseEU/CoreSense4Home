@@ -78,6 +78,9 @@ BT::NodeStatus CountPeople::tick()
     RCLCPP_INFO(node_->get_logger(), "CountPeople idle");
   }
 
+  RCLCPP_INFO(node_->get_logger(), "[CountPeople] color %s", color_);
+  RCLCPP_INFO(node_->get_logger(), "[CountPeople] pose %s", pose_);
+  RCLCPP_INFO(node_->get_logger(), "[CountPeople] color %s", gesture_);
   RCLCPP_INFO(node_->get_logger(), "CountPeople ticked");
   pl::getInstance(node_)->set_interest("person", true);
   pl::getInstance(node_)->update(35);
@@ -96,8 +99,11 @@ BT::NodeStatus CountPeople::tick()
     bool removed = false;
 
     if (detection.score > threshold_) {
+      RCLCPP_INFO(node_->get_logger(), "[CountPeople] threshold okey");
+      
       // Color filtering
       if (color_ != "none") {
+        RCLCPP_INFO(node_->get_logger(), "[CountPeople] Count by color");
         auto const detection_id_colors = perception_system::getHSVFromUniqueID(
           detection.color_person);
         std::string lower_color = "lower_" + color_;
@@ -135,6 +141,7 @@ BT::NodeStatus CountPeople::tick()
 
       // gesture filtering
       if (gesture_ != "unknown" && !removed) {
+        RCLCPP_INFO(node_->get_logger(), "[CountPeople] Count by gesture");
         if (std::find(
             gestures_[gesture_].begin(), gestures_[gesture_].end(),
             detection.pointing_direction) != gestures_[gesture_].end())
@@ -153,6 +160,7 @@ BT::NodeStatus CountPeople::tick()
 
       // pose filtering
       if (pose_ != "unknown" && !removed) {
+        RCLCPP_INFO(node_->get_logger(), "[CountPeople] Count by pose");
         if (pose_names_[detection.body_pose] == pose_) {
           RCLCPP_DEBUG(
             node_->get_logger(), "[IsDetected] Detection %s is %s",
@@ -182,7 +190,9 @@ BT::NodeStatus CountPeople::tick()
     // return BT::NodeStatus::SUCCESS;
   }
 
-  setOutput("num_person", prev_num_person + num_entities);
+  auto result = std::to_string(prev_num_person + num_entities);
+
+  setOutput("num_person", result);
 
   RCLCPP_INFO(node_->get_logger(), "[CountPeople] %d people detected", num_entities);
 

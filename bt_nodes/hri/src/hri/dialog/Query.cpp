@@ -47,10 +47,17 @@ void Query::on_tick()
   std::string text_;
   getInput("text", text_);
   getInput("intention", intention_);
-  std::string prompt_ = "Given the sentence \"" + text_ + "\", extract the " + intention_ +
+
+  std::string prompt_ = "";
+
+  if(intention_.empty()){
+    prompt_= "You are a robot named Tiago who is participating in the Robocup with the Gentlebots team from Spain, made up of the Rey Juan Carlos University of Madrid and the University of León. Answer the following question: \"" + text_ + "\"";
+  }else{
+    prompt_ = "Given the sentence \"" + text_ + "\", extract the " + intention_ +
     " from the sentence and return "
     "it with the following JSON format:\n" +
     "{\n\t\"intention\": \"word extracted in the sentence\"\n}";
+  }
   goal_.prompt = prompt_;
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;

@@ -49,7 +49,7 @@ def generate_launch_description():
 
     manipulation_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(manipulation_dir, 'launch', 'server.launch.py')
+            os.path.join(manipulation_dir, 'launch', 'simple_server.launch.py')
         )
     )
 
@@ -62,16 +62,16 @@ def generate_launch_description():
 
     yolo3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(yolo3d_dir, 'launch', 'yolo_3d.launch.py')
+            os.path.join(yolo3d_dir, 'launch', 'yolo.launch.py')
         ),
         launch_arguments={
             # 'namespace': 'perception_system',
-            'model': 'yolov8n-pose.pt',
+            'model': 'yolo11n.pt',
             'input_image_topic': '/head_front_camera/rgb/image_raw',
             'input_depth_topic': '/head_front_camera/depth/image_raw',
-            'input_depth_info_topic': '/head_front_camera/depth/camera_info',
-            'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 in real robot
-            'target_frame': 'head_front_camera_rgb_optical_frame',
+            'input_depth_info_topic': '/head_front_camera/rgb/camera_info',
+            'depth_image_units_divisor': '1000',  # 1 for simulation, 1000 real
+            'target_frame': 'head_front_camera_color_optical_frame',
             'threshold': '0.5'
             }.items()
     )
@@ -82,13 +82,13 @@ def generate_launch_description():
         ),
         launch_arguments={
             'rviz': 'True',
-            'mode': 'amcl',
-            'params_file': package_dir + '/config/gpsr/tiago_nav_params.yaml',
-            'slam_params_file': package_dir + '/config/gpsr/tiago_nav_follow_params.yaml',
-            'map': os.path.join(
-                                package_dir,
-                                'maps',
-                                'robocup_arena_1.yaml'),
+            # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
+            'map': package_dir + '/maps/apartamento_leon_gimp_con_mesa_tv.yaml', # ARENA B
+            'params_file': package_dir +
+                    '/config/receptionist/tiago_nav_params.yaml',
+            'slam_params_file': package_dir +
+                    '/config/receptionist/tiago_nav_follow_params.yaml',
+            'nav_mode': 'amcl'
         }.items()
     )
 
@@ -103,7 +103,7 @@ def generate_launch_description():
     ld.add_action(dialog)
     ld.add_action(yolo3d)
     ld.add_action(real_time)
-    ld.add_action(move_group)
+    # ld.add_action(move_group)
     ld.add_action(manipulation_server)
     ld.add_action(gpsr)
 

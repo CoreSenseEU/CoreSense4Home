@@ -76,6 +76,11 @@ BT::NodeStatus SetupGPSR::tick()
   plugins.push_back("sleep_bt_node");
   plugins.push_back("count_people_bt_node");
   plugins.push_back("set_blackboard_int_bt_node");
+  plugins.push_back("check_policy_bt_node");
+  plugins.push_back("move_along_axis_bt_node");
+  plugins.push_back("switch_yolo_model_bt_node");
+  plugins.push_back("remove_string_prefix_bt_node");
+  plugins.push_back("set_persistent_id_bt_node");
 
   setOutput("plugins", plugins);
 

@@ -25,6 +25,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_cascade_lifecycle/rclcpp_cascade_lifecycle.hpp"
 #include "std_msgs/msg/int8.hpp"
+#include "std_msgs/msg/string.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
@@ -48,6 +49,7 @@ public:
 
 private:
   rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_text_;
 };
 
 }  // namespace dialog

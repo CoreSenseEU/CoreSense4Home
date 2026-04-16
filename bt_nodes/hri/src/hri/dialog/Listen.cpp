@@ -20,6 +20,7 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "std_msgs/msg/int8.hpp"
+#include "std_msgs/msg/string.hpp"
 #include "whisper_msgs/action/stt.hpp"
 
 namespace dialog
@@ -35,6 +36,7 @@ Listen::Listen(
     xml_tag_name, action_name, conf)
 {
   publisher_start_ = node_->create_publisher<std_msgs::msg::Int8>("dialog_action", 10);
+  publisher_text_ = node_->create_publisher<std_msgs::msg::String>("/whisper/text", 10);
 }
 
 void Listen::on_tick()
@@ -51,13 +53,24 @@ void Listen::on_tick()
 
 BT::NodeStatus Listen::on_success()
 {
-  fprintf(stderr, "%s\n", result_.result->transcription.text.c_str());
+  auto text = result_.result->transcription.text;
 
-  if (result_.result->transcription.text.size() == 0) {
+  // Trim leading and trailing whitespace
+  auto start = text.find_first_not_of(" \t\n\r");
+  if (start == std::string::npos) {
+    RCLCPP_WARN(node_->get_logger(), "[Listen] Transcription is empty or whitespace-only");
     return BT::NodeStatus::FAILURE;
   }
+  text = text.substr(start, text.find_last_not_of(" \t\n\r") - start + 1);
 
-  setOutput("listen_text", result_.result->transcription.text);
+  RCLCPP_INFO(node_->get_logger(), "[Listen] Heard: \"%s\"", text.c_str());
+
+  // Publish the transcribed text
+  auto msg = std_msgs::msg::String();
+  msg.data = text;
+  publisher_text_->publish(msg);
+
+  setOutput("listen_text", text);
   return BT::NodeStatus::SUCCESS;
 }
 

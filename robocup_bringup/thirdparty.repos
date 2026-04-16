@@ -92,3 +92,13 @@ repositories:
     type: git
     url: https://github.com/CoreSenseEU/cs4home-explainability.git
     version: main
+
+  ThirdParty/knowledge_core:
+    type: git
+    url: https://github.com/severin-lemaignan/knowledge_core.git
+    version: main
+
+  ThirdParty/kb_msgs:
+    type: git
+    url: https://github.com/pal-robotics/kb_msgs.git
+    version: main

@@ -92,6 +92,9 @@ list(APPEND plugin_libs get_guest_info_bt_node)
 add_library(remove_guest_attended_bt_node SHARED src/hri/dialog/remove_guest_attended.cpp)
 list(APPEND plugin_libs remove_guest_attended_bt_node)
 
+add_library(remove_guest_facts_bt_node SHARED src/hri/dialog/remove_guest_facts.cpp)
+list(APPEND plugin_libs remove_guest_facts_bt_node)
+
 add_library(explain_bt_node SHARED src/hri/dialog/Explain.cpp)
 list(APPEND plugin_libs explain_bt_node)
 

@@ -2,7 +2,7 @@ behaviors_main:
   ros__parameters:
     use_sim_time: False
     cam_frame: "head_front_camera_color_optical_frame"
-    home_position: [54.701, 1.360, 0.001]
+    home_position: [0.0, 0.0, 0.0]
     home_pose: "home"
     offer_pose: "offer"
     person_id: 001122334455
@@ -29,12 +29,13 @@ behaviors_main:
         "kitchen",
         "office",
         "living_room",
-        "instruction_point"
+        "instruction_point",
+        "bedroom"
       ]
     waypoints:
       #ARENA B
-      tv_table: [-14.936, -0.490, 1.543]
-      hallway: [-12.272, 0.691, 2.076]
+      tv_table: [1.42, 3.89, 1.543]
+      hallway: [1.01, 9.05, 2.076]
       hallway_cabinet: [-14.214, 2.942, 1.258]
       desk: [-9.134, 2.014, 2.901]
       shelf: [-8.354, 0.573, 1.306]
@@ -47,13 +48,14 @@ behaviors_main:
       dinner_table: [-9.216, -1.555, -1.775]
       kitchen_counter: [-9.312, -4.550, -1.747]
       dishwasher: [-10.371, -4.185, -1.762]
-      entrance: [-11.886, 2.915, 1.952]
+      entrance: [1.16, 6.19, 1.952]
       coffee_table: [-14.142, -2.027, -2.056]
       exit: [-8.242, -0.344, -0.441]
-      kitchen: [-11.626, -0.85, -0.689]
+      kitchen: [3.79, 6.57, -0.689]
       office: [-8.551, 0.033, 2.090]
-      living_room: [-13.452, -1.870, -2.397]
-      instruction_point: [-12.933, -0.495, -2.132]
+      living_room: [1.27, 4.56, -2.397]
+      instruction_point: [1.16, 6.19, -2.132]
+      bedroom: [6.31, 1.54, 1.258]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node

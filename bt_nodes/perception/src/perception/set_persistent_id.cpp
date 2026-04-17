@@ -38,9 +38,10 @@ void SetPersistentId::on_tick()
   int id;
   if (!getInput("id", id)) {
     RCLCPP_ERROR(node_->get_logger(), "Missing ID in SetPersistentId");
+    setStatus(BT::NodeStatus::FAILURE);
+  }else{
+    request_->id = id;
   }
-
-  request_->id = id;
 }
 
 void SetPersistentId::on_result()

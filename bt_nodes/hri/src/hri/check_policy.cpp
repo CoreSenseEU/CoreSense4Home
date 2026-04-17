@@ -17,6 +17,9 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
+#include <regex>
+#include <algorithm>
+#include <cctype>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "hri/check_policy.hpp"
@@ -49,9 +52,8 @@ void CheckPolicy::on_tick()
   RCLCPP_DEBUG(node_->get_logger(), "CheckPolicy ticked");
   RCLCPP_INFO(node_->get_logger(), "CheckPolicy ticked");
   if (!image_) {
-    RCLCPP_ERROR(node_->get_logger(), "No image received");
-    RCLCPP_INFO(node_->get_logger(), "No image received, setting to IDLE");
-    setStatus(BT::NodeStatus::IDLE);
+    RCLCPP_ERROR(node_->get_logger(), "No image received yet");
+    goal_.prompt.clear();
     return;
   }
   RCLCPP_INFO(node_->get_logger(), "Image received, proceeding with CheckPolicy");
@@ -61,6 +63,7 @@ void CheckPolicy::on_tick()
 
   std::string prompt_ = text_;
   goal_.prompt = prompt_;
+  goal_.images.clear();
   goal_.images.push_back(*image_);
   goal_.reset = true;
   goal_.sampling_config.temp = 0.0;
@@ -99,6 +102,61 @@ void CheckPolicy::image_callback(
   RCLCPP_INFO_ONCE(node_->get_logger(), "Image received in CheckPolicy");
 }
 
+std::string trim_copy(const std::string & s)
+{
+  auto start = std::find_if_not(s.begin(), s.end(),
+    [](unsigned char c) { return std::isspace(c); });
+  auto end = std::find_if_not(s.rbegin(), s.rend(),
+    [](unsigned char c) { return std::isspace(c); }).base();
+
+  if (start >= end) {
+    return "";
+  }
+  return std::string(start, end);
+}
+
+std::string sanitize_llm_output(std::string text)
+{
+  // 1) quitar bloques <think>...</think>
+  text = std::regex_replace(text, std::regex(R"(<think>.*?</think>)"), "");
+
+  // 2) quitar tags sueltos <think>, </think> y cualquier otro <...>
+  text = std::regex_replace(text, std::regex(R"(</?think>)"), "");
+  text = std::regex_replace(text, std::regex(R"(<[^>]+>)"), "");
+
+  // 3) si existe 'the guest is', quedarse desde ahí
+  // std::string anchor = "the guest is";
+  // auto pos = text.find(anchor);
+  // if (pos != std::string::npos) {
+  //   text = text.substr(pos);
+  // }
+
+  // 4) quitar saltos de línea
+  text = std::regex_replace(text, std::regex(R"([\r\n\t]+)"), " ");
+
+  // 5) quitar comillas y paréntesis
+  text = std::regex_replace(text, std::regex(R"(["])"), "");
+  text = std::regex_replace(text, std::regex(R"([()])"), "");
+  text = std::regex_replace(text, std::regex(R"([!])"), "");
+
+  // 6) cambiar guiones por espacio
+  text = std::regex_replace(text, std::regex(R"(-)"), " ");
+
+  // 7) colapsar espacios múltiples
+  text = std::regex_replace(text, std::regex(R"(\s{2,})"), " ");
+
+  // 8) trim
+  text = trim_copy(text);
+
+  // 9) quedarnos con una sola frase si hay varias
+  // auto dot_pos = text.find('.');
+  // if (dot_pos != std::string::npos) {
+  //   text = text.substr(0, dot_pos + 1);
+  // }
+
+  return text;
+}
+
 BT::NodeStatus CheckPolicy::on_success()
 {
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
@@ -110,24 +168,18 @@ BT::NodeStatus CheckPolicy::on_success()
   if (result_.result->response.text.empty() || result_.result->response.text == "{}") {
     return BT::NodeStatus::FAILURE;
   }
-  std::string answer = result_.result->response.text;
-  setOutput("output_text", answer);
+
+  std::string answer = sanitize_llm_output(result_.result->response.text);
+
   RCLCPP_INFO(
     node_->get_logger(), "CheckPolicy extracted answer: %s",
     answer.c_str());
-
-  answer.erase(
-    std::remove_if(
-      answer.begin(), answer.end(),
-      [](unsigned char c) {return !std::isalnum(c);}), answer.end());
-  std::transform(
-    answer.begin(), answer.end(), answer.begin(),
-    [](unsigned char c) {return std::tolower(c);});
 
   if (answer.empty()) {
     return BT::NodeStatus::FAILURE;
   }
 
+  setOutput("output_text", answer);
   return BT::NodeStatus::SUCCESS;
 }
 

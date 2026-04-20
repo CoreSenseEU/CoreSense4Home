@@ -20,7 +20,6 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-# from llama_bringup.utils import create_llama_launch
 
 
 def generate_launch_description():
@@ -66,29 +65,18 @@ def generate_launch_description():
     # )
 
     llava_cmd = Node(
-        package="llama_ros",
-        executable="llava_node",
-        name="llava_node",
-        namespace="llama",
-        parameters=[{
-            "context.n_ctx": 2048,
-            "context.n_batch": 256,
-            "gpu.n_gpu_layers": 23,
-            "cpu.n_threads": 4,
-            "context.n_predict": -1,
-
-            # uncomment this for GPSR:
-            # "model.repo": "cstr/Spaetzle-v60-7b-Q4_0-GGUF",
-            # "model.filename": "Spaetzle-v60-7b_Q4_0.gguf",
-
-            # comment this for GPSR:
-            "model.repo": 'bartowski/Qwen2-VL-2B-Instruct-GGUF',
-            "model.filename": 'Qwen2-VL-2B-Instruct-Q4_K_M.gguf',
-            "mmproj.repo": "bartowski/Qwen2-VL-2B-Instruct-GGUF",
-            "mmproj.filename": "mmproj-Qwen2-VL-2B-Instruct-f16.gguf",
-            "prompt.system_prompt_type": "ChatML"
-        }]
-    )
+                package="llama_ros",
+                executable="llava_node",
+                name="llava_node",
+                namespace="llama",
+                parameters=[
+                    os.path.join(
+                        get_package_share_directory("robocup_bringup"),
+                        "config",
+                        "llm.yaml",
+                    )
+                ],
+            )
 
     whisper_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -134,8 +122,8 @@ def generate_launch_description():
     ld.add_action(llava_cmd)
     ld.add_action(audio_common_tts_node)
     ld.add_action(audio_common_player_node)
-    ld.add_action(kb_cmd)
+    # ld.add_action(kb_cmd)
 
-    #ld.add_action(music_player_node)
+    ld.add_action(music_player_node)
 
     return ld

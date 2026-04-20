@@ -121,6 +121,6 @@ def generate_launch_description():
     ld.add_action(yolo3d)
     ld.add_action(real_time)
     # ld.add_action(move_group)
-    # ld.add_action(manipulation_server)
+    ld.add_action(manipulation_server)
 
     return ld

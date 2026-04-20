@@ -20,7 +20,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from llama_bringup.utils import create_llama_launch
+# from llama_bringup.utils import create_llama_launch
 
 
 def generate_launch_description():
@@ -47,43 +47,47 @@ def generate_launch_description():
         description='Minimum silence duration in milliseconds for segmenting audio') 
 
     # Actions
-    llama_cmd = create_llama_launch(
-            n_ctx=2048,
-            n_batch=256,
-            n_gpu_layers=23,
-            n_threads=4,
-            n_predict=-1,
+    # llama_cmd = create_llama_launch(
+    #         n_ctx=2048,
+    #         n_batch=256,
+    #         n_gpu_layers=23,
+    #         n_threads=4,
+    #         n_predict=-1,
+
+    #         # uncomment this for GPSR:
+    #         # model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
+    #         # model_filename="Spaetzle-v60-7b_Q4_0.gguf",
+
+    #         # comment this for GPSR:
+    #         model_repo='qwen/Qwen2.5-Coder-7B-Instruct-GGUF',
+    #         model_filename='qwen2.5-coder-7b-instruct-q4_k_m-00001-of-00002.gguf',
+    #         system_prompt_type= "ChatML"
+
+    # )
+
+    llava_cmd = Node(
+        package="llama_ros",
+        executable="llava_node",
+        name="llava_node",
+        namespace="llama",
+        parameters=[{
+            "context.n_ctx": 2048,
+            "context.n_batch": 256,
+            "gpu.n_gpu_layers": 23,
+            "cpu.n_threads": 4,
+            "context.n_predict": -1,
 
             # uncomment this for GPSR:
-            # model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
-            # model_filename="Spaetzle-v60-7b_Q4_0.gguf",
+            # "model.repo": "cstr/Spaetzle-v60-7b-Q4_0-GGUF",
+            # "model.filename": "Spaetzle-v60-7b_Q4_0.gguf",
 
             # comment this for GPSR:
-            model_repo='qwen/Qwen2.5-Coder-7B-Instruct-GGUF',
-            model_filename='qwen2.5-coder-7b-instruct-q4_k_m-00001-of-00002.gguf',
-            system_prompt_type= "ChatML"
-
-    )
-
-    llava_cmd = create_llama_launch(
-            use_llava=True,
-            n_ctx=2048,
-            n_batch=256,
-            n_gpu_layers=23,
-            n_threads=4,
-            n_predict=-1,
-
-            # uncomment this for GPSR:
-            # model_repo="cstr/Spaetzle-v60-7b-Q4_0-GGUF",
-            # model_filename="Spaetzle-v60-7b_Q4_0.gguf",
-
-            # comment this for GPSR:
-            model_repo='bartowski/Qwen2-VL-2B-Instruct-GGUF',
-            model_filename='Qwen2-VL-2B-Instruct-Q4_K_M.gguf',
-            mmproj_repo= "bartowski/Qwen2-VL-2B-Instruct-GGUF",
-            mmproj_filename= "mmproj-Qwen2-VL-2B-Instruct-f16.gguf",
-            system_prompt_type= "ChatML"
-
+            "model.repo": 'bartowski/Qwen2-VL-2B-Instruct-GGUF',
+            "model.filename": 'Qwen2-VL-2B-Instruct-Q4_K_M.gguf',
+            "mmproj.repo": "bartowski/Qwen2-VL-2B-Instruct-GGUF",
+            "mmproj.filename": "mmproj-Qwen2-VL-2B-Instruct-f16.gguf",
+            "prompt.system_prompt_type": "ChatML"
+        }]
     )
 
     whisper_cmd = IncludeLaunchDescription(

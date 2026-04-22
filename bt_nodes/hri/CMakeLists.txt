@@ -71,6 +71,9 @@ list(APPEND plugin_libs choose_from_classes_bt_node)
 add_library(check_policy_bt_node SHARED src/hri/check_policy.cpp)
 list(APPEND plugin_libs check_policy_bt_node)
 
+add_library(update_lora_bt_node SHARED src/hri/UpdateLora.cpp)
+list(APPEND plugin_libs update_lora_bt_node)
+
 add_library(command_planning_bt_node SHARED src/hri/CommandPlanning.cpp)
 list(APPEND plugin_libs command_planning_bt_node)
 

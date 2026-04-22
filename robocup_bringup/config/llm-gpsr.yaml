@@ -1,0 +1,34 @@
+/**:
+  ros__parameters:
+    # Model parameters
+    model:
+      repo: bartowski/Qwen_Qwen3.5-4B-GGUF
+      filename: Qwen_Qwen3.5-4B-Q4_K_M.gguf
+
+    mmproj:
+      repo: bartowski/Qwen_Qwen3.5-4B-GGUF
+      filename: mmproj-Qwen_Qwen3.5-4B-f16.gguf
+
+    # Context / inference parameters
+    context:
+      n_ctx: 16384
+      n_batch: 1024
+      n_predict: 2000
+
+    # GPU / backend parameters
+    gpu:
+      n_gpu_layers: -1
+
+    # CPU parameters
+    cpu:
+      n_threads: -1
+
+    lora:
+      adapters:
+      - gpsr
+
+      gpsr:
+        repo: unileon-robotics/Qwen3.5-4B-GPSR-LoRA-GGUF
+        filename: f32.gguf
+        scale: 0.7
+

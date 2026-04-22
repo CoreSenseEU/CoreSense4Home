@@ -52,6 +52,8 @@ private:
   rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int8>::SharedPtr publisher_start_;
   std::shared_ptr<rclcpp_action::Client<audio_common_msgs::action::TTS>> client_;
   bool is_goal_sent_ = false;
+
+  std::string resolve_blackboard_refs(const std::string & text);
   // rclcpp::Node::SharedPtr node_;
   //  rclcpp::ActionClient<audio_common_msgs::action::TTS>::SharedPtr
   //  tts_action_;

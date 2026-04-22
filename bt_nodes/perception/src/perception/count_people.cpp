@@ -192,6 +192,7 @@ BT::NodeStatus CountPeople::tick()
 
   auto result = std::to_string(prev_num_person + num_entities);
 
+  setOutput("input_num_person", prev_num_person + num_entities);
   setOutput("num_person", result);
 
   RCLCPP_INFO(node_->get_logger(), "[CountPeople] %d people detected", num_entities);

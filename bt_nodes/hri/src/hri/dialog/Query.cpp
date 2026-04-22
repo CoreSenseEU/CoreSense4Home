@@ -18,6 +18,9 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
+#include <regex>
+#include <algorithm>
+#include <cctype>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "hri/dialog/Query.hpp"
@@ -74,6 +77,48 @@ ws ::= ([ \t\n] ws)?)";
   publisher_start_->publish(msg_dialog_action);
 }
 
+std::string sanitize_llm_output(std::string text)
+{
+  // 1) quitar bloques <think>...</think>
+  text = std::regex_replace(text, std::regex(R"(<think>.*?</think>)"), "");
+
+  // 2) quitar tags sueltos <think>, </think> y cualquier otro <...>
+  text = std::regex_replace(text, std::regex(R"(</?think>)"), "");
+  text = std::regex_replace(text, std::regex(R"(<[^>]+>)"), "");
+
+  // 3) si existe 'the guest is', quedarse desde ahí
+  std::string anchor = "the guest is";
+  auto pos = text.find(anchor);
+  if (pos != std::string::npos) {
+    text = text.substr(pos);
+  }
+
+  // 4) quitar saltos de línea
+  text = std::regex_replace(text, std::regex(R"([\r\n\t]+)"), " ");
+
+  // 5) quitar comillas y paréntesis
+  text = std::regex_replace(text, std::regex(R"(["])"), "");
+  text = std::regex_replace(text, std::regex(R"([()])"), "");
+  text = std::regex_replace(text, std::regex(R"([!])"), "");
+
+  // 6) cambiar guiones por espacio
+  text = std::regex_replace(text, std::regex(R"(-)"), " ");
+
+  // 6) cambiar comillas por espacio
+  text = std::regex_replace(text, std::regex(R"(,)"), " ");
+
+  // 7) colapsar espacios múltiples
+  text = std::regex_replace(text, std::regex(R"(\s{2,})"), " ");
+
+  // 9) quedarnos con una sola frase si hay varias
+  // auto dot_pos = text.find('.');
+  // if (dot_pos != std::string::npos) {
+  //   text = text.substr(0, dot_pos + 1);
+  // }
+
+  return text;
+}
+
 BT::NodeStatus Query::on_success()
 {
   fprintf(stderr, "%s\n", result_.result->response.text.c_str());
@@ -96,6 +141,8 @@ BT::NodeStatus Query::on_success()
   if (it != response.end() && it->is_string()) {
     value_ = it->get<std::string>();
   }
+
+  value_ = sanitize_llm_output(value_);
 
   // Fix 2: fallback — scan all values for the first non-empty string
   if (value_.empty()) {

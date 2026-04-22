@@ -121,8 +121,12 @@ list(APPEND plugin_libs extract_pc_from_class_bt_node)
 add_library(store_identity_vector_bt_node SHARED src/perception/store_identity_vector.cpp)
 list(APPEND plugin_libs store_identity_vector_bt_node)
 
+add_library(has_store_identity_bt_node SHARED src/perception/has_store_identity.cpp)
+list(APPEND plugin_libs has_store_identity_bt_node)
+
 add_library(enable_detect_by_identity_bt_node SHARED src/perception/enable_detect_by_identity.cpp)
 list(APPEND plugin_libs enable_detect_by_identity_bt_node)
+
 add_library(extract_handover_alignment_bt_node SHARED src/perception/ExtractHandoverAlignment.cpp)
 list(APPEND plugin_libs extract_handover_alignment_bt_node)
 

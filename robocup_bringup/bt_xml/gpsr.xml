@@ -6,14 +6,16 @@
             <!-- <Action ID="SetStartPosition" frame_name="instruction point" /> -->
             <Action ID="SetWp"/>
 
-            <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>  
+            <!-- <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>  
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
             </RetryUntilSuccessful>
-            <Action ID="MoveTo" tf_frame="instruction_point"/>
+            <Action ID="MoveTo" tf_frame="instruction_point"/> -->
 
             <Repeat num_cycles="3">
                 <Sequence>
+                    <Action ID="ChangeLifecycleState" node_name="/llama/llava_node" />
+                    <UpdateLora lora_name="f32" lora_scale="0.7"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Sequence>
                             <Action ID="Speak" say_text="Tell me how I can help you." param=""/>
@@ -33,6 +35,8 @@
                             <Action ID="DialogConfirmation"/>
                         </Sequence>
                     </RetryUntilSuccessful>
+                    <UpdateLora lora_name="f32" lora_scale="0.0"/>
+                    <Action ID="ChangeLifecycleState" node_name="/llama/llava_node" deactivate="true"/>
                     <ForceSuccess>
                         <Action ID="Deferred" bt_pkg="" plugins="{plugins}" xml="{bt_xml}"/>
                     </ForceSuccess>

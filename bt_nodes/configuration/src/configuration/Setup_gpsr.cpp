@@ -53,6 +53,7 @@ BT::NodeStatus SetupGPSR::tick()
   plugins.push_back("speak_bt_node");
   plugins.push_back("dialogConfirmation_bt_node");
   plugins.push_back("listen_bt_node");
+  plugins.push_back("update_lora_bt_node");
   plugins.push_back("query_bt_node");
   plugins.push_back("command_planning_bt_node");
   plugins.push_back("move_to_predefined_bt_node");
@@ -81,6 +82,8 @@ BT::NodeStatus SetupGPSR::tick()
   plugins.push_back("switch_yolo_model_bt_node");
   plugins.push_back("remove_string_prefix_bt_node");
   plugins.push_back("set_persistent_id_bt_node");
+  plugins.push_back("play_motion_predefined_bt_node");
+  plugins.push_back("change_lifecycle_state_bt_node");
 
   setOutput("plugins", plugins);
 

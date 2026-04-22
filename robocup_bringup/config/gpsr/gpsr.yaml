@@ -64,12 +64,14 @@ behaviors_main:
       - deferred_bt_node
       - set_wp_bt_node
       - command_planning_bt_node
+      - update_lora_bt_node
       - setup_gpsr_bt_node
       - set_start_position_bt_node
       - move_to_bt_node
       - start_music_bt_node
       - stop_music_bt_node
       - is_door_open_bt_node
+      - change_lifecycle_state_bt_node
 
 
 # ARENA B:

@@ -15,6 +15,7 @@
 #include "hri/dialog/Speak.hpp"
 
 #include <cstdint>
+#include <regex>
 #include <string>
 #include <utility>
 
@@ -75,12 +76,40 @@ BT::NodeStatus Speak::tick()
   this->publisher_start_->publish(msg_dialog_action); */
 }
 
+std::string Speak::resolve_blackboard_refs(const std::string & text)
+{
+  static const std::regex pattern("<result:([^>]+)>");
+  std::string resolved;
+  resolved.reserve(text.size());
+
+  std::sregex_iterator it(text.begin(), text.end(), pattern);
+  const std::sregex_iterator end;
+  size_t last_pos = 0;
+
+  for (; it != end; ++it) {
+    const std::smatch & match = *it;
+    resolved += text.substr(last_pos, match.position() - last_pos);
+    const std::string key = match[1].str();
+    std::string value;
+    if (config().blackboard->get(key, value)) {
+      resolved += value;
+    } else {
+      RCLCPP_WARN(node_->get_logger(), "[Speak] Blackboard key '%s' not found", key.c_str());
+      resolved += match[0].str();
+    }
+    last_pos = match.position() + match.length();
+  }
+  resolved += text.substr(last_pos);
+  return resolved;
+}
+
 BT::NodeStatus Speak::on_idle()
 {
   auto goal = audio_common_msgs::action::TTS::Goal();
 
   std::string text_;
   getInput("say_text", text_);
+  text_ = resolve_blackboard_refs(text_);
 
   std::string param_;
   getInput("param", param_);

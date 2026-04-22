@@ -109,7 +109,7 @@ def generate_launch_description():
                     '/config/carry_my_luggage/tiago_nav_follow_params.yaml',
             'map': os.path.join(package_dir,
                                 'maps',
-                                'carry_map.yaml'),
+                                'last_dance.yaml'),
         }.items()
     )
 

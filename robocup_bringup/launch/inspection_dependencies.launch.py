@@ -77,7 +77,7 @@ def generate_launch_description():
             'map': os.path.join(
                                 package_dir,
                                 'maps',
-                                'robocup_arena_1.yaml'),
+                                'last_dance.yaml'),
         }.items()
     )
 

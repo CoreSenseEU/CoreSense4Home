@@ -32,8 +32,8 @@
                             <Action ID="StartMusic" audio="elevator" loop="true" />
                             <Action ID="CommandPlanning" command="{command}" actions="{action_list}" bt_value="{bt_xml}"/>
                             <Action ID="StopMusic" />
-                            <Action ID="Speak" say_text="Then I have to do the following actions " param="{action_list}"/>
-                            <Action ID="Speak" say_text="This is correct?" param=""/>
+                            <Action ID="Speak" say_text="Here it is the reasoning for the next actions: " param="{action_list}"/>
+                            <Action ID="Speak" say_text="Is this correct?" param=""/>
                             <Action ID="DialogConfirmation"/>
                         </Sequence>
                     </RetryUntilSuccessful>

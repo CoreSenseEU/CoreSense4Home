@@ -1,16 +1,18 @@
 <root>
     <BehaviorTree ID="GPSR">
         <Sequence>
+            <Action ID="InitCarry" />
             <Action ID="SetupGPSR" plugins="{plugins}"/>
             <SetBlackboard output_key="cam_frame" value="head_front_camera_color_optical_frame"/>
-            <!-- <Action ID="SetStartPosition" frame_name="instruction point" /> -->
+            <!-- <Action ID="SetStartPosition" frame_name="instruction_point" /> -->
             <Action ID="SetWp"/>
 
-            <!-- <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>  
+            <Action ID="Speak" say_text="Hi this is gentlebots. Can you please open the door "/>  
             <RetryUntilSuccessful num_attempts="-1">
                 <Condition ID="IsDoorOpen" door_thfloatreshold="1.5"/>
             </RetryUntilSuccessful>
-            <Action ID="MoveTo" tf_frame="instruction_point"/> -->
+            <Action ID="MoveAlongAxis" speed="0.25" distance="1.5" axis="x"/>
+            <Action ID="MoveTo" tf_frame="instruction_point"/>
 
             <Repeat num_cycles="3">
                 <Sequence>
@@ -18,7 +20,7 @@
                     <UpdateLora lora_name="f32" lora_scale="0.7"/>
                     <RetryUntilSuccessful num_attempts="-1">
                         <Sequence>
-                            <Action ID="Speak" say_text="Tell me how I can help you." param=""/>
+                            <Action ID="Speak" say_text="I will fulfill your task and then I will come back. Tell me how I can help you." param=""/>
                             <Action ID="Listen" listen_text="{command}"/>
                             <Action ID="Speak" say_text="Did you say " param="{command}"/>
                             <Action ID="DialogConfirmation"/>

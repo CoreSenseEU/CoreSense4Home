@@ -245,9 +245,6 @@ std::tuple<bool, tf2::Transform> IsSittable::check_free_space(
   }
 
   auto intersection = r_person & r_chair;
-  auto union_area = r_person | r_chair;
-
-  cv::Mat union_img = cv::Mat::zeros(union_area.height, union_area.width, CV_8UC1);
 
   if (intersection.area() == 0) {
     RCLCPP_INFO(node_->get_logger(), "[IsSittable] no intersection");
@@ -260,44 +257,35 @@ std::tuple<bool, tf2::Transform> IsSittable::check_free_space(
   } else {  // chair and person intersect
     auto free_space = (r_chair.area() - intersection.area()) * 0.8;
     if (r_person.area() >= free_space) {
-      // std::vector<cv::Rect> freeSpaces;
+      std::vector<cv::Rect> freeSpaces;
 
-      //substract the intersection from the union image to get the free space
-      // cv::rectangle(union_img, cv::Point(intersection.x - union_area.x, intersection.y - union_area.y),
-      //               cv::Point(intersection.x + intersection.width - union_area.x, intersection.y + intersection.height - union_area.y),
-      //               cv::Scalar(255), cv::FILLED);
-      cv::Mat cropped_union = union_img(intersection);
-      // compute the centroid of the free space:
-      cv::Moments m = cv::moments(cropped_union, true);
-      cv::Point p(m.m10 / m.m00, m.m01 / m.m00);
+      if (r_person.y > r_chair.y) { // Top free space
+          freeSpaces.push_back(cv::Rect(r_chair.x, r_chair.y, r_chair.width, r_person.y - r_chair.y));
+      }
 
-      // if (r_person.y > r_chair.y) { // Top free space
-      //     freeSpaces.push_back(cv::Rect(r_chair.x, r_chair.y, r_chair.width, r_person.y - r_chair.y));
-      // }
+      if (r_person.y + r_person.height < r_chair.y + r_chair.height) { // Bottom free space
+          freeSpaces.push_back(cv::Rect(r_chair.x, r_person.y + r_person.height, r_chair.width, r_chair.y + r_chair.height - (r_person.y + r_person.height)));
+      }
 
-      // if (r_person.y + r_person.height < r_chair.y + r_chair.height) { // Bottom free space
-      //     freeSpaces.push_back(cv::Rect(r_chair.x, r_person.y + r_person.height, r_chair.width, r_chair.y + r_chair.height - (r_person.y + r_person.height)));
-      // }
+      if (r_person.x > r_chair.x) { // Left free space
+          freeSpaces.push_back(cv::Rect(r_chair.x, r_person.y, r_person.x - r_chair.x, r_person.height));
+      }
 
-      // if (r_person.x > r_chair.x) { // Left free space
-      //     freeSpaces.push_back(cv::Rect(r_chair.x, r_person.y, r_person.x - r_chair.x, r_person.height));
-      // }
+      if (r_person.x + r_person.width < r_chair.x + r_chair.width) { // Right free space
+          freeSpaces.push_back(cv::Rect(r_person.x + r_person.width, r_person.y, r_chair.x + r_chair.width - (r_person.x + r_person.width), r_person.height));
+      }
 
-      // if (r_person.x + r_person.width < r_chair.x + r_chair.width) { // Right free space
-      //     freeSpaces.push_back(cv::Rect(r_person.x + r_person.width, r_person.y, r_chair.x + r_chair.width - (r_person.x + r_person.width), r_person.height));
-      // }
+      // sort the vector to get the biggest free space
+      std::sort(freeSpaces.begin(), freeSpaces.end(), [](const cv::Rect & a, const cv::Rect & b) {
+          return a.area() > b.area();
+      });
 
-      // // sort the vector to get the biggest free space
-      // std::sort(freeSpaces.begin(), freeSpaces.end(), [](const cv::Rect & a, const cv::Rect & b) {
-      //     return a.area() > b.area();
-      // });
-
-      // free_space_tf.setOrigin(tf2::Vector3((freeSpaces[0].x + freeSpaces[0].width / 2.0) / 100.0,
-      //                                      (freeSpaces[0].y + freeSpaces[0].height / 2.0) / 100.0,
-      //                                       chair_detection.center3d.position.z));
-      free_space_tf.setOrigin(
-        tf2::Vector3(p.x / 100.0, p.y / 100.0, chair_detection.center3d.position.z));
-      return std::make_tuple(true, free_space_tf);
+      if (!freeSpaces.empty()) {
+        free_space_tf.setOrigin(tf2::Vector3((freeSpaces[0].x + freeSpaces[0].width / 2.0) / 100.0,
+                                             (freeSpaces[0].y + freeSpaces[0].height / 2.0) / 100.0,
+                                              chair_detection.center3d.position.z));
+        return std::make_tuple(true, free_space_tf);
+      }
     }
   }
   RCLCPP_DEBUG(node_->get_logger(), "[IsSittable] no free space");

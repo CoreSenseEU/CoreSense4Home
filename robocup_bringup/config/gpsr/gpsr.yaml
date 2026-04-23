@@ -9,53 +9,71 @@ behaviors_main:
     bt_xml_file: gpsr.xml
     waypoints_names:
       [
-        "tv_table",
-        "hallway",
-        "hallway_cabinet",
-        "desk",
-        "shelf",
-        "coathanger",
-        "lounge_chair",
-        "lamp",
-        "couch",
-        "trashcan",
-        "kitchen_cabinet",
-        "dinner_table",
+        "fridge",
         "kitchen_counter",
+        "kitchen_trashcan",
         "dishwasher",
-        "entrance",
+        "dinner_table",
+        "cabinet",
+        "side_table",
+        "pantry",
+        "right_lounge_chair",
+        "coloured_couch",
+        "left_lounge_chair",
+        "grey_couch",
+        "tv_table",
+        "bookshelf",
         "coffee_table",
-        "exit",
-        "kitchen",
-        "office",
-        "living_room",
+        "desk",
+        "bed",
+        "bedside_table",
+        "reading_chair",
+        "shelf",
+        "pink_storage",
+        "laundry_room_trashcan",
+        "washing_machine",
+        "clothes_dryer",
+        "laundry_counter",
+        "coat_stand",
         "instruction_point",
-        "bedroom"
+        "kitchen",
+        "living_room",
+        "bedroom",
+        "laundry_room"
       ]
     waypoints:
       #ARENA B
-      tv_table: [1.42, 3.89, 1.543]
-      hallway: [1.01, 9.05, 2.076]
-      hallway_cabinet: [-14.214, 2.942, 1.258]
-      desk: [-9.134, 2.014, 2.901]
-      shelf: [-8.354, 0.573, 1.306]
-      coathanger: [-12.637, 2.190, -0.207] 
-      lounge_chair: [-14.914, -2.117, -2.731]
-      lamp: [-14.902, -1.983, -2.276]
-      couch: [-13.489, -1.594, -2.120]
-      trashcan: [3.79, 6.77, 0.12] #TODO
-      kitchen_cabinet: [-8.263, -1.846, 1.239]
-      dinner_table: [-9.216, -1.555, -1.775]
-      kitchen_counter: [-9.312, -4.550, -1.747]
-      dishwasher: [-10.371, -4.185, -1.762]
-      entrance: [1.16, 6.19, 1.952]
-      coffee_table: [-14.142, -2.027, -2.056]
-      exit: [-8.242, -0.344, -0.441]
-      kitchen: [3.79, 6.57, -0.689]
-      office: [-8.551, 0.033, 2.090]
-      living_room: [1.27, 4.56, -2.397]
-      instruction_point: [1.16, 6.19, -2.132]
-      bedroom: [6.31, 1.54, 1.258]
+      fridge: [2.54, -6.88, -1.65]
+      kitchen_counter: [2.54, -6.88, -1.65]
+      kitchen_trashcan: [4.72, -6.97, -1.49]
+      dishwasher: [4.72, -6.97, 0.03]
+      dinner_table: [3.58, -4.25, -1.43]
+      cabinet: [4.91, -3.80, 0.05]
+      side_table: [4.91, -3.80, 1.58]
+      pantry: [3.28, -3.61, 2.52]
+      right_lounge_chair: [7.97, -5.97, -1.91]
+      coloured_couch: [8.44, -4.22, -1.39]
+      left_lounge_chair: [8.44, -4.22, -0.91]
+      grey_couch: [8.44, -4.22, -0.51]
+      tv_table: [8.44, -4.22, 0.76]
+      bookshelf: [8.44, -4.22, 2.89]
+      coffee_table: [8.44, -4.22, -1.39]
+      desk: [8.50, -0.84, -0.75]
+      bed: [8.50, -0.84, 0.56]
+      bedside_table: [8.59, 0.55, 0.30]
+      reading_chair: [8.59, 0.55, -2.6]
+      shelf: [8.89, -1.36, 3.13]
+      pink_storage: [3.43, -0.51, -2.50]
+      laundry_room_trashcan: [4.44, -0.42, -0.76]
+      washing_machine: [4.44, -0.42, -0.01]
+      clothes_dryer: [4.44, -0.42, 1.18]
+      laundry_counter: [3.76, -0.47, 1.70]
+      coat_stand: [3.76, -0.47, 2.27]
+      instruction_point: [8.23, -0.3, 1.62]
+      kitchen: [4.06, -4.12, -0.84]
+      living_room: [8.06, -3.09, -1.06]
+      bedroom: [8.23, -0.3, 0.56]
+      laundry_room: [4.20, -0.28, -0.33]
     plugins:
       - dialogConfirmation_bt_node
       - listen_bt_node
@@ -72,6 +90,8 @@ behaviors_main:
       - stop_music_bt_node
       - is_door_open_bt_node
       - change_lifecycle_state_bt_node
+      - move_along_axis_bt_node
+      - init_carry_bt_node
 
 
 # ARENA B:

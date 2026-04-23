@@ -10,7 +10,7 @@
     # allow_duplicate_names: false
     waypoints:
       inspection_zone: [4.982, 0.158, -2.12]
-      exit: [0.587, 0.013, 3.018]
+      exit: [2.169, -0.122, -2.979]
 
 behaviors_main:
   ros__parameters:

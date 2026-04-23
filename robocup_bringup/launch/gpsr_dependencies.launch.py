@@ -86,7 +86,7 @@ def generate_launch_description():
         launch_arguments={
             'rviz': 'True',
             # 'map': package_dir + '/maps/robocup_arena_1.yaml', # ARENA C
-            'map': package_dir + '/maps/apartamento_leon_gimp_con_mesa_tv.yaml', # ARENA B
+            'map': package_dir + '/maps/last_dance.yaml', # ARENA B
             'params_file': package_dir +
                     '/config/receptionist/tiago_nav_params.yaml',
             'slam_params_file': package_dir +
@@ -163,7 +163,7 @@ def generate_launch_description():
     ld.add_action(person_tracker)
     ld.add_action(gpsr_planning)
     ld.add_action(explainer_selector)
-    ld.add_action(llava_cmd)
+    # ld.add_action(llava_cmd)
     # ld.add_action(move_group)
     ld.add_action(manipulation_server)
 

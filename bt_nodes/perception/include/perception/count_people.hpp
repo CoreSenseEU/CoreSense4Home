@@ -58,7 +58,7 @@ public:
         BT::InputPort<std::string>("color"),
         BT::InputPort<std::string>("pose"),
         BT::InputPort<std::string>("gesture"),
-        BT::InputPort<int>("input_num_person"),
+        BT::BidirectionalPort<int>("input_num_person"),
 
         BT::OutputPort<std::vector<std::string>>("frames"),
         BT::OutputPort<std::string>("num_person")});

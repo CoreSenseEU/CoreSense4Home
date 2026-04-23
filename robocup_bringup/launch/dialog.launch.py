@@ -73,7 +73,7 @@ def generate_launch_description():
                     os.path.join(
                         get_package_share_directory("robocup_bringup"),
                         "config",
-                        "llm.yaml",
+                        "llm-gpsr.yaml",
                     )
                 ],
             )

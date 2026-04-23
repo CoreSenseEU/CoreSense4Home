@@ -198,7 +198,7 @@ BT::NodeStatus IsDetected::tick()
 
     if (detection.score > threshold_ && detection.center3d.position.z < max_depth_) {
       // Color filtering
-      if (color_ != "unknown" and color_ != "") {
+      if (color_ != "unknown" && !color_.empty()) {
         auto const detection_id_colors = perception_system::getHSVFromUniqueID(
           detection.color_person);
         std::string lower_color = "lower_" + color_;
@@ -237,7 +237,7 @@ BT::NodeStatus IsDetected::tick()
       }
 
       // gesture filtering
-      if (gesture_ != "unknown" && gesture_ != "" && !removed) {
+      if (gesture_ != "unknown" && !gesture_.empty() && !removed) {
         if (std::find(
             gestures_[gesture_].begin(), gestures_[gesture_].end(),
             detection.pointing_direction) != gestures_[gesture_].end())
@@ -255,7 +255,7 @@ BT::NodeStatus IsDetected::tick()
       }
 
       // pose filtering
-      if (pose_ != "unknown" && pose_ != "" && !removed) {
+      if (pose_ != "unknown" && !pose_.empty() && !removed) {
         if (pose_names_[detection.body_pose] == pose_) {
           RCLCPP_DEBUG(
             node_->get_logger(), "[IsDetected] Detection %s is %s",

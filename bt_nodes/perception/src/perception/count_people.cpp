@@ -140,7 +140,7 @@ BT::NodeStatus CountPeople::tick()
       }
 
       // gesture filtering
-      if (gesture_ != "unknown" && !removed) {
+      if (gesture_ != "unknown" && !gesture_.empty() && !removed) {
         RCLCPP_INFO(node_->get_logger(), "[CountPeople] Count by gesture");
         if (std::find(
             gestures_[gesture_].begin(), gestures_[gesture_].end(),
@@ -159,7 +159,7 @@ BT::NodeStatus CountPeople::tick()
       }
 
       // pose filtering
-      if (pose_ != "unknown" && !removed) {
+      if (pose_ != "unknown" && !pose_.empty() && !removed) {
         RCLCPP_INFO(node_->get_logger(), "[CountPeople] Count by pose");
         if (pose_names_[detection.body_pose] == pose_) {
           RCLCPP_DEBUG(

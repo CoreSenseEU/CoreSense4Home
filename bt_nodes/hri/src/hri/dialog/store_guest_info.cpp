@@ -126,29 +126,23 @@ void StoreGuestInfo::on_result()
   std_msgs::msg::String fact_msg;
 
   // // Add guest
-  // fact_msg.data = guest_id + " rdf:type oro:Person";
-  // kb_publisher_->publish(fact_msg);
+  fact_msg.data = guest_id + " rdf:type oro:Person";
+  kb_publisher_->publish(fact_msg);
 
-  // // Add guest name
-  // fact_msg.data = guest_id + " oro:hasName \"" + guest_name_ + "\"";
-  // kb_publisher_->publish(fact_msg);
+  // Add guest name
+  guest_name_ = sanitize_turtle_literal(guest_name_);
+  fact_msg.data = guest_id + " oro:hasName \"" + guest_name_ + "\"";
+  kb_publisher_->publish(fact_msg);
 
-  // //Add guest drink
-  // fact_msg.data = guest_id + " oro:hasFavoriteDrink \"" + guest_drink_ + "\"";
-  // kb_publisher_->publish(fact_msg);
+  //Add guest drink
+    guest_drink_ = sanitize_turtle_literal(guest_drink_);
+  fact_msg.data = guest_id + " oro:hasFavoriteDrink \"" + guest_drink_ + "\"";
+  kb_publisher_->publish(fact_msg);
 
   if (!guest_description_.empty()) {
     
     guest_description_ = sanitize_turtle_literal(guest_description_);
     fact_msg.data = guest_id + " oro:description \"" + guest_description_ + "\"";
-    kb_publisher_->publish(fact_msg);
-    guest_drink_ = sanitize_turtle_literal(guest_drink_);
-    
-    fact_msg.data = guest_id + " oro:hasFavoriteDrink \"" + guest_drink_ + "\"";
-    kb_publisher_->publish(fact_msg);
-
-    guest_name_ = sanitize_turtle_literal(guest_name_);
-    fact_msg.data = guest_id + " oro:hasName \"" + guest_name_ + "\"";
     kb_publisher_->publish(fact_msg);  
   }
 

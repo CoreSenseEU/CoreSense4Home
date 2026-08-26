@@ -1,74 +1,62 @@
 # CoreSense4Home
 
-## Installation
+CoreSense4Home is the CoreSense social testbed developed by the Gentlebots RoboCup@Home team. It combines perception, dialogue, navigation and manipulation through ROS 2 lifecycle components and behaviour trees.
 
-See [Software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/C-Software-Setup)
+## CoreSense role
 
+The terms below follow the [CoreSense Ontology (CSO)](https://w3id.org/coresense/cso).
 
-## Usage 
-### Navigation
-```bash
-ros2 launch robocup_bringup navigation.launch.py
-```
-### Launch current carry my luggage implementation
+- The robot is an [Agent](https://w3id.org/coresense/cso#Agent) that executes or commands actions.
+- Perception, dialogue and task control are [Cognitive Functions](https://w3id.org/coresense/cso#CognitiveFunction): they process information used by the robot.
+- These functions realise [Cognitive Capabilities](https://w3id.org/coresense/cso#CognitiveCapability), including detecting people and objects, interacting with people, navigating and manipulating objects.
+- A RoboCup scenario is a [Task](https://w3id.org/coresense/cso#Task). Its behaviour tree organises planned [Actions](https://w3id.org/coresense/cso#Action) that contribute to a [Goal](https://w3id.org/coresense/cso#Goal), such as welcoming a guest or delivering luggage.
 
-First kill move_group node inside tiago robot. Then in separate terminals launch:
+## System flow
 
-```bash
-ros2 launch robocup_bringup navigation_follow.launch.py rviz:=True
-```
-```bash
-ros2 launch attention_system attention.launch.py
-```
-```bash
+~~~mermaid
+flowchart LR
+    environment["People and environment"] --> perception["Perception and dialogue"]
+    perception --> state["Task context and robot knowledge"]
+    state --> bt["Behaviour-tree task control"]
+    bt --> actions["Navigation, speech and manipulation actions"]
+    actions --> environment
+~~~
+
+The main ROS 2 packages are `perception`, `hri`, `configuration`, `motion`, `arm`, `bt_test` and `robocup_bringup`.
+
+## Requirements
+
+Use Ubuntu 22.04 and ROS 2 Humble. The full testbed is developed for the TIAGo robot; individual packages can also be built and tested separately. Follow the [CoreSense4Home software setup](https://github.com/CoreSenseEU/CoreSense4Home/wiki/C-Software-Setup) for the robot-specific dependencies.
+
+## Build
+
+~~~bash
+mkdir -p ~/robocup24_ws/src
+cd ~/robocup24_ws/src
+git clone https://github.com/CoreSenseEU/CoreSense4Home.git
+vcs import --recursive < CoreSense4Home/robocup_bringup/thirdparty.repos
+cd ..
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+~~~
+
+## Run
+
+Carry My Luggage:
+
+~~~bash
 ros2 launch robocup_bringup carry_my_luggage_dependencies.launch.py
-``` 
-```bash
-ros2 launch whisper_bringup whisper.launch.py
-```
-Finally:
+ros2 launch robocup_bringup carry_my_luggage.launch.py
+~~~
 
-```bash
-ros2 run bt_test carry_my_luggage_test
-```
+Receptionist:
 
-### Follow navigation with small objects
-```bash
-ros2 launch robocup_bringup navigation_follow.launch.py
-```
-### Demo moveit
-inside tiago, first kill move_group and then:
-```bash
-ros2 launch tiago_moveit_config move_group.launch.py
-```
-Launch the percetion system with the remaps for the tiago, and activate the object detection node
-```bash
-ros2 launch perception_system perception3d.launch.py
-```
-launch the speaking system:
-```bash
-ros2 run audio_common tts_node
-ros2 run audio_common audio_player_node
-ros2 launch whisper_bringup whisper.launch.py
-```
-launch the manipulation system:
-```bash
-ros2 launch action_server server.launch.py
-```
+~~~bash
+ros2 launch robocup_bringup receptionist_dependencies.launch.py
+ros2 launch robocup_bringup receptionist.launch.py
+~~~
 
-execute the test:
+The dependencies and task launch files should be started in separate terminals after sourcing the workspace in each terminal.
 
-```bash
-ros2 run bt_test pick_demo_test
-```
-
-### Demo Dialog
-```bash
-ros2 launch robocup_bringup dialog.launch.py
-```
-
-Execute the test:
-
-```bash
-ros2 run bt_test ask_test
-```
+The [CoreSense4Home wiki](https://github.com/CoreSenseEU/CoreSense4Home/wiki) describes the original system setup, architecture and behaviour-tree tasks. General project documentation is available on the [CoreSense technical site](https://coresenseeu.github.io/).

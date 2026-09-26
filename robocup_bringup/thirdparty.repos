@@ -2,75 +2,75 @@ repositories:
   ThirdParty/pointcloud_to_laserscan:
     type: git
     url: https://github.com/Juancams/pointcloud_to_laserscan.git
-    version: humble
+    version: fe51151f1b4cccbd136abd64b819ae95e8214be8
   ThirdParty/small_objects_detector:
     type: git
     url: https://github.com/gentlebots/small_objects_detector.git
-    version: robocup
+    version: 9332a60cc388541c1281d4bf0fe602d262e76b5d
   ThirdParty/audio_common:
     type: git
     url: https://github.com/mgonzs13/audio_common.git
-    version: main
+    version: b3c67da12cdb52aba3ae6f7187ca5ca5f252be3b
   ThirdParty/whisper_ros:
     type: git
     url: https://github.com/mgonzs13/whisper_ros.git
-    version: main
+    version: d581098a772fdfcf77602fb955263ba3eb993eee
   ThirdParty/llama_ros:
     type: git
     url: https://github.com/mgonzs13/llama_ros.git
-    version: main
+    version: 4facfa54229b65e2938c335ccad7cc2235295c10
   ThirdParty/moveit_task_constructor:
     type: git
     url: https://github.com/juandpenan/moveit_task_constructor.git
-    version: humble
+    version: d0a990071e00740e2b516406898cea076a073da1
   ThirdParty/tiago_mtc_examples:
     type: git
     url: https://github.com/juandpenan/tiago_mtc_examples.git
-    version: main
+    version: 2e817246e6f70c6fe31cd157c3c1ea955c3f4fec
   ThirdParty/yolov8_ros:
     type: git
     url: https://github.com/jmguerreroh/yolov8_ros.git
-    version: main
+    version: 40f538bdcfe7435336193fa47ef23bdbddf769e8
   ThirdParty/rclcpp_cascade_lifecycle:
     type: git
     url: https://github.com/fmrico/cascade_lifecycle.git
-    version: humble-devel
+    version: 29b2d9c8c6cff72f0f21f1e5552ff2c7b6c8a260
   ThirdParty/tts_ros:
     type: git
     url: https://github.com/mgonzs13/tts_ros
-    version: main
+    version: fb372c092e5736d2077f5dc8b516085f339fb6f2
   ThirdParty/slam_toolbox:
     type: git
     url: https://github.com/SteveMacenski/slam_toolbox.git
-    version: ros2
+    version: 19a66904c648a174220be1a1b98e81a9ef0e6758
   ThirdParty/tiago_robot:
     type: git
     url: https://github.com/juandpenan/tiago_robot.git 
-    version: steamdeck
+    version: ae93c1b421506a5f1ed213b911e6558a99a0724d
   ThirdParty/gpd:
     type: git
     url: https://github.com/atenpas/gpd.git
-    version: master
+    version: 6327f20eabfcba41a05fdd2e2ba408153dc2e958
   systems/manipulation_server:
     type: git
     url: https://github.com/rodperex/manipulation_server.git
-    version: main
+    version: 10304bff17e012ae9a37ea689b1e65f608eb18e3
   systems/perception_system:
     type: git
     url: https://github.com/jmguerreroh/perception_system.git
-    version: main
+    version: dfbf2cfdb5d1c647290412b50789616ab92c3351
   systems/attention_system:
     type: git
     url: https://github.com/aaggj/attention_system
-    version: humble
+    version: 4dd113b3d54f355f34e28ef340d7b8de81e44b99
   systems/navigation_system:
     type: git
     url: https://github.com/Juancams/navigation_system.git
-    version: main
+    version: f10f0feeb8809b731ce5813a899e051b332250a2
   ThirdParty/gpsr_planning:
     type: git
     url: https://github.com/igonzf/GPSR_planning
-    version: main
+    version: 1e482f31bedd569e244eeb1c2c6700d26b753a59
 
     
 

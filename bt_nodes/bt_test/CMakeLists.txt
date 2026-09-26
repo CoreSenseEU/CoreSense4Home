@@ -175,7 +175,7 @@ target_link_libraries(set_perception_model_test
 # music tests
 add_executable(music_test src/music_test.cpp)
 ament_target_dependencies(music_test ${dependencies})
-target_link_libraries(music_test 
+target_link_libraries(music_test
   hri::start_music_bt_node
   hri::stop_music_bt_node
   configuration::sleep_bt_node
@@ -202,7 +202,10 @@ target_link_libraries(filter_object_test perception::filter_object_bt_node)
 # extract the description of the person test
 add_executable(extract_person_description_test src/extract_person_description_test.cpp)
 ament_target_dependencies(extract_person_description_test ${dependecies})
-target_link_libraries(extract_person_description_test perception::extract_person_description_bt_node perception::is_detected_bt_node hri::speak_bt_node)
+target_link_libraries(extract_person_description_test
+  perception::extract_person_description_bt_node
+  perception::is_detected_bt_node
+  hri::speak_bt_node)
 
 # gpsr test
 add_executable(gpsr_test src/gpsr_test.cpp)
@@ -400,7 +403,7 @@ install(TARGETS
   extract_person_description_test
   music_test
   set_blackboard_test
-  
+
   gpsr_test
   gpsr_answerquiz_test
   gpsr_countobject_test

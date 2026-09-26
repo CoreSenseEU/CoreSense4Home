@@ -8,28 +8,20 @@ on:
     branches:
       - main
   workflow_dispatch:
+
 jobs:
   build-and-test:
-    runs-on: ${{ matrix.os }}
-    env:
-      # Tests cannot create ~/.ros/log in the runner
-      ROS_LOG_DIR: /tmp/ros_log
-    strategy:
-      matrix:
-        os: [ubuntu-22.04]
-      fail-fast: false
+    runs-on: ubuntu-22.04
+    # Run in the ROS 2 Humble image of ros-tooling
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-jammy-ros-humble-ros-base-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup ROS 2
-        uses: ros-tooling/setup-ros@0.7.19
-        with:
-          required-ros-distributions: humble
-      - name: Install nlohmann
-        run: sudo apt -y install nlohmann-json3-dev
-      - name: Install ceres dependencies
-        run: sudo apt -y install libunwind-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev libgflags-dev
-      - name: Install ceres
-        run: sudo apt -y install libceres-dev
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nlohmann-json3-dev libunwind-dev libgoogle-glog-dev \
+            libatlas-base-dev libsuitesparse-dev libgflags-dev libceres-dev
       - name: build and test
         uses: ros-tooling/action-ros-ci@0.4.8
         with:

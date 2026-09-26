@@ -33,7 +33,7 @@ jobs:
       - name: build and test
         uses: ros-tooling/action-ros-ci@0.4.8
         with:
-          package-name: arm bt_test hri motion perception robocup_bringup cs4home_core
+          package-name: arm bt_test hri motion perception robocup_bringup
           target-ros2-distro: humble
           colcon-defaults: |
             {

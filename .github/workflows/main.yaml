@@ -19,6 +19,7 @@ jobs:
         os: [ubuntu-22.04]
       fail-fast: false
     steps:
+      - uses: actions/checkout@v4
       - name: Setup ROS 2
         uses: ros-tooling/setup-ros@0.7.19
         with:
@@ -40,4 +41,4 @@ jobs:
                 "parallel-workers" : 1
               }
             }
-          vcs-repo-file-url: https://raw.githubusercontent.com/CoreSenseEU/CoreSense4Home/main/robocup_bringup/thirdparty.repos
+          vcs-repo-file-url: ${{ github.workspace }}/robocup_bringup/thirdparty.repos

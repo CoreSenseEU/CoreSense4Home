@@ -18,6 +18,9 @@
   <exec_depend>hri</exec_depend>
   <exec_depend>motion</exec_depend>
   <exec_depend>perception</exec_depend>
+  <depend>attention_system</depend>
+  <depend>nav2_behavior_tree</depend>
+  <depend>perception_system</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
